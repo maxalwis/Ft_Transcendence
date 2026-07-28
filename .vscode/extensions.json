@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "charliermarsh.ruff",
+    "llvm-vs-code-extensions.vscode-clangd",
+    "ms-azuretools.vscode-docker"
+  ]
+}
