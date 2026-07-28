@@ -1,0 +1,11 @@
+{
+  "name": "ft_transcendence",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write \"**/*.{html,css,js,ts,tsx,json}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0"
+  }
+}
