@@ -1,0 +1,96 @@
+# ==============================================================================
+# Environment Variables & Secrets
+# ==============================================================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+*.cert
+
+# ==============================================================================
+# OS & IDE Files
+# ==============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Editor-specific files
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.sublime-workspace
+*.sublime-project
+
+# ==============================================================================
+# Node.js & Front-End (React + Vite)
+# ==============================================================================
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build & Cache directories
+dist/
+dist-ssr/
+build/
+.vite/
+.eslintcache
+
+# ==============================================================================
+# Python (FastAPI / Scrapers / Celery)
+# ==============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Data Dumps / Local Databases
+*.sqlite3
+*.db
+tmp/
+dumps/
+
+# ==============================================================================
+# Testing & Coverage Caches
+# ==============================================================================
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ==============================================================================
+# Container Data & Volume Mounts
+# ==============================================================================
+# Prevents mounted DB data directories from cluttering Git
+pgdata/
+redisdata/
+podman-volumes/
+docker-volumes/
+
+# ==============================================================================
+# Logs
+# ==============================================================================
+logs/
+*.log

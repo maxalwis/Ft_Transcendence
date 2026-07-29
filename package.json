@@ -1,0 +1,20 @@
+{
+  "name": "ft_transcendence",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write \"**/*.{html,css,js,ts,tsx,json}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0",
+    "@types/leaflet": "^1.9.21",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "react": "^19.0.0-rc.1",
+    "react-dom": "^19.0.0-rc.1",
+    "react-leaflet": "^5.0.0"
+  }
+}
