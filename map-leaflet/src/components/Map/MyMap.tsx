@@ -1,12 +1,21 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { LatLngBounds } from "leaflet";
+import { useState } from "react";
+import "../Sidebar/Chat/Chat.tsx"
 import "leaflet/dist/leaflet.css";
-
+import "../Sidebar/sidebar.css";
+import MyButton from "../Sidebar/Chat/Chat.tsx";
+import MyChat from "../Sidebar/Chat/Chat.tsx";
 
 const idfBounds = new LatLngBounds(
   [48.65, 1.95],
   [49.05, 2.75],
 );
+
+type Event = {
+	title: string;
+	description: string;
+};
 
 function MyTileLayer()
 {
@@ -19,7 +28,7 @@ function MyTileLayer()
 }
 
 
-function MyPopup()
+/* function MyPopup()
 {
 	return (
 		<Popup>
@@ -27,20 +36,32 @@ function MyPopup()
 		Easily customizable.
 		</Popup>
 	);
-}
+} */
 
-function MyMarker()
+/* function MyMarker()
 {
 	return (
-		<Marker position={[48.8566, 2.3522]}>
-			< MyPopup />
+		<Marker 
+		position={[48.8566, 2.3522]}
+		eventHandlers= {{
+			click: () => {
+				setSelectedEvent({
+					title: "Concert à Paris",
+					description: "Le concert commence à 20h."
+				});
+			}
+		}}
+		>
 		</Marker>
 	);
-}
+} */
 
 function MyMap()
 {
+	const [selectedEvent, setSelectedEvent] = useState<Event | null >(null);
+
 	return (
+	<>
 		<MapContainer
 		center={[48.8566, 2.3522]}
 		zoom={12}
@@ -51,8 +72,31 @@ function MyMap()
 		style={{ height: "100vh", width: "100vw" }}
 		>
 		<MyTileLayer />
-		<MyMarker />
+		{/* <MyMarker /> */}
+		<Marker 
+		position={[48.8566, 2.3522]}
+		eventHandlers= {{
+			click: () => {
+				console.log("Clique !");
+				console.log(selectedEvent);
+				setSelectedEvent({
+					title: "Concert à Paris",
+					description: "Le concert commence à 20h."
+				});
+			}
+		}}
+		/>
+
 	</MapContainer>
+	{selectedEvent && (
+		<div className="sidebar">
+			<h2>{selectedEvent.title}</h2>
+			 <p>{selectedEvent.description}</p>
+			<MyButton />
+			<MyChat />
+		</div>
+		)}
+	</>
 	);
 }
 
