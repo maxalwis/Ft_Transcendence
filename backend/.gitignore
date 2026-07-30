@@ -1,0 +1,27 @@
+# Dépendances
+node_modules/
+
+# Build
+dist/
+
+# Environnement
+.env
+.env.*.local
+
+# Prisma
+generated/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Tests / couverture
+coverage/
+
+# OS
+.DS_Store
+
+# Dossiers IA auto generes par NestJS
+.agents/
+.claude/
+.windsurf/
