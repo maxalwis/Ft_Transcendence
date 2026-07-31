@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-.sidebar
+/* .sidebar-event
 {
 	position: fixed;
 	top: 20px;
@@ -14,4 +14,5 @@
 
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.313);
 	z-index: 1000;
-}
+} */
+

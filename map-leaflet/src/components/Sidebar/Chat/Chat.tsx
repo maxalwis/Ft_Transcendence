@@ -1,10 +1,18 @@
+[
+	{
+		id: 1,
+		user: "Alice",
+		text: "Salut !"
+	},
+	{
+		id: 2,
+		user: "Bob",
+		text: "Bienvenue."
+	}
+]
+
+
 export default function MyChat()
 {
-	return (
-		<div>
-			<button className= "bg-gray-500 text-white py px-4 py-2 rounded-lg">
-				Type a message
-			</button>
-		</div>
-	);
+
 }

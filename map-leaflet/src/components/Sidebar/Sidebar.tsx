@@ -1,18 +1,14 @@
-import EventInfo from "EventInfo/EventDetails.tsx"
-import EventChat from "EventChat/EventChat.tsx"
+/* function Sidebar({ event }) */
 
-function EventSidebar({ event }) {
-    return (
-        <aside className="w-96 h-screen flex flex-col border-l">
-
-            <div className="h-[30%]">
-                <EventInfo event={event} />
-            </div>
-
-            <div className="h-[70%]">
-                <EventChat eventId={event.id} />
-            </div>
-
-        </aside>
-    );
+export default function MySidebar() {
+	return (
+	<div className="fixed top-2 right-3 w-[20vw] h-[96.5vh] bg-white rounded-xl p-5 shadow-lg z-10000 flex flex-col">
+		<div className = "flex-3" >
+			Event
+		</div>
+		<div className = "flex-7" >
+			Chat
+		</div>
+	</div>
+	);
 }
