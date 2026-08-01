@@ -1,18 +1,16 @@
-[
-	{
-		id: 1,
-		user: "Alice",
-		text: "Salut !"
-	},
-	{
-		id: 2,
-		user: "Bob",
-		text: "Bienvenue."
-	}
-]
+import "./MessageInput"
 
-
-export default function MyChat()
+function Chat()
 {
-
+	return (
+		<div>
+			{messages.map((message) => (
+				<p key={message.id}>
+					{message.user}: {message.text}
+				</p>
+			))}
+		</div>
+	);
 }
+
+export default Chat;
