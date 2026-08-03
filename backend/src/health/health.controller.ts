@@ -8,7 +8,7 @@ export class HealthController {
   constructor(
     private health: HealthCheckService,
     private prisma: PrismaService,
-    private healthIndicatorService: HealthIndicatorService,
+    private healthIndicatorService: HealthIndicatorService
   ) {}
 
   @Get()
