@@ -11,9 +11,9 @@ type Message = {
 export default function Chat()
 {
 	const [messages, setMessages] = useState<Message[]>([]);
-	
+
 	return (
-	<div className="flex flex-col h-full">
+	<div className="flex flex-col h-full gap-3">
 		<div className="flex-1 overflow-auto">
 			<MessageOutput messages={messages} />
 		</div>
@@ -21,7 +21,7 @@ export default function Chat()
 			<MessageInput messages={messages}
 				setMessages={setMessages} />
 		</div>
-	</div>	
+	</div>
 	);
 
 }

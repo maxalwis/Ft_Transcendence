@@ -30,6 +30,13 @@ export default function MessageInput({messages,setMessages}: MessageInputProps)
 		setInput("");
 	};
 
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === "Enter" && !e.shiftKey) {
+			e.preventDefault();
+			handleSend();
+		}
+	};
+
 	return (
 		<div className="flex w-full gap-1">
 			<textarea
@@ -37,7 +44,8 @@ export default function MessageInput({messages,setMessages}: MessageInputProps)
 				placeholder="Type a message"
 				maxLength={150}
 				value={input}
-				onChange={(e) => setInput(e.target.value)}>
+				onChange={(e) => setInput(e.target.value)}
+				onKeyDown={handleKeyDown}>
 			</textarea>
 			<button
 				type="button"
