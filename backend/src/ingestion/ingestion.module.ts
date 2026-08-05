@@ -4,6 +4,6 @@ import { IngestionController } from './ingestion.controller';
 
 @Module({
   providers: [IngestionService],
-  controllers: [IngestionController]
+  controllers: [IngestionController],
 })
 export class IngestionModule {}
