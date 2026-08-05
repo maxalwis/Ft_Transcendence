@@ -49,7 +49,7 @@ export default function MessageInput({messages,setMessages}: MessageInputProps)
 			</textarea>
 			<button
 				type="button"
-				className="bg-teal-200 text-sm rounded-4xl size-8 border border-r-gray-800 self-center"
+				className="bg-teal-200 cursor-pointer text-sm rounded-4xl size-8 border border-r-gray-800 self-center"
 				onClick={handleSend}>
 					⬆️
 			</button>

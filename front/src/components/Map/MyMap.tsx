@@ -1,6 +1,7 @@
 import { MapContainer, TileLayer, Marker} from "react-leaflet";
 import { LatLngBounds } from "leaflet";
 import { useState } from "react";
+import { useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MySidebar from "../Sidebar/Sidebar"
 
@@ -20,10 +21,20 @@ function MyTileLayer()
 	);
 }
 
+function MapClickHandler({ closeSidebar }: { closeSidebar: () => void })
+{
+	useMapEvents({
+		click: () => {
+			closeSidebar();
+		},
+	});
+
+	return null;
+}
+
 function MyMap()
 {
 	const [showSidebar, setShowSidebar] = useState(false);
-	console.log(showSidebar);
 
 	return (
 	<>
@@ -34,8 +45,9 @@ function MyMap()
 		scrollWheelZoom={true}
 		maxBounds={idfBounds}
 		maxBoundsViscosity={1.0}
-		style={{ height: "100vh", width: "100vw" }}
-		>
+		style={{ height: "100vh", width: "100vw" }}>
+	
+		<MapClickHandler closeSidebar={() => setShowSidebar(false)} />
 		<MyTileLayer />
 		<Marker 
 		position={[48.8566, 2.3522]}
@@ -47,7 +59,7 @@ function MyMap()
 		/>
 	</MapContainer>
 	{showSidebar && (
-		<MySidebar />
+		<MySidebar onClose={() => setShowSidebar(false)} />
 	)}
 	</>
 	);
