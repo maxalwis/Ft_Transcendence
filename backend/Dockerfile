@@ -8,10 +8,10 @@ COPY package*.json ./
 COPY prisma ./prisma
 
 # installe les dependances dans node_modules du conteneur
-RUN npm install && npx prisma generate
+RUN npm install
 
 COPY . .
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:dev"]
+CMD ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm run start:dev"]
