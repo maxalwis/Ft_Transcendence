@@ -10,7 +10,6 @@ type MessageOutputProps = {
 	messages: Message[];
 };
 
-
 export default function MessageOutput({ messages }: MessageOutputProps)
 {
 	const bottomRef = useRef<HTMLDivElement>(null);
