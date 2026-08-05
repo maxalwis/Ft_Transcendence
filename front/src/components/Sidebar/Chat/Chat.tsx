@@ -1,3 +1,4 @@
+import './Chat.css';
 import { useState } from "react";
 import MessageInput from "./MessageInput";
 import MessageOutput from "./MessageOutput";
