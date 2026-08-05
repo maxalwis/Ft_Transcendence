@@ -1,0 +1,8 @@
+{
+  "name": "simple-user-crud-backend",
+  "version": "1.0.0",
+  "description": "Simple CRUD backend for users",
+  "scripts": {
+    "test": "node --test"
+  }
+}
