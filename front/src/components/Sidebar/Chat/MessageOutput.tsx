@@ -30,7 +30,7 @@ export default function MessageOutput({ messages }: MessageOutputProps) {
           >
             <span className="text-[10px] text-gray-400 px-1 mb-0.5">{message.user}</span>
             <div
-              className={`rounded-2xl px-3.5 py-2 text-sm break-words shadow-sm ${
+              className={`rounded-2xl px-3.5 py-2 text-sm break-all shadow-sm ${
                 isMe
                   ? 'glass-blue text-white rounded-br-xs'
                   : 'glassmorphism-element text-gray-200 border border-gray-700/50 rounded-bl-xs'
