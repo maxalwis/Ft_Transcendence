@@ -1,4 +1,1 @@
-export default function Event()
-{
-
-}
+export default function Event() {}
