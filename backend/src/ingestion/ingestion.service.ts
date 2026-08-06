@@ -27,7 +27,9 @@ export class IngestionService {
       }
 
       const data = await response.json();
-      totalCount = data.total_count;
+      if (totalCount === Infinity) {
+        totalCount = data.total_count;
+      }
 
       for (const item of data.results) {
         await this.upsertEvent(this.mapToEvent(item));
