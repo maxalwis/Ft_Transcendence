@@ -10,8 +10,15 @@ COPY prisma ./prisma
 # installe les dependances dans node_modules du conteneur
 RUN npm install
 
+# genere les fichiers client Prisma dans le conteneur durant la pahse de build
+RUN npx prisma generate
+
 COPY . .
+
+# compile le code TypeScript en JavaScript dans le dossier dist
+RUN npm run build
 
 EXPOSE 3000
 
-CMD npx prisma generate && npm run start:dev
+# lance directement la node en tatn que processus principal du conteneur, ce qui permet de recevoir les signaux d'arrêt correctement
+CMD ["node", "dist/src/main.js"]
