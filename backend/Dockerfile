@@ -8,7 +8,9 @@ COPY package*.json ./
 COPY prisma ./prisma
 
 # installe les dependances dans node_modules du conteneur
-RUN npm install
+RUN npm install \
+	&& apt-get update \
+	&& apt-get install -y openssl
 
 COPY . .
 
