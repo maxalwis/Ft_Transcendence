@@ -18,10 +18,7 @@ COPY . .
 # compile le code TypeScript en JavaScript dans le dossier dist
 RUN npm run build
 
-# DEBUG: Print contents of dist so we can see the exact path structure
-RUN ls -R /app/dist
-
 EXPOSE 3000
 
 # lance directement la node en tatn que processus principal du conteneur, ce qui permet de recevoir les signaux d'arrêt correctement
-CMD ["node", "dist/src/main.js"]
+CMD ["node", "dist/src/main.js"] 
