@@ -8,10 +8,12 @@ COPY package*.json ./
 COPY prisma ./prisma
 
 # installe les dependances dans node_modules du conteneur
-RUN npm install
+RUN npm install \
+	&& apt-get update \
+	&& apt-get install -y openssl
 
 COPY . .
 
 EXPOSE 3000
 
-CMD npx prisma generate && npm run start:dev
+CMD ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm run start:dev"]
