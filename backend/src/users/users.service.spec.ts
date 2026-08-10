@@ -74,9 +74,9 @@ describe('UsersService', () => {
       });
       prismaMock.user.create.mockRejectedValue(prismaError);
 
-      await expect(
-        service.create({ name: 'Alice', email: 'alice@example.com' }),
-      ).rejects.toThrow(ConflictException);
+      await expect(service.create({ name: 'Alice', email: 'alice@example.com' })).rejects.toThrow(
+        ConflictException
+      );
     });
   });
 
