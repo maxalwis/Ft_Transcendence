@@ -1,22 +1,9 @@
 import './Chat.css';
-// import { useState } from 'react';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
+import type { MessageProps } from './MessageInput';
 
-type Message = {
-  id: number;
-  user: string;
-  text: string;
-};
-
-type MessageProps = {
-  messages: Message[];
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-};
-
-export default function Chat( { messages }: MessageProps) {
-//   const [messages, setMessages] = useState<Message[]>([]);
-
+export default function Chat({ messages, setMessages }: MessageProps) {
   return (
     <div className="flex flex-col h-full gap-3">
       <div className="flex-1 overflow-auto">
