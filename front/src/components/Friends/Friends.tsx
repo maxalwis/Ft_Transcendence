@@ -1,8 +1,8 @@
 export default function Friends()
 {
 	return (
-		<div>
-			<h2>Friends</h2>
+		<div className="flex flex-col h-full p-4">
+			<h2 className="text-xl font-bold mb-4"> </h2>
 
 			<UserSearch />
 			<FriendRequests />
