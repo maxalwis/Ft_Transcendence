@@ -106,12 +106,22 @@ function MapEventsHandler({
 }
 
 export default function MyMap() {
-  const [showSidebar, setShowSidebar] = useState(false);
+  // Store messages by marker ID: { [eventId]: Message[] }
+  const [messagesByEvent, setMessagesByEvent] = useState<Record<string, any[]>>({});
+
+  // Track which event ID's sidebar is currently open (null means closed)
+  const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
-
   const [events, setEvents] = useState<any[]>([]);
+
+  // Ref to hold the map instance and zoom control so we can add it safely
+  const mapRef = useRef<L.Map | null>(null);
+
+  // Ref to hold the close timer
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const activeItem = events.find((item) => item.id === hoveredMarkerId);
 
   // Fetch events matching your backend's expected bounding box coordinates
   const fetchEventsForBbox = useCallback(async (bounds: L.LatLngBounds) => {
@@ -153,7 +163,19 @@ export default function MyMap() {
     return () => cancelCloseTimeout();
   }, []);
 
-  const activeItem = events.find((item) => item.id === hoveredMarkerId);
+  // Effect to add the custom zoom control once the map initializes
+  useEffect(() => {
+    if (mapRef.current) {
+      const zoomControl = L.control.zoom({
+        position: 'topleft',
+      });
+      zoomControl.addTo(mapRef.current);
+
+      return () => {
+        zoomControl.remove();
+      };
+    }
+  }, []);
 
   return (
     <>
@@ -166,7 +188,7 @@ export default function MyMap() {
         style={{ height: '100vh', width: '100vw' }}
       >
         <MapEventsHandler onBoundsChange={fetchEventsForBbox} />
-        <MapClickHandler closeSidebar={() => setShowSidebar(false)} />
+        <MapClickHandler closeSidebar={() => setActiveSidebarEventId(null)} />
         <MyTileLayer />
         <GlassZoomControl />
 
@@ -179,7 +201,15 @@ export default function MyMap() {
               position={[event.latitude, event.longitude]}
               icon={createCustomIcon(isHovered)}
               eventHandlers={{
-                click: () => setShowSidebar(true),
+                click: () => {
+                  cancelCloseTimeout();
+                  // 1. Open the sidebar for this specific event
+                  setActiveSidebarEventId(event.id);
+                  
+                  // 2. Reset the marker and hover card back to their original state
+                  setHoveredMarkerId(null);
+                  setHoverPos(null);
+                },
                 mouseover: (e) => {
                   cancelCloseTimeout();
                   const mouseEvent = e.originalEvent as MouseEvent;
@@ -193,7 +223,7 @@ export default function MyMap() {
         })}
       </MapContainer>
 
-      {hoveredMarkerId && activeItem && hoverPos && (
+      {activeItem && hoverPos && (
         <MarkerHoverCard
           position={hoverPos}
           title={activeItem.title}
@@ -209,17 +239,37 @@ export default function MyMap() {
           }
           interestedUsersCount={activeItem.interestedUsersCount || 0}
           imageUrl={activeItem.coverUrl}
-          onClick={() => setShowSidebar(true)}
-          onMouseEnter={() => cancelCloseTimeout()}
-          onMouseLeave={() => handleMouseLeave()}
+          onClick={() => setActiveSidebarEventId(activeItem.id)}
+          onMouseEnter={() => {
+            cancelCloseTimeout();
+            setHoveredMarkerId(activeItem.id);
+          }}
+          onMouseLeave={() => {
+            // Only trigger leave timeout if the sidebar for this item isn't open
+            if (activeSidebarEventId !== activeItem.id) {
+              handleMouseLeave();
+            }
+          }}
         />
       )}
 
-      {showSidebar && (
+      {activeSidebarEventId && (
         <MySidebar
-          messages={messages}
-          setMessages={setMessages}
-          onClose={() => setShowSidebar(false)}
+          messages={messagesByEvent[activeSidebarEventId] || []}
+          setMessages={(value) => {
+            setMessagesByEvent((prev) => {
+              const currentMessages = prev[activeSidebarEventId] || [];
+              const newMessages = typeof value === 'function' ? value(currentMessages) : value;
+              return {
+                ...prev,
+                [activeSidebarEventId]: newMessages,
+              };
+            });
+          }}
+          onClose={() => {
+            setActiveSidebarEventId(null);
+            setHoverPos(null);
+          }}
         />
       )}
     </>
