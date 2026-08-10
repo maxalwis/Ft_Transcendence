@@ -1,9 +1,18 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Query, Param } from '@nestjs/common';
 import { EventsService } from './events.service';
+import { MapQueryDto } from './dto/map-query.dto';
 
 @Controller('events')
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(private eventsService: EventsService) {}
 
-  // Vos routes API ici (ex: @Get(), @Post(), etc.)
+  @Get('map')
+  findForMap(@Query() query: MapQueryDto) {
+    return this.eventsService.findForMap(query.bbox);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.eventsService.findOne(id);
+  }
 }
