@@ -1,5 +1,3 @@
-import eventVisual from '/event_image.webp';
-
 // Interface for friends who are interested
 export interface Friend {
   id: string;
@@ -29,7 +27,7 @@ export default function MarkerHoverCard({
   interestedUsersCount = 0,
   isConnected = false,
   interestedFriends = [],
-  imageUrl = eventVisual,
+  imageUrl = '/event_image.webp',
   position,
   onMouseEnter,
   onMouseLeave,

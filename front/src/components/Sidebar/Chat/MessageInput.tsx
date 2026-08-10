@@ -6,12 +6,12 @@ type Message = {
   text: string;
 };
 
-type MessageInputProps = {
+export type MessageProps = {
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 };
 
-export default function MessageInput({ setMessages }: MessageInputProps) {
+export default function MessageInput({ setMessages }: MessageProps) {
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 

@@ -215,7 +215,13 @@ export default function MyMap() {
         />
       )}
 
-      {showSidebar && <MySidebar onClose={() => setShowSidebar(false)} />}
+      {showSidebar && (
+        <MySidebar
+          messages={messages}
+          setMessages={setMessages}
+          onClose={() => setShowSidebar(false)}
+        />
+      )}
     </>
   );
 }
