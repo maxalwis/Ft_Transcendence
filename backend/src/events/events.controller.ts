@@ -1,6 +1,5 @@
 import { Controller, Query, Get, Param, Logger } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { MapQueryDto } from './dto/map-query.dto';
 
 @Controller('events')
 export class EventsController {

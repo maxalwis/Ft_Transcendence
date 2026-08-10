@@ -2,16 +2,18 @@ FROM node:24-bookworm-slim
 
 WORKDIR /app
 
-# copie package.json et package-lock.json vers le conteneur
-COPY package*.json ./
+# Copy package files and the root prisma config file
+COPY package*.json prisma.config.ts* ./
 
+# Copy the prisma folder (schema, migrations, etc.)
 COPY prisma ./prisma
 
-# installe les dependances dans node_modules du conteneur
+# Install dependencies and openssl
 RUN npm install \
-	&& apt-get update \
-	&& apt-get install -y openssl
+    && apt-get update \
+    && apt-get install -y openssl
 
+# Copy the rest of the application code
 COPY . .
 
 EXPOSE 3000
