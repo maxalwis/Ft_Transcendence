@@ -1,7 +1,7 @@
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import L from 'leaflet';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import 'leaflet/dist/leaflet.css';
 import MySidebar from '../Sidebar/Sidebar';
 import MarkerHoverCard from './MarkerHoverCard.tsx';
@@ -83,16 +83,56 @@ const createCustomIcon = (isHovered: boolean) => {
   });
 };
 
-function MyMap() {
+// Helper component to track map viewport changes and trigger fetches
+function MapEventsHandler({
+  onBoundsChange,
+}: {
+  onBoundsChange: (bounds: L.LatLngBounds) => void;
+}) {
+  const map = useMapEvents({
+    moveend: () => {
+      onBoundsChange(map.getBounds());
+    },
+    zoomend: () => {
+      onBoundsChange(map.getBounds());
+    },
+  });
+
+  useEffect(() => {
+    onBoundsChange(map.getBounds());
+  }, [map, onBoundsChange]);
+
+  return null;
+}
+
+export default function MyMap() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
-  const [isMarkerHovered, setIsMarkerHovered] = useState(false);
+  const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
 
-  // Ref to hold the map instance and zoom control so we can add it safely
-  const mapRef = useRef<L.Map | null>(null);
-
-  // Ref to hold the close timer
+  const [events, setEvents] = useState<any[]>([]);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Fetch events matching your backend's expected bounding box coordinates
+  const fetchEventsForBbox = useCallback(async (bounds: L.LatLngBounds) => {
+    try {
+      const sw = bounds.getSouthWest();
+      const ne = bounds.getNorthEast();
+
+      // Combine coordinates into the exact string format your DTO expects: minLon,minLat,maxLon,maxLat
+      const bboxString = `${sw.lng},${sw.lat},${ne.lng},${ne.lat}`;
+
+      const response = await fetch(
+        `http://localhost:3000/events/map?bbox=${encodeURIComponent(bboxString)}`
+      );
+
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+      setEvents(data);
+    } catch (err) {
+      console.error('Failed to fetch map events:', err);
+    }
+  }, []);
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -104,7 +144,7 @@ function MyMap() {
   const handleMouseLeave = () => {
     cancelCloseTimeout();
     closeTimeoutRef.current = setTimeout(() => {
-      setIsMarkerHovered(false);
+      setHoveredMarkerId(null);
       setHoverPos(null);
     }, 150);
   };
@@ -113,24 +153,7 @@ function MyMap() {
     return () => cancelCloseTimeout();
   }, []);
 
-  // Effect to add the custom zoom control once the map initializes
-  useEffect(() => {
-    if (mapRef.current) {
-      const zoomControl = L.control.zoom({
-        position: 'topleft',
-      });
-      zoomControl.addTo(mapRef.current);
-
-      return () => {
-        zoomControl.remove();
-      };
-    }
-  }, []);
-
-  const mockFriends = [
-    { id: '1', name: 'Alice', avatarUrl: 'https://via.placeholder.com/50' },
-    { id: '2', name: 'Bob', avatarUrl: 'https://via.placeholder.com/50' },
-  ];
+  const activeItem = events.find((item) => item.id === hoveredMarkerId);
 
   return (
     <>
@@ -139,52 +162,56 @@ function MyMap() {
         zoom={12}
         minZoom={12}
         scrollWheelZoom={true}
-        maxBounds={idfBounds}
-        maxBoundsViscosity={1.0}
-        zoomControl={false} // Disable default
+        zoomControl={false}
         style={{ height: '100vh', width: '100vw' }}
       >
+        <MapEventsHandler onBoundsChange={fetchEventsForBbox} />
         <MapClickHandler closeSidebar={() => setShowSidebar(false)} />
         <MyTileLayer />
         <GlassZoomControl />
-        <Marker
-          position={[48.8566, 2.3522]}
-          icon={createCustomIcon(isMarkerHovered)}
-          eventHandlers={{
-            click: () => {
-              setShowSidebar(true);
-            },
-            mouseover: (e) => {
-              cancelCloseTimeout();
-              const mouseEvent = e.originalEvent as MouseEvent;
-              setIsMarkerHovered(true);
-              setHoverPos({ x: mouseEvent.clientX, y: mouseEvent.clientY });
-            },
-            mouseout: () => {
-              handleMouseLeave();
-            },
-          }}
-        />
+
+        {events.map((event) => {
+          const isHovered = hoveredMarkerId === event.id;
+
+          return (
+            <Marker
+              key={event.id}
+              position={[event.latitude, event.longitude]}
+              icon={createCustomIcon(isHovered)}
+              eventHandlers={{
+                click: () => setShowSidebar(true),
+                mouseover: (e) => {
+                  cancelCloseTimeout();
+                  const mouseEvent = e.originalEvent as MouseEvent;
+                  setHoveredMarkerId(event.id);
+                  setHoverPos({ x: mouseEvent.clientX, y: mouseEvent.clientY });
+                },
+                mouseout: () => handleMouseLeave(),
+              }}
+            />
+          );
+        })}
       </MapContainer>
 
-      {isMarkerHovered && hoverPos && (
+      {hoveredMarkerId && activeItem && hoverPos && (
         <MarkerHoverCard
           position={hoverPos}
-          title="Event Title"
-          category="Music & Arts"
+          title={activeItem.title}
+          category={activeItem.category || 'Event'}
           isOpen={true}
-          closingTime="11:00 PM"
-          interestedUsersCount={14}
-          isConnected={true}
-          interestedFriends={mockFriends}
-          onClick={() => setShowSidebar(true)} // <-- Add this handler here
-          onMouseEnter={() => {
-            cancelCloseTimeout();
-            setIsMarkerHovered(true);
-          }}
-          onMouseLeave={() => {
-            handleMouseLeave();
-          }}
+          closingTime={
+            activeItem.dateEnd
+              ? new Date(activeItem.dateEnd).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : '11:00 PM'
+          }
+          interestedUsersCount={activeItem.interestedUsersCount || 0}
+          imageUrl={activeItem.coverUrl}
+          onClick={() => setShowSidebar(true)}
+          onMouseEnter={() => cancelCloseTimeout()}
+          onMouseLeave={() => handleMouseLeave()}
         />
       )}
 
@@ -192,5 +219,3 @@ function MyMap() {
     </>
   );
 }
-
-export default MyMap;
