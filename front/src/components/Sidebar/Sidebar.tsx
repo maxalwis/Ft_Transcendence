@@ -1,10 +1,11 @@
 import Chat from './Chat/Chat';
+import type { MessageProps } from './Chat/MessageInput';
 
-interface ChatWindowProps {
+interface ChatWindowProps extends MessageProps {
   onClose: () => void;
 }
 
-export default function MySidebar({ onClose }: ChatWindowProps) {
+export default function MySidebar({ onClose, messages, setMessages }: ChatWindowProps) {
   return (
     <div className="glassmorphism-popup fixed top-2 right-3 w-[20vw] h-[96.5vh] rounded-xl p-5 shadow-lg z-1000 flex flex-col">
       <div>
@@ -30,7 +31,7 @@ export default function MySidebar({ onClose }: ChatWindowProps) {
       </div>
       <div className="h-[30%] overflow-hidden">Event</div>
       <div className="h-[70%] flex flex-col overflow-hidden">
-        <Chat></Chat>
+        <Chat messages={messages} setMessages={setMessages}></Chat>
       </div>
     </div>
   );

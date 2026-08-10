@@ -83,7 +83,14 @@ const createCustomIcon = (isHovered: boolean) => {
   });
 };
 
+type Message = {
+  id: number;
+  user: string;
+  text: string;
+};
+
 function MyMap() {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [showSidebar, setShowSidebar] = useState(false);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
   const [isMarkerHovered, setIsMarkerHovered] = useState(false);
@@ -188,7 +195,13 @@ function MyMap() {
         />
       )}
 
-      {showSidebar && <MySidebar onClose={() => setShowSidebar(false)} />}
+      {showSidebar && (
+        <MySidebar
+          messages={messages}
+          setMessages={setMessages}
+          onClose={() => setShowSidebar(false)}
+        />
+      )}
     </>
   );
 }
