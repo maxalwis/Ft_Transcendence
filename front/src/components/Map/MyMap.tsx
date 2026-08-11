@@ -1,7 +1,7 @@
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import L from 'leaflet';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import 'leaflet/dist/leaflet.css';
 import MySidebar from '../Sidebar/Sidebar';
 import MarkerHoverCard from './MarkerHoverCard.tsx';
@@ -83,23 +83,66 @@ const createCustomIcon = (isHovered: boolean) => {
   });
 };
 
-type Message = {
-  id: number;
-  user: string;
-  text: string;
-};
+// Helper component to track map viewport changes and trigger fetches
+function MapEventsHandler({
+  onBoundsChange,
+}: {
+  onBoundsChange: (bounds: L.LatLngBounds) => void;
+}) {
+  const map = useMapEvents({
+    moveend: () => {
+      onBoundsChange(map.getBounds());
+    },
+    zoomend: () => {
+      onBoundsChange(map.getBounds());
+    },
+  });
 
-function MyMap() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [showSidebar, setShowSidebar] = useState(false);
+  useEffect(() => {
+    onBoundsChange(map.getBounds());
+  }, [map, onBoundsChange]);
+
+  return null;
+}
+
+export default function MyMap() {
+  // Store messages by marker ID: { [eventId]: Message[] }
+  const [messagesByEvent, setMessagesByEvent] = useState<Record<string, any[]>>({});
+
+  // Track which event ID's sidebar is currently open (null means closed)
+  const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
-  const [isMarkerHovered, setIsMarkerHovered] = useState(false);
+  const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
+  const [events, setEvents] = useState<any[]>([]);
 
   // Ref to hold the map instance and zoom control so we can add it safely
   const mapRef = useRef<L.Map | null>(null);
 
   // Ref to hold the close timer
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const activeItem = events.find((item) => item.id === hoveredMarkerId);
+
+  // Fetch events matching your backend's expected bounding box coordinates
+  const fetchEventsForBbox = useCallback(async (bounds: L.LatLngBounds) => {
+    try {
+      const sw = bounds.getSouthWest();
+      const ne = bounds.getNorthEast();
+
+      // Combine coordinates into the exact string format your DTO expects: minLon,minLat,maxLon,maxLat
+      const bboxString = `${sw.lng},${sw.lat},${ne.lng},${ne.lat}`;
+
+      const response = await fetch(
+        `http://localhost:3000/events/map?bbox=${encodeURIComponent(bboxString)}`
+      );
+
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+      setEvents(data);
+    } catch (err) {
+      console.error('Failed to fetch map events:', err);
+    }
+  }, []);
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -111,7 +154,7 @@ function MyMap() {
   const handleMouseLeave = () => {
     cancelCloseTimeout();
     closeTimeoutRef.current = setTimeout(() => {
-      setIsMarkerHovered(false);
+      setHoveredMarkerId(null);
       setHoverPos(null);
     }, 150);
   };
@@ -134,11 +177,6 @@ function MyMap() {
     }
   }, []);
 
-  const mockFriends = [
-    { id: '1', name: 'Alice', avatarUrl: 'https://via.placeholder.com/50' },
-    { id: '2', name: 'Bob', avatarUrl: 'https://via.placeholder.com/50' },
-  ];
-
   return (
     <>
       <MapContainer
@@ -146,64 +184,94 @@ function MyMap() {
         zoom={12}
         minZoom={12}
         scrollWheelZoom={true}
-        maxBounds={idfBounds}
-        maxBoundsViscosity={1.0}
-        zoomControl={false} // Disable default
+        zoomControl={false}
         style={{ height: '100vh', width: '100vw' }}
       >
-        <MapClickHandler closeSidebar={() => setShowSidebar(false)} />
+        <MapEventsHandler onBoundsChange={fetchEventsForBbox} />
+        <MapClickHandler closeSidebar={() => setActiveSidebarEventId(null)} />
         <MyTileLayer />
         <GlassZoomControl />
-        <Marker
-          position={[48.8566, 2.3522]}
-          icon={createCustomIcon(isMarkerHovered)}
-          eventHandlers={{
-            click: () => {
-              setShowSidebar(true);
-            },
-            mouseover: (e) => {
-              cancelCloseTimeout();
-              const mouseEvent = e.originalEvent as MouseEvent;
-              setIsMarkerHovered(true);
-              setHoverPos({ x: mouseEvent.clientX, y: mouseEvent.clientY });
-            },
-            mouseout: () => {
-              handleMouseLeave();
-            },
-          }}
-        />
+
+        {events.map((event) => {
+          const isHovered = hoveredMarkerId === event.id;
+
+          return (
+            <Marker
+              key={event.id}
+              position={[event.latitude, event.longitude]}
+              icon={createCustomIcon(isHovered)}
+              eventHandlers={{
+                click: () => {
+                  cancelCloseTimeout();
+                  // 1. Open the sidebar for this specific event
+                  setActiveSidebarEventId(event.id);
+                  
+                  // 2. Reset the marker and hover card back to their original state
+                  setHoveredMarkerId(null);
+                  setHoverPos(null);
+                },
+                mouseover: (e) => {
+                  cancelCloseTimeout();
+                  const mouseEvent = e.originalEvent as MouseEvent;
+                  setHoveredMarkerId(event.id);
+                  setHoverPos({ x: mouseEvent.clientX, y: mouseEvent.clientY });
+                },
+                mouseout: () => handleMouseLeave(),
+              }}
+            />
+          );
+        })}
       </MapContainer>
 
-      {isMarkerHovered && hoverPos && (
+      {activeItem && hoverPos && (
         <MarkerHoverCard
           position={hoverPos}
-          title="Event Title"
-          category="Music & Arts"
+          title={activeItem.title}
+          category={activeItem.category || 'Event'}
           isOpen={true}
-          closingTime="11:00 PM"
-          interestedUsersCount={14}
-          isConnected={true}
-          interestedFriends={mockFriends}
-          onClick={() => setShowSidebar(true)} // <-- Add this handler here
+          closingTime={
+            activeItem.dateEnd
+              ? new Date(activeItem.dateEnd).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : '11:00 PM'
+          }
+          interestedUsersCount={activeItem.interestedUsersCount || 0}
+          imageUrl={activeItem.coverUrl}
+          onClick={() => setActiveSidebarEventId(activeItem.id)}
           onMouseEnter={() => {
             cancelCloseTimeout();
-            setIsMarkerHovered(true);
+            setHoveredMarkerId(activeItem.id);
           }}
           onMouseLeave={() => {
-            handleMouseLeave();
+            // Only trigger leave timeout if the sidebar for this item isn't open
+            if (activeSidebarEventId !== activeItem.id) {
+              handleMouseLeave();
+            }
           }}
         />
       )}
 
-      {showSidebar && (
+      {activeSidebarEventId && (
         <MySidebar
-          messages={messages}
-          setMessages={setMessages}
-          onClose={() => setShowSidebar(false)}
+          messages={messagesByEvent[activeSidebarEventId] || []}
+          setMessages={(value) => {
+            setMessagesByEvent((prev) => {
+              const currentMessages = prev[activeSidebarEventId] || [];
+              const newMessages = typeof value === 'function' ? value(currentMessages) : value;
+              return {
+                ...prev,
+                [activeSidebarEventId]: newMessages,
+              };
+            });
+          }}
+          onClose={() => {
+            setActiveSidebarEventId(null);
+            setHoverPos(null);
+          }}
         />
       )}
     </>
   );
 }
-
-export default MyMap;
