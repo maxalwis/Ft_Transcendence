@@ -12,7 +12,7 @@ export class EventsService {
     const { minLon, minLat, maxLon, maxLat } = bbox;
 
     return this.prisma.$queryRaw`
-			SELECT id, title, "dateStart", "dateEnd", latitude, longitude
+			SELECT id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude
 			FROM "Event"
 			WHERE location && ST_MakeEnvelope(
 				${minLon}, ${minLat}, ${maxLon}, ${maxLat}, 4326

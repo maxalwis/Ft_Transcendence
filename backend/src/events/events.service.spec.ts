@@ -1,4 +1,3 @@
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventsService } from './events.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -24,4 +23,4 @@ describe('EventsService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-});                                                                                                                                                                                                                                                                                                                        
+});

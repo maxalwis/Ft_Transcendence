@@ -43,25 +43,40 @@ export class IngestionService {
     this.logger.log(`Ingestion complete: ${totalIngested} events processed`);
   }
 
+  // découpe une string délimitée (ex: "tag1;tag2;tag3") en tableau de strings nettoyées
+  // utilisée pour extraire les catégories de qfap_tags
+  private parseDelimitedString(value: string | null | undefined, delimiter = ';'): string[] {
+    if (!value) return [];
+    return value
+      .split(delimiter)
+      .map((t) => t.trim())
+      .filter(Boolean);
+  }
+
   // fonction de transformation d'un item tel que renvoyé par l'API Mairie de Paris
   // en un objet qui correspond au format défini dans schema.prisma
   private mapToEvent(item: any) {
     return {
       source: 'mairie_paris',
       externalId: item.id,
-      title: item.title,
-      description: item.lead_text,
+      title: item.title ?? null,
+      description: item.lead_text ?? null,
       dateStart: new Date(item.date_start),
       dateEnd: new Date(item.date_end),
-      coverUrl: item.cover_url,
-      addressName: item.address_name,
-      addressStreet: item.address_street,
-      zipCode: item.address_zipcode,
-      city: item.address_city,
-      latitude: item.lat_lon?.lat,
-      longitude: item.lat_lon?.lon,
-      priceType: item.price_type,
-      priceDetail: item.price_detail,
+      coverUrl: item.cover_url ?? null,
+      addressName: item.address_name ?? null,
+      addressStreet: item.address_street ?? null,
+      zipCode: item.address_zipcode ?? null,
+      city: item.address_city ?? null,
+      latitude: item.lat_lon?.lat ?? null,
+      longitude: item.lat_lon?.lon ?? null,
+      priceType: item.price_type ?? null,
+      priceDetail: item.price_detail ?? null,
+      category: this.parseDelimitedString(item.qfap_tags),
+      accessLink: item.access_link ?? null,
+      audience: item.audience ?? null,
+      rank: item.rank ?? null,
+      weight: item.weight ?? null,
     };
   }
 

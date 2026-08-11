@@ -21,10 +21,7 @@ export class UsersController {
   }
 
   @Put(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: { name?: string; email?: string },
-  ) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: { name?: string; email?: string }) {
     return this.usersService.update(id, body);
   }
 
