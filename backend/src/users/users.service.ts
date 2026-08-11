@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { User, Prisma } from '../../generated/prisma/client';
 
@@ -26,20 +22,14 @@ export class UsersService {
     try {
       return await this.prisma.user.create({ data });
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new ConflictException('Email address already in use');
       }
       throw error;
     }
   }
 
-  async update(
-    id: number,
-    data: { name?: string; email?: string },
-  ): Promise<User> {
+  async update(id: number, data: { name?: string; email?: string }): Promise<User> {
     await this.findOne(id); // Lève une NotFoundException si l'ID n'existe pas
 
     try {
@@ -48,10 +38,7 @@ export class UsersService {
         data,
       });
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new ConflictException('Email address already in use');
       }
       throw error;

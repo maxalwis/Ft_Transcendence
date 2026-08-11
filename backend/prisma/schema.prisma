@@ -28,6 +28,11 @@ model Event {
   location      Unsupported("geography(Point, 4326)")?
   priceType     String?
   priceDetail   String?
+  accessLink    String?
+  category      String[] @default([])
+  audience      String?
+  rank          Float?
+  weight        Int?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
