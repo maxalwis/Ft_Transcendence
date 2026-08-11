@@ -44,4 +44,15 @@ model User {
   id    Int    @id @default(autoincrement())
   email String @unique
   name  String?
+  messages Message[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+  createdAt DateTime @default(now())
 }
