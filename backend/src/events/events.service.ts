@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BoundingBox } from './dto/bounding-box.interface';
+import { NearbyQueryDto } from './dto/map-query.dto';
 
 @Injectable()
 export class EventsService {
@@ -30,5 +31,28 @@ export class EventsService {
       throw new NotFoundException(`Event ${id} not found`);
     }
     return event;
+  }
+
+  // Renvoie les 100 events les plus proches, du plus proche au plus éloigné,
+  // dans un rayon de 'radius' mètres
+  async findNearby(query: NearbyQueryDto) {
+    const { lat, lon, radius } = query;
+
+    return this.prisma.$queryRaw`
+      SELECT
+        id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude,
+        ST_Distance(
+          location,
+          ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326)::geography -- convertit les nombres en coordonnées terrestres
+          ) AS distance -- distance entre le point entré en argument et tous les events
+      FROM "Event"
+      WHERE ST_DWithin(
+        location,
+        ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326)::geography,
+        ${radius}
+      )
+        AND "dateEnd" >= NOW()
+      ORDER BY distance ASC
+      LIMIT 100`
   }
 }

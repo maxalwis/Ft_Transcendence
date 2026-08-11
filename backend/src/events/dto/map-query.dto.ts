@@ -1,7 +1,8 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { BadRequestException } from '@nestjs/common';
-import { IsDefined } from 'class-validator';
+import { IsDefined, IsNumber, IsPositive, Max } from 'class-validator';
 import { BoundingBox } from './bounding-box.interface';
+
 
 // Parse et valide "minLon,minLat,maxLon,maxLat" reçu en query param
 export class MapQueryDto {
@@ -30,4 +31,21 @@ export class MapQueryDto {
     return { minLon, minLat, maxLon, maxLat };
   })
   bbox!: BoundingBox;
+}
+
+export class NearbyQueryDto {
+  @Type(() => Number)
+  @IsNumber()
+  lat!: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  lon!: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  @IsPositive()
+  @Max(20000) // on peut chercher dans un rayon de 20 km max
+  radius!: number; //en mètres
+
 }
