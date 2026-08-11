@@ -61,3 +61,42 @@
   border: 2px solid rgba(0, 20, 120, 0.5);
   box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 5px;
 }
+
+/* 1. Whole cluster pop (scale + opacity entry) */
+@keyframes clusterPopIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 2. Counter-only pop (quick scale bump for existing clusters) */
+@keyframes counterPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.45);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Utility classes */
+.cluster-pop-animation {
+  animation: clusterPopIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.counter-pop-animation {
+  display: inline-block;
+  animation: counterPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
