@@ -55,7 +55,7 @@ services:
     networks:
       - transcendence_network
     # Ensure first launch of the project is made properly by generating Prisma client and running migrations before starting the backend server
-    command: ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm run start:dev"]
+    command: ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm run start"]
 
   worker:
     build:

@@ -154,24 +154,36 @@ function MyMap() {
         <MapClickHandler closeSidebar={() => setShowSidebar(false)} />
         <MyTileLayer />
         <GlassZoomControl />
-        <Marker
-          position={[48.8566, 2.3522]}
-          icon={createCustomIcon(isMarkerHovered)}
-          eventHandlers={{
-            click: () => {
-              setShowSidebar(true);
-            },
-            mouseover: (e) => {
-              cancelCloseTimeout();
-              const mouseEvent = e.originalEvent as MouseEvent;
-              setIsMarkerHovered(true);
-              setHoverPos({ x: mouseEvent.clientX, y: mouseEvent.clientY });
-            },
-            mouseout: () => {
-              handleMouseLeave();
-            },
-          }}
-        />
+
+        {events.map((event) => {
+          const isHovered = hoveredMarkerId === event.id;
+
+          return (
+            <Marker
+              key={event.id}
+              position={[event.latitude, event.longitude]}
+              icon={createCustomIcon(isHovered)}
+              eventHandlers={{
+                click: () => {
+                  cancelCloseTimeout();
+                  // 1. Open the sidebar for this specific event
+                  setActiveSidebarEventId(event.id);
+
+                  // 2. Reset the marker and hover card back to their original state
+                  setHoveredMarkerId(null);
+                  setHoverPos(null);
+                },
+                mouseover: (e) => {
+                  cancelCloseTimeout();
+                  const mouseEvent = e.originalEvent as MouseEvent;
+                  setHoveredMarkerId(event.id);
+                  setHoverPos({ x: mouseEvent.clientX, y: mouseEvent.clientY });
+                },
+                mouseout: () => handleMouseLeave(),
+              }}
+            />
+          );
+        })}
       </MapContainer>
 
       {isMarkerHovered && hoverPos && (
@@ -197,9 +209,12 @@ function MyMap() {
 
       {showSidebar && (
         <MySidebar
-          messages={messages}
-          setMessages={setMessages}
-          onClose={() => setShowSidebar(false)}
+          eventId={activeSidebarEventId}
+          currentUserId={1} // TODO: Replace with actual logged-in user state ID
+          onClose={() => {
+            setActiveSidebarEventId(null);
+            setHoverPos(null);
+          }}
         />
       )}
     </>

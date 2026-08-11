@@ -1,11 +1,12 @@
 import Chat from './Chat/Chat';
-import type { MessageProps } from './Chat/MessageInput';
 
-interface ChatWindowProps extends MessageProps {
+interface MySidebarProps {
   onClose: () => void;
+  eventId: string;
+  currentUserId: number;
 }
 
-export default function MySidebar({ onClose, messages, setMessages }: ChatWindowProps) {
+export default function MySidebar({ onClose, eventId, currentUserId }: MySidebarProps) {
   return (
     <div className="glassmorphism-popup fixed top-2 right-3 w-[20vw] h-[96.5vh] rounded-xl p-5 shadow-lg z-1000 flex flex-col">
       <div>
@@ -29,9 +30,13 @@ export default function MySidebar({ onClose, messages, setMessages }: ChatWindow
           </svg>
         </button>
       </div>
-      <div className="h-[30%] overflow-hidden">Event</div>
+      <div className="h-[30%] overflow-hidden">Event Details</div>
       <div className="h-[70%] flex flex-col overflow-hidden">
-        <Chat messages={messages} setMessages={setMessages}></Chat>
+        {eventId ? (
+          <Chat eventId={eventId} currentUserId={currentUserId} />
+        ) : (
+          <div className="text-gray-400 text-sm p-4">Select an event to view chat.</div>
+        )}
       </div>
     </div>
   );
