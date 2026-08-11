@@ -11,6 +11,7 @@ import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
+import FriendsSidebar from '../Friends/FriendsSidebar.tsx';
 import './Map.css';
 
 const idfBounds = new L.LatLngBounds([48.65, 1.95], [49.05, 2.75]);
@@ -220,7 +221,9 @@ export default function MyMap() {
           }}
         />
       )}
-
+	<FriendsSidebar>
+		
+	</FriendsSidebar>
       {activeSidebarEventId && (
         <MySidebar
           eventId={activeSidebarEventId}
