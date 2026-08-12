@@ -83,7 +83,6 @@ function MapEventsHandler({
 }
 
 export default function MyMap() {
-  const [messagesByEvent, setMessagesByEvent] = useState<Record<string, unknown[]>>({});
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
