@@ -15,13 +15,13 @@ export class EventsController {
     return this.eventsService.findForMap(query.bbox);
   }
 
-  @Get('nearby')
-  findNearby(@Query() query: NearbyQueryDto) {
-    return this.eventsService.findNearby(query);
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.eventsService.findOne(id);
+  }
+
+  @Get('nearby')
+    findNearby(@Query() query: NearbyQueryDto) {
+      return this.eventsService.findNearby(query);
   }
 }

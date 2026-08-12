@@ -3,7 +3,6 @@ import { BadRequestException } from '@nestjs/common';
 import { IsDefined, IsNumber, IsPositive, Max } from 'class-validator';
 import { BoundingBox } from './bounding-box.interface';
 
-
 // Parse et valide "minLon,minLat,maxLon,maxLat" reçu en query param
 export class MapQueryDto {
   @IsDefined()
