@@ -132,9 +132,10 @@ export default function MyMap() {
       // Combine coordinates into the exact string format your DTO expects: minLon,minLat,maxLon,maxLat
       const bboxString = `${sw.lng},${sw.lat},${ne.lng},${ne.lat}`;
 
-      const response = await fetch(
-        `http://localhost:3000/events/map?bbox=${encodeURIComponent(bboxString)}`
-      );
+      // Use the environment variable with a fallback to localhost:3000
+      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+      const response = await fetch(`${baseUrl}/events/map?bbox=${encodeURIComponent(bboxString)}`);
 
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
@@ -205,7 +206,7 @@ export default function MyMap() {
                   cancelCloseTimeout();
                   // 1. Open the sidebar for this specific event
                   setActiveSidebarEventId(event.id);
-                  
+
                   // 2. Reset the marker and hover card back to their original state
                   setHoveredMarkerId(null);
                   setHoverPos(null);
