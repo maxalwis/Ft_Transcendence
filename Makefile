@@ -1,4 +1,4 @@
-.PHONY: all up down clean fclean re build logs
+.PHONY: all up logs down clean fclean re restart
 
 all: up
 
@@ -25,3 +25,5 @@ re:
 	@$(MAKE) fclean
 	@sleep 3
 	@$(MAKE) all
+
+restart : down up
