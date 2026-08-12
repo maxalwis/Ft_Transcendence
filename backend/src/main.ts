@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   app.useGlobalPipes(
@@ -13,23 +14,11 @@ async function bootstrap() {
     })
   );
 
+  app.enableShutdownHooks();
+
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
-
-  // Automatically trigger data ingestion on first startup
-  try {
-    console.log('Triggering automatic Mairie de Paris ingestion...');
-    const response = await fetch(`http://localhost:${port}/ingestion/mairie-paris`, {
-      method: 'POST',
-    });
-
-    if (response.ok) {
-      console.log('Mairie de Paris data ingested successfully!');
-    } else {
-      console.log(`Ingestion returned status: ${response.status} (Data might already exist)`);
-    }
-  } catch (error) {
-    console.error('Failed to trigger automatic ingestion:', error.message);
-  }
+  logger.log(`Application is running on port ${port}`);
 }
+
 bootstrap();
