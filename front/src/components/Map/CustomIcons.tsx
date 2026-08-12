@@ -71,9 +71,10 @@ export const createMarkerIcon = (isHovered: boolean, isNew: boolean = false) => 
 // Store previous marker count per cluster instance: Map<leaflet_id, count>
 export const clusterCountCache = new Map<number, number>();
 
-export const createClusterIcon = (cluster: any, isHovered: boolean = false) => {
+export const createClusterIcon = (cluster: MarkerCluster, isHovered: boolean = false) => {
   const count = cluster.getChildCount();
-  const clusterId = cluster._leaflet_id;
+  // Leaflet internal IDs can sometimes be numbers or strings depending on plugins/versions
+  const clusterId = (cluster as unknown as { _leaflet_id: number })._leaflet_id;
 
   // 1. Check if this is a brand new cluster or an updated existing cluster
   const prevCount = clusterCountCache.get(clusterId);
@@ -83,9 +84,9 @@ export const createClusterIcon = (cluster: any, isHovered: boolean = false) => {
   // Cache/update the current count for future re-renders
   clusterCountCache.set(clusterId, count);
 
-  // 2. Styling logic
-  let baseSize = 38;
-  let ringRadius = 0;
+  // 2. Styling logic (Declared without initial assignments to satisfy no-useless-assignment)
+  let baseSize: number;
+  let ringRadius: number;
   let topColor = '#9C82F7';
   let midColor = '#7B56EC';
   let botColor = '#5A2EE1';

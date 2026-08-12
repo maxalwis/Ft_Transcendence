@@ -1,6 +1,5 @@
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { LatLngBounds } from 'leaflet';
 import L from 'leaflet';
 
 import 'leaflet/dist/leaflet.css';
@@ -13,6 +12,8 @@ import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
 import './Map.css';
+
+const idfBounds = new L.LatLngBounds([48.65, 1.95], [49.05, 2.75]);
 
 // 1. Move static cluster radius logic outside component so reference remains identical across renders
 const getClusterRadius = (zoom: number) => {
@@ -82,11 +83,11 @@ function MapEventsHandler({
 }
 
 export default function MyMap() {
-  const [messagesByEvent, setMessagesByEvent] = useState<Record<string, any[]>>({});
+  const [messagesByEvent, setMessagesByEvent] = useState<Record<string, unknown[]>>({});
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<EventItem[]>([]);
 
   const loadedEventIdsRef = useRef<Set<string>>(new Set());
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -107,14 +108,12 @@ export default function MyMap() {
       const response = await fetch(`${baseUrl}/events/map?bbox=${encodeURIComponent(bboxString)}`);
 
       if (!response.ok) throw new Error('Network response was not ok');
-      const data = await response.json();
+      const data: EventItem[] = await response.json();
 
-      let hasNewItems = false;
-      const processedEvents = data.map((event: any) => {
+      const processedEvents = data.map((event) => {
         const isNew = !loadedEventIdsRef.current.has(event.id);
         if (isNew) {
           loadedEventIdsRef.current.add(event.id);
-          hasNewItems = true;
         }
         return { ...event, isNew };
       });
@@ -153,6 +152,8 @@ export default function MyMap() {
         zoom={12}
         minZoom={12}
         scrollWheelZoom={true}
+        maxBounds={idfBounds}
+        maxBoundsViscosity={1.0}
         zoomControl={false}
         style={{ height: '100vh', width: '100vw' }}
       >
