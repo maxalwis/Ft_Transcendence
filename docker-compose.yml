@@ -1,20 +1,34 @@
 services:
+  nginx:
+    image: docker.io/library/nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - transcendence_network
+
   postgres:
     image: docker.io/postgis/postgis:16-3.4-alpine
     container_name: main_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: transcendence
-      POSTGRES_PASSWORD: changeme
-      POSTGRES_DB: transcendence
+      POSTGRES_USER: ${POSTGRES_USER:-transcendence}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-transcendence}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - transcendence_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U transcendence -d transcendence"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-transcendence} -d ${POSTGRES_DB:-transcendence}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -25,7 +39,7 @@ services:
     container_name: redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
     networks:
       - transcendence_network
     healthcheck:
@@ -41,10 +55,10 @@ services:
     container_name: backend
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://transcendence:changeme@postgres:5432/transcendence?schema=public
+      DATABASE_URL: ${DATABASE_URL:-postgresql://transcendence:changeme@postgres:5432/transcendence?schema=public}
       PORT: 3000
     ports:
-      - "3000:3000"
+      - "${BACKEND_PORT:-3000}:3000"
     volumes:
       - ./backend:/app
       - backend_node_modules:/app/node_modules
@@ -63,8 +77,8 @@ services:
     container_name: worker
     restart: unless-stopped
     environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
     volumes:
       - worker_node_modules:/app/node_modules
     depends_on:
@@ -80,9 +94,8 @@ services:
     container_name: frontend
     restart: unless-stopped
     environment:
-      - VITE_API_URL=http://localhost:3000
-    ports:
-      - "5173:5173"
+      - VITE_API_URL=/api
+      - HMR_CLIENT_PORT=${HTTP_PORT:-8080}
     volumes:
       - ./front:/app
       - frontend_node_modules:/app/node_modules
@@ -99,9 +112,9 @@ services:
     container_name: prisma_studio
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://transcendence:changeme@postgres:5432/transcendence?schema=public
+      DATABASE_URL: ${DATABASE_URL:-postgresql://transcendence:changeme@postgres:5432/transcendence?schema=public}
     ports:
-      - "5555:5555"
+      - "${STUDIO_PORT:-5555}:5555"
     volumes:
       - ./backend:/app
       - backend_node_modules:/app/node_modules
