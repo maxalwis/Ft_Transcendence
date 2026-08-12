@@ -1,7 +1,8 @@
 import { Transform, Type } from 'class-transformer';
 import { BadRequestException } from '@nestjs/common';
-import { IsDefined, IsNumber, IsPositive, Max } from 'class-validator';
+import { IsDefined, IsNumber, IsPositive, Max, IsOptional, IsISO8601 } from 'class-validator';
 import { BoundingBox } from './bounding-box.interface';
+import { CenterPoint } from './center-point.interface';
 
 // Parse et valide "minLon,minLat,maxLon,maxLat" reçu en query param
 export class MapQueryDto {
@@ -30,21 +31,45 @@ export class MapQueryDto {
     return { minLon, minLat, maxLon, maxLat };
   })
   bbox!: BoundingBox;
+
+  @IsOptional()
+  @IsISO8601()
+  from?: string;
+
+  @IsOptional()
+  @IsISO8601()
+  to?: string;
 }
 
+// Parse et valide "lon,lat" reçu en query param 'center'
 export class NearbyQueryDto {
-  @Type(() => Number)
-  @IsNumber()
-  lat!: number;
-
-  @Type(() => Number)
-  @IsNumber()
-  lon!: number;
+  @IsDefined()
+  @Transform(({ value }) => {
+    if (typeof value != 'string') {
+      throw new BadRequestException('center must be a string');
+    }
+    const parts = value.split(',').map(Number);
+    if (parts.length != 2 || parts.some(isNaN)) {
+      throw new BadRequestException(
+        'center must be in the format "lon,lat"'
+      );
+    }
+    const [lon, lat] = parts;
+    return { lon, lat };
+  })
+  center!: CenterPoint;
 
   @Type(() => Number)
   @IsNumber()
   @IsPositive()
   @Max(20000) // on peut chercher dans un rayon de 20 km max
-  radius!: number; //en mètres
+  radius!: number; // en mètres
 
+  @IsOptional()
+  @IsISO8601()
+  from?: string;
+
+  @IsOptional()
+  @IsISO8601()
+  to?: string;
 }
