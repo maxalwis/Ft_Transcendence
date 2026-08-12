@@ -101,9 +101,10 @@ export default function MyMap() {
       const ne = bounds.getNorthEast();
       const bboxString = `${sw.lng},${sw.lat},${ne.lng},${ne.lat}`;
 
-      const response = await fetch(
-        `http://localhost:3000/events/map?bbox=${encodeURIComponent(bboxString)}`
-      );
+      // Use the environment variable with a fallback to localhost:3000
+      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+      const response = await fetch(`${baseUrl}/events/map?bbox=${encodeURIComponent(bboxString)}`);
 
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
@@ -229,17 +230,8 @@ export default function MyMap() {
 
       {activeSidebarEventId && (
         <MySidebar
-          messages={messagesByEvent[activeSidebarEventId] || []}
-          setMessages={(value) => {
-            setMessagesByEvent((prev) => {
-              const currentMessages = prev[activeSidebarEventId] || [];
-              const newMessages = typeof value === 'function' ? value(currentMessages) : value;
-              return {
-                ...prev,
-                [activeSidebarEventId]: newMessages,
-              };
-            });
-          }}
+          eventId={activeSidebarEventId}
+          currentUserId={1} // TODO: Replace with actual logged-in user state ID
           onClose={() => {
             setActiveSidebarEventId(null);
             setHoverPos(null);
