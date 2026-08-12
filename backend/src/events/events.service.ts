@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { BoundingBox } from './dto/map-query.dto';
+import { BoundingBox } from './dto/bounding-box.interface';
 
 @Injectable()
 export class EventsService {
