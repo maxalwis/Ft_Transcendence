@@ -255,17 +255,8 @@ export default function MyMap() {
 
       {activeSidebarEventId && (
         <MySidebar
-          messages={messagesByEvent[activeSidebarEventId] || []}
-          setMessages={(value) => {
-            setMessagesByEvent((prev) => {
-              const currentMessages = prev[activeSidebarEventId] || [];
-              const newMessages = typeof value === 'function' ? value(currentMessages) : value;
-              return {
-                ...prev,
-                [activeSidebarEventId]: newMessages,
-              };
-            });
-          }}
+          eventId={activeSidebarEventId}
+          currentUserId={1} // TODO: Replace with actual logged-in user state ID
           onClose={() => {
             setActiveSidebarEventId(null);
             setHoverPos(null);
