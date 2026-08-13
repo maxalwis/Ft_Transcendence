@@ -1,6 +1,6 @@
 import { Controller, Query, Get, Param, Logger } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { MapQueryDto } from './dto/map-query.dto';
+import { MapQueryDto, NearbyQueryDto } from './dto/map-query.dto';
 
 @Controller('events')
 export class EventsController {
@@ -9,7 +9,12 @@ export class EventsController {
 
   @Get('map')
   findForMap(@Query() query: MapQueryDto) {
-    return this.eventsService.findForMap(query.bbox);
+    return this.eventsService.findForMap(query.bbox, query.from, query.to);
+  }
+  
+  @Get('nearby')
+    findNearby(@Query() query: NearbyQueryDto) {
+      return this.eventsService.findNearby(query, query.from, query.to);
   }
 
   @Get(':id')
