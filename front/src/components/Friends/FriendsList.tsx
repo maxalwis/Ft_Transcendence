@@ -11,7 +11,7 @@ export default function FriendsList() {
 						<div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600 text-xs font-semibold text-white">
 							{friend.charAt(0)}
 						</div>
-						<div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-slate-900 bg-green-500" />
+						<div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-slate-500 bg-green-500" />
 					</div>
 					<span>{friend}</span>
 				</div>
