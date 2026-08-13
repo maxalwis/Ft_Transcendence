@@ -1,16 +1,14 @@
 import FriendsList from './FriendsList';
 import UserSearch from './UserSearch';
-import { useState } from 'react';
 import type { FriendAction } from './Friends';
+import type { OpenState  } from './Friends';
 
-type FriendsSidebarProps = {
+type FriendsSidebarProps = OpenState & {
 	action: FriendAction;
 };
 
-export default function Friends({ action }: FriendsSidebarProps)
+export default function Friends({ action, isOpen, setIsOpen }: FriendsSidebarProps)
 {
-	const [isOpen, setIsOpen] = useState(true);
-	
 	let borderClass = "";
 	switch (action) {
 		case "add":
@@ -27,24 +25,23 @@ export default function Friends({ action }: FriendsSidebarProps)
 			break;
 	}
 
-	if (!isOpen)
-		return null;
-	
 	return (
-	
-	<div className={`glassmorphism-popup relative max-w-80 flex flex-col h-[20vh]
-	w-[25vw] rounded-xl overflow-hidden ${borderClass}`}>
-		<button
-			className='glassmorphism-element absolute top-1 right-1 rounded-xl w-6 h-6 duration-150 cursor-pointer hover:bg-slate-400!'
-			onClick={() => setIsOpen(false)}>
-			X
-		</button>
-		<div className='flex-1 overflow-y-auto'>
-			<FriendsList />
+		isOpen && (
+		<div
+			className={`glassmorphism-popup relative max-w-80 flex flex-col h-[20vh]
+					w-[25vw] rounded-xl overflow-hidden ${borderClass}`}>
+			<button
+				className='glassmorphism-element absolute top-1 right-4 rounded-xl w-6 h-6 duration-150 cursor-pointer hover:bg-slate-400! active:scale-70'
+				onClick={() => setIsOpen(false)}>
+				X
+			</button>
+			<div className='flex-1 overflow-y-auto'>
+				<FriendsList />
+			</div>
+			<div className={`glassmorphism-popup ${borderClass}`}>
+				<UserSearch />
+			</div>
 		</div>
-		<div className={`glassmorphism-popup ${borderClass}`}>
-			<UserSearch />
-		</div>
-	</div>
+	)
 	);
 }

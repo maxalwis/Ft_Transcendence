@@ -13,7 +13,8 @@ export default function FriendsButton({ setAction }: FriendsButtonProps)
 	return (
 	<>
 		<button
-		className="flex h-8 w-8 justify-center bg-white/50 backdrop-blur-sm border-2 border-slate-700 rounded-2xl text-xl font-bold text-gray-600 hover:bg-sky-900! hover:text-white cursor-pointer duration-150 active:scale-50"
+		className="flex h-8 w-8 items-center justify-center bg-white/50 backdrop-blur-sm border-2 border-slate-700 rounded-2xl text-lg
+		font-bold text-gray-600 hover:bg-sky-900! hover:text-white cursor-pointer duration-150 active:scale-50"
 		onClick={() => setIsOpen(!isOpen)}>
 			{isOpen ? "-" : "+"}
 		</button>
