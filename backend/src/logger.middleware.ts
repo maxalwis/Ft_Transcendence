@@ -12,23 +12,27 @@ export class LoggerMiddleware implements NestMiddleware {
     res.on('finish', () => {
       const { statusCode } = res;
       const duration = Date.now() - start;
-      const decodedUrl = decodeURIComponent(originalUrl);
-
-      // ANSI escape codes for grey, invisible (conceal), and reset
       const grey = '\x1b[90m';
       const invisible = '\x1b[8m';
-      const reset = '\x1b[0m'; // or \x1b[28m
-
-      // Spaces padding to match the width of the timestamp, process ID, and log level prefix after the newline
+      const reset = '\x1b[0m';
       const padding = '                                                     ';
+      const decodedUrl = decodeURIComponent(originalUrl);
 
-      const logMessage = [
+      const humanMessage = [
         `${method} ${grey}${decodedUrl} ${statusCode} - ${duration}ms`,
         `${padding}${invisible}${method}${reset}${grey}|- Body: ${JSON.stringify(body)}`,
         `${padding}${invisible}${method}${reset}${grey}\`- Query: ${JSON.stringify(query)}`,
       ].join('\n');
 
-      this.logger.log(logMessage);
+      // Log with extra metadata context (ideal for structured log pipelines)
+      this.logger.log(humanMessage, {
+        method,
+        originalUrl,
+        statusCode,
+        duration,
+        body,
+        query,
+      });
     });
 
     next();
