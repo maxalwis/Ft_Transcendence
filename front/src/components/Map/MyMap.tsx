@@ -99,29 +99,22 @@ export default function MyMap() {
     try {
       const sw = bounds.getSouthWest();
       const ne = bounds.getNorthEast();
-      const bboxString = `${sw.lng},${sw.lat},${ne.lng},${ne.lat}`;
 
-      // Use the environment variable with a fallback to localhost:3000
+      // Truncate coordinates to 3 decimal places
+      const swLng = sw.lng.toFixed(3);
+      const swLat = sw.lat.toFixed(3);
+      const neLng = ne.lng.toFixed(3);
+      const neLat = ne.lat.toFixed(3);
+
+      // Combine into the format your DTO expects with cleaner numbers
+      const bboxString = `${swLng},${swLat},${neLng},${neLat}`;
+
       const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
       const response = await fetch(`${baseUrl}/events/map?bbox=${encodeURIComponent(bboxString)}`);
 
       if (!response.ok) throw new Error('Network response was not ok');
-      const data: EventItem[] = await response.json();
-
-      const processedEvents = data.map((event) => {
-        const isNew = !loadedEventIdsRef.current.has(event.id);
-        if (isNew) {
-          loadedEventIdsRef.current.add(event.id);
-        }
-        return { ...event, isNew };
-      });
-
-      if (loadedEventIdsRef.current.size > 1000) {
-        clusterCountCache.clear();
-      }
-
-      setEvents(processedEvents);
+      const data = await response.json();
+      setEvents(data);
     } catch (err) {
       console.error('Failed to fetch map events:', err);
     }

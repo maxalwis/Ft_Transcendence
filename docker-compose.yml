@@ -38,7 +38,7 @@ services:
       - "-c"
       - "log_timezone=Europe/Paris"
       - "-c"
-      - "log_line_prefix=[DB] - %m      "
+      - "log_line_prefix=[DB]  - %m     "
   redis:
     image: docker.io/library/redis:alpine
     container_name: redis
@@ -74,7 +74,7 @@ services:
     networks:
       - transcendence_network
     # Ensure first launch of the project is made properly by generating Prisma client and running migrations before starting the backend server
-    command: ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm run start"]
+    command: ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && exec npm run start"]
 
   worker:
     image: localhost/transcendence_worker:latest
