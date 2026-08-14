@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -17,19 +17,22 @@ async function bootstrap() {
   await app.listen(port);
 
   // Automatically trigger data ingestion on first startup
+  const logger = new Logger('Bootstrap');
+
   try {
-    console.log('Triggering automatic Mairie de Paris ingestion...');
+    logger.log('Triggering automatic Mairie de Paris ingestion...');
+
     const response = await fetch(`http://localhost:${port}/ingestion/mairie-paris`, {
       method: 'POST',
     });
 
     if (response.ok) {
-      console.log('Mairie de Paris data ingested successfully!');
+      logger.log('Mairie de Paris data ingested successfully!');
     } else {
-      console.log(`Ingestion returned status: ${response.status} (Data might already exist)`);
+      logger.warn(`Ingestion returned status: ${response.status} (Data might already exist)`);
     }
   } catch (error) {
-    console.error('Failed to trigger automatic ingestion:', error.message);
+    logger.error('Failed to trigger automatic ingestion:', error.message);
   }
 }
 bootstrap();

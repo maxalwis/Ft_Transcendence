@@ -12,11 +12,21 @@ export class LoggerMiddleware implements NestMiddleware {
     res.on('finish', () => {
       const { statusCode } = res;
       const duration = Date.now() - start;
-      this.logger.log(
-        `${method} ${originalUrl} ${statusCode} - ${duration}ms | Body: ${JSON.stringify(
-          body
-        )} | Query: ${JSON.stringify(query)}`
-      );
+      const decodedUrl = decodeURIComponent(originalUrl);
+
+      // ANSI escape codes for grey and reset
+      const grey = '\x1b[90m';
+
+      // Spaces padding to match the width of the timestamp, process ID, and log level prefix after the newline
+      const padding = '                                                         ';
+
+      const logMessage = [
+        `${method} ${grey}${decodedUrl} ${statusCode} - ${duration}ms`,
+        `${padding}${grey}|- Body: ${JSON.stringify(body)}`,
+        `${padding}${grey}\`- Query: ${JSON.stringify(query)}`,
+      ].join('\n');
+
+      this.logger.log(logMessage);
     });
 
     next();
