@@ -7,7 +7,7 @@ import { fetchEventMessages, sendEventMessage } from './chatService';
 export type Message = {
   id: number;
   content: string;
-  user: { name?: string; email: string };
+  user: { username?: string; email: string };
   createdAt: string;
 };
 

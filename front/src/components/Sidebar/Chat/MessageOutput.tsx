@@ -19,7 +19,7 @@ export default function MessageOutput({ messages, currentUserId = 1 }: MessageOu
       {messages.map((message) => {
         // Check if the message was sent by the current logged-in user
         const isMe = message.userId === currentUserId;
-        const displayName = message.user?.name || message.user?.email || 'Unknown User';
+        const displayName = message.user?.username || message.user?.email || 'Unknown User';
 
         return (
           <div

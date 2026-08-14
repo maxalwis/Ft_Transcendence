@@ -4,10 +4,22 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-    constructor(private usersService: UsersService) {}
+    constructor(
+        private usersService: UsersService,
+    ) {}
 
-    async signIn(username: string, pass: string): Promise<any> {
-        const user = await this.usersService.findOne(username);
-        if 
+    async validateUser(email: string, pass: string) {
+        const user = await this.usersService.findFromEmail(email);
+        if (!user) {
+            return null;
+        }
+
+        const isPasswordValid = await bcrypt.compare(pass, user.password);
+        if (!isPasswordValid) {
+            return null;
+        }
+
+        const { password, ...result } = user;
+        return result; // result contient tout user sauf password
     }
 }

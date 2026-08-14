@@ -16,12 +16,12 @@ export class UsersController {
   }
 
   @Post()
-  create(@Body() body: { name: string; email: string }) {
+  create(@Body() body: { username: string; email: string, password: string }) {
     return this.usersService.create(body);
   }
 
   @Put(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: { name?: string; email?: string }) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: { username?: string; email?: string }) {
     return this.usersService.update(id, body);
   }
 
