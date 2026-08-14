@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { PrismaHealthIndicator } from './prisma.health';
 
-@Global() // <-- Ajoute cette ligne !
+@Global()
 @Module({
   providers: [PrismaService, PrismaHealthIndicator],
   exports: [PrismaService, PrismaHealthIndicator],
