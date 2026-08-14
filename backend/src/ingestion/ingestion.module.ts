@@ -4,7 +4,7 @@ import { IngestionController } from './ingestion.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  imports: [PrismaModule], // <-- C'est CET import qui manque !
+  imports: [PrismaModule],
   controllers: [IngestionController],
   providers: [IngestionService],
 })
