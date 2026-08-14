@@ -1,7 +1,7 @@
 import FriendsList from './FriendsList';
-import UserSearch from './UserSearch';
 import type { FriendAction } from './Friends';
 import type { OpenState  } from './Friends';
+import FriendsSearchBar from './FriendsSearchBar';
 
 type FriendsSidebarProps = OpenState & {
 	action: FriendAction;
@@ -31,7 +31,7 @@ export default function Friends({ action, isOpen, setIsOpen }: FriendsSidebarPro
 			className={`glassmorphism-popup relative max-w-80 flex flex-col h-[20vh]
 					w-[25vw] rounded-xl overflow-hidden ${borderClass}`}>
 			<button
-				className='glassmorphism-element absolute top-1 right-4 rounded-xl w-6 h-6 duration-150 cursor-pointer hover:bg-slate-400! active:scale-70'
+				className='glassmorphism-element border-slate-700! absolute top-1 right-4 rounded-xl w-6 h-6 duration-150 cursor-pointer hover:bg-sky-900! hover:text-white! active:scale-70'
 				onClick={() => setIsOpen(false)}>
 				X
 			</button>
@@ -39,7 +39,7 @@ export default function Friends({ action, isOpen, setIsOpen }: FriendsSidebarPro
 				<FriendsList />
 			</div>
 			<div className={`glassmorphism-popup ${borderClass}`}>
-				<UserSearch />
+				<FriendsSearchBar action={action}/>
 			</div>
 		</div>
 	)
