@@ -2,5 +2,9 @@ server.name: kibana
 server.host: 0.0.0.0
 elasticsearch.hosts: [ "http://elasticsearch:9200" ]
 
+# Explicitly disable APM agent telemetry to stop the massive startup JSON dump
+agent.ai.enabled: false
+apm.enabled: false
+
 # Lock down global logging root to errors only (silencing info/startup clutter)
 logging.root.level: error

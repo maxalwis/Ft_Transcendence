@@ -139,8 +139,13 @@ services:
         condition: service_started
     networks:
       - transcendence_network
+<<<<<<< HEAD
     command: ['npm', 'run', 'studio']
 
+=======
+    command: ["npm", "run", "studio"]
+    
+>>>>>>> abb6a50 ([BE] Base of ELK structure, updated HTTP logs)
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
     container_name: elasticsearch
@@ -148,27 +153,40 @@ services:
     environment:
       - node.name=elasticsearch
       - discovery.type=single-node
+<<<<<<< HEAD
       - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
       - xpack.security.enabled=false
       - 'logger.level=WARN'
     ports:
       - '9200:9200'
+=======
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - "logger.level=WARN"
+    ports:
+      - "9200:9200"
+>>>>>>> abb6a50 ([BE] Base of ELK structure, updated HTTP logs)
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
       - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:z
     networks:
       - transcendence_network
     healthcheck:
+<<<<<<< HEAD
       test:
         [
           'CMD-SHELL',
           "curl -s http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'",
         ]
+=======
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'"]
+>>>>>>> abb6a50 ([BE] Base of ELK structure, updated HTTP logs)
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
 
+<<<<<<< HEAD
   logstash:
     image: docker.elastic.co/logstash/logstash:8.11.3
     container_name: logstash
@@ -187,10 +205,13 @@ services:
     networks:
       - transcendence_network
 
+=======
+>>>>>>> abb6a50 ([BE] Base of ELK structure, updated HTTP logs)
   kibana:
     image: docker.elastic.co/kibana/kibana:8.11.3
     container_name: kibana
     restart: unless-stopped
+<<<<<<< HEAD
     environment:
       - ELASTIC_APM_ACTIVE=false
       - ELASTICSEARCH_URL=http://elasticsearch:9200
@@ -198,11 +219,18 @@ services:
       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:z
     ports:
       - '5601:5601'
+=======
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:z
+    ports:
+      - "5601:5601"
+>>>>>>> abb6a50 ([BE] Base of ELK structure, updated HTTP logs)
     depends_on:
       elasticsearch:
         condition: service_healthy
     networks:
       - transcendence_network
+<<<<<<< HEAD
 
   kibana-setup:
     image: docker.io/library/alpine:latest
@@ -220,6 +248,8 @@ services:
         chmod +x /usr/local/bin/setup.sh &&
         /usr/local/bin/setup.sh
       "
+=======
+>>>>>>> abb6a50 ([BE] Base of ELK structure, updated HTTP logs)
 
 volumes:
   postgres_data:
@@ -228,6 +258,7 @@ volumes:
   frontend_node_modules:
   elasticsearch_data:
   nginx_certs:
+  elasticsearch_data:
 
 networks:
   transcendence_network:
