@@ -1,9 +1,15 @@
-import { useState } from 'react';
 import type { ActionState } from './Friends';
 
-export default function FriendsSearchBar( { action }: ActionState ) {
+type InputProps = ActionState & {
+	input: string
+	setInput:  React.Dispatch<React.SetStateAction<string>>
+};
 
-	const [input, setInput] = useState('');
+export default function FriendsSearchBar( { action, input, setInput }: InputProps ) {
+
+	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+		setInput(e.target.value);
+	}
 
 	const placeholders = {
 		add: 'Add a friend...',
@@ -17,8 +23,9 @@ export default function FriendsSearchBar( { action }: ActionState ) {
 		<input
 		maxLength={30}
 		type="text"
+
+		onChange={handleChange}
 		value={input}
-		onChange={(event) => setInput(event.target.value)}
 		placeholder={placeholders[action]}
 		className="w-full bg-transparent text-sm text-black outline-none placeholder:text-black"
 		/>

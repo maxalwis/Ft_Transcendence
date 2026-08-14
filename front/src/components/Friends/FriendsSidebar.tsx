@@ -2,13 +2,22 @@ import FriendsList from './FriendsList';
 import type { FriendAction } from './Friends';
 import type { OpenState  } from './Friends';
 import FriendsSearchBar from './FriendsSearchBar';
+import { useState } from 'react';
 
 type FriendsSidebarProps = OpenState & {
 	action: FriendAction;
 };
 
-export default function Friends({ action, isOpen, setIsOpen }: FriendsSidebarProps)
+export default function FriendsSidebar({ action, isOpen, setIsOpen }: FriendsSidebarProps)
 {
+	const friends = ['Alice', 'Bob', 'Charlie', 'Max', 'Flav'];
+
+	const [input, setInput] = useState('');
+
+	const filteredFriends = friends.filter((friend) => {
+		return friend.toLowerCase().startsWith(input.toLowerCase());
+	});
+
 	let borderClass = "";
 	switch (action) {
 		case "add":
@@ -36,10 +45,10 @@ export default function Friends({ action, isOpen, setIsOpen }: FriendsSidebarPro
 				X
 			</button>
 			<div className='flex-1 overflow-y-auto'>
-				<FriendsList />
+				<FriendsList friends={filteredFriends}/>
 			</div>
 			<div className={`glassmorphism-popup ${borderClass}`}>
-				<FriendsSearchBar action={action}/>
+				<FriendsSearchBar action={action} input={input} setInput={setInput}/>
 			</div>
 		</div>
 	)

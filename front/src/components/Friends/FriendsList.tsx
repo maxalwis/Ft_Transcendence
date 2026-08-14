@@ -1,6 +1,9 @@
-export default function FriendsList() {
-	const friends = ['Alice', 'Bob', 'Charlie', 'Max', 'Flav'];
 
+type FriendsListProps = {
+	friends: string[];
+};
+
+export default function FriendsList( {friends}: FriendsListProps ) {
 	return (
 		<div className="flex flex-col gap-2">
 			{friends.map((friend) => (
