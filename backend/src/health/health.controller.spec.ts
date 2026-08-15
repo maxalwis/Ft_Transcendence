@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TerminusModule } from '@nestjs/terminus';
 import { HealthController } from './health.controller';
+import { PrismaHealthIndicator } from '../prisma/prisma.health'; // Ajustez le chemin selon votre structure
 import { PrismaService } from '../prisma/prisma.service';
 
 describe('HealthController', () => {
@@ -11,11 +12,10 @@ describe('HealthController', () => {
       imports: [TerminusModule],
       controllers: [HealthController],
       providers: [
+        PrismaHealthIndicator,
         {
           provide: PrismaService,
-          useValue: {
-            $queryRaw: jest.fn(),
-          },
+          useValue: {}, // Vous pouvez utiliser un objet vide ou mocker les méthodes nécessaires
         },
       ],
     }).compile();
