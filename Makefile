@@ -1,9 +1,13 @@
-.PHONY: all up down clean fclean re build
+.PHONY: all up down clean fclean re build logs
 
 all: up
 
 up:
-	podman compose up --build
+	podman compose up -d --build
+	podman compose logs -f
+
+logs:
+	podman compose logs -f
 
 down:
 	podman compose down
@@ -13,7 +17,11 @@ clean:
 
 fclean:
 	podman compose down -v --rmi all --remove-orphans
-	docker system prune -f --volumes
+	-pkill -u $$(whoami) -f rootlessport || true
+	podman system prune -f --volumes
 	rm -rf backend/dist backend/node_modules worker/node_modules
 
-re: fclean all
+re:
+	@$(MAKE) fclean
+	@sleep 3
+	@$(MAKE) all
