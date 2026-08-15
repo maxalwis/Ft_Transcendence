@@ -1,5 +1,6 @@
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
+import { WinstonInstance } from './logger/winston-logger';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -25,9 +26,20 @@ export class LoggerMiddleware implements NestMiddleware {
       ].join('\n');
 
       // Log with extra metadata context (ideal for structured log pipelines)
-      this.logger.log(humanMessage, {
+      this.logger.log(
+        humanMessage /*, {
         method,
         originalUrl,
+        statusCode,
+        duration,
+        body,
+        query,
+      }*/
+      );
+
+      WinstonInstance.info('HTTP Request', {
+        method,
+        originalUrl: decodedUrl,
         statusCode,
         duration,
         body,
