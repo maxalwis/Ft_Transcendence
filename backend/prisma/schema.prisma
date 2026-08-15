@@ -1,15 +1,13 @@
 datasource db {
-  provider = "postgresql"
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
   extensions = [postgis, postgis_topology, postgis_tiger_geocoder, fuzzystrmatch]
 }
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
-  moduleFormat   = "cjs"
-  previewFeatures = ["postgresqlExtensions"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions", "driverAdapters"]
 }
-
 model Event {
   id            String   @id @default(uuid())
   externalId    String?
