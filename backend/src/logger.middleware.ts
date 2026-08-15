@@ -26,7 +26,16 @@ export class LoggerMiddleware implements NestMiddleware {
       ].join('\n');
 
       // Log with extra metadata context (ideal for structured log pipelines)
-      this.logger.log(humanMessage);
+      this.logger.log(
+        humanMessage /*, {
+        method,
+        originalUrl: decodedUrl,
+        statusCode,
+        duration,
+        body,
+        query,
+      }*/
+      );
 
       WinstonInstance.info('HTTP Request', {
         method,
