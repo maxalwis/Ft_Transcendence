@@ -62,7 +62,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), tailwindcss()],
     server: {
       host: true,
-      hmr: { clientPort: Number(env.HTTP_PORT) || 8080 },
+      hmr: { protocol: 'wss', clientPort: Number(env.HTTPS_PORT) || 8443 },
     },
   };
 });
