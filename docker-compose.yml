@@ -4,12 +4,14 @@ services:
     container_name: nginx
     restart: unless-stopped
     ports:
-      - "${HTTP_PORT:-8080}:80"
+      - "${HTTP_PORT}:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro,z
     depends_on:
-      - backend
-      - frontend
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_healthy
     networks:
       - transcendence_network
 
@@ -18,17 +20,17 @@ services:
     container_name: main_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-transcendence}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
-      POSTGRES_DB: ${POSTGRES_DB:-transcendence}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - transcendence_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-transcendence} -d ${POSTGRES_DB:-transcendence}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -44,14 +46,9 @@ services:
     container_name: redis
     restart: unless-stopped
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
     networks:
       - transcendence_network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   backend:
     image: localhost/transcendence_backend:latest
@@ -61,10 +58,13 @@ services:
     container_name: backend
     restart: unless-stopped
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://transcendence:changeme@postgres:5432/transcendence?schema=public}
-      PORT: 3000
+      DATABASE_URL: ${DATABASE_URL}
+      PORT: ${BACKEND_PORT}
+      NODE_ENV: development
+    env_file:
+      - .env
     ports:
-      - "${BACKEND_PORT:-3000}:3000"
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     volumes:
       - ./backend:/app
       - backend_node_modules:/app/node_modules
@@ -73,6 +73,12 @@ services:
         condition: service_healthy
     networks:
       - transcendence_network
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:${BACKEND_PORT}/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     # Ensure first launch of the project is made properly by generating Prisma client and running migrations before starting the backend server
     command: ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && exec npm run start"]
 
@@ -84,8 +90,8 @@ services:
     container_name: worker
     restart: unless-stopped
     environment:
-      REDIS_HOST: ${REDIS_HOST:-redis}
-      REDIS_PORT: 6379
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
     volumes:
       - worker_node_modules:/app/node_modules
     depends_on:
@@ -103,12 +109,13 @@ services:
     restart: unless-stopped
     environment:
       - VITE_API_URL=/api
-      - HTTP_PORT=${HTTP_PORT:-8080}
+      - HTTP_PORT=${HTTP_PORT}
     volumes:
       - ./front:/app
       - frontend_node_modules:/app/node_modules
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - transcendence_network
     command: ["sh", "-c", "npm install && npm run dev -- --host 0.0.0.0"]
@@ -118,9 +125,9 @@ services:
     container_name: prisma_studio
     restart: unless-stopped
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://transcendence:changeme@postgres:5432/transcendence?schema=public}
+      DATABASE_URL: ${DATABASE_URL}
     ports:
-      - "${STUDIO_PORT:-5555}:5555"
+      - "${STUDIO_PORT}:${STUDIO_PORT}"
     volumes:
       - ./backend:/app
       - backend_node_modules:/app/node_modules

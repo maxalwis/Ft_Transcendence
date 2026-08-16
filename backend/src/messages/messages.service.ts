@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { Message } from '@prisma/client';
+import { User, Message } from '../generated/prisma/client';
 
 @Injectable()
 export class MessagesService {
