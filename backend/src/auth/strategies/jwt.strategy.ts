@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(config: ConfigService) {
     // extraction du secret pour etre sur d'avoir un string
-    // et pas un undefined
+    // et pas un undefined : obligatoire pour secretOrKey
     const secret = config.get<string>('JWT_SECRET');
     if (!secret) {
         throw new Error('JWT_SECRET is not defined in env variables');

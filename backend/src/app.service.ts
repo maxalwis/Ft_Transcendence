@@ -59,8 +59,9 @@ export class AppService implements OnApplicationBootstrap, OnApplicationShutdown
       
       const defaultUser = await this.prisma.user.create({
         data: {
-          name: 'Test User',
+          username: 'Test User',
           email: 'test@transcendence.com',
+          password: 'mdp123secret',
         },
       });
 
