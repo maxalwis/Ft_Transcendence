@@ -82,8 +82,8 @@ describe('IngestionService', () => {
 
       expect(global.fetch).toHaveBeenCalledTimes(1);
       expect(prismaService.event.upsert).toHaveBeenCalledWith({
-        where: { 
-          source_externalId: { source: 'mairie_paris', externalId: '12345' } 
+        where: {
+          source_externalId: { source: 'mairie_paris', externalId: '12345' },
         },
         update: expect.objectContaining({
           title: 'Exposition Test',
@@ -100,6 +100,8 @@ describe('IngestionService', () => {
     });
 
     it('should handle HTTP fetch failure gracefully', async () => {
+      // Mock the logger to suppress error output during the test because we expect an error to be logged
+      const loggerSpy = jest.spyOn(service['logger'], 'error').mockImplementation(() => {});
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: false,
         statusText: 'Internal Server Error',
@@ -107,6 +109,10 @@ describe('IngestionService', () => {
 
       await service.fetchFromMairieParis();
 
+      // Ensure that the logger was called with the expected error message
+      expect(loggerSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Failed to fetch page at offset 0: Internal Server Error')
+      );
       expect(prismaService.event.upsert).not.toHaveBeenCalled();
     });
   });
