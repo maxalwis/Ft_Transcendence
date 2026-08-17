@@ -1,8 +1,8 @@
 export default function AddFriends(
-	friendName: string,
-	setFriends: React.Dispatch<React.SetStateAction<string[]>>
+  friendName: string,
+  setFriends: React.Dispatch<React.SetStateAction<string[]>>
 ) {
-	setFriends((currentFriends) => [...currentFriends, friendName]);
+  setFriends((currentFriends) => [...currentFriends, friendName]);
 }
 
 // export default async function AddFriend(userId: number) {

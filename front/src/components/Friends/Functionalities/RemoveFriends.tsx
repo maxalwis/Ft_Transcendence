@@ -1,10 +1,8 @@
 export default function RemoveFriends(
-	friendName: string,
-	setFriends: React.Dispatch<React.SetStateAction<string[]>>
+  friendName: string,
+  setFriends: React.Dispatch<React.SetStateAction<string[]>>
 ) {
-	setFriends((currentFriends) =>
-		currentFriends.filter((friend) => friend !== friendName)
-	);
+  setFriends((currentFriends) => currentFriends.filter((friend) => friend !== friendName));
 }
 
 // export default async function RemoveFriend(userId: number) {
