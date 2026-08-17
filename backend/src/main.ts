@@ -19,9 +19,6 @@ async function bootstrap() {
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
 
-  // Automatically trigger data ingestion on first startup
-  const logger = new Logger('Bootstrap');
-
   try {
     logger.log('Triggering automatic Mairie de Paris ingestion...');
 
