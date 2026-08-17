@@ -3,6 +3,7 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   app.useGlobalPipes(
@@ -12,6 +13,8 @@ async function bootstrap() {
       enableDebugMessages: true,
     })
   );
+
+  app.enableShutdownHooks();
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
@@ -35,4 +38,5 @@ async function bootstrap() {
     logger.error('Failed to trigger automatic ingestion:', error.message);
   }
 }
+
 bootstrap();
