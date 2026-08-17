@@ -1,4 +1,4 @@
-.PHONY: all up down clean fclean re build
+.PHONY: all up down clean fclean re restart
 
 all: up
 
@@ -17,3 +17,5 @@ fclean:
 	rm -rf backend/dist backend/node_modules worker/node_modules
 
 re: fclean all
+
+restart: down up
