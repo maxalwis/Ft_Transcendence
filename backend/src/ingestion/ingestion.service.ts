@@ -33,8 +33,13 @@ export class IngestionService implements OnModuleInit {
 
   // Exécution automatique au démarrage de NestJS pour valider l'ingestion en local
   async onModuleInit() {
-    this.logger.log('--- TEST MANUEL D\'INGESTION AU DÉMARRAGE ---');
-    await this.handleDailyIngestionAndCleanup();
+    try {
+      this.logger.log('Triggering automatic Mairie de Paris ingestion...');
+      await this.handleDailyIngestionAndCleanup();
+      this.logger.log('Mairie de Paris automatic data ingestion completed successfully!');
+    } catch (error) {
+      this.logger.error('Failed to trigger automatic ingestion:', error.message);
+    }
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
@@ -84,7 +89,9 @@ export class IngestionService implements OnModuleInit {
 
         if (!data.results || data.results.length === 0) break;
 
-        const mappedEvents: IngestedEventData[] = data.results.map((item: any) => this.mapToEvent(item));
+        const mappedEvents: IngestedEventData[] = data.results.map((item: any) =>
+          this.mapToEvent(item)
+        );
         await Promise.all(mappedEvents.map((eventData) => this.upsertEvent(eventData)));
 
         totalIngested += data.results.length;
