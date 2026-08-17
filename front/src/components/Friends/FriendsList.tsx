@@ -53,8 +53,8 @@ export default function FriendsList( { friends, action, setFriends, input, setIn
 					{action === 'remove' && (
 						<button
 							onClick={() => handleRemoveFriend(friend)}
-							className="h-5 w-5 text-red-500 rounded-full border hover:bg-red-600 hover:text-white duration-150 cursor-pointer">
-							✕
+							className="flex h-5 w-5 items-center justify-center text-red-500 rounded-full border hover:border-white/10 hover:bg-red-600 hover:text-white duration-150 cursor-pointer">
+							X
 						</button>
 					)}
 				</div>
