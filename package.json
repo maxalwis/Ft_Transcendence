@@ -8,13 +8,21 @@
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/leaflet": "^1.9.21",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/passport-local": "^1.0.38",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "prettier": "^3.0.0"
   },
   "dependencies": {
+    "@nestjs/config": "^4.0.4",
+    "@nestjs/jwt": "^11.0.2",
+    "@nestjs/passport": "^11.0.5",
     "bcrypt": "^6.0.0",
     "leaflet": "^1.9.4",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0",
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1",
     "react-leaflet": "^5.0.0"

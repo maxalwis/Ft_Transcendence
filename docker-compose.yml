@@ -60,6 +60,8 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     restart: unless-stopped
+    env_file:
+      - .env.example
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://transcendence:changeme@postgres:5432/transcendence?schema=public}
       PORT: 3000
