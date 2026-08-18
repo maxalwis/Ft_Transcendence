@@ -1,12 +1,16 @@
 services:
   nginx:
-    image: docker.io/library/nginx:alpine
+    image: localhost/transcendence_nginx:latest
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     container_name: nginx
     restart: unless-stopped
     ports:
-      - "${HTTP_PORT}:80"
+      - "${HTTPS_PORT:-8443}:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro,z
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx_certs:/etc/nginx/certs
     depends_on:
       frontend:
         condition: service_started
@@ -109,7 +113,7 @@ services:
     restart: unless-stopped
     environment:
       - VITE_API_URL=/api
-      - HTTP_PORT=${HTTP_PORT}
+      - HTTPS_PORT=${HTTPS_PORT:-8443}
     volumes:
       - ./front:/app
       - frontend_node_modules:/app/node_modules
@@ -134,6 +138,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      backend:
+        condition: service_started
     networks:
       - transcendence_network
     command: ["npm", "run", "studio"]
@@ -143,6 +149,7 @@ volumes:
   backend_node_modules:
   worker_node_modules:
   frontend_node_modules:
+  nginx_certs:
 
 networks:
   transcendence_network:

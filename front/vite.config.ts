@@ -26,7 +26,7 @@ const baseLogger = createLogger();
 
 const customLogger = {
   ...baseLogger,
-  info: (msg: string, options?: any) => {
+  info: (msg: string) => {
     // Format regular Vite info logs (like server startup or HMR updates)
     console.log(
       `${CYAN}[Vite]      - ${RESET}${getTimestamp()}`,
@@ -35,7 +35,7 @@ const customLogger = {
       `${RESET}`
     );
   },
-  warn: (msg: string, options?: any) => {
+  warn: (msg: string) => {
     console.warn(
       `${YELLOW}[Vite]      - ${RESET}${getTimestamp()}`,
       `${YELLOW}     WARN ${YELLOW}[Client]${YELLOW}`,
@@ -43,7 +43,7 @@ const customLogger = {
       `${RESET}`
     );
   },
-  error: (msg: string, options?: any) => {
+  error: (msg: string) => {
     console.error(
       `${RED}[Vite]      - ${RESET}${getTimestamp()}`,
       `${RED}     ERROR ${YELLOW}[Client]${RED}`,
@@ -62,7 +62,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), tailwindcss()],
     server: {
       host: true,
-      hmr: { clientPort: Number(env.HTTP_PORT) || 8080 },
+      hmr: { protocol: 'wss', clientPort: Number(env.HTTPS_PORT) || 8443 },
     },
   };
 });
