@@ -3,6 +3,7 @@ import './Chat.css';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
 import { fetchEventMessages, sendEventMessage } from './chatService';
+import { useNotification } from '../../Context/NotificationContext';
 
 export type Message = {
   id: number;
@@ -19,15 +20,18 @@ interface ChatProps {
 export default function Chat({ eventId, currentUserId }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
+  const { showError } = useNotification();
 
-  // 1. Fetch messages on mount or when event changes
+  // Fetch messages on mount or when event changes
   useEffect(() => {
     let isMounted = true;
     fetchEventMessages(eventId)
       .then((data) => {
         if (isMounted) setMessages(data);
       })
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        if (isMounted) setErrorMessage(err.message || 'Failed to load messages');
+      })
       .finally(() => {
         if (isMounted) setLoading(false);
       });
@@ -37,20 +41,21 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     };
   }, [eventId]);
 
-  // 2. Handle sending through the backend
+  // Handle sending through the backend
   const handleSendMessage = async (text: string) => {
     try {
       const newMessage = await sendEventMessage(eventId, text, currentUserId);
       setMessages((prev) => [...prev, newMessage]);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error sending message:', err);
+      showError(`Error while trying to send the message: ${err.message}`);
     }
   };
 
   if (loading) return <div className="text-gray-400 text-sm p-4">Loading messages...</div>;
 
   return (
-    <div className="flex flex-col h-full gap-3">
+    <div className="flex flex-col h-full gap-3 relative">
       <div className="flex-1 overflow-auto">
         <MessageOutput messages={messages} currentUserId={currentUserId} />
       </div>

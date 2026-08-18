@@ -1,12 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { AppLogger } from './logger/app-logger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const logger = new Logger('Bootstrap');
+
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: new AppLogger(),
   });
+
+  app.set('trust proxy', 1);
   app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
@@ -20,7 +25,8 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
-  app.logger.log(`Application is running on port ${port}`);
+
+  logger.log(`Application is running on port ${port}`);
 }
 
 bootstrap();

@@ -39,7 +39,7 @@ export default function MessageInput({ onSend }: { onSend: (text: string) => voi
       {input.trim().length > 0 && (
         <button
           type="button"
-          className="absolute right-2 bottom-2 flex w-7 cursor-pointer items-center justify-center rounded-full bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-xs text-white"
+          className="absolute right-2 bottom-2 flex w-7 cursor-pointer items-center justify-center rounded-full bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-xs"
           onClick={handleSend}
         >
           ➤
