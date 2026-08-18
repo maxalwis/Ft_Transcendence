@@ -59,7 +59,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const logLines = [
         `${method} ${grey}${decodedUrl} ${statusCode} - ${duration}ms`,
         `${padding}${invisible}${method}${reset}${grey}|- Body: ${JSON.stringify(body)}`,
-        `${padding}${invisible}${method}${reset}${grey}\`- Query: ${JSON.stringify(query)}`,
+        `${padding}${invisible}${method}${reset}${grey}|- Query: ${JSON.stringify(query)}`,
       ];
 
       if (reason) {
