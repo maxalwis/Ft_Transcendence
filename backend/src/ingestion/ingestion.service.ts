@@ -31,8 +31,13 @@ export class IngestionService implements OnModuleInit {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  // Exécution automatique au démarrage de NestJS pour valider l'ingestion en local
+  // Skip automatic execution in test environments
   async onModuleInit() {
+    if (process.env.NODE_ENV === 'test') {
+      this.logger.log('Skipping automatic ingestion on init during tests.');
+      return;
+    }
+
     try {
       this.logger.log('Triggering automatic Mairie de Paris ingestion...');
       await this.handleDailyIngestionAndCleanup();
@@ -71,7 +76,11 @@ export class IngestionService implements OnModuleInit {
     let totalCount = Infinity;
     let totalIngested = 0;
 
-    while (offset < totalCount) {
+    // Limit pagination depth during test runs to avoid hitting external rate limits/timeouts
+    const isTest = process.env.NODE_ENV === 'test';
+    const maxOffset = isTest ? limit : Infinity;
+
+    while (offset < totalCount && offset < maxOffset) {
       const url = `${baseUrl}?limit=${limit}&offset=${offset}`;
 
       try {
