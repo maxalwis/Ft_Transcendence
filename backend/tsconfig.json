@@ -12,11 +12,15 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "incremental": true,
+    "incremental": false,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true
+  },
+  "watchOptions": {
+    "watchFile": "fixedPollingInterval",
+    "watchDirectory": "fixedPollingInterval"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

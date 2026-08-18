@@ -70,6 +70,7 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: ${DATABASE_URL}
+      NODE_ENV: development
       PORT: ${BACKEND_PORT:-3000}
     ports:
       - '${BACKEND_PORT:-3000}:${BACKEND_PORT:-3000}'
@@ -82,8 +83,7 @@ services:
     networks:
       - transcendence_network
     healthcheck:
-      test:
-        ['CMD-SHELL', 'wget -q -T 3 -O- http://localhost:${BACKEND_PORT:-3000}/health || exit 1']
+      test: ["CMD-SHELL", "wget -q -T 3 -O- http://localhost:${BACKEND_PORT}/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 3
