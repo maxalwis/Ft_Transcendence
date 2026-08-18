@@ -1,13 +1,15 @@
 datasource db {
-  provider = "postgresql"
+  provider   = "postgresql"
   extensions = [postgis, postgis_topology, postgis_tiger_geocoder, fuzzystrmatch]
 }
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
-  moduleFormat   = "cjs"
-  previewFeatures = ["postgresqlExtensions"]
+  provider               = "prisma-client"
+  output                 = "../src/generated/prisma"
+  moduleFormat           = "cjs"
+  generatedFileExtension = "ts"
+  importFileExtension    = "js"
+  previewFeatures        = ["postgresqlExtensions"]
 }
 
 model Event {

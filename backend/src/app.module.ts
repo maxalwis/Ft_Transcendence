@@ -1,4 +1,5 @@
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthModule } from './health/health.module';
@@ -10,11 +11,18 @@ import { MessagesModule } from './messages/messages.module';
 import { LoggerMiddleware } from './logger.middleware';
 
 @Module({
-  imports: [HealthModule, PrismaModule, IngestionModule, EventsModule, UsersModule, MessagesModule],
+  imports: [
+    ScheduleModule.forRoot(),
+    HealthModule,
+    PrismaModule,
+    IngestionModule,
+    EventsModule,
+    UsersModule,
+    MessagesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
