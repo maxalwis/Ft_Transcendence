@@ -1,8 +1,14 @@
-.PHONY: all up down clean fclean re restart
+.PHONY: all up down clean fclean build check-env re restart
 
 all: up
 
-up:
+check-env:
+ifeq (,$(wildcard .env))
+	@echo "Error: .env file not found! Please create one from your example file."
+	@exit 1
+endif
+
+up: check-env
 	podman compose up --build
 
 down:
