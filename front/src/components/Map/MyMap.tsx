@@ -5,12 +5,13 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import MySidebar from '../Sidebar/Sidebar';
 import MarkerHoverCard from './MarkerHoverCard.tsx';
-import { createMarkerIcon, createClusterIcon, clusterCountCache } from './CustomIcons.tsx';
+import { createMarkerIcon, createClusterIcon } from './CustomIcons.tsx';
 
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
+import Friends from '../Friends/Friends.tsx';
 import './Map.css';
 
 const idfBounds = new L.LatLngBounds([48.65, 1.95], [49.05, 2.75]);
@@ -88,7 +89,6 @@ export default function MyMap() {
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
   const [events, setEvents] = useState<EventItem[]>([]);
 
-  const loadedEventIdsRef = useRef<Set<string>>(new Set());
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const activeItem = useMemo(() => {
@@ -220,7 +220,7 @@ export default function MyMap() {
           }}
         />
       )}
-
+      <Friends></Friends>
       {activeSidebarEventId && (
         <MySidebar
           eventId={activeSidebarEventId}
