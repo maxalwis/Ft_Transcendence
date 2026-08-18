@@ -7,6 +7,7 @@ export class HealthController {
   constructor(
     private readonly health: HealthCheckService,
     private readonly prismaHealth: PrismaHealthIndicator,
+    private readonly redisHealth: RedisHealthIndicator,
   ) {}
 
   @Get()
@@ -14,6 +15,7 @@ export class HealthController {
   readiness() {
     return this.health.check([
       () => this.prismaHealth.isHealthy('database'),
+      () => this.redisHealth.isHealthy('redis'),
     ]);
   }
 }

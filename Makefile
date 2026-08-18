@@ -1,5 +1,4 @@
-.PHONY: all up down clean fclean re build check-env
-.PHONY: all up down clean fclean re restart
+.PHONY: all up down clean fclean build check-env re restart
 
 all: up
 

@@ -11,7 +11,7 @@ COPY prisma ./prisma
 # Install dependencies and openssl
 RUN npm install \
     && apt-get update \
-    && apt-get install -y openssl
+    && apt-get install -y openssl wget
 
 # Copy the rest of the application code
 COPY . .

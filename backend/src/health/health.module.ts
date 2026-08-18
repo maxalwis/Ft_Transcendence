@@ -3,11 +3,12 @@ import { TerminusModule } from '@nestjs/terminus';
 import { HealthController } from './health.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { LoggerMiddleware } from '../logger.middleware';
-import { PrismaHealthIndicator } from '../prisma/prisma.health';
+import { RedisHealthIndicator } from './redis.health';
+
 @Module({
   imports: [TerminusModule, PrismaModule],
   controllers: [HealthController],
-  providers: [PrismaHealthIndicator], // <-- Ajouté ici
+  providers: [RedisHealthIndicator],
 })
 export class HealthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
