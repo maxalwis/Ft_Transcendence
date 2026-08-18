@@ -7,7 +7,7 @@ services:
     container_name: nginx
     restart: unless-stopped
     ports:
-      - "${HTTPS_PORT:-8443}:443"
+      - '${HTTPS_PORT:-8443}:443'
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro,z
       - nginx_certs:/etc/nginx/certs
@@ -28,33 +28,34 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - transcendence_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 5s
     command:
-      - "postgres"
-      - "-c"
-      - "log_timezone=Europe/Paris"
-      - "-c"
-      - "log_line_prefix=[DB]  - %m     "
+      - 'postgres'
+      - '-c'
+      - 'log_timezone=Europe/Paris'
+      - '-c'
+      - 'log_line_prefix=[DB]  - %m     '
+
   redis:
     image: docker.io/library/redis:alpine
     container_name: redis
     restart: unless-stopped
     ports:
-      - "${REDIS_PORT}:${REDIS_PORT}"
+      - '${REDIS_PORT}:${REDIS_PORT}'
     networks:
       - transcendence_network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 5
@@ -69,9 +70,9 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: ${DATABASE_URL}
-      PORT: ${BACKEND_PORT}
+      PORT: ${BACKEND_PORT:-3000}
     ports:
-      - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - '${BACKEND_PORT:-3000}:${BACKEND_PORT:-3000}'
     volumes:
       - ./backend:/app:z
       - backend_node_modules:/app/node_modules
@@ -81,13 +82,13 @@ services:
     networks:
       - transcendence_network
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -T 3 -O- http://localhost:${BACKEND_PORT}/health || exit 1"]
+      test:
+        ['CMD-SHELL', 'wget -q -T 3 -O- http://localhost:${BACKEND_PORT:-3000}/health || exit 1']
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 10s
-    # Ensure first launch of the project is made properly by generating Prisma client and running migrations before starting the backend server
-    command: ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && exec npm run start"]
+    command: ['sh', '-c', 'npx prisma generate && npx prisma migrate deploy && exec npm run start']
 
   worker:
     image: localhost/transcendence_worker:latest
@@ -125,7 +126,7 @@ services:
         condition: service_healthy
     networks:
       - transcendence_network
-    command: ["sh", "-c", "npm install && npm run dev -- --host 0.0.0.0"]
+    command: ['sh', '-c', 'npm install && npm run dev -- --host 0.0.0.0']
 
   prisma-studio:
     image: localhost/transcendence_backend:latest
@@ -134,7 +135,7 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
     ports:
-      - "${STUDIO_PORT}:${STUDIO_PORT}"
+      - '${STUDIO_PORT}:${STUDIO_PORT}'
     volumes:
       - ./backend:/app:z
       - backend_node_modules:/app/node_modules
@@ -145,7 +146,7 @@ services:
         condition: service_started
     networks:
       - transcendence_network
-    command: ["npm", "run", "studio"]
+    command: ['npm', 'run', 'studio']
 
 volumes:
   postgres_data:

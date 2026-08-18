@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { HealthIndicator, HealthIndicatorResult, HealthCheckError } from '@nestjs/terminus';
 import Redis from 'ioredis';
 
 @Injectable()
-export class RedisHealthIndicator extends HealthIndicator {
+export class RedisHealthIndicator extends HealthIndicator implements OnApplicationShutdown {
   private redis: Redis;
 
   constructor() {
@@ -12,6 +12,7 @@ export class RedisHealthIndicator extends HealthIndicator {
     this.redis = new Redis({
       host: process.env.REDIS_HOST || 'redis',
       port: Number(process.env.REDIS_PORT) || 6379,
+      maxRetriesPerRequest: 1,
     });
   }
 
@@ -34,5 +35,9 @@ export class RedisHealthIndicator extends HealthIndicator {
         this.getStatus(key, false, { message: err.message }),
       );
     }
+  }
+
+  onApplicationShutdown() {
+    this.redis.disconnect();
   }
 }

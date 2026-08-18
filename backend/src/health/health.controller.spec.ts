@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TerminusModule } from '@nestjs/terminus';
+import { TerminusModule, HealthCheckService } from '@nestjs/terminus';
 import { HealthController } from './health.controller';
-import { PrismaHealthIndicator } from '../prisma/prisma.health'; // Ajustez le chemin selon votre structure
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaHealthIndicator } from '../prisma/prisma.health';
+import { RedisHealthIndicator } from '../prisma/redis.health';
 
 describe('HealthController', () => {
   let controller: HealthController;
@@ -12,10 +12,13 @@ describe('HealthController', () => {
       imports: [TerminusModule],
       controllers: [HealthController],
       providers: [
-        PrismaHealthIndicator,
         {
-          provide: PrismaService,
-          useValue: {}, // Vous pouvez utiliser un objet vide ou mocker les méthodes nécessaires
+          provide: PrismaHealthIndicator,
+          useValue: { isHealthy: jest.fn() },
+        },
+        {
+          provide: RedisHealthIndicator,
+          useValue: { isHealthy: jest.fn() },
         },
       ],
     }).compile();
