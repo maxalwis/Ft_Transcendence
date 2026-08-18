@@ -1,12 +1,15 @@
+import LoginButton from "./Auth/Auth";
+
 export default function NavBar()
 {
 	return (
 	<div className="fixed top-2 w-full flex flex-row items-center justify-between px-6 py-3 z-500">
 		<div className="flex items-center absolute top-2 left-1/20">
-			<button
+			{/* <button
 				className=" h-10 w-25 cursor-pointer rounded-full text-white bg-sky-600 duration-300 hover:zoom-98">
-				{/* onClick= */}
-				Connexion</button>
+				onClick=
+				Connexion</button> */}
+				<LoginButton></LoginButton>
 		</div>
 
 		<nav className="flex items-center gap-3 absolute top-2 left-1/2 -translate-x-1/2">
