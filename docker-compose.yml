@@ -28,13 +28,17 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+      - '${POSTGRES_PORT:-5432}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - transcendence_network
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-transcendence} -d ${POSTGRES_DB:-transcendence}',
+        ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -45,13 +49,13 @@ services:
       - 'log_timezone=Europe/Paris'
       - '-c'
       - 'log_line_prefix=[DB]  - %m     '
-
+      
   redis:
     image: docker.io/library/redis:alpine
     container_name: redis
     restart: unless-stopped
     ports:
-      - '${REDIS_PORT}:${REDIS_PORT}'
+      - '${REDIS_PORT:-6379}:6379'
     networks:
       - transcendence_network
     healthcheck:
@@ -73,7 +77,7 @@ services:
       NODE_ENV: development
       PORT: ${BACKEND_PORT:-3000}
     ports:
-      - '${BACKEND_PORT:-3000}:${BACKEND_PORT:-3000}'
+      - '${BACKEND_PORT:-3000}:3000'
     volumes:
       - ./backend:/app:z
       - backend_node_modules:/app/node_modules
@@ -117,7 +121,7 @@ services:
     restart: unless-stopped
     environment:
       - VITE_API_URL=/api
-      - HTTP_PORT=${HTTP_PORT}
+      - HTTPS_PORT=${HTTPS_PORT:-8443}
     volumes:
       - ./front:/app:z
       - frontend_node_modules:/app/node_modules
@@ -135,7 +139,7 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
     ports:
-      - '${STUDIO_PORT}:${STUDIO_PORT}'
+      - '${STUDIO_PORT:-5555}:5555'
     volumes:
       - ./backend:/app:z
       - backend_node_modules:/app/node_modules
@@ -148,11 +152,102 @@ services:
       - transcendence_network
     command: ['npm', 'run', 'studio']
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+    container_name: elasticsearch
+    restart: unless-stopped
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - 'logger.level=WARN'
+    ports:
+      - '9200:9200'
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+      - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:z
+    networks:
+      - transcendence_network
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          "curl -s http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging:
+      driver: none
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.3
+    container_name: logstash
+    restart: unless-stopped
+    volumes:
+      - ./logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:z
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - '5044:5044'
+    environment:
+      - LS_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.monitoring.enabled=false
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - transcendence_network
+    logging:
+      driver: none
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.3
+    container_name: kibana
+    restart: unless-stopped
+    environment:
+      - ELASTIC_APM_ACTIVE=false
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:z
+    ports:
+      - '5601:5601'
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - transcendence_network
+    logging:
+      driver: none
+
+  kibana-setup:
+    image: docker.io/library/alpine:latest
+    container_name: kibana_setup
+    depends_on:
+      kibana:
+        condition: service_started
+    volumes:
+      - ./kibana/scripts/setup.sh:/usr/local/bin/setup.sh:z
+    networks:
+      - transcendence_network
+    command: >
+      sh -c "
+        apk add --no-cache curl &&
+        chmod +x /usr/local/bin/setup.sh &&
+        /usr/local/bin/setup.sh
+      "
+    logging:
+      driver: none
+
 volumes:
   postgres_data:
   backend_node_modules:
   worker_node_modules:
   frontend_node_modules:
+  elasticsearch_data:
+  nginx_certs:
+  elasticsearch_data:
   nginx_certs:
 
 networks:

@@ -1,6 +1,10 @@
-.PHONY: all up down clean fclean build check-env re restart test test-unit test-health test-e2e
+.PHONY: all up logs down clean fclean re restart
 
 all: up
+
+logs:
+	podman compose logs -f
+.PHONY: all up down clean fclean build check-env re restart test test-unit test-health test-e2e
 
 check-env:
 ifeq (,$(wildcard .env))
@@ -9,7 +13,8 @@ ifeq (,$(wildcard .env))
 endif
 
 up: check-env
-	podman compose up --build
+	podman compose up -d --build
+	podman compose logs -f
 
 down:
 	podman compose down
@@ -19,10 +24,18 @@ clean:
 
 fclean:
 	podman compose down -v --rmi all --remove-orphans
+	-pkill -u $$(whoami) -f rootlessport || true
+	podman system prune -f --volumes
+	rm -rf backend/dist backend/node_modules worker/node_modules
+
+re:
+	@$(MAKE) fclean
+	@sleep 3
+	@$(MAKE) all
+
+restart : down up
 	docker system prune -f --volumes
 	rm -rf backend/dist backend/node_modules worker/node_modules backend/generated backend/tsconfig.build.tsbuildinfo
-
-re: fclean all
 
 restart: down up
 

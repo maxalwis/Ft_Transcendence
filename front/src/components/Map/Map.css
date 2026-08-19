@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+.leaflet-control-attribution {
+    display: none;
+}
+
 /* Main zoom container container */
 .leaflet-control-zoom.leaflet-bar {
   background: rgba(255, 103, 18, 0) !important;
