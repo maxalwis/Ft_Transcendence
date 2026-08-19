@@ -15,6 +15,7 @@ import Friends from '../Friends/Friends.tsx';
 import './Map.css';
 import NavBar from '../NavBar/NavBar.tsx';
 import Filters from '../Filters/Filters.tsx';
+import BottomBar from '../BottomBar/BottomBar.tsx';
 
 
 const idfBounds = new L.LatLngBounds([48.65, 1.95], [49.05, 2.75]);
@@ -226,6 +227,7 @@ export default function MyMap() {
 	<Friends></Friends>
 	<Filters></Filters>
 	<NavBar></NavBar>
+	<BottomBar></BottomBar>
       {activeSidebarEventId && (
         <MySidebar
           eventId={activeSidebarEventId}
