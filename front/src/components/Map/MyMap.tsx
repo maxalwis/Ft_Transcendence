@@ -1,89 +1,34 @@
-import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
+import { MapContainer } from 'react-leaflet';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import L from 'leaflet';
 
 import 'leaflet/dist/leaflet.css';
-import MySidebar from '../Sidebar/Sidebar';
-import MarkerHoverCard from './MarkerHoverCard.tsx';
-import { createMarkerIcon, createClusterIcon } from './CustomIcons.tsx';
-
-import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
+import MySidebar from '../Sidebar/Sidebar';
+import { EventsDetails } from './EventsDetails.tsx';
 import Friends from '../Friends/Friends.tsx';
+import { useNotification } from '../Context/NotificationContext.tsx';
+
+import { ClusterLayer } from './ClusterLayer.tsx';
+import { MyTileLayer, MapClickHandler, GlassZoomControl } from './MapControls.tsx';
+import type { EventItem } from '../types/event';
 import './Map.css';
 import NavBar from '../NavBar/NavBar.tsx';
 import Filters from '../Filters/Filters.tsx';
 import BottomBar from '../BottomBar/BottomBar.tsx';
 
+
+import { MapEventsHandler } from './MapHelper.tsx';
+
 const idfBounds = new L.LatLngBounds([48.65, 1.95], [49.05, 2.75]);
 
-// 1. Move static cluster radius logic outside component so reference remains identical across renders
-const getClusterRadius = (zoom: number) => {
-  if (zoom <= 13) return 90;
-  if (zoom <= 16) return 70;
-  if (zoom <= 18) return 50;
-  return 20;
-};
-
-function MyTileLayer() {
-  return (
-    <TileLayer
-      attribution='&copy; <a href="https://jawg.io">JawgMaps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      url="https://tile.jawg.io/jawg-streets/{z}/{x}/{y}{r}.png?access-token=4WuRvsSGNfmiSQizbI3DVZxUqDNOgTXjHvNMXONKplADuRzTbn7p0x5wlenNak14"
-    />
-  );
-}
-
-function MapClickHandler({ closeSidebar }: { closeSidebar: () => void }) {
-  useMapEvents({ click: closeSidebar });
-  return null;
-}
-
-function GlassZoomControl() {
-  const map = useMap();
-  useEffect(() => {
-    const zoomControl = L.control.zoom({ position: 'topleft' });
-    zoomControl.addTo(map);
-    return () => {
-      zoomControl.remove();
-    };
-  }, [map]);
-  return null;
-}
-
-// 2. Debounce & consolidate viewport handlers to eliminate duplicate fetches
-function MapEventsHandler({
-  onBoundsChange,
-}: {
-  onBoundsChange: (bounds: L.LatLngBounds) => void;
-}) {
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const triggerFetch = useCallback(
-    (map: L.Map) => {
-      if (debounceTimer.current) clearTimeout(debounceTimer.current);
-      debounceTimer.current = setTimeout(() => {
-        onBoundsChange(map.getBounds());
-      }, 250); // 250ms debounce prevents API spam during panning/zooming
-    },
-    [onBoundsChange]
-  );
-
-  const map = useMapEvents({
-    moveend: () => triggerFetch(map),
-    zoomend: () => triggerFetch(map),
-  });
-
-  useEffect(() => {
-    triggerFetch(map);
-    return () => {
-      if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    };
-  }, [map, triggerFetch]);
-
-  return null;
+export interface EventGroup {
+  id: string; // Unique spatial key
+  latitude: number;
+  longitude: number;
+  events: EventItem[];
 }
 
 // Interface pour typer vos events si ce n'est pas déjà fait ailleurs
@@ -102,8 +47,8 @@ interface EventItem {
 export default function MyMap() {
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
-  const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // État local pour stocker les filtres actifs
   const [filters, setFilters] = useState({
@@ -113,11 +58,11 @@ export default function MyMap() {
     priceType: '',
   });
 
+  const { showError } = useNotification();
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const activeItem = useMemo(() => {
-    return events.find((item) => item.id === hoveredMarkerId);
-  }, [events, hoveredMarkerId]);
+  const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
+  const [activeEventIndex, setActiveEventIndex] = useState<number>(0);
 
   const fetchEventsForBbox = useCallback(
     async (bounds: L.LatLngBounds) => {
@@ -153,6 +98,89 @@ export default function MyMap() {
     },
     [filters] // Dépendance sur 'filters' pour refetcher automatiquement quand ils changent
   );
+  // 1. Group raw events by spatial location
+  const eventGroups = useMemo(() => {
+    const groupsMap = new Map<string, EventItem[]>();
+
+    events.forEach((event) => {
+      if (
+        event.latitude == null ||
+        event.longitude == null ||
+        isNaN(Number(event.latitude)) ||
+        isNaN(Number(event.longitude))
+      ) {
+        return;
+      }
+
+      const lat = Number(event.latitude);
+      const lng = Number(event.longitude);
+      const key = `${lat.toFixed(4)},${lng.toFixed(4)}`;
+
+      if (!groupsMap.has(key)) {
+        groupsMap.set(key, []);
+      }
+      groupsMap.get(key)!.push(event);
+    });
+
+    return Array.from(groupsMap.entries()).map(([key, groupEvents]) => ({
+      id: key,
+      latitude: groupEvents[0].latitude,
+      longitude: groupEvents[0].longitude,
+      events: groupEvents,
+    }));
+  }, [events]);
+
+  // 2. Active spatial group
+  const activeGroup = useMemo(() => {
+    if (!activeGroupId) return null;
+    return eventGroups.find((g) => g.id === activeGroupId) || null;
+  }, [eventGroups, activeGroupId]);
+
+  // 3. Current event inside carousel
+  const currentEvent = useMemo(() => {
+    if (!activeGroup) return null;
+    return activeGroup.events[activeEventIndex] || activeGroup.events[0];
+  }, [activeGroup, activeEventIndex]);
+
+  // Navigation Handlers
+  const handlePrevEvent = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setActiveEventIndex((prev) => (prev > 0 ? prev - 1 : prev));
+  }, []);
+
+  const handleNextEvent = useCallback((e?: React.MouseEvent, maxIndex = 0) => {
+    e?.stopPropagation();
+    setActiveEventIndex((prev) => (prev < maxIndex ? prev + 1 : prev));
+  }, []);
+
+  useEffect(() => {
+    const fetchAllEvents = async () => {
+      try {
+        setIsLoading(true);
+        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const response = await fetch(`${baseUrl}/events/map`);
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          const message = Array.isArray(errorData.message)
+            ? errorData.message.join(', ')
+            : errorData.message || `Error ${response.status}: Failed to load map events`;
+
+          throw new Error(message);
+        }
+
+        const data: EventItem[] = await response.json();
+        setEvents(data);
+      } catch (err: any) {
+        console.error('Failed to fetch map events:', err);
+        showError(err.message || 'An error occurred while loading map events.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllEvents();
+  }, [showError]);
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -161,15 +189,27 @@ export default function MyMap() {
     }
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     cancelCloseTimeout();
     closeTimeoutRef.current = setTimeout(() => {
-      setHoveredMarkerId(null);
+      setActiveGroupId(null);
+      setActiveEventIndex(0);
       setHoverPos(null);
     }, 150);
-  };
+  }, []);
 
-  useEffect(() => () => cancelCloseTimeout(), []);
+  const handleMarkerClick = useCallback((id: string) => {
+    cancelCloseTimeout();
+    setActiveSidebarEventId(id);
+    setActiveGroupId(null);
+    setHoverPos(null);
+  }, []);
+
+  // Set active group; MapEventsHandler will compute hoverPos inside <MapContainer>
+  const handleMarkerHover = useCallback((groupId: string) => {
+    cancelCloseTimeout();
+    setActiveGroupId(groupId);
+  }, []);
 
   return (
     <>
@@ -183,75 +223,48 @@ export default function MyMap() {
         zoomControl={false}
         style={{ height: '100vh', width: '100vw' }}
       >
-        <MapEventsHandler onBoundsChange={fetchEventsForBbox} />
         <MapClickHandler closeSidebar={() => setActiveSidebarEventId(null)} />
         <MyTileLayer />
         <GlassZoomControl />
 
-        <MarkerClusterGroup
-          chunkedLoading
-          maxClusterRadius={getClusterRadius} // Static function reference prevents cluster re-creation
-          disableClusteringAtZoom={16}
-          spiderfyOnMaxZoom={true}
-          showCoverageOnHover={false}
-          // 3. Delegate cluster animation state calculation internally to createClusterIcon
-          iconCreateFunction={(cluster: any)=> createClusterIcon(cluster)}
-        >
-          {events.map((event) => {
-            const isHovered = hoveredMarkerId === event.id;
+        {/* Syncs container pixel position for hoverPos on hover, pan, and zoom */}
+        <MapEventsHandler activeGroup={activeGroup} setHoverPos={setHoverPos} />
 
-            return (
-              <Marker
-                key={event.id}
-                position={[event.latitude, event.longitude]}
-                icon={createMarkerIcon(isHovered, event.isNew)}
-                eventHandlers={{
-                  click: () => {
-                    cancelCloseTimeout();
-                    setActiveSidebarEventId(event.id);
-                    setHoveredMarkerId(null);
-                    setHoverPos(null);
-                  },
-                  mouseover: (e) => {
-                    cancelCloseTimeout();
-                    const mouseEvent = e.originalEvent as MouseEvent;
-                    setHoveredMarkerId(event.id);
-                    setHoverPos({ x: mouseEvent.clientX, y: mouseEvent.clientY });
-                  },
-                  mouseout: handleMouseLeave,
-                }}
-              />
-            );
-          })}
-        </MarkerClusterGroup>
+        {!isLoading && (
+          <ClusterLayer
+            eventGroups={eventGroups}
+            activeGroupId={activeGroupId}
+            onMarkerClick={handleMarkerClick}
+            onMarkerHover={(groupId) => handleMarkerHover(groupId)}
+            onMarkerLeave={handleMouseLeave}
+          />
+        )}
       </MapContainer>
 
-      {activeItem && hoverPos && (
-        <MarkerHoverCard
+      {/* Floating Popup Overlay */}
+      {currentEvent && activeGroup && hoverPos && (
+        <EventsDetails
           position={hoverPos}
-          title={activeItem.title}
-          category={activeItem.category || 'Event'}
+          title={currentEvent.title}
+          category={currentEvent.category?.[0] || 'Event'}
           isOpen={true}
           closingTime={
-            activeItem.dateEnd
-              ? new Date(activeItem.dateEnd).toLocaleTimeString([], {
+            currentEvent.dateEnd
+              ? new Date(currentEvent.dateEnd).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
                 })
               : '11:00 PM'
           }
-          interestedUsersCount={activeItem.interestedUsersCount || 0}
-          imageUrl={activeItem.coverUrl}
-          onClick={() => setActiveSidebarEventId(activeItem.id)}
-          onMouseEnter={() => {
-            cancelCloseTimeout();
-            setHoveredMarkerId(activeItem.id);
-          }}
-          onMouseLeave={() => {
-            if (activeSidebarEventId !== activeItem.id) {
-              handleMouseLeave();
-            }
-          }}
+          interestedUsersCount={currentEvent.interestedUsersCount || 0}
+          imageUrl={currentEvent.coverUrl}
+          totalInGroup={activeGroup.events.length}
+          currentIndex={activeEventIndex}
+          onPrev={handlePrevEvent}
+          onNext={(e) => handleNextEvent(e, activeGroup.events.length - 1)}
+          onClick={() => setActiveSidebarEventId(currentEvent.id)}
+          onMouseEnter={cancelCloseTimeout}
+          onMouseLeave={handleMouseLeave}
         />
       )}
 
@@ -264,7 +277,7 @@ export default function MyMap() {
       {activeSidebarEventId && (
         <MySidebar
           eventId={activeSidebarEventId}
-          currentUserId={1} // TODO: Replace with actual logged-in user state ID
+          currentUserId={1}
           onClose={() => {
             setActiveSidebarEventId(null);
             setHoverPos(null);

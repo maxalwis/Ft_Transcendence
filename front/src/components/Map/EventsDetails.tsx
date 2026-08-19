@@ -1,38 +1,63 @@
-// Interface for friends who are interested
+import React, { useMemo } from 'react';
+
 export interface Friend {
   id: string;
   name: string;
 }
 
-interface MarkerHoverCardProps {
-  title: string;
-  category: string;
-  isOpen: boolean;
-  closingTime: string;
-  interestedUsersCount: number;
+export interface EventsDetailsProps {
+  title?: string;
+  category?: string;
+  isOpen?: boolean;
+  closingTime?: string;
+  interestedUsersCount?: number;
   isConnected?: boolean;
   interestedFriends?: Friend[];
   imageUrl?: string;
   position: { x: number; y: number };
+  
+  // Group Carousel Props
+  totalInGroup?: number;
+  currentIndex?: number;
+  onPrev?: (e: React.MouseEvent) => void;
+  onNext?: (e: React.MouseEvent) => void;
+
+  // Interaction Handlers
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
   onClick?: () => void;
 }
 
-export default function MarkerHoverCard({
+const CARD_HEIGHT = 260; // Estimated height of the card in px
+
+export function EventsDetails({
   title = 'Event Title',
   category = 'Category',
   isOpen = false,
-  closingTime = 'Closing Time',
+  closingTime = '11:00 PM',
   interestedUsersCount = 0,
   isConnected = false,
   interestedFriends = [],
   imageUrl = '/event_image.webp',
   position,
+  totalInGroup = 1,
+  currentIndex = 0,
+  onPrev,
+  onNext,
   onMouseEnter,
   onMouseLeave,
   onClick,
-}: MarkerHoverCardProps) {
+}: EventsDetailsProps) {
+  // Check if there is enough space above the marker to show the popup
+  const isFlippedDownward = useMemo(() => {
+    return position.y - CARD_HEIGHT < 20; // 20px padding safety threshold from top of viewport
+  }, [position.y]);
+
+  // Adjust top offset and transform origin based on orientation
+  const topPos = isFlippedDownward ? position.y + 15 : position.y - 15;
+  const transformOrigin = isFlippedDownward ? 'top center' : 'bottom center';
+  const animationName = isFlippedDownward ? 'markerPopupAnimationDown' : 'markerPopupAnimationUp';
+
   return (
     <div
       onMouseEnter={onMouseEnter}
@@ -41,34 +66,41 @@ export default function MarkerHoverCard({
       className="glassmorphism-popup cursor-pointer"
       style={{
         position: 'fixed',
-        top: `${position.y - 15}px`,
+        top: `${topPos}px`,
         left: `${position.x}px`,
-        transform: 'translate(-50%, -100%)',
         width: '300px',
-
         zIndex: 1000,
-
-        // Pop-out & scale animation from the pinpoint position
-        transformOrigin: 'bottom center',
-        animation: 'markerPopupAnimation 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        transformOrigin,
+        animation: `${animationName} 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards`,
       }}
     >
-      {/* Bubble Image Container */}
       <style>
         {`
-                    @keyframes markerPopupAnimation {
-                        0% {
-                            opacity: 0;
-                            transform: translate(-50%, -100%) scale(0.6);
-                        }
-                        100% {
-                            opacity: 1;
-                            transform: translate(-50%, -100%) scale(1);
-                        }
-                    }
-                `}
+          @keyframes markerPopupAnimationUp {
+            0% {
+              opacity: 0;
+              transform: translate(-50%, -100%) scale(0.6);
+            }
+            100% {
+              opacity: 1;
+              transform: translate(-50%, -100%) scale(1);
+            }
+          }
+
+          @keyframes markerPopupAnimationDown {
+            0% {
+              opacity: 0;
+              transform: translate(-50%, 0%) scale(0.6);
+            }
+            100% {
+              opacity: 1;
+              transform: translate(-50%, 0%) scale(1);
+            }
+          }
+        `}
       </style>
 
+      {/* Image & Carousel Overlay Container */}
       <div
         style={{
           width: '100%',
@@ -89,9 +121,81 @@ export default function MarkerHoverCard({
             boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
           }}
         />
+
+        {/* Navigation Controls for Grouped Events */}
+        {totalInGroup > 1 && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '20px',
+              left: '20px',
+              right: '20px',
+              display: 'flex',
+              justify: 'space-between',
+              alignItems: 'center',
+              pointerEvents: 'none',
+            }}
+          >
+            <button
+              onClick={onPrev}
+              disabled={currentIndex === 0}
+              style={{
+                pointerEvents: 'auto',
+                background: 'rgba(255, 255, 255, 0.85)',
+                backdropFilter: 'blur(4px)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '28px',
+                height: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: currentIndex === 0 ? 'default' : 'pointer',
+                opacity: currentIndex === 0 ? 0.4 : 1,
+                boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+              }}
+            >
+              ‹
+            </button>
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 600,
+                color: '#fff',
+                background: 'rgba(0,0,0,0.5)',
+                padding: '2px 8px',
+                borderRadius: '10px',
+                backdropFilter: 'blur(4px)',
+              }}
+            >
+              {currentIndex + 1} / {totalInGroup}
+            </span>
+            <button
+              onClick={onNext}
+              disabled={currentIndex === totalInGroup - 1}
+              style={{
+                pointerEvents: 'auto',
+                background: 'rgba(255, 255, 255, 0.85)',
+                backdropFilter: 'blur(4px)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '28px',
+                height: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: currentIndex === totalInGroup - 1 ? 'default' : 'pointer',
+                opacity: currentIndex === totalInGroup - 1 ? 0.4 : 1,
+                boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+              }}
+            >
+              ›
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Content Section */}
+      {/* Card Content Details */}
       <div style={{ padding: '14px 18px 18px 18px' }}>
         <div
           style={{
@@ -109,12 +213,12 @@ export default function MarkerHoverCard({
         <div
           style={{
             display: 'flex',
-            justifyContent: 'space-between',
+            justify: 'space-between',
             alignItems: 'center',
             marginBottom: '8px',
           }}
         >
-          {/* Left: Heart + Count */}
+          {/* Heart + Count */}
           <div
             style={{
               fontSize: '13px',
@@ -161,15 +265,16 @@ export default function MarkerHoverCard({
                 />
               </g>
             </svg>
-            <span style={{ fontWeight: 600, color: '#1f1f1f' }}>{interestedUsersCount}</span>
+            <span style={{ fontWeight: 600, color: '#1f1f1f' }}>
+              {interestedUsersCount}
+            </span>
             <span>interested</span>
           </div>
 
-          {/* Right: Friends Initials Circles (Only shown if connected) */}
+          {/* Friends Initials Circles */}
           {isConnected && interestedFriends.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', pointerEvents: 'auto' }}>
               {interestedFriends.slice(0, 3).map((friend, index) => {
-                // Extract first 1 or 2 letters for initials
                 const initials = friend.name
                   .split(' ')
                   .map((n) => n[0])
@@ -180,7 +285,7 @@ export default function MarkerHoverCard({
                 return (
                   <div
                     key={friend.id}
-                    title={friend.name} // Shows full name on hover natively
+                    title={friend.name}
                     className="glassmorphism-element"
                     style={{
                       width: '26px',
@@ -188,6 +293,11 @@ export default function MarkerHoverCard({
                       cursor: 'pointer',
                       borderRadius: '50%',
                       marginLeft: index > 0 ? '-8px' : '0px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '11px',
+                      fontWeight: 600,
                     }}
                   >
                     {initials}
@@ -198,8 +308,12 @@ export default function MarkerHoverCard({
           )}
         </div>
 
-        <div style={{ fontSize: '13px', color: '#5f6368', marginBottom: '4px' }}>{category}</div>
+        {/* Category */}
+        <div style={{ fontSize: '13px', color: '#5f6368', marginBottom: '4px' }}>
+          {category}
+        </div>
 
+        {/* Opening Status */}
         <div style={{ fontSize: '13px' }}>
           <span style={{ fontWeight: 600, color: isOpen ? '#137333' : '#d93025' }}>
             {isOpen ? 'Open' : 'Closed'}
