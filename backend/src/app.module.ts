@@ -11,11 +11,18 @@ import { LoggerMiddleware } from './logger.middleware';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [HealthModule, PrismaModule, IngestionModule, EventsModule, UsersModule, MessagesModule, AuthModule],
+  imports: [
+    HealthModule,
+    PrismaModule,
+    IngestionModule,
+    EventsModule,
+    UsersModule,
+    MessagesModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('*');
