@@ -1,17 +1,23 @@
-FROM node:24-bookworm-slim
+FROM node:20-alpine
 
 WORKDIR /app
 
-# copie package.json et package-lock.json vers le conteneur
-COPY package*.json ./
+# Copy package files and the root prisma config file
+COPY package*.json prisma.config.ts* ./
 
+# Copy the prisma folder (schema, migrations, etc.)
 COPY prisma ./prisma
 
-# installe les dependances dans node_modules du conteneur
-RUN npm install
+# Install dependencies and OpenSSL/wget via Alpine package manager (apk)
+RUN apk add --no-cache openssl wget \
+    && npm install
 
+# Copy the rest of the application code
 COPY . .
 
 EXPOSE 3000
 
-CMD npx prisma generate && npm run start:dev
+CMD npx prisma generate && \
+    npx prisma migrate deploy && \
+    npm run build && \
+    npm run start:prod

@@ -1,34 +1,22 @@
 import { Controller, Get } from '@nestjs/common';
-import { HealthCheck, HealthCheckService, HealthIndicatorService } from '@nestjs/terminus';
-import { PrismaService } from '../prisma/prisma.service';
+import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
+import { PrismaHealthIndicator } from '../prisma/prisma.health';
+import { RedisHealthIndicator } from './redis.health';
 
-// Permet de voir dans /health que tout tourne
 @Controller('health')
 export class HealthController {
   constructor(
-    private health: HealthCheckService,
-    private prisma: PrismaService,
-    private healthIndicatorService: HealthIndicatorService
+    private readonly health: HealthCheckService,
+    private readonly prismaHealth: PrismaHealthIndicator,
+    private readonly redisHealth: RedisHealthIndicator
   ) {}
 
   @Get()
   @HealthCheck()
   readiness() {
     return this.health.check([
-      () => this.checkDatabase(),
-      // par la suite : () => this.checkRedis(), () => this.checkNginx(), etc.
+      () => this.prismaHealth.isHealthy('database'),
+      () => this.redisHealth.isHealthy('redis'),
     ]);
-  }
-
-  // Vérifie que la connexion à BDD Postgres fonctionne avec une query minimale
-  private async checkDatabase() {
-    const indicator = this.healthIndicatorService.check('database');
-
-    try {
-      await this.prisma.$queryRaw`SELECT 1`;
-      return indicator.up();
-    } catch (e) {
-      return indicator.down();
-    }
   }
 }

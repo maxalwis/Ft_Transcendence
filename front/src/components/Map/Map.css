@@ -1,0 +1,106 @@
+@import 'tailwindcss';
+
+.leaflet-control-attribution {
+  display: none;
+}
+
+/* Main zoom container container */
+.leaflet-control-zoom.leaflet-bar {
+  background: rgba(255, 103, 18, 0) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  border: 1px solid rgba(255, 103, 18, 0.3) !important;
+  border-radius: 16px !important;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 30px !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+/* Style the buttons (+ and -) inside */
+.leaflet-control-zoom.leaflet-bar a {
+  background: transparent !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255, 103, 18, 0.3) !important;
+  font-family: Roboto, Arial, sans-serif !important;
+}
+
+/* Remove bottom border on the last button */
+.leaflet-control-zoom.leaflet-bar a:last-child {
+  border-bottom: none !important;
+}
+
+/* Hover state */
+.leaflet-control-zoom.leaflet-bar a:hover {
+  background: rgba(255, 103, 18, 0.15) !important;
+}
+
+/* Style the buttons (+ and -) inside */
+.leaflet-control-zoom.leaflet-bar a {
+  background: transparent !important;
+  color: rgba(0, 20, 120, 0.5) !important;
+  border-bottom: 1px solid rgba(255, 103, 18, 0.3) !important;
+  font-family: Roboto, Arial, sans-serif !important;
+}
+
+.glassmorphism-popup {
+  background: rgba(255, 250, 244, 0.6);
+  border-radius: 16px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 30px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 103, 18, 0.3);
+  overflow: hidden;
+  pointer-events: auto;
+  font-family: Roboto, Arial, sans-serif;
+}
+
+.glassmorphism-element {
+  background-color: rgb(245, 246, 255);
+  color: rgb(31, 31, 31);
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(0, 20, 120, 0.5);
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 5px;
+}
+
+/* 1. Whole cluster pop (scale + opacity entry) */
+@keyframes clusterPopIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 2. Counter-only pop (quick scale bump for existing clusters) */
+@keyframes counterPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.45);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Utility classes */
+.cluster-pop-animation {
+  animation: clusterPopIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.counter-pop-animation {
+  display: inline-block;
+  animation: counterPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}

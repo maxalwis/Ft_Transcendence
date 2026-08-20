@@ -1,15 +1,30 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module.js';
+import { ValidationPipe, Logger } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { AppModule } from './app.module';
+import { AppLogger } from './logger/app-logger.service';
 
 async function bootstrap() {
+  const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: true, // Accepte n'importe quelle adresse hôte/port en dev
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    origin: 'http://localhost:8080',
     credentials: true,
   });
 
-  await app.listen(process.env.PORT ?? 3000);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      enableDebugMessages: true,
+    })
+  );
+
+  app.enableShutdownHooks();
+
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
+  logger.log(`Server is running on http://localhost:${port}`);
 }
 bootstrap();
