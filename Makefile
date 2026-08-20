@@ -1,4 +1,6 @@
-.PHONY: all up logs down clean fclean re restart
+.PHONY: all up logs down clean fclean build check-env re restart test test-unit test-health test-e2e prepare-socket elk
+export CONTAINERS_REGISTRIES_CONF = $(shell pwd)/.containers/registries.conf
+export PODMAN_COMPOSE_WARNING_LOGS=0
 
 all: up
 
@@ -18,6 +20,10 @@ up: check-env
 
 down:
 	podman compose down
+
+elk: check-env
+	podman compose --profile elk up -d --build
+	podman compose logs -f
 
 clean:
 	podman compose down -v

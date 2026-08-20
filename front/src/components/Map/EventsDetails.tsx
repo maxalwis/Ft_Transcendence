@@ -50,11 +50,11 @@ export function EventsDetails({
 }: EventsDetailsProps) {
   // Check if there is enough space above the marker to show the popup
   const isFlippedDownward = useMemo(() => {
-    return position.y - CARD_HEIGHT < 20; // 20px padding safety threshold from top of viewport
+    return position.y - CARD_HEIGHT < 75; // 75px padding safety threshold from top of viewport
   }, [position.y]);
 
   // Adjust top offset and transform origin based on orientation
-  const topPos = isFlippedDownward ? position.y + 15 : position.y - 15;
+  const topPos = isFlippedDownward ? position.y : position.y - 60;
   const transformOrigin = isFlippedDownward ? 'top center' : 'bottom center';
   const animationName = isFlippedDownward ? 'markerPopupAnimationDown' : 'markerPopupAnimationUp';
 

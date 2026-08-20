@@ -135,7 +135,7 @@ services:
         condition: service_healthy
     networks:
       - transcendence_network
-    command: ['sh', '-c', 'npm install && npm run dev -- --host 0.0.0.0']
+    command: ['sh', '-c', 'npm run dev -- --host 0.0.0.0']
 
   prisma-studio:
     image: localhost/transcendence_backend:latest
@@ -185,7 +185,9 @@ services:
       retries: 5
       start_period: 20s
     logging:
-      driver: none
+      driver: 'json-file'
+    profiles:
+      - 'elk'
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.11.3
@@ -205,7 +207,9 @@ services:
     networks:
       - transcendence_network
     logging:
-      driver: none
+      driver: 'json-file'
+    profiles:
+      - 'elk'
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.11.3
@@ -213,9 +217,10 @@ services:
     restart: unless-stopped
     environment:
       - ELASTIC_APM_ACTIVE=false
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTIC_APM_LOG_LEVEL=off
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     volumes:
-      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:z
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
     ports:
       - '5601:5601'
     depends_on:
@@ -224,25 +229,30 @@ services:
     networks:
       - transcendence_network
     logging:
-      driver: none
+      driver: 'json-file'
+    profiles:
+      - 'elk'
 
   kibana-setup:
     image: docker.io/curlimages/curl:latest
     container_name: kibana_setup
     depends_on:
       kibana:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - ./kibana/scripts/setup.sh:/usr/local/bin/setup.sh:z
     networks:
       - transcendence_network
     command: >
       sh -c "
+        apk add --no-cache curl &&
         chmod +x /usr/local/bin/setup.sh &&
         /usr/local/bin/setup.sh
       "
     logging:
-      driver: none
+      driver: 'json-file'
+    profiles:
+      - 'elk'
 
 volumes:
   postgres_data:
