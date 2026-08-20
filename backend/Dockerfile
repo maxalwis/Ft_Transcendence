@@ -1,4 +1,4 @@
-FROM node:24-bookworm-slim
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -8,14 +8,16 @@ COPY package*.json prisma.config.ts* ./
 # Copy the prisma folder (schema, migrations, etc.)
 COPY prisma ./prisma
 
-# Install dependencies and openssl
-RUN npm install \
-    && apt-get update \
-    && apt-get install -y openssl
+# Install dependencies and OpenSSL/wget via Alpine package manager (apk)
+RUN apk add --no-cache openssl wget \
+    && npm install
 
 # Copy the rest of the application code
 COPY . .
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && exec npm run start:dev"]
+CMD npx prisma generate && \
+    npx prisma migrate deploy && \
+    npm run build && \
+    npm run start:prod
