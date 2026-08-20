@@ -230,7 +230,7 @@ services:
       - transcendence_network
 
   kibana-setup:
-    image: curlimages/curl:latest
+    image: docker.io/curlimages/curl:latest
     container_name: kibana_setup
     depends_on:
       kibana:
