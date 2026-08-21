@@ -2,14 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
+import { AppLogger } from './logger/app-logger.service';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: true, 
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    origin: 'http://localhost:8080',
     credentials: true,
   });
 
@@ -27,5 +27,4 @@ async function bootstrap() {
   await app.listen(port);
   logger.log(`Server is running on http://localhost:${port}`);
 }
-
 bootstrap();

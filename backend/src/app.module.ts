@@ -8,8 +8,8 @@ import { IngestionModule } from './ingestion/ingestion.module';
 import { EventsModule } from './events/events.module';
 import { UsersModule } from './users/users.module';
 import { MessagesModule } from './messages/messages.module';
-import { FriendsModule } from './friends/friends.module';
 import { LoggerMiddleware } from './logger.middleware';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [

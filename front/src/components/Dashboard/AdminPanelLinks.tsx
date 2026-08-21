@@ -34,7 +34,7 @@ const dashboards: DashboardLink[] = [
     ),
   },
   {
-    name: 'Kibana',
+    name: 'Elasticsearch',
     url: 'http://localhost:5601',
     description: 'Logs, analytics & dashboard workspace',
     icon: (
