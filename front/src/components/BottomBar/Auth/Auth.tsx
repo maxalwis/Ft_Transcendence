@@ -1,8 +1,8 @@
 export default function LoginButton()
 {
 	const handleLogin = () => {
-		window.location.href = `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/login/`;
-		// window.location.href = "http://localhost:5173/login";
+		// window.location.href = `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/login/`;
+		window.location.href = "http://localhost:5173/login";
 	};
 
 	return (

@@ -4,6 +4,7 @@ import LoginPage from './components/BottomBar/Auth/LoginPage';
 import MyMap from './components/Map/MyMap';
 import { AdminPanelLinks } from './components/Dashboard/AdminPanelLinks';
 import { NotificationProvider } from './components/Context/NotificationContext';
+import RegisterPage from './components/BottomBar/Auth/RegisterPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<MyMap />} />
 				<Route path="/login" element={<LoginPage />} />
+				<Route path="/register" element={<RegisterPage />} />
 			</Routes>
 			</div>
 

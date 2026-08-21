@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { SubmitEvent } from 'react';
-import { useNavigate } from "react-router-dom";
 
 export default function LoginPage()
 {
@@ -20,9 +19,14 @@ export default function LoginPage()
 		window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-eafc486920117f3b35ec72b7d5397bd65f1a26b0a04ba905103413815298e2f7&redirect_uri=https%3A%2F%2Flocalhost%3A8443&response_type=code";
 	};
 
-	const navigate = useNavigate();
-	const gohome = () => {
-		navigate(-1);
+	const home = () => {
+		window.location.href = `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/`;
+		// window.location.href = "http://localhost:5173/";
+	};
+
+	const register = () => {
+		window.location.href = `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/register/`;
+		// window.location.href = "http://localhost:5173/register";
 	};
 
 	return (
@@ -75,10 +79,18 @@ export default function LoginPage()
 				</button>
 				<button
 					className='glassmorphism-popup hover:scale-3d ease-in p-2 h-11 w-11 cursor-pointer flex justify-center items-center'
-					onClick={gohome}>
+					onClick={home}>
 					<img
 						src="https://img.icons8.com/?size=25&id=83326&format=png&color=000000">
 					</img>
+				</button>
+			</div>
+			<div className='flex items-center justify-center gap-2 text-sm pt-4'>
+				No account ?
+				<button
+					className='flex items-center justify-center hover:underline cursor-pointer text-sm text-amber-600'
+					onClick={register}>
+						Create an account
 				</button>
 			</div>
 
