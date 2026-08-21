@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { PendingRequest } from '../../../api/friends';
 import { acceptFriendRequest } from '../../../api/friends';
 
-export type FriendsRequestsProps = {
+type FriendsRequestsProps = {
   requests: PendingRequest[];
   onDataChanged: () => void;
 };
@@ -10,48 +10,48 @@ export type FriendsRequestsProps = {
 export default function FriendsRequests({ requests, onDataChanged }: FriendsRequestsProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const acceptRequest = async (senderId: number) => {
-    setErrorMsg(null);
+  const handleAccept = async (senderId: number) => {
     try {
       await acceptFriendRequest(senderId);
       onDataChanged();
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Erreur lors de l'acceptation.");
+      setErrorMsg(err instanceof Error ? err.message : "Erreur lors de l'acceptation");
     }
   };
 
-  const rejectRequest = (senderId: number) => {
-    // TODO: appeler rejectFriendRequest(senderId) une fois l'endpoint ajouté côté backend
-  };
+  if (!requests || requests.length === 0) {
+    return (
+      <div className="p-3 text-xs text-slate-400 italic text-center">
+        Aucune demande d'ami en attente.
+      </div>
+    );
+  }
 
   return (
-    <div>
-      {errorMsg && <p className="text-xs text-red-500 px-2 pb-1">{errorMsg}</p>}
-      <ul className="mt-2 space-y-1">
-        {requests.map((request) => (
-          <li
-            key={request.sender.id}
-            className="flex items-center justify-between px-2 py-2 text-sm text-black"
-          >
-            <span>{request.sender.name}</span>
+    <div className="flex flex-col gap-2 p-2">
+      {errorMsg && <p className="text-xs text-red-500">{errorMsg}</p>}
+      {requests.map((req: any) => {
+        // Extraction sécurisée du nom du demandeur (sender)
+        const displayName =
+          req.sender?.name || req.senderName || req.name || `Utilisateur #${req.senderId || req.id}`;
+        const targetId = req.senderId || req.sender?.id || req.id;
 
-            <div className="flex gap-2 absolute right-11">
-              <button
-                className="cursor-pointer border border-green-500 hover:text-white hover:bg-green-600 rounded-lg p-1"
-                onClick={() => acceptRequest(request.sender.id)}
-              >
-                Accept
-              </button>
-              <button
-                className="cursor-pointer border border-red-500 hover:text-white hover:bg-red-600 rounded-lg p-1 bg"
-                onClick={() => rejectRequest(request.sender.id)}
-              >
-                Reject
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+        return (
+          <div
+            key={req.id || targetId}
+            className="flex items-center justify-between gap-2 rounded-lg bg-white/10 px-3 py-2 text-sm text-black"
+          >
+            <span className="font-medium">{displayName}</span>
+            <button
+              type="button"
+              onClick={() => handleAccept(targetId)}
+              className="px-2 py-1 text-xs bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer"
+            >
+              Accept
+            </button>
+          </div>
+        );
+      })}
     </div>
   );
 }

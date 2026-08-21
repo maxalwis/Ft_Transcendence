@@ -37,9 +37,10 @@ export default function Friends() {
     if (isOpen) loadData();
   }, [isOpen]);
 
-  if (!isOpen)
-    return (
-      <div className="fixed flex flex-col bottom-1 left-1 z-1000">
+  return (
+    <div className="fixed bottom-1 left-1 z-1000 flex items-end gap-1">
+      {/* Bouton Friends initial (affiché quand fermé) */}
+      {!isOpen && (
         <button
           className="glassmorphism-popup p-2 cursor-pointer hover:bg-sky-900! hover:text-white duration-500 active:scale-70"
           onClick={() => {
@@ -49,21 +50,23 @@ export default function Friends() {
         >
           Friends
         </button>
-      </div>
-    );
+      )}
 
-  return (
-    <div className="fixed bottom-1 left-1 z-1000 flex items-end gap-1">
-      <FriendsSidebar
-        action={action}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        friends={friends}
-        requests={requests}
-        errorMsg={errorMsg}
-        onDataChanged={loadData}
-      />
-      <FriendsButton setAction={setAction} />
+      {/* Interface complète d'amis (affichée quand ouvert) */}
+      {isOpen && (
+        <>
+          <FriendsSidebar
+            action={action}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            friends={friends}
+            requests={requests}
+            errorMsg={errorMsg}
+            onDataChanged={loadData}
+          />
+          <FriendsButton setAction={setAction} />
+        </>
+      )}
     </div>
   );
 }

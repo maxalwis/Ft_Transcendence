@@ -100,6 +100,7 @@ const DropdownMenu: React.FC = () => {
             {dashboards.map((tool) => (
               <button
                 key={tool.name}
+                type="button"
                 onClick={() => window.open(tool.url, '_blank')}
                 className="flex items-center gap-3 p-2 rounded-xl bg-white/40 hover:bg-white/80 border border-blue-400/30 hover:border-blue-400/60 transition-all text-left group"
               >
@@ -142,7 +143,10 @@ export const AdminPanelLinks: React.FC = () => {
     topLeftContainer.appendChild(controlDiv);
 
     return () => {
-      root.unmount();
+      // ✅ FIX : Démontage asynchrone pour éviter l'erreur de rendu React
+      queueMicrotask(() => {
+        root.unmount();
+      });
       controlDiv.remove();
     };
   }, []);

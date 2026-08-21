@@ -1,4 +1,9 @@
-import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -10,43 +15,55 @@ export class FriendsService {
       throw new BadRequestException('Vous ne pouvez pas vous ajouter vous-même.');
     }
 
-    try {
-      return await this.prisma.friendship.create({
-        data: {
-          senderId,
-          receiverId,
-        },
-      });
-    } catch (error: any) {
-      if (error?.code === 'P2002') {
-        throw new ConflictException('Une demande a déjà été envoyée à cet utilisateur.');
-      }
-      throw error;
+    // 1. Vérifier que le destinataire existe
+    const receiver = await this.prisma.user.findUnique({
+      where: { id: receiverId },
+    });
+    if (!receiver) {
+      throw new NotFoundException('Utilisateur introuvable.');
     }
+
+    // 2. Vérifier si une demande ou amitié existe déjà
+    const existing = await this.prisma.friendship.findFirst({
+      where: {
+        OR: [
+          { senderId: senderId, receiverId: receiverId },
+          { senderId: receiverId, receiverId: senderId },
+        ],
+      },
+    });
+
+    if (existing) {
+      throw new ConflictException('Une demande ou une amitié existe déjà.');
+    }
+
+    // 3. Créer la demande en attente
+    return this.prisma.friendship.create({
+      data: {
+        senderId: senderId,
+        receiverId: receiverId,
+        status: 'PENDING',
+      },
+    });
   }
 
   async acceptFriendRequest(senderId: number, receiverId: number) {
-    return this.prisma.friendship.update({
+    const pendingRequest = await this.prisma.friendship.findFirst({
       where: {
-        senderId_receiverId: { senderId, receiverId },
+        senderId: senderId,
+        receiverId: receiverId,
+        status: 'PENDING',
       },
+    });
+
+    if (!pendingRequest) {
+      throw new NotFoundException('Aucune demande d’ami en attente trouvée.');
+    }
+
+    return this.prisma.friendship.update({
+      where: { id: pendingRequest.id },
       data: { status: 'ACCEPTED' },
     });
-  }
-
-  async getUserFriends(userId: number) {
-    const friendships = await this.prisma.friendship.findMany({
-      where: {
-        status: 'ACCEPTED',
-        OR: [{ senderId: userId }, { receiverId: userId }],
-      },
-      include: {
-        sender: { select: { id: true, name: true, avatar: true, status: true } },
-        receiver: { select: { id: true, name: true, avatar: true, status: true } },
-      },
-    });
-
-    return friendships.map((f) => (f.senderId === userId ? f.receiver : f.sender));
   }
 
   async getPendingRequests(userId: number) {
@@ -56,14 +73,22 @@ export class FriendsService {
         status: 'PENDING',
       },
       include: {
-        sender: {
-          select: {
-            id: true,
-            name: true,
-            avatar: true,
-            status: true,
-          },
-        },
+        sender: true,
+      },
+    });
+  }
+
+  async getUserFriends(userId: number) {
+    return this.prisma.friendship.findMany({
+      where: {
+        OR: [
+          { senderId: userId, status: 'ACCEPTED' },
+          { receiverId: userId, status: 'ACCEPTED' },
+        ],
+      },
+      include: {
+        sender: true,
+        receiver: true,
       },
     });
   }
