@@ -22,10 +22,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       {/* Renders once at top-left, shifted to left-14 to clear your 30px button */}
       {errorMessage && (
         <div className="fixed top-4 left-14 z-50 pointer-events-auto">
-          <WarningNotification
-            message={errorMessage}
-            onClose={clearNotification}
-          />
+          <WarningNotification message={errorMessage} onClose={clearNotification} />
         </div>
       )}
     </NotificationContext.Provider>

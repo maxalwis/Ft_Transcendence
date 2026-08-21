@@ -1,16 +1,18 @@
 import FriendsList from './FriendsList';
-import type { FriendAction } from './Friends';
-import type { OpenState } from './Friends';
+import type { FriendAction, OpenState } from './Friends';
+import type { User, PendingRequest } from '../../api/friends';
 import FriendsSearchBar from './FriendsSearchBar';
 import { useState } from 'react';
 import FriendsRequests from './Functionalities/FriendRequests';
 
 type FriendsSidebarProps = OpenState & {
   action: FriendAction;
-  friends: string[];
-  setFriends: React.Dispatch<React.SetStateAction<string[]>>;
-  requests: string[];
-  setRequests: React.Dispatch<React.SetStateAction<string[]>>;
+  friends: User[];
+  requests: PendingRequest[];
+  errorMsg: string | null;
+  onDataChanged: () => void;
+  /*   setFriends: React.Dispatch<React.SetStateAction<string[]>>;
+  setRequests: React.Dispatch<React.SetStateAction<string[]>>; */
 };
 
 export default function FriendsSidebar({
@@ -18,14 +20,16 @@ export default function FriendsSidebar({
   isOpen,
   setIsOpen,
   friends,
-  setFriends,
   requests,
-  setRequests,
+  errorMsg,
+  onDataChanged,
+  /*   setFriends,
+  setRequests, */
 }: FriendsSidebarProps) {
   const [input, setInput] = useState('');
 
   const filteredFriends = friends.filter((friend) => {
-    return friend.toLowerCase().startsWith(input.toLowerCase());
+    return friend.name.toLowerCase().startsWith(input.toLowerCase());
   });
 
   let borderClass = '';
@@ -59,17 +63,19 @@ export default function FriendsSidebar({
         <div className="flex-1 overflow-y-auto pr-10">
           {action === 'request' ? (
             <FriendsRequests
-              setFriends={setFriends}
               requests={requests}
-              setRequests={setRequests}
+              onDataChanged={onDataChanged}
+              /* setFriends={setFriends}
+              setRequests={setRequests} */
             />
           ) : (
             <FriendsList
               friends={filteredFriends}
               action={action}
-              setFriends={setFriends}
               input={input}
               setInput={setInput}
+              onDataChanged={onDataChanged}
+              /* setFriends={setFriends} */
             />
           )}
         </div>

@@ -1,6 +1,8 @@
 import FriendsButton from './FriendsButton';
 import FriendsSidebar from './FriendsSidebar';
-import { useState } from 'react';
+import { getFriends, getPendingRequests } from '../../api/friends';
+import type { User, PendingRequest } from '../../api/friends';
+import { useState, useEffect } from 'react';
 
 export type FriendAction = 'default' | 'add' | 'remove' | 'request';
 
@@ -16,8 +18,24 @@ export type OpenState = {
 export default function Friends() {
   const [action, setAction] = useState<FriendAction>('default');
   const [isOpen, setIsOpen] = useState(false);
-  const [friends, setFriends] = useState(['Alice', 'Bob', 'Charlie', 'Max', 'Flav']);
-  const [requests, setRequests] = useState(['Diana', 'Evan']);
+  const [friends, setFriends] = useState<User[]>([]);
+  const [requests, setRequests] = useState<PendingRequest[]>([]);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const loadData = async () => {
+    try {
+      const [friendsList, pendingList] = await Promise.all([getFriends(), getPendingRequests()]);
+      setFriends(friendsList);
+      setRequests(pendingList);
+      setErrorMsg(null);
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Erreur de chargement.');
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) loadData();
+  }, [isOpen]);
 
   if (!isOpen)
     return (
@@ -41,9 +59,9 @@ export default function Friends() {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         friends={friends}
-        setFriends={setFriends}
         requests={requests}
-        setRequests={setRequests}
+        errorMsg={errorMsg}
+        onDataChanged={loadData}
       />
       <FriendsButton setAction={setAction} />
     </div>

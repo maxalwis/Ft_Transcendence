@@ -11,10 +11,10 @@ export class EventsController {
   findForMap(@Query() query: MapQueryDto) {
     return this.eventsService.findForMap(query.bbox, query.from, query.to);
   }
-  
+
   @Get('nearby')
-    findNearby(@Query() query: NearbyQueryDto) {
-      return this.eventsService.findNearby(query, query.from, query.to);
+  findNearby(@Query() query: NearbyQueryDto) {
+    return this.eventsService.findNearby(query, query.from, query.to);
   }
 
   @Get(':id')

@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 .leaflet-control-attribution {
-    display: none;
+  display: none;
 }
 
 /* Main zoom container container */

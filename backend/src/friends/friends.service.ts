@@ -1,5 +1,5 @@
 import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class FriendsService {
@@ -7,7 +7,7 @@ export class FriendsService {
 
   async sendFriendRequest(senderId: number, receiverId: number) {
     if (senderId === receiverId) {
-      throw new BadRequestException("Vous ne pouvez pas vous ajouter vous-même.");
+      throw new BadRequestException('Vous ne pouvez pas vous ajouter vous-même.');
     }
 
     try {
@@ -19,7 +19,7 @@ export class FriendsService {
       });
     } catch (error: any) {
       if (error?.code === 'P2002') {
-        throw new ConflictException("Une demande a déjà été envoyée à cet utilisateur.");
+        throw new ConflictException('Une demande a déjà été envoyée à cet utilisateur.');
       }
       throw error;
     }
@@ -41,8 +41,8 @@ export class FriendsService {
         OR: [{ senderId: userId }, { receiverId: userId }],
       },
       include: {
-        sender: { select: { id: true, username: true, avatar: true, status: true } },
-        receiver: { select: { id: true, username: true, avatar: true, status: true } },
+        sender: { select: { id: true, name: true, avatar: true, status: true } },
+        receiver: { select: { id: true, name: true, avatar: true, status: true } },
       },
     });
 
@@ -59,7 +59,7 @@ export class FriendsService {
         sender: {
           select: {
             id: true,
-            username: true,
+            name: true,
             avatar: true,
             status: true,
           },

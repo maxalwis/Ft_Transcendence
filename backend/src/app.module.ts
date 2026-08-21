@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
-import { PrismaModule } from './prisma/prisma.module.js';
-import { FriendsModule } from './friends/friends.module.js';
-
-@Module({
-  imports: [
-    PrismaModule,
-    FriendsModule,
-=======
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
@@ -20,6 +8,7 @@ import { IngestionModule } from './ingestion/ingestion.module';
 import { EventsModule } from './events/events.module';
 import { UsersModule } from './users/users.module';
 import { MessagesModule } from './messages/messages.module';
+import { FriendsModule } from './friends/friends.module';
 import { LoggerMiddleware } from './logger.middleware';
 
 @Module({
@@ -31,19 +20,13 @@ import { LoggerMiddleware } from './logger.middleware';
     EventsModule,
     UsersModule,
     MessagesModule,
->>>>>>> dev
+    FriendsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-<<<<<<< HEAD
-export class AppModule {}
-=======
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware)
-      .forRoutes({ path: '*path', method: RequestMethod.ALL });
+    consumer.apply(LoggerMiddleware).forRoutes({ path: '*path', method: RequestMethod.ALL });
   }
 }
->>>>>>> dev

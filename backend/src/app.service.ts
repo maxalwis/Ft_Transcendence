@@ -51,12 +51,14 @@ export class AppService implements OnApplicationBootstrap, OnApplicationShutdown
       const userCount = await this.prisma.user.count();
 
       if (userCount > 0) {
-        this.logger.log(`Database already contains ${userCount} user(s). Skipping default user creation.`);
+        this.logger.log(
+          `Database already contains ${userCount} user(s). Skipping default user creation.`
+        );
         return;
       }
 
       this.logger.log('No users found. Creating default test user...');
-      
+
       const defaultUser = await this.prisma.user.create({
         data: {
           name: 'Test User',
@@ -64,7 +66,9 @@ export class AppService implements OnApplicationBootstrap, OnApplicationShutdown
         },
       });
 
-      this.logger.log(`Default user created successfully (ID: ${defaultUser.id}, Email: ${defaultUser.email})`);
+      this.logger.log(
+        `Default user created successfully (ID: ${defaultUser.id}, Email: ${defaultUser.email})`
+      );
     } catch (error) {
       this.logger.error(`Failed to create default user: ${error.message}`);
     }

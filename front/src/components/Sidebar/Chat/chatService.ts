@@ -18,7 +18,7 @@ export async function sendEventMessage(eventId: string, content: string, userId:
     const message = Array.isArray(errorData?.message)
       ? errorData.message.join(', ')
       : errorData?.message || 'Failed to send message';
-      
+
     throw new Error(message);
   }
 
