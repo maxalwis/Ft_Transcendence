@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import type { FriendAction } from './Friends';
 import type { User } from '../../api/friends';
 import { sendFriendRequest } from '../../api/friends';
