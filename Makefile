@@ -10,7 +10,7 @@ logs:
 
 check-env:
 ifeq (,$(wildcard .env))
-	@echo "Error: .env file not found! Please create one from your example file."
+	@printf "\033[41;37m ERROR \033[0m .env file not found! Please create one from your example file.\n"
 	@exit 1
 endif
 

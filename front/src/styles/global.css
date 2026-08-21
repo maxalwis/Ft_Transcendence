@@ -1,0 +1,104 @@
+@import "tailwindcss";
+@import "./variables.css";
+
+/* Base Elements */
+button {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-blue-dark);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+    background: var(--color-orange-hover) !important;
+}
+
+span {
+    color: var(--color-blue-dark);
+    font-family: var(--font-main);
+    font-size: var(--font-size-base);
+}
+
+/* Base Glass Panels */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--color-orange-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glass-shadow);
+    overflow: hidden;
+    pointer-events: auto;
+}
+
+.glass-blue {
+    background-color: var(--color-blue-glass-bg);
+    color: var(--color-text-dark);
+    border: 2px solid var(--color-blue-dark);
+}
+
+/* Icon Overrides */
+.menu-dots-icon svg {
+    color: var(--color-blue-dark) !important;
+    margin: 6px 0 0 6px;
+}
+
+.menu-dots-icon:hover {
+    background: var(--color-orange-hover) !important;
+}
+
+/* Animations */
+@keyframes glassPopupSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-10px) scale(0.85);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes clusterPopIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    70% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes counterPop {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.45);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.glassmorphism-animate-in {
+    animation: glassPopupSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.counter-pop-animation {
+    display: inline-block;
+    animation: counterPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}

@@ -10,3 +10,17 @@ export interface EventItem {
   isNew?: boolean;
   interestedUsersCount?: number;
 }
+
+export interface EventGroup {
+  id: string; // Spatial key `${lat.toFixed(4)},${lng.toFixed(4)}`
+  latitude: number;
+  longitude: number;
+  events: EventItem[];
+}
+
+export type EventFilters = {
+  city: string;
+  startDate: string;
+  endDate: string;
+  priceType: string;
+}
