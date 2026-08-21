@@ -1,58 +1,50 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from 'react';
 
-type Message = {
-	id: number;
-	user: string;
-	text: string;
-};
+export default function MessageInput({ onSend }: { onSend: (text: string) => void }) {
+  const [input, setInput] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-type MessageInputProps = {
-	messages: Message[];
-	setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-};
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
+    }
+  }, [input]);
 
-export default function MessageInput({messages,setMessages}: MessageInputProps)
-{
-	const [input, setInput] = useState("");
+  const handleSend = () => {
+    if (!input.trim()) return;
+    onSend(input.trim());
+    setInput('');
+    if (textareaRef.current) textareaRef.current.style.height = 'auto';
+  };
 
-	const handleSend = () => {
-		if (input.trim() === "")
-			return;
-
-		setMessages([
-			...messages,
-			{
-				id: messages.length + 1,
-				text: input,
-				user: "Moi",
-			},
-		]);
-		setInput("");
-	};
-
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-		if (e.key === "Enter" && !e.shiftKey) {
-			e.preventDefault();
-			handleSend();
-		}
-	};
-
-	return (
-		<div className="flex w-full gap-1">
-			<textarea
-				className="bg-teal-100 p-1 border border-r-gray-800 text-sm w-full outline-none resize-none rounded-2xl"
-				placeholder="Type a message"
-				maxLength={150}
-				value={input}
-				onChange={(e) => setInput(e.target.value)}
-				onKeyDown={handleKeyDown}>
-			</textarea>
-			<button
-				type="button"
-				className="bg-teal-200 cursor-pointer text-sm rounded-4xl size-8 border border-r-gray-800 self-center"
-				onClick={handleSend}>
-					⬆️
-			</button>
-		</div>
-	);
+  return (
+    <div className="relative flex w-full items-end">
+      <textarea
+        ref={textareaRef}
+        rows={1}
+        className="glassmorphism-element w-full resize-none rounded-3xl py-2 pl-4 pr-12 text-sm outline-none border border-gray-700/50 focus:border-gray-500 transition-all shadow-sm leading-relaxed overflow-y-auto text-white"
+        placeholder="Type a message..."
+        maxLength={150}
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
+          }
+        }}
+      />
+      {input.trim().length > 0 && (
+        <button
+          type="button"
+          className="absolute right-2 bottom-2 flex w-7 cursor-pointer items-center justify-center rounded-full bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-xs"
+          onClick={handleSend}
+        >
+          ➤
+        </button>
+      )}
+    </div>
+  );
 }
