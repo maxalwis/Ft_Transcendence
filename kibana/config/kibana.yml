@@ -1,0 +1,11 @@
+server.name: kibana
+server.host: "0.0.0.0"
+elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+
+# Silence background telemetry tasks causing field deprecation warnings
+telemetry.enabled: false
+telemetry.optIn: false
+telemetry.allowChangingOptInStatus: false
+
+# Lock down global logging root to errors only (silencing info/startup clutter)
+logging.root.level: error

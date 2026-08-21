@@ -12,6 +12,15 @@ export async function sendEventMessage(eventId: string, content: string, userId:
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content, userId }),
   });
-  if (!res.ok) throw new Error('Failed to send message');
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    // Extracts NestJS "message" string or array, or falls back to status text
+    const message = Array.isArray(errorData?.message)
+      ? errorData.message.join(', ')
+      : errorData?.message || 'Failed to send message';
+      
+    throw new Error(message);
+  }
+
   return res.json();
 }

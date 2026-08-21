@@ -1,8 +1,8 @@
 import { Transform, Type } from 'class-transformer';
 import { BadRequestException } from '@nestjs/common';
 import { IsDefined, IsNumber, IsPositive, Max, IsOptional, IsISO8601 } from 'class-validator';
-import { BoundingBox } from './bounding-box.interface';
-import { CenterPoint } from './center-point.interface';
+import type { BoundingBox } from './bounding-box.interface';
+import type { CenterPoint } from './center-point.interface';
 
 // Parse et valide "minLon,minLat,maxLon,maxLat" reçu en query param
 export class MapQueryDto {
