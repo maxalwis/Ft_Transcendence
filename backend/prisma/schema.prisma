@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-
-generator client {
-  provider     = "prisma-client"
-  output       = "../generated/prisma"
-  moduleFormat = "cjs"
-=======
 datasource db {
   provider   = "postgresql"
   extensions = [postgis, postgis_topology, postgis_tiger_geocoder, fuzzystrmatch]
@@ -17,7 +10,18 @@ generator client {
   generatedFileExtension = "ts"
   importFileExtension    = "js"
   previewFeatures        = ["postgresqlExtensions"]
->>>>>>> dev
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+}
+
+enum UserStatus {
+  OFFLINE
+  ONLINE
+  IN_GAME
 }
 
 model Event {
@@ -51,10 +55,18 @@ model Event {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String?
-  messages Message[]
+  id        Int        @id @default(autoincrement())
+  username  String?    @unique
+  email     String     @unique
+  name      String?
+  avatar    String?
+  status    UserStatus @default(OFFLINE)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  messages            Message[]
+  sentFriendships     Friendship[] @relation("SentFriendships")
+  receivedFriendships Friendship[] @relation("ReceivedFriendships")
 }
 
 model Message {
@@ -65,31 +77,6 @@ model Message {
   eventId   String
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
-}
-
-enum FriendshipStatus {
-  PENDING
-  ACCEPTED
-  BLOCKED
-}
-
-enum UserStatus {
-  OFFLINE
-  ONLINE
-  IN_GAME
-}
-
-model User {
-  id        Int        @id @default(autoincrement())
-  username  String     @unique
-  email     String     @unique
-  avatar    String?
-  status    UserStatus @default(OFFLINE)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
-  sentFriendships     Friendship[] @relation("SentFriendships")
-  receivedFriendships Friendship[] @relation("ReceivedFriendships")
 }
 
 model Friendship {
