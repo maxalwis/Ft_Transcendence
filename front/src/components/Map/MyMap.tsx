@@ -17,7 +17,6 @@ import NavBar from '../NavBar/NavBar.tsx';
 import Filters from '../Filters/Filters.tsx';
 import BottomBar from '../BottomBar/BottomBar.tsx';
 
-
 const idfBounds = new L.LatLngBounds([48.65, 1.95], [49.05, 2.75]);
 
 // 1. Move static cluster radius logic outside component so reference remains identical across renders
@@ -87,11 +86,32 @@ function MapEventsHandler({
   return null;
 }
 
+// Interface pour typer vos events si ce n'est pas déjà fait ailleurs
+interface EventItem {
+  id: string;
+  latitude: number;
+  longitude: number;
+  isNew?: boolean;
+  title: string;
+  category?: string;
+  dateEnd?: string;
+  interestedUsersCount?: number;
+  coverUrl?: string;
+}
+
 export default function MyMap() {
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
   const [events, setEvents] = useState<EventItem[]>([]);
+
+  // État local pour stocker les filtres actifs
+  const [filters, setFilters] = useState({
+    city: 'Paris',
+    startDate: '',
+    endDate: '',
+    priceType: '',
+  });
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -99,30 +119,40 @@ export default function MyMap() {
     return events.find((item) => item.id === hoveredMarkerId);
   }, [events, hoveredMarkerId]);
 
-  const fetchEventsForBbox = useCallback(async (bounds: L.LatLngBounds) => {
-    try {
-      const sw = bounds.getSouthWest();
-      const ne = bounds.getNorthEast();
+  const fetchEventsForBbox = useCallback(
+    async (bounds: L.LatLngBounds) => {
+      try {
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
 
-      // Truncate coordinates to 3 decimal places
-      const swLng = sw.lng.toFixed(3);
-      const swLat = sw.lat.toFixed(3);
-      const neLng = ne.lng.toFixed(3);
-      const neLat = ne.lat.toFixed(3);
+        // Truncate coordinates to 3 decimal places
+        const swLng = sw.lng.toFixed(3);
+        const swLat = sw.lat.toFixed(3);
+        const neLng = ne.lng.toFixed(3);
+        const neLat = ne.lat.toFixed(3);
 
-      // Combine into the format your DTO expects with cleaner numbers
-      const bboxString = `${swLng},${swLat},${neLng},${neLat}`;
+        const bboxString = `${swLng},${swLat},${neLng},${neLat}`;
 
-      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await fetch(`${baseUrl}/events/map?bbox=${encodeURIComponent(bboxString)}`);
+        // Construction dynamique des paramètres de l'URL avec les filtres
+        const params = new URLSearchParams({
+          bbox: bboxString,
+          ...(filters.startDate && { from: filters.startDate }),
+          ...(filters.endDate && { to: filters.endDate }),
+          ...(filters.priceType && { priceType: filters.priceType }),
+        });
 
-      if (!response.ok) throw new Error('Network response was not ok');
-      const data = await response.json();
-      setEvents(data);
-    } catch (err) {
-      console.error('Failed to fetch map events:', err);
-    }
-  }, []);
+        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const response = await fetch(`${baseUrl}/events/map?${params.toString()}`);
+
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        setEvents(data);
+      } catch (err) {
+        console.error('Failed to fetch map events:', err);
+      }
+    },
+    [filters] // Dépendance sur 'filters' pour refetcher automatiquement quand ils changent
+  );
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -165,7 +195,7 @@ export default function MyMap() {
           spiderfyOnMaxZoom={true}
           showCoverageOnHover={false}
           // 3. Delegate cluster animation state calculation internally to createClusterIcon
-          iconCreateFunction={(cluster) => createClusterIcon(cluster)}
+          iconCreateFunction={(cluster: any)=> createClusterIcon(cluster)}
         >
           {events.map((event) => {
             const isHovered = hoveredMarkerId === event.id;
@@ -224,10 +254,13 @@ export default function MyMap() {
           }}
         />
       )}
-	<Friends></Friends>
-	<Filters></Filters>
-	<NavBar></NavBar>
-	<BottomBar></BottomBar>
+
+      <Friends />
+      {/* On transmet la fonction de mise à jour au composant Filters */}
+      <Filters onApplyFilters={(newFilters) => setFilters(newFilters)} />
+      <NavBar />
+      <BottomBar />
+
       {activeSidebarEventId && (
         <MySidebar
           eventId={activeSidebarEventId}
