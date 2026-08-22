@@ -53,7 +53,7 @@ export default function FriendsList({
     }
   };
 
-  const handleRemoveFriend = async (friendId: number) => {
+  const handleRemoveFriend = async (_friendId: number) => {
     try {
       // TODO: appeler removeFriend(friendId) une fois l'endpoint DELETE ajouté côté backend
       onDataChanged();
