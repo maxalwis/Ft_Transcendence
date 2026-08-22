@@ -46,9 +46,9 @@ export const createMarkerIcon = (isHovered: boolean = false, isNew: boolean = fa
 
                 <path fill="url(#blueGlassBody)" 
                       stroke="url(#glassBorder)" 
-                      stroke-width="12" 
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeWidth="12" 
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M256 12C150.13 12 64 98.13 64 204c0 110.5 165.25 284.14 172.3 291.68a24 24 0 0 0 34.4 0C278.75 488.14 444 314.5 444 204C444 98.13 357.87 12 256 12z" />
 
                 <path fill="url(#glassReflection)" 
@@ -117,7 +117,7 @@ export const createGroupMarkerIcon = (
 
                 <path fill="url(#blueGlassBody)" 
                       stroke="url(#glassBorder)" 
-                      stroke-width="12" 
+                      ="12" 
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       d="M256 12C150.13 12 64 98.13 64 204c0 110.5 165.25 284.14 172.3 291.68a24 24 0 0 0 34.4 0C278.75 488.14 444 314.5 444 204C444 98.13 357.87 12 256 12z" />

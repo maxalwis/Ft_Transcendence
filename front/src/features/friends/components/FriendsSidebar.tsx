@@ -41,8 +41,8 @@ export default function FriendsSidebar({
 
   if (!shouldRender) return null;
 
-  const filteredFriends = friends.filter((friend) =>
-    friend.name.toLowerCase().includes(input.toLowerCase().trim())
+  const filteredFriends = (friends || []).filter((friend) =>
+    (friend?.name || '').toLowerCase().includes(input.toLowerCase().trim())
   );
 
   const handleClose = (e: React.MouseEvent) => {
@@ -104,33 +104,33 @@ export default function FriendsSidebar({
       </button>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto pt-10 px-3">
+      <div className="flex-1 overflow-y-auto pt-10">
         {action === 'menu' ? (
           <div className="flex flex-col gap-2 py-2">
             <button
               type="button"
-              className="border-blue-600 border-2 py-1.5 text-sm rounded-xl hover:bg-blue-600 hover:text-white cursor-pointer duration-150 font-medium"
+              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-blue-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('default')}
             >
               Search Friends
             </button>
             <button
               type="button"
-              className="border-orange-600 border-2 py-1.5 text-sm rounded-xl hover:bg-orange-600 hover:text-white cursor-pointer duration-150 font-medium"
+              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-orange-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('request')}
             >
               Pending Requests ({requests.length})
             </button>
             <button
               type="button"
-              className="border-green-600 border-2 py-1.5 text-sm rounded-xl hover:bg-green-600 hover:text-white cursor-pointer duration-150 font-medium"
+              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-green-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('add')}
             >
               Add a friend
             </button>
             <button
               type="button"
-              className="border-red-600 border-2 py-1.5 text-sm rounded-xl hover:bg-red-600 hover:text-white cursor-pointer duration-150 font-medium"
+              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-red-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('remove')}
             >
               Remove a friend

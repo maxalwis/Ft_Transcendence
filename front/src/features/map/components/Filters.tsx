@@ -94,7 +94,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
             </button>
 
             <h3
-              className="text-lg font-bold text-center border-b pb-2 pr-6"
+              className="text-lg font-bold text-center pb-2 pr-6"
               style={{ color: 'var(--color-blue-dark)', borderColor: 'var(--glass-border)' }}
             >
               Events Filters

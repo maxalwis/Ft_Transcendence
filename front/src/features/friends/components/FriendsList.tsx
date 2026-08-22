@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import type { FriendAction } from './Friends';
-import type { User, sendFriendRequest } from '../../../api/friends';
-import type { searchUsers, UserSearchResult } from '../../../api/users';
-import AddFriends from './AddFriends';
-import RemoveFriends from './RemoveFriends';
+import { sendFriendRequest } from '../../../api/friends';
+import type { User } from '../../../api/friends';
+import { searchUsers } from '../../../api/users';
+import type { UserSearchResult } from '../../../api/users';
 
 type FriendsListProps = {
   friends: User[];
@@ -14,7 +14,7 @@ type FriendsListProps = {
 };
 
 export default function FriendsList({
-  friends,
+  friends = [],
   action,
   input,
   setInput,
@@ -34,7 +34,7 @@ export default function FriendsList({
         setResults(found);
         setErrorMsg(null);
       } catch (err) {
-        setErrorMsg(err instanceof Error ? err.message : 'Erreur de recherche.');
+        setErrorMsg(err instanceof Error ? err.message : 'Searching error.');
       }
     }, 300);
 
@@ -47,9 +47,9 @@ export default function FriendsList({
       await sendFriendRequest(receiverId);
       setInput('');
       setResults([]);
-      onDataChanged(); // <--- AJOUTÉ : permet de recharger les données globales
+      onDataChanged();
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Erreur lors de l'envoi.");
+      setErrorMsg(err instanceof Error ? err.message : "Error during sending.");
     }
   };
 
@@ -58,7 +58,7 @@ export default function FriendsList({
       // TODO: appeler removeFriend(friendId) une fois l'endpoint DELETE ajouté côté backend
       onDataChanged();
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Erreur lors de la suppression.');
+      setErrorMsg(err instanceof Error ? err.message : 'Error during removal.');
     }
   };
 
@@ -70,9 +70,9 @@ export default function FriendsList({
           {results.map((user) => (
             <div
               key={user.id}
-              className="flex items-center justify-between px-3 py-2 border border-green-500 rounded-full text-sm text-black"
+              className="flex items-center justify-between px-3 py-2 rounded-full text-sm text-black"
             >
-              <span>{user.name}</span>
+              <span>{user?.name || 'Inconnu'}</span>
               <button
                 type="button"
                 onClick={() => handleAddFriend(user.id)}
@@ -89,7 +89,7 @@ export default function FriendsList({
         </div>
       )}
       {action !== 'add' &&
-        friends.map((friend) => (
+        (friends || []).map((friend) => (
           <div
             key={friend.id}
             className="flex items-center justify-between gap-3 rounded-lg bg-white/10 px-2 py-1 text-sm text-black"
@@ -97,19 +97,19 @@ export default function FriendsList({
             <div className="flex items-center gap-3">
               <div className="relative shrink-0">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600 text-xs font-semibold text-white">
-                  {friend.name.charAt(0)}
+                  {friend?.name?.charAt(0) || '?'}
                 </div>
                 <div
-                  className={`absolute bottom-0 right-0 ${
-                    friend.status === 'ONLINE'
+                  className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full ${
+                    friend?.status === 'ONLINE'
                       ? 'bg-green-500'
-                      : friend.status === 'IN_GAME'
+                      : friend?.status === 'IN_GAME'
                         ? 'bg-blue-500'
                         : 'bg-gray-400'
                   }`}
                 />
               </div>
-              <span>{friend.name}</span>
+              <span>{friend?.name || 'Inconnu'}</span>
             </div>
             {action === 'remove' && (
               <button
