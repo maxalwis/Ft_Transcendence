@@ -94,11 +94,15 @@ span {
     }
 }
 
-.glassmorphism-animate-in {
+.glass-animate-in {
     animation: glassPopupSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .counter-pop-animation {
     display: inline-block;
     animation: counterPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.leaflet-control-attribution.leaflet-control {
+    display: none !important;
 }

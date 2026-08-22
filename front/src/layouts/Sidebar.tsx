@@ -1,10 +1,6 @@
-<<<<<<< HEAD:front/src/components/Sidebar/Sidebar.tsx
-import { useState } from "react";
-import Chat from "./Chat/Chat";
-import Friends from "../Friends/Friends";
-=======
+import { useState } from 'react';
 import Chat from '../features/chat/components/Chat';
->>>>>>> 16cd49e ([FE] Rearranged files organization and unified css):front/src/layouts/Sidebar.tsx
+import Friends from '../features/friends/components/Friends';
 
 interface SideBarProps {
   onClose: () => void;
@@ -12,13 +8,9 @@ interface SideBarProps {
   currentUserId?: number;
 }
 
-<<<<<<< HEAD:front/src/components/Sidebar/Sidebar.tsx
-export default function MySidebar({ onClose, eventId, currentUserId }: MySidebarProps) {
+export default function SideBar({ onClose, eventId, currentUserId }: SideBarProps) {
   const [activeTab, setActiveTab] = useState<'chat' | 'friends'>('chat');
 
-=======
-export default function SideBar({ onClose, eventId, currentUserId }: SideBarProps) {
->>>>>>> 16cd49e ([FE] Rearranged files organization and unified css):front/src/layouts/Sidebar.tsx
   return (
     <div className="glass-panel fixed top-2 right-3 w-[20vw] h-[96.5vh] rounded-xl p-5 shadow-lg z-1000 flex flex-col">
       <div>

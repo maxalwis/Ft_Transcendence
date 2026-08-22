@@ -1,14 +1,9 @@
-import FriendsList from './FriendsList';
-import type { FriendAction, OpenState } from './Friends';
-import type { User, PendingRequest } from '../../api/friends';
-import FriendsSearchBar from './FriendsSearchBar';
-<<<<<<< HEAD:front/src/components/Friends/FriendsSidebar.tsx
 import { useState, useEffect } from 'react';
-import FriendsRequests from './Functionalities/FriendRequests';
-=======
-import { useState } from 'react';
+import FriendsList from './FriendsList';
 import FriendsRequests from './FriendRequests';
->>>>>>> 16cd49e ([FE] Rearranged files organization and unified css):front/src/features/friends/components/FriendsSidebar.tsx
+import FriendsSearchBar from './FriendsSearchBar';
+import type { FriendAction, OpenState } from './Friends';
+import type { User, PendingRequest } from '../../../api/friends';
 
 type FriendsSidebarProps = OpenState & {
   action: FriendAction;
@@ -27,12 +22,12 @@ export default function FriendsSidebar({
 }: FriendsSidebarProps) {
   const [input, setInput] = useState('');
 
-  // Réinitialise la recherche lors du changement de mode
+  // Reset search input when action mode changes
   useEffect(() => {
     setInput('');
   }, [action]);
 
-  // Filtrage local des amis existants (pour les modes 'default' et 'remove')
+  // Local filtering for existing friends
   const filteredFriends = friends.filter((friend) =>
     friend.name.toLowerCase().includes(input.toLowerCase().trim())
   );
@@ -59,24 +54,20 @@ export default function FriendsSidebar({
   };
 
   return (
-<<<<<<< HEAD:front/src/components/Friends/FriendsSidebar.tsx
     <div
-      className={`glassmorphism-popup relative max-w-80 flex flex-col h-[25vh]
+      className={`glass-panel relative max-w-80 flex flex-col h-[25vh]
         w-[25vw] rounded-xl overflow-hidden ${borderClass}`}
     >
       <button
         type="button"
-        className="glassmorphism-element border-slate-700! absolute top-1 right-4 rounded-xl w-6 h-6 duration-150 cursor-pointer hover:bg-sky-900! hover:text-white! active:scale-70"
+        className="glass-element border-slate-700! absolute top-1 right-4 rounded-xl w-6 h-6 duration-150 cursor-pointer hover:bg-sky-900! hover:text-white! active:scale-70"
         onClick={handleClose}
       >
         X
       </button>
       <div className="flex-1 overflow-y-auto pr-10">
         {action === 'request' ? (
-          <FriendsRequests
-            requests={requests}
-            onDataChanged={onDataChanged}
-          />
+          <FriendsRequests requests={requests} onDataChanged={onDataChanged} />
         ) : (
           <FriendsList
             friends={action === 'add' ? friends : filteredFriends}
@@ -86,41 +77,8 @@ export default function FriendsSidebar({
             onDataChanged={onDataChanged}
           />
         )}
-=======
-    isOpen && (
-      <div
-        className={`glass-panel relative max-w-80 flex flex-col h-[25vh]
-					w-[25vw] rounded-xl overflow-hidden ${borderClass}`}
-      >
-        <button
-          className="glass-panel border-slate-700! absolute top-1 right-4 rounded-xl w-6 h-6 duration-150 cursor-pointer hover:text-white! active:scale-70"
-          onClick={() => setIsOpen(false)}
-        >
-          X
-        </button>
-        <div className="flex-1 overflow-y-auto pr-10">
-          {action === 'request' ? (
-            <FriendsRequests
-              setFriends={setFriends}
-              requests={requests}
-              setRequests={setRequests}
-            />
-          ) : (
-            <FriendsList
-              friends={filteredFriends}
-              action={action}
-              setFriends={setFriends}
-              input={input}
-              setInput={setInput}
-            />
-          )}
-        </div>
-        <div className={`glass-panel ${borderClass}`}>
-          <FriendsSearchBar action={action} input={input} setInput={setInput} />
-        </div>
->>>>>>> 16cd49e ([FE] Rearranged files organization and unified css):front/src/features/friends/components/FriendsSidebar.tsx
       </div>
-      <div className={`glassmorphism-popup ${borderClass}`}>
+      <div className={`glass-panel ${borderClass}`}>
         <FriendsSearchBar action={action} input={input} setInput={setInput} />
       </div>
     </div>

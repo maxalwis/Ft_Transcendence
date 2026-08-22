@@ -95,7 +95,7 @@ const DropdownMenu: React.FC = () => {
       </a>
 
       {isOpen && (
-        <div className="glass-panel glassmorphism-animate-in absolute left-[calc(100%+8px)] top-0 w-64 z-50 p-3">
+        <div className="glass-panel glass-animate-in absolute left-[calc(100%+8px)] top-0 w-64 z-50 p-3">
           <div className="flex flex-col gap-2">
             {dashboards.map((tool) => (
               <button

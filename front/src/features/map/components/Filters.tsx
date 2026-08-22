@@ -24,42 +24,48 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
   };
 
   return (
-    <header className="glassmorphism-popup h-auto w-64 fixed left-1 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 z-1000 text-white">
+    <header className="glass-panel h-auto w-64 fixed left-1 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 z-1000">
       <h3 className="text-lg font-bold text-center border-b border-white/20 pb-2">
-        Filtres Events
+        Events Filters
       </h3>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-semibold text-gray-300">Ville / Localisation</label>
+        <label className="text-xs font-semibold">Ville / Localisation</label>
         <input
           type="text"
           value={city}
           onChange={(e) => setCity(e.target.value)}
           placeholder="Ex: Paris"
-          className="px-2 py-1 bg-black/30 border border-white/20 rounded text-xs text-white"
+          className="px-2 py-1 bg-black/30 border border-white/20 rounded text-xs"
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-semibold text-gray-300">Type de tarif</label>
+        <label className="text-xs font-semibold">Type de tarif</label>
         <select
           value={priceType}
           onChange={(e) => setPriceType(e.target.value)}
-          className="px-2 py-1 bg-black/30 border border-white/20 rounded text-xs text-white"
+          className="px-2 py-1 bg-black/30 border border-white/20 rounded text-xs"
         >
-          <option value="" className="bg-gray-800">Tous</option>
-          <option value="gratuit" className="bg-gray-800">Gratuit</option>
-          <option value="payant" className="bg-gray-800">Payant</option>
+          <option value="" className="bg-gray-800">
+            Tous
+          </option>
+          <option value="gratuit" className="bg-gray-800">
+            Gratuit
+          </option>
+          <option value="payant" className="bg-gray-800">
+            Payant
+          </option>
         </select>
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-semibold text-gray-300">À partir du :</label>
+        <label className="text-xs font-semibold">From :</label>
         <input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className="w-full px-2 py-1 bg-black/30 border border-white/20 rounded text-xs text-white"
+          className="w-full px-2 py-1 bg-black/30 border border-white/20 rounded text-xs"
         />
       </div>
 

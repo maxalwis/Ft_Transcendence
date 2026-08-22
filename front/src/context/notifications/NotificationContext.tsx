@@ -14,19 +14,6 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const showError = (msg: string) => setErrorMessage(msg);
   const clearNotification = () => setErrorMessage(null);
 
-<<<<<<< HEAD:front/src/components/Context/NotificationContext.tsx
-  return (
-    <NotificationContext.Provider value={{ showError, clearNotification }}>
-      {children}
-
-      {/* Renders once at top-left, shifted to left-14 to clear your 30px button */}
-      {errorMessage && (
-        <div className="fixed top-4 left-14 z-50 pointer-events-auto">
-          <WarningNotification message={errorMessage} onClose={clearNotification} />
-        </div>
-      )}
-    </NotificationContext.Provider>
-=======
   return React.createElement(
     NotificationContext.Provider,
     { value: { showError, clearNotification } },
@@ -40,7 +27,6 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
           onClose: clearNotification,
         })
       )
->>>>>>> 16cd49e ([FE] Rearranged files organization and unified css):front/src/context/notifications/NotificationContext.tsx
   );
 };
 

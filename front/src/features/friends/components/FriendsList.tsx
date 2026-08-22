@@ -1,14 +1,9 @@
 import { useState, useEffect } from 'react';
 import type { FriendAction } from './Friends';
-<<<<<<< HEAD:front/src/components/Friends/FriendsList.tsx
-import type { User } from '../../api/friends';
-import { sendFriendRequest } from '../../api/friends';
-import { searchUsers } from '../../api/users';
-import type { UserSearchResult } from '../../api/users';
-=======
+import type { User, sendFriendRequest } from '../../api/friends';
+import type { searchUsers, UserSearchResult } from '../../api/users';
 import AddFriends from './AddFriends';
 import RemoveFriends from './RemoveFriends';
->>>>>>> 16cd49e ([FE] Rearranged files organization and unified css):front/src/features/friends/components/FriendsList.tsx
 
 type FriendsListProps = {
   friends: User[];

@@ -32,7 +32,7 @@ fclean:
 	podman compose down -v --remove-orphans 2>/dev/null || true
 	-podman ps -aq | xargs -r podman rm -f
 	-podman images -aq | xargs -r podman rmi -f
-	podman system prune -a --volumes -f
+	podman system prune -af --volumes
 	-pkill -u $$(whoami) -f rootlessport 2>/dev/null || true
 	rm -rf backend/dist backend/node_modules worker/node_modules
 

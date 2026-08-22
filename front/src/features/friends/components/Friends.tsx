@@ -1,7 +1,7 @@
 import FriendsButton from './FriendsButton';
 import FriendsSidebar from './FriendsSidebar';
-import { getFriends, getPendingRequests } from '../../api/friends';
-import type { User, PendingRequest } from '../../api/friends';
+import { getFriends, getPendingRequests } from '../../../api/friends';
+import type { User, PendingRequest } from '../../../api/friends';
 import { useState, useEffect } from 'react';
 
 export type FriendAction = 'default' | 'add' | 'remove' | 'request';
@@ -22,7 +22,6 @@ export default function Friends() {
   const [requests, setRequests] = useState<PendingRequest[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-<<<<<<< HEAD:front/src/components/Friends/Friends.tsx
   const loadData = async () => {
     try {
       const [friendsList, pendingList] = await Promise.all([getFriends(), getPendingRequests()]);
@@ -33,22 +32,6 @@ export default function Friends() {
       setErrorMsg(err instanceof Error ? err.message : 'Erreur de chargement.');
     }
   };
-=======
-	if (!isOpen)
-	return (
-		<div className="fixed flex flex-col w-50 bottom-2 left-1 z-1000">
-		<button
-			className="glass-panel p-2 cursor-pointer hover:text-white duration-500 active:scale-70"
-			onClick={() => {
-			setAction('default');
-			setIsOpen(true);
-			}}
-		>
-			Friends
-		</button>
-		</div>
-	);
->>>>>>> 16cd49e ([FE] Rearranged files organization and unified css):front/src/features/friends/components/Friends.tsx
 
   useEffect(() => {
     if (isOpen) loadData();
@@ -59,7 +42,7 @@ export default function Friends() {
       {/* Bouton Friends initial (affiché quand fermé) */}
       {!isOpen && (
         <button
-          className="glassmorphism-popup p-2 cursor-pointer hover:bg-sky-900! hover:text-white duration-500 active:scale-70"
+          className="glass-panel p-2 cursor-pointer duration-500 active:scale-70"
           onClick={() => {
             setAction('default');
             setIsOpen(true);

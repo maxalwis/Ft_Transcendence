@@ -1,14 +1,3 @@
-.glass-panel {
-    background: rgba(255, 103, 18, 0) !important;
-    backdrop-filter: blur(5px) !important;
-    -webkit-backdrop-filter: blur(5px) !important;
-    border: 1px solid rgba(255, 103, 18, 0.3) !important;
-    border-radius: 16px !important;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 30px !important;
-    overflow: hidden !important;
-    pointer-events: auto !important;
-}
-
 .menu-dots-icon svg {
     color: rgba(0, 20, 120, 0.5) !important;
     margin: 6px 0 0px 6px;
@@ -30,6 +19,6 @@
     }
 }
 
-.glassmorphism-animate-in {
+.glass-animate-in {
     animation: glassPopupSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
