@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function fetchEventMessages(eventId: string) {
   const res = await fetch(`${API_URL}/events/${eventId}/messages`);
@@ -18,7 +18,7 @@ export async function sendEventMessage(eventId: string, content: string, userId:
     const message = Array.isArray(errorData?.message)
       ? errorData.message.join(', ')
       : errorData?.message || 'Failed to send message';
-      
+
     throw new Error(message);
   }
 

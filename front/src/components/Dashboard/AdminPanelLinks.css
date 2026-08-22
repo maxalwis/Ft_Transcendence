@@ -15,7 +15,7 @@
 }
 
 .menu-dots-icon:hover {
-    background: rgba(255, 103, 18, 0.15) !important;
+  background: rgba(255, 103, 18, 0.15) !important;
 }
 
 @keyframes glassPopupSlideIn {

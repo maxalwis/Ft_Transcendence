@@ -20,6 +20,10 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    if (!req.user) {
+      throw new UnauthorizedException();
+    }
+
     const { accessToken, refreshToken } = await this.authService.login(req.user);
 
     res.cookie('refresh_token', refreshToken, {
@@ -27,10 +31,13 @@ export class AuthController {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours en ms
-      path: '/auth/refresh',
+      path: '/api/auth/refresh',
     });
 
-    return { accessToken };
+    return {
+      accessToken,
+      user: { id: req.user.id, email: req.user.email, username: req.user.username },
+    };
   }
 
   @Post('refresh')
@@ -46,7 +53,7 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('refresh_token', { path: '/auth/refresh' });
+    res.clearCookie('refresh_token', { path: '/api/auth/refresh' });
     // invalider le refresh token en DB si stocké (voir login() dans auth.service)
     return { message: 'Déconnecté' };
   }

@@ -50,12 +50,20 @@ export class AuthService {
         secret: this.config.get<string>('JWT_REFRESH_SECRET'),
       });
 
+      const user = await this.usersService.findOne(payload.sub);
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+
       const newAccessToken = await this.jwtService.signAsync(
-        { sub: payload.sub, email: payload.email },
+        { sub: user.id, email: user.email },
         { expiresIn: '15m' }
       );
 
-      return { accessToken: newAccessToken };
+      return {
+        accessToken: newAccessToken,
+        user: { id: user.id, email: user.email, username: user.username },
+      };
     } catch {
       throw new UnauthorizedException('Refresh token invalid or expired');
     }

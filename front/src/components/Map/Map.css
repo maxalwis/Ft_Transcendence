@@ -1,8 +1,7 @@
-@import "tailwindcss";
-
+@import 'tailwindcss';
 
 .leaflet-control-attribution {
-    display: none;
+  display: none;
 }
 
 /* Main zoom container container */
@@ -44,17 +43,18 @@
 }
 
 @layer utilities {
-.glassmorphism-popup {
-  background: rgba(255, 250, 244, 0.6);
-  border-radius: 16px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 30px;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 103, 18, 0.3);
-  overflow: hidden;
-  pointer-events: auto;
-  font-family: Roboto, Arial, sans-serif;
-}}
+  .glassmorphism-popup {
+    background: rgba(255, 250, 244, 0.6);
+    border-radius: 16px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 30px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 103, 18, 0.3);
+    overflow: hidden;
+    pointer-events: auto;
+    font-family: Roboto, Arial, sans-serif;
+  }
+}
 
 .glassmorphism-element {
   background-color: rgb(245, 246, 255);

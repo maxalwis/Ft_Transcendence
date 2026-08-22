@@ -17,6 +17,7 @@ import NavBar from '../NavBar/NavBar.tsx';
 import Filters from '../Filters/Filters.tsx';
 import BottomBar from '../BottomBar/BottomBar.tsx';
 
+import { useAuth } from '../Context/AuthContext.tsx';
 
 const idfBounds = new L.LatLngBounds([48.65, 1.95], [49.05, 2.75]);
 
@@ -92,6 +93,7 @@ export default function MyMap() {
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
   const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
   const [events, setEvents] = useState<EventItem[]>([]);
+  const { user } = useAuth();
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -224,14 +226,14 @@ export default function MyMap() {
           }}
         />
       )}
-	<Friends></Friends>
-	<Filters></Filters>
-	<NavBar></NavBar>
-	<BottomBar></BottomBar>
+      <Friends></Friends>
+      <Filters></Filters>
+      <NavBar></NavBar>
+      <BottomBar></BottomBar>
       {activeSidebarEventId && (
         <MySidebar
           eventId={activeSidebarEventId}
-          currentUserId={1} // TODO: Replace with actual logged-in user state ID
+          currentUserId={user?.id ?? 0} // TODO: Replace with actual logged-in user state ID
           onClose={() => {
             setActiveSidebarEventId(null);
             setHoverPos(null);

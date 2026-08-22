@@ -159,97 +159,97 @@ services:
       - transcendence_network
     command: ['npm', 'run', 'studio']
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
-    container_name: elasticsearch
-    restart: unless-stopped
-    environment:
-      - node.name=elasticsearch
-      - cluster.name=docker-cluster
-      - discovery.type=single-node
-      - AWS_EC2_METADATA_DISABLED=true
-      - AWS_REGION=us-east-1
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m -Djava.locale.providers=SPI,CLDR'
-      - xpack.security.enabled=false
-      - 'logger.level=ERROR'
-    ports:
-      - '9200:9200'
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-      - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:z
-    networks:
-      - transcendence_network
-    healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          "curl -s http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
-    logging:
-      driver: 'json-file'
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+  #   container_name: elasticsearch
+  #   restart: unless-stopped
+  #   environment:
+  #     - node.name=elasticsearch
+  #     - cluster.name=docker-cluster
+  #     - discovery.type=single-node
+  #     - AWS_EC2_METADATA_DISABLED=true
+  #     - AWS_REGION=us-east-1
+  #     - 'ES_JAVA_OPTS=-Xms512m -Xmx512m -Djava.locale.providers=SPI,CLDR'
+  #     - xpack.security.enabled=false
+  #     - 'logger.level=ERROR'
+  #   ports:
+  #     - '9200:9200'
+  #   volumes:
+  #     - elasticsearch_data:/usr/share/elasticsearch/data
+  #     - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:z
+  #   networks:
+  #     - transcendence_network
+  #   healthcheck:
+  #     test:
+  #       [
+  #         'CMD-SHELL',
+  #         "curl -s http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'",
+  #       ]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 20s
+  #   logging:
+  #     driver: 'json-file'
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.11.3
-    container_name: logstash
-    restart: unless-stopped
-    volumes:
-      - ./logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:z
-      - ./logstash/config/log4j2.properties:/usr/share/logstash/config/log4j2.properties:ro
-    command: logstash -f /usr/share/logstash/pipeline/logstash.conf --config.reload.automatic
-    ports:
-      - '5044:5044'
-    environment:
-      - 'LS_JAVA_OPTS=-Xms512m -Xmx512m'
-      - xpack.monitoring.enabled=false
-      - LOG_LEVEL=warn
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    networks:
-      - transcendence_network
-    logging:
-      driver: 'json-file'
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:8.11.3
+  #   container_name: logstash
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:z
+  #     - ./logstash/config/log4j2.properties:/usr/share/logstash/config/log4j2.properties:ro
+  #   command: logstash -f /usr/share/logstash/pipeline/logstash.conf --config.reload.automatic
+  #   ports:
+  #     - '5044:5044'
+  #   environment:
+  #     - 'LS_JAVA_OPTS=-Xms512m -Xmx512m'
+  #     - xpack.monitoring.enabled=false
+  #     - LOG_LEVEL=warn
+  #   depends_on:
+  #     elasticsearch:
+  #       condition: service_healthy
+  #   networks:
+  #     - transcendence_network
+  #   logging:
+  #     driver: 'json-file'
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.11.3
-    container_name: kibana
-    restart: unless-stopped
-    volumes:
-      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
-    environment:
-      - ELASTIC_APM_LOG_LEVEL=off
-      - ELASTIC_APM_ACTIVE=false
-    ports:
-      - '5601:5601'
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    networks:
-      - transcendence_network
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.11.3
+  #   container_name: kibana
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+  #   environment:
+  #     - ELASTIC_APM_LOG_LEVEL=off
+  #     - ELASTIC_APM_ACTIVE=false
+  #   ports:
+  #     - '5601:5601'
+  #   depends_on:
+  #     elasticsearch:
+  #       condition: service_healthy
+  #   networks:
+  #     - transcendence_network
 
-  kibana-setup:
-    image: docker.io/curlimages/curl:latest
-    container_name: kibana_setup
-    depends_on:
-      kibana:
-        condition: service_started
-    volumes:
-      - ./kibana/scripts/setup.sh:/setup.sh:ro
-      - ./kibana/scripts/kibana-dashboard.ndjson:/kibana-dashboard.ndjson:ro
-    networks:
-      - transcendence_network
-    entrypoint: ['/bin/sh', '/setup.sh']
+  # kibana-setup:
+  #   image: docker.io/curlimages/curl:latest
+  #   container_name: kibana_setup
+  #   depends_on:
+  #     kibana:
+  #       condition: service_started
+  #   volumes:
+  #     - ./kibana/scripts/setup.sh:/setup.sh:ro
+  #     - ./kibana/scripts/kibana-dashboard.ndjson:/kibana-dashboard.ndjson:ro
+  #   networks:
+  #     - transcendence_network
+  #   entrypoint: ['/bin/sh', '/setup.sh']
 
 volumes:
   postgres_data:
   backend_node_modules:
   worker_node_modules:
   frontend_node_modules:
-  elasticsearch_data:
+  # elasticsearch_data:
   nginx_certs:
 
 networks:

@@ -32,7 +32,7 @@ export class RedisHealthIndicator extends HealthIndicator implements OnApplicati
 
       throw new HealthCheckError(
         'Redis connection failed',
-        this.getStatus(key, false, { message: err.message }),
+        this.getStatus(key, false, { message: err.message })
       );
     }
   }
