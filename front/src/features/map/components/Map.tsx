@@ -26,7 +26,7 @@ import { MapEventsHandler } from './MapHelper';
 import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
 
 // Local Styles
-import styles from '../Map.module.css';
+import '../Map.module.css';
 
 export default function Map() {
   const { showError } = useNotification();

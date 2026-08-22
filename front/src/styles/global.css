@@ -10,9 +10,14 @@ body {
     font-family: var(--font-main);
     font-size: var(--font-size-base);
     color: var(--color-text-dark);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-span, p, a, label {
+span,
+p,
+a,
+label {
     font-family: var(--font-main);
     color: var(--color-blue-dark);
 }
@@ -35,7 +40,12 @@ a:hover {
     color: var(--color-orange-primary);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: var(--font-main);
     color: var(--color-blue-dark);
     font-weight: 600;
@@ -53,7 +63,6 @@ input[type="url"],
 textarea,
 select {
     background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-sm);
@@ -85,12 +94,11 @@ textarea {
 }
 
 /* Interactive Elements */
-button, 
-input[type="submit"], 
-input[type="button"], 
+button,
+input[type="submit"],
+input[type="button"],
 input[type="reset"] {
     background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-sm);
@@ -124,7 +132,10 @@ button.icon-btn,
 }
 
 /* Structural & Surface Elements */
-card, section, article, aside {
+card,
+section,
+article,
+aside {
     background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
@@ -141,7 +152,8 @@ hr {
 }
 
 /* Code & Preformatted Text */
-code, pre {
+code,
+pre {
     font-family: monospace;
     background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
@@ -172,6 +184,8 @@ pre {
     box-shadow: var(--glass-shadow);
     overflow: hidden;
     pointer-events: auto;
+    isolation: isolate;
+    transform: translateZ(0);
 }
 
 .glass-blue {
@@ -199,6 +213,7 @@ pre {
         opacity: 0;
         transform: translateX(-10px) scale(0.85);
     }
+
     100% {
         opacity: 1;
         transform: translateX(0) scale(1);
@@ -210,10 +225,12 @@ pre {
         transform: scale(0);
         opacity: 0;
     }
+
     70% {
         transform: scale(1.2);
         opacity: 1;
     }
+
     100% {
         transform: scale(1);
         opacity: 1;
@@ -224,9 +241,11 @@ pre {
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.45);
     }
+
     100% {
         transform: scale(1);
     }
@@ -239,8 +258,4 @@ pre {
 .counter-pop-animation {
     display: inline-block;
     animation: counterPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-.leaflet-control-attribution.leaflet-control {
-    display: none !important;
 }

@@ -1,24 +1,61 @@
-.menu-dots-icon svg {
-    color: rgba(0, 20, 120, 0.5) !important;
-    margin: 6px 0 0px 6px;
+/* AdminPanelLinks.css */
+
+/* Override Leaflet container defaults to allow absolute popovers */
+:global(.leaflet-control.leaflet-links) {
+  background: rgba(255, 103, 18, 0) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid var(--color-orange-border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--glass-shadow) !important;
+  
+  /* CRITICAL: Overrides Leaflet's default overflow:hidden so popover isn't clipped */
+  overflow: visible !important; 
+  pointer-events: auto !important;
+  position: relative !important;
 }
 
-.menu-dots-icon:hover {
-    background: rgba(255, 103, 18, 0.15) !important;
+/* Base button styling */
+:global(.menu-dots-icon) {
+  background: transparent !important;
+  color: var(--color-blue-dark) !important;
+  border: none !important;
+  font-family: var(--font-main) !important;
+  width: 30px !important;
+  height: 30px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: background 0.2s ease;
 }
 
+:global(.menu-dots-icon:hover) {
+  background: rgba(255, 103, 18, 0.15) !important;
+}
+
+:global(.menu-dots-icon svg) {
+  color: rgba(0, 20, 120, 0.5) !important;
+  stroke: rgba(0, 20, 120, 0.5) !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 !important;
+}
+
+/* Glass animation */
 @keyframes glassPopupSlideIn {
-    0% {
-        opacity: 0;
-        transform: translateX(-10px) scale(0.85);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-    }
+  0% {
+    opacity: 0;
+    transform: translateX(-10px) scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
 }
 
-.glass-animate-in {
-    animation: glassPopupSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+:global(.glass-animate-in) {
+  animation: glassPopupSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top left;
 }
