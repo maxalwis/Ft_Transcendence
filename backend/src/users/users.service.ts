@@ -18,6 +18,23 @@ export class UsersService {
     return user;
   }
 
+  async findByName(name: string): Promise<Pick<User, 'id' | 'name' | 'avatar' | 'status'>[]> {
+    if (!name || name.trim().length === 0) {
+      return [];
+    }
+
+    return this.prisma.user.findMany({
+      where: {
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      },
+      select: { id: true, name: true, avatar: true, status: true },
+      take: 10,
+    });
+  }
+
   async create(data: { name: string; email: string }): Promise<User> {
     try {
       return await this.prisma.user.create({ data });

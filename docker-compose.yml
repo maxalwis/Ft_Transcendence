@@ -64,7 +64,6 @@ services:
       timeout: 3s
       retries: 5
       start_period: 5s
-    command: redis-server --loglevel warning
 
   backend:
     image: localhost/transcendence_backend:latest
@@ -88,7 +87,7 @@ services:
     networks:
       - transcendence_network
     healthcheck:
-      test: ['CMD-SHELL', 'wget -q -T 3 -O- http://localhost:${BACKEND_PORT}/health || exit 1']
+      test: ["CMD-SHELL", "wget -q -T 3 -O- http://localhost:${BACKEND_PORT}/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -122,6 +121,7 @@ services:
     restart: unless-stopped
     environment:
       - VITE_API_URL=/api
+      - HTTPS_PORT=${HTTPS_PORT:-8443}
       - VITE_HTTPS_PORT=${HTTPS_PORT:-8443}
       - NPM_CONFIG_UPDATE_NOTIFIER=false
       - NPM_CONFIG_FUND=false
@@ -135,7 +135,7 @@ services:
         condition: service_healthy
     networks:
       - transcendence_network
-    command: sh -c "npm install && npm run dev"
+    command: ['sh', '-c', 'npm install && npm run dev -- --host 0.0.0.0']
 
   prisma-studio:
     image: localhost/transcendence_backend:latest
@@ -163,13 +163,10 @@ services:
     restart: unless-stopped
     environment:
       - node.name=elasticsearch
-      - cluster.name=docker-cluster
       - discovery.type=single-node
-      - AWS_EC2_METADATA_DISABLED=true
-      - AWS_REGION=us-east-1
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m -Djava.locale.providers=SPI,CLDR'
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - xpack.security.enabled=false
-      - 'logger.level=ERROR'
+      - 'logger.level=WARN'
     ports:
       - '9200:9200'
     volumes:
@@ -188,7 +185,7 @@ services:
       retries: 5
       start_period: 20s
     logging:
-      driver: 'json-file'
+      driver: none
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.11.3
@@ -196,31 +193,29 @@ services:
     restart: unless-stopped
     volumes:
       - ./logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:z
-      - ./logstash/config/log4j2.properties:/usr/share/logstash/config/log4j2.properties:ro
-    command: logstash -f /usr/share/logstash/pipeline/logstash.conf --config.reload.automatic
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
     ports:
       - '5044:5044'
     environment:
-      - 'LS_JAVA_OPTS=-Xms512m -Xmx512m'
+      - LS_JAVA_OPTS=-Xms512m -Xmx512m
       - xpack.monitoring.enabled=false
-      - LOG_LEVEL=warn
     depends_on:
       elasticsearch:
         condition: service_healthy
     networks:
       - transcendence_network
     logging:
-      driver: 'json-file'
+      driver: none
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.11.3
     container_name: kibana
     restart: unless-stopped
-    volumes:
-      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
     environment:
-      - ELASTIC_APM_LOG_LEVEL=off
       - ELASTIC_APM_ACTIVE=false
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:z
     ports:
       - '5601:5601'
     depends_on:
@@ -228,6 +223,8 @@ services:
         condition: service_healthy
     networks:
       - transcendence_network
+    logging:
+      driver: none
 
   kibana-setup:
     image: docker.io/curlimages/curl:latest
@@ -236,11 +233,16 @@ services:
       kibana:
         condition: service_started
     volumes:
-      - ./kibana/scripts/setup.sh:/setup.sh:ro
-      - ./kibana/scripts/kibana-dashboard.ndjson:/kibana-dashboard.ndjson:ro
+      - ./kibana/scripts/setup.sh:/usr/local/bin/setup.sh:z
     networks:
       - transcendence_network
-    entrypoint: ['/bin/sh', '/setup.sh']
+    command: >
+      sh -c "
+        chmod +x /usr/local/bin/setup.sh &&
+        /usr/local/bin/setup.sh
+      "
+    logging:
+      driver: none
 
 volumes:
   postgres_data:

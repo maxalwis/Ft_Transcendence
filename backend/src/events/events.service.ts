@@ -62,6 +62,6 @@ export class EventsService {
         AND "dateEnd" >= ${fromDate}
         ${toDate ? Prisma.sql`AND "dateStart" <= ${toDate}` : Prisma.empty}
       ORDER BY distance ASC
-      LIMIT 100`
+      LIMIT 100`;
   }
 }

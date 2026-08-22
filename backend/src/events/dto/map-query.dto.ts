@@ -50,9 +50,7 @@ export class NearbyQueryDto {
     }
     const parts = value.split(',').map(Number);
     if (parts.length != 2 || parts.some(isNaN)) {
-      throw new BadRequestException(
-        'center must be in the format "lon,lat"'
-      );
+      throw new BadRequestException('center must be in the format "lon,lat"');
     }
     const [lon, lat] = parts;
     return { lon, lat };

@@ -18,9 +18,7 @@ describe('Ingestion (e2e)', () => {
   }, 30000);
 
   it('/ingestion/mairie-paris (POST)', () => {
-    return agent(app.getHttpServer())
-      .post('/ingestion/mairie-paris')
-      .expect(201);
+    return agent(app.getHttpServer()).post('/ingestion/mairie-paris').expect(201);
   }, 30000); // 30s timeout for real API fetch + DB operations
 
   afterAll(async () => {

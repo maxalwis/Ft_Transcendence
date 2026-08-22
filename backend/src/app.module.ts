@@ -9,6 +9,7 @@ import { EventsModule } from './events/events.module';
 import { UsersModule } from './users/users.module';
 import { MessagesModule } from './messages/messages.module';
 import { LoggerMiddleware } from './logger.middleware';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
@@ -19,14 +20,13 @@ import { LoggerMiddleware } from './logger.middleware';
     EventsModule,
     UsersModule,
     MessagesModule,
+    FriendsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware)
-      .forRoutes({ path: '*path', method: RequestMethod.ALL });
+    consumer.apply(LoggerMiddleware).forRoutes({ path: '*path', method: RequestMethod.ALL });
   }
 }

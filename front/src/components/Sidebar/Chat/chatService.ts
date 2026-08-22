@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:3000';
+// Passer par le proxy Reverse Nginx en chemin relatif
+const API_URL = '/api';
 
 export async function fetchEventMessages(eventId: string) {
   const res = await fetch(`${API_URL}/events/${eventId}/messages`);
@@ -18,7 +19,7 @@ export async function sendEventMessage(eventId: string, content: string, userId:
     const message = Array.isArray(errorData?.message)
       ? errorData.message.join(', ')
       : errorData?.message || 'Failed to send message';
-      
+
     throw new Error(message);
   }
 

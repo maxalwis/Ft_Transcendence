@@ -23,7 +23,7 @@ export class LogstashTcpTransport extends Transport {
 
   private connect() {
     this.client = new net.Socket();
-    
+
     this.client.on('error', () => {
       this.isConnected = false;
     });
