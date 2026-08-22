@@ -6,7 +6,6 @@ all: up
 
 logs:
 	podman compose logs -f
-.PHONY: all up down clean fclean build check-env re restart test test-unit test-health test-e2e
 
 check-env:
 ifeq (,$(wildcard .env))
@@ -40,10 +39,6 @@ re:
 	@$(MAKE) fclean
 	@sleep 3
 	@$(MAKE) all
-
-restart : down up
-	docker system prune -f --volumes
-	rm -rf backend/dist backend/node_modules worker/node_modules backend/generated backend/tsconfig.build.tsbuildinfo
 
 restart: down up
 
