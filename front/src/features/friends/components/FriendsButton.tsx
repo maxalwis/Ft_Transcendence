@@ -7,45 +7,66 @@ type FriendsButtonProps = {
 };
 
 export default function FriendsButton({ setAction }: FriendsButtonProps) {
-	const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-	return (
-	<>
-		<button
-		className="glass-panel flex h-8 w-8 items-center justify-center bg-white/50 backdrop-blur-sm border-2 border-slate-700 rounded-2xl text-lg
-		font-bold text-gray-600 hover:text-white cursor-pointer duration-150 active:scale-50"
-		onClick={() => setIsOpen(!isOpen)}
-		>
-		{isOpen ? '-' : '+'}
-		</button>
-		{isOpen && (
-		<div className="flex flex-col glass-panel p-2 gap-2 text-sm">
-			<button
-			className="border-blue-600 border-2 rounded-xl hover:bg-blue-600 hover:text-white cursor-pointer duration-150"
-			onClick={() => setAction('default')}
-			>
-			Search
-			</button>
-			<button
-			className="border-orange-600 px-3 border-2 rounded-xl hover:bg-orange-600 hover:text-white cursor-pointer duration-150"
-			onClick={() => setAction('request')}
-			>
-			Pending Request
-			</button>
-			<button
-			className="border-green-600 border-2 rounded-xl hover:bg-green-600 hover:text-white cursor-pointer duration-150"
-			onClick={() => setAction('add')}
-			>
-			Add a friend
-			</button>
-			<button
-			className="border-red-600 border-2 rounded-xl hover:bg-red-600 hover:text-white cursor-pointer duration-150"
-			onClick={() => setAction('remove')}
-			>
-			Remove a friend
-			</button>
-		</div>
-		)}
-	</>
-	);
+  return (
+    <>
+      <button
+        type="button"
+        aria-label={isOpen ? 'Close menu' : 'Open menu'}
+        className="glass-panel flex p-0! shrink-0 items-center justify-center rounded-2xl text-gray-600 hover:text-white cursor-pointer duration-150 active:scale-50"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <svg
+          className="w-4 h-4 stroke-current"
+          viewBox="0 0 24 24"
+          fill="none"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {isOpen ? (
+            /* Minus Icon */
+            <path d="M5 12h14" />
+          ) : (
+            /* Plus Icon */
+            <path d="M12 5v14M5 12h14" />
+          )}
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="flex flex-col glass-panel p-2 gap-2 text-sm">
+          <button
+            type="button"
+            className="border-2 rounded-xl hover:text-white cursor-pointer duration-150"
+            onClick={() => setAction('default')}
+          >
+            Search
+          </button>
+          <button
+            type="button"
+            className="border-orange-600 px-3 border-2 rounded-xl hover:bg-orange-600 hover:text-white cursor-pointer duration-150"
+            onClick={() => setAction('request')}
+          >
+            Pending Request
+          </button>
+          <button
+            type="button"
+            className="border-green-600 border-2 rounded-xl hover:bg-green-600 hover:text-white cursor-pointer duration-150"
+            onClick={() => setAction('add')}
+          >
+            Add a friend
+          </button>
+          <button
+            type="button"
+            className="border-red-600 border-2 rounded-xl hover:bg-red-600 hover:text-white cursor-pointer duration-150"
+            onClick={() => setAction('remove')}
+          >
+            Remove a friend
+          </button>
+        </div>
+      )}
+    </>
+  );
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { FriendAction } from './Friends';
-import type { User, sendFriendRequest } from '../../api/friends';
-import type { searchUsers, UserSearchResult } from '../../api/users';
+import type { User, sendFriendRequest } from '../../../api/friends';
+import type { searchUsers, UserSearchResult } from '../../../api/users';
 import AddFriends from './AddFriends';
 import RemoveFriends from './RemoveFriends';
 
@@ -100,7 +100,7 @@ export default function FriendsList({
                   {friend.name.charAt(0)}
                 </div>
                 <div
-                  className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-slate-500 ${
+                  className={`absolute bottom-0 right-0 ${
                     friend.status === 'ONLINE'
                       ? 'bg-green-500'
                       : friend.status === 'IN_GAME'

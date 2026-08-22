@@ -1,10 +1,10 @@
-import FriendsButton from './FriendsButton';
 import FriendsSidebar from './FriendsSidebar';
 import { getFriends, getPendingRequests } from '../../../api/friends';
 import type { User, PendingRequest } from '../../../api/friends';
 import { useState, useEffect } from 'react';
+import styles from '../Friends.module.css';
 
-export type FriendAction = 'default' | 'add' | 'remove' | 'request';
+export type FriendAction = 'menu' | 'default' | 'add' | 'remove' | 'request';
 
 export type ActionState = {
   action: FriendAction;
@@ -16,7 +16,7 @@ export type OpenState = {
 };
 
 export default function Friends() {
-  const [action, setAction] = useState<FriendAction>('default');
+  const [action, setAction] = useState<FriendAction>('menu');
   const [isOpen, setIsOpen] = useState(false);
   const [friends, setFriends] = useState<User[]>([]);
   const [requests, setRequests] = useState<PendingRequest[]>([]);
@@ -38,35 +38,28 @@ export default function Friends() {
   }, [isOpen]);
 
   return (
-    <div className="fixed bottom-1 left-1 z-1000 flex items-end gap-1">
-      {/* Bouton Friends initial (affiché quand fermé) */}
-      {!isOpen && (
-        <button
-          className="glass-panel p-2 cursor-pointer duration-500 active:scale-70"
-          onClick={() => {
-            setAction('default');
-            setIsOpen(true);
-          }}
-        >
-          Friends
-        </button>
-      )}
+    <div className={styles.friendsContainer}>
+      {/* whitespace-nowrap keeps button text on a single line */}
+      <button
+        className="glass-panel p-2 cursor-pointer duration-500 active:scale-70 whitespace-nowrap"
+        onClick={() => {
+          setAction('menu');
+          setIsOpen(true);
+        }}
+      >
+        Friends
+      </button>
 
-      {/* Interface complète d'amis (affichée quand ouvert) */}
-      {isOpen && (
-        <>
-          <FriendsSidebar
-            action={action}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            friends={friends}
-            requests={requests}
-            errorMsg={errorMsg}
-            onDataChanged={loadData}
-          />
-          <FriendsButton setAction={setAction} />
-        </>
-      )}
+      <FriendsSidebar
+        action={action}
+        setAction={setAction}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        friends={friends}
+        requests={requests}
+        errorMsg={errorMsg}
+        onDataChanged={loadData}
+      />
     </div>
   );
 }

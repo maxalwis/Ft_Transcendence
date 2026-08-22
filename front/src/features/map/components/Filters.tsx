@@ -36,25 +36,25 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
           value={city}
           onChange={(e) => setCity(e.target.value)}
           placeholder="Ex: Paris"
-          className="px-2 py-1 bg-black/30 border border-white/20 rounded text-xs"
+          className="px-2 py-1 border border-white/20 rounded text-xs"
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-semibold">Type de tarif</label>
+        <label className="text-xs font-semibold">Price category</label>
         <select
           value={priceType}
           onChange={(e) => setPriceType(e.target.value)}
-          className="px-2 py-1 bg-black/30 border border-white/20 rounded text-xs"
+          className="px-2 py-1 border border-white/20 rounded text-xs"
         >
           <option value="" className="bg-gray-800">
-            Tous
+            All
           </option>
-          <option value="gratuit" className="bg-gray-800">
-            Gratuit
+          <option value="free" className="bg-gray-800">
+            Free
           </option>
-          <option value="payant" className="bg-gray-800">
-            Payant
+          <option value="fee-based" className="bg-gray-800">
+            Fee-based
           </option>
         </select>
       </div>
@@ -65,7 +65,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className="w-full px-2 py-1 bg-black/30 border border-white/20 rounded text-xs"
+          className="w-full px-2 py-1 border border-white/20 rounded text-xs"
         />
       </div>
 

@@ -14,7 +14,7 @@
     --color-warning-hover: rgba(245, 158, 11, 0.15);
 
     /* glass Presets */
-    --glass-bg: rgba(0, 0, 0, 0.05);
+    --glass-bg: rgba(255, 255, 255, 0.5);
     --glass-border: rgba(255, 255, 255, 0.25);
     --glass-blur: blur(5px);
     --glass-shadow: rgba(0, 0, 0, 0.1) 0px 4px 30px;

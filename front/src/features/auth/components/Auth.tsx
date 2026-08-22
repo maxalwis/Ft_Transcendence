@@ -5,10 +5,10 @@ export default function LoginButton() {
 
   return (
     <button
-      className="glass-panel h-10 w-25 cursor-pointer rounded-full text-white bg-sky-600 duration-300 hover:zoom-98"
+      className="glass-panel cursor-pointer rounded-full duration-300 hover:zoom-98"
       onClick={handleLogin}
     >
-      Connexion
+      Login
     </button>
   );
 }

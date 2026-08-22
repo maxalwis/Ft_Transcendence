@@ -31,10 +31,21 @@ export default function FriendsSearchBar({ action, input, setInput }: InputProps
       {input ? (
         <button
           type="button"
+          aria-label="Close"
           onClick={() => setInput('')}
-          className="glass-panel border-slate-700! rounded-xl w-6 h-6 duration-150 cursor-pointer hover:text-white! active:scale-70"
+          className="glass-element icon-btn rounded-xl w-6 h-6 duration-150 cursor-pointer hover:text-white! active:scale-70"
         >
-          X
+          <svg
+          className="w-full h-full"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
         </button>
       ) : null}
     </div>

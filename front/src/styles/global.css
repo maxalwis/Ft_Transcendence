@@ -1,28 +1,168 @@
 @import "tailwindcss";
 @import "./variables.css";
 
-/* Base Elements */
-button {
+/* ==========================================================================
+   Base DOM Element Presets
+   ========================================================================== */
+
+/* Typography & Inline Elements */
+body {
+    font-family: var(--font-main);
+    font-size: var(--font-size-base);
+    color: var(--color-text-dark);
+}
+
+span, p, a, label {
+    font-family: var(--font-main);
+    color: var(--color-blue-dark);
+}
+
+span {
+    font-size: var(--font-size-base);
+}
+
+p {
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+}
+
+a {
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+    color: var(--color-orange-primary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-main);
+    color: var(--color-blue-dark);
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+/* Forms & Inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
     background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-dark);
+    font-family: var(--font-main);
+    font-size: var(--font-size-base);
+    padding: 0.5rem 0.75rem;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--color-blue-dark);
+    opacity: 0.6;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--color-orange-primary);
+    background: var(--color-orange-hover);
+    box-shadow: 0 0 0 2px var(--color-orange-border);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Interactive Elements */
+button, 
+input[type="submit"], 
+input[type="button"], 
+input[type="reset"] {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-sm);
     color: var(--color-blue-dark);
+    font-family: var(--font-main);
+    font-size: var(--font-size-base);
+    padding: 0.5rem 1rem;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
 
-button:hover {
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+input[type="reset"]:hover {
     background: var(--color-orange-hover) !important;
+    border-color: var(--color-orange-border);
 }
 
-span {
-    color: var(--color-blue-dark);
-    font-family: var(--font-main);
-    font-size: var(--font-size-base);
+button:active,
+input[type="submit"]:active {
+    transform: scale(0.98);
 }
 
-/* Base Glass Panels */
+button.icon-btn,
+.icon-btn {
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Structural & Surface Elements */
+card, section, article, aside {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glass-shadow);
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background: var(--glass-border);
+    margin: 1rem 0;
+}
+
+/* Code & Preformatted Text */
+code, pre {
+    font-family: monospace;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+}
+
+code {
+    padding: 0.2rem 0.4rem;
+}
+
+pre {
+    padding: 1rem;
+    overflow-x: auto;
+}
+
+/* ==========================================================================
+   Base Glass Utility Classes
+   ========================================================================== */
+
 .glass-panel {
     background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
@@ -50,13 +190,15 @@ span {
     background: var(--color-orange-hover) !important;
 }
 
-/* Animations */
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
 @keyframes glassPopupSlideIn {
     0% {
         opacity: 0;
         transform: translateX(-10px) scale(0.85);
     }
-
     100% {
         opacity: 1;
         transform: translateX(0) scale(1);
@@ -68,12 +210,10 @@ span {
         transform: scale(0);
         opacity: 0;
     }
-
     70% {
         transform: scale(1.2);
         opacity: 1;
     }
-
     100% {
         transform: scale(1);
         opacity: 1;
@@ -84,11 +224,9 @@ span {
     0% {
         transform: scale(1);
     }
-
     50% {
         transform: scale(1.45);
     }
-
     100% {
         transform: scale(1);
     }
