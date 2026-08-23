@@ -1,0 +1,35 @@
+@keyframes slideInFromLeft {
+  0% { opacity: 0; transform: translateX(-100%); }
+  70% { transform: translateX(8px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideOutToLeft {
+  0% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-100%); }
+}
+
+.warning {
+  background: var(--color-warning-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--color-warning-border);
+  color: var(--color-warning-text);
+  overflow: hidden;
+  pointer-events: auto;
+  font-family: var(--font-main);
+}
+
+.warning button:hover {
+  background: var(--color-warning-hover);
+}
+
+.toastSlideIn {
+  animation: slideInFromLeft 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.toastSlideOut {
+  animation: slideOutToLeft 0.3s ease-in forwards;
+}

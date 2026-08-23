@@ -1,14 +1,15 @@
-.PHONY: all up logs down clean fclean re restart
+.PHONY: all up logs down clean fclean build check-env re restart test test-unit test-health test-e2e prepare-socket elk
+export CONTAINERS_REGISTRIES_CONF = $(shell pwd)/.containers/registries.conf
+export PODMAN_COMPOSE_WARNING_LOGS=0
 
 all: up
 
 logs:
 	podman compose logs -f
-.PHONY: all up down clean fclean build check-env re restart test test-unit test-health test-e2e
 
 check-env:
 ifeq (,$(wildcard .env))
-	@echo "Error: .env file not found! Please create one from your example file."
+	@printf "\033[41;37m ERROR \033[0m .env file not found! Please create one from your example file.\n"
 	@exit 1
 endif
 
@@ -19,23 +20,25 @@ up: check-env
 down:
 	podman compose down
 
+elk: check-env
+	podman compose --profile elk up -d --build
+	podman compose logs -f
+
 clean:
 	podman compose down -v
 
 fclean:
-	podman compose down -v --rmi all --remove-orphans
-	-pkill -u $$(whoami) -f rootlessport || true
-	podman system prune -f --volumes
+	podman compose down -v --remove-orphans 2>/dev/null || true
+	-podman ps -aq | xargs -r podman rm -f
+	-podman images -aq | xargs -r podman rmi -f
+	podman system prune -af --volumes
+	-pkill -u $$(whoami) -f rootlessport 2>/dev/null || true
 	rm -rf backend/dist backend/node_modules worker/node_modules
 
 re:
 	@$(MAKE) fclean
 	@sleep 3
 	@$(MAKE) all
-
-restart : down up
-	docker system prune -f --volumes
-	rm -rf backend/dist backend/node_modules worker/node_modules backend/generated backend/tsconfig.build.tsbuildinfo
 
 restart: down up
 
