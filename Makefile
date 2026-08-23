@@ -6,13 +6,16 @@ all: up
 
 logs:
 	podman compose logs -f
+<<<<<<< HEAD
 
 prepare-socket:
 	@systemctl --user is-active --quiet podman.socket || systemctl --user enable --now podman.socket
+=======
+>>>>>>> origin/dev
 
 check-env:
 ifeq (,$(wildcard .env))
-	@echo "Error: .env file not found! Please create one from your example file."
+	@printf "\033[41;37m ERROR \033[0m .env file not found! Please create one from your example file.\n"
 	@exit 1
 endif
 
@@ -34,7 +37,11 @@ fclean:
 	podman compose down -v --remove-orphans 2>/dev/null || true
 	-podman ps -aq | xargs -r podman rm -f
 	-podman images -aq | xargs -r podman rmi -f
+<<<<<<< HEAD
 	podman system prune -a --volumes -f
+=======
+	podman system prune -af --volumes
+>>>>>>> origin/dev
 	-pkill -u $$(whoami) -f rootlessport 2>/dev/null || true
 	rm -rf backend/dist backend/node_modules worker/node_modules
 

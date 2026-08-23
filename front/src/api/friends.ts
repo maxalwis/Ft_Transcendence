@@ -9,6 +9,10 @@ export interface User {
 }
 
 export interface PendingRequest {
+  id: number;
+  senderId: number;
+  receiverId: number;
+  status: string;
   sender: User;
   createdAt?: string;
 }
@@ -34,6 +38,7 @@ export async function getPendingRequests(): Promise<PendingRequest[]> {
 export async function sendFriendRequest(receiverId: number) {
   const res = await fetch(`${API_URL}/request/${receiverId}`, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
   });
   if (!res.ok) {
@@ -46,6 +51,7 @@ export async function sendFriendRequest(receiverId: number) {
 export async function acceptFriendRequest(senderId: number) {
   const res = await fetch(`${API_URL}/accept/${senderId}`, {
     method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
   });
   if (!res.ok) throw new Error("Impossible d'accepter la demande");

@@ -1,52 +1,55 @@
-/* Yellow-based Amber Glassmorphism Notification */
-.glassmorphism-warning {
-  background: rgba(255, 248, 225, 0.7);
-  border-radius: 16px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 30px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: #451a03;
-  overflow: hidden;
-  pointer-events: auto;
-  font-family: Roboto, Arial, sans-serif;
+/* Yellow-based Amber glass Notification */
+.glass-warning {
+    background: rgba(255, 248, 225, 0.7);
+    border-radius: 16px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 30px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #451a03;
+    overflow: hidden;
+    pointer-events: auto;
+    font-family: Roboto, Arial, sans-serif;
 }
 
-.glassmorphism-warning button:hover {
-  background: rgba(245, 158, 11, 0.15);
+.glass-warning button:hover {
+    background: rgba(245, 158, 11, 0.15);
 }
 
 /* Slide in from left with a slight bounce */
 @keyframes slideInFromLeft {
-  0% {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-  70% {
-    transform: translateX(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+
+    70% {
+        transform: translateX(8px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 /* Slide out and fade out to the left */
 @keyframes slideOutToLeft {
-  0% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
 }
 
 .toast-slide-in {
-  animation: slideInFromLeft 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: slideInFromLeft 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .toast-slide-out {
-  animation: slideOutToLeft 0.3s ease-in forwards;
+    animation: slideOutToLeft 0.3s ease-in forwards;
 }
