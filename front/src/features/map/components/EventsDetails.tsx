@@ -15,7 +15,7 @@ export interface EventsDetailsProps {
   interestedFriends?: Friend[];
   imageUrl?: string;
   position: { x: number; y: number };
-  
+
   // Group Carousel Props
   totalInGroup?: number;
   currentIndex?: number;

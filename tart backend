@@ -1,0 +1,13 @@
+[1mdiff --git a/backend/src/events/events.service.ts b/backend/src/events/events.service.ts[m
+[1mindex 53a7c95..34bd271 100644[m
+[1m--- a/backend/src/events/events.service.ts[m
+[1m+++ b/backend/src/events/events.service.ts[m
+[36m@@ -16,7 +16,7 @@[m [mexport class EventsService {[m
+     const defaultToDate = to ? new Date(to) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);[m
+ [m
+     return this.prisma.$queryRaw`[m
+[31m-        SELECT id, title, category, latitude, longitude, "dateStart", "dateEnd"[m
+[32m+[m[32m        SELECT id, title, category, latitude, longitude, "dateStart", "dateEnd", "coverUrl"[m
+         FROM "Event"[m
+         WHERE latitude IS NOT NULL AND longitude IS NOT NULL[m
+             AND "dateEnd" >= ${fromDate}[m

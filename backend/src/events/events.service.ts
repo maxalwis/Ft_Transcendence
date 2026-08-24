@@ -16,7 +16,7 @@ export class EventsService {
     const defaultToDate = to ? new Date(to) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
     return this.prisma.$queryRaw`
-        SELECT id, title, category, latitude, longitude, "dateStart", "dateEnd"
+        SELECT id, title, category, latitude, longitude, "dateStart", "dateEnd", "coverUrl"
         FROM "Event"
         WHERE latitude IS NOT NULL AND longitude IS NOT NULL
             AND "dateEnd" >= ${fromDate}

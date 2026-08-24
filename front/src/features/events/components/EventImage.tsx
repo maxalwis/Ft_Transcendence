@@ -9,6 +9,7 @@ export default function EventImage({ src, alt }: EventImageProps) {
       className="h-28 w-full rounded-lg object-cover"
       src={src || '/event_image.webp'}
       alt={alt}
+      referrerPolicy="no-referrer"
     />
   );
 }
