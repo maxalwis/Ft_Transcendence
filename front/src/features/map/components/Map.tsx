@@ -33,7 +33,7 @@ export default function Map() {
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
-    // État local pour stocker les filtres actifs
+  // État local pour stocker les filtres actifs
   const [filters, setFilters] = useState({
     city: 'Paris',
     startDate: '',
@@ -45,6 +45,7 @@ export default function Map() {
 
   const {
     isLoading,
+    events,
     eventGroups,
     activeGroup,
     currentEvent,
@@ -55,6 +56,10 @@ export default function Map() {
     handlePrevEvent,
     handleNextEvent,
   } = useMapEvents(showError);
+
+  const selectedSidebarEvent = activeSidebarEventId
+    ? events.find((event) => event.id === activeSidebarEventId) || null
+    : null;
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -154,6 +159,7 @@ export default function Map() {
         <SideBar
           eventId={activeSidebarEventId}
           currentUserId={1}
+          event={selectedSidebarEvent}
           onClose={() => {
             setActiveSidebarEventId(null);
             setHoverPos(null);

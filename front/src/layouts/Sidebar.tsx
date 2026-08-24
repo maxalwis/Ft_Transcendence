@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import Chat from '../features/chat/components/Chat';
 import Friends from '../features/friends/components/Friends';
+import Event from '../features/events/components/Event';
+import type { EventItem } from '../types/event';
 
 interface SideBarProps {
   onClose: () => void;
   eventId?: string;
   currentUserId?: number;
+  event?: EventItem | null;
 }
 
-export default function SideBar({ onClose, eventId, currentUserId }: SideBarProps) {
+export default function SideBar({ onClose, eventId, currentUserId, event }: SideBarProps) {
   const [activeTab, setActiveTab] = useState<'chat' | 'friends'>('chat');
 
   return (
@@ -37,7 +40,11 @@ export default function SideBar({ onClose, eventId, currentUserId }: SideBarProp
 
       {/* Section Événements (30%) */}
       <div className="h-[30%] overflow-hidden border-b border-teal-200/20 pb-2">
-        Event Details
+        {event ? (
+          <Event event={event} />
+        ) : (
+          <div className="p-2 text-sm text-slate-400">Select an event.</div>
+        )}
       </div>
 
       {/* Section Chat / Amis (70%) avec onglets */}
