@@ -1,20 +1,22 @@
 import { Transform, Type } from 'class-transformer';
 import { BadRequestException } from '@nestjs/common';
-import { IsDefined, IsNumber, IsPositive, Max, IsOptional, IsISO8601 } from 'class-validator';
+import { IsOptional, IsISO8601, IsNumber, IsPositive, Max, IsDefined } from 'class-validator';
 import type { BoundingBox } from './bounding-box.interface';
 import type { CenterPoint } from './center-point.interface';
 
 // Parse et valide "minLon,minLat,maxLon,maxLat" reçu en query param
 export class MapQueryDto {
-  @IsDefined()
+  @IsOptional()
   @Transform(({ value }) => {
-    if (typeof value != 'string') {
+    if (!value) return undefined;
+
+    if (typeof value !== 'string') {
       throw new BadRequestException('bounding box must be a string');
     }
 
     const parts = value.split(',').map(Number);
 
-    if (parts.length != 4 || parts.some(isNaN)) {
+    if (parts.length !== 4 || parts.some(isNaN)) {
       throw new BadRequestException(
         'bounding box must be in the format "minLon,minLat,maxLon,maxLat"'
       );
@@ -30,7 +32,7 @@ export class MapQueryDto {
 
     return { minLon, minLat, maxLon, maxLat };
   })
-  bbox!: BoundingBox;
+  bbox?: BoundingBox;
 
   @IsOptional()
   @IsISO8601()
@@ -45,11 +47,11 @@ export class MapQueryDto {
 export class NearbyQueryDto {
   @IsDefined()
   @Transform(({ value }) => {
-    if (typeof value != 'string') {
+    if (typeof value !== 'string') {
       throw new BadRequestException('center must be a string');
     }
     const parts = value.split(',').map(Number);
-    if (parts.length != 2 || parts.some(isNaN)) {
+    if (parts.length !== 2 || parts.some(isNaN)) {
       throw new BadRequestException('center must be in the format "lon,lat"');
     }
     const [lon, lat] = parts;
@@ -60,8 +62,8 @@ export class NearbyQueryDto {
   @Type(() => Number)
   @IsNumber()
   @IsPositive()
-  @Max(20000) // on peut chercher dans un rayon de 20 km max
-  radius!: number; // en mètres
+  @Max(20000) // 20 km max radius
+  radius!: number;
 
   @IsOptional()
   @IsISO8601()

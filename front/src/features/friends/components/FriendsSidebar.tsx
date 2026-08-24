@@ -1,82 +1,160 @@
+import { useState, useEffect } from 'react';
 import FriendsList from './FriendsList';
-import type { FriendAction } from './Friends';
-import type { OpenState } from './Friends';
+import FriendsRequests from './FriendRequests';
 import FriendsSearchBar from './FriendsSearchBar';
-import { useState } from 'react';
-import FriendsRequests from './Functionalities/FriendRequests';
+import type { FriendAction, OpenState } from './Friends';
+import type { User, PendingRequest } from '../../../api/friends';
+import styles from '../Friends.module.css';
 
 type FriendsSidebarProps = OpenState & {
   action: FriendAction;
-  friends: string[];
-  setFriends: React.Dispatch<React.SetStateAction<string[]>>;
-  requests: string[];
-  setRequests: React.Dispatch<React.SetStateAction<string[]>>;
+  setAction: React.Dispatch<React.SetStateAction<FriendAction>>;
+  friends: User[];
+  requests: PendingRequest[];
+  errorMsg: string | null;
+  onDataChanged: () => void;
 };
 
 export default function FriendsSidebar({
   action,
+  setAction,
   isOpen,
   setIsOpen,
   friends,
-  setFriends,
   requests,
-  setRequests,
+  onDataChanged,
 }: FriendsSidebarProps) {
   const [input, setInput] = useState('');
+  const [shouldRender, setShouldRender] = useState(isOpen);
 
-  const filteredFriends = friends.filter((friend) => {
-    return friend.toLowerCase().startsWith(input.toLowerCase());
-  });
+  useEffect(() => {
+    if (isOpen) setShouldRender(true);
+  }, [isOpen]);
 
-  let borderClass = '';
-  switch (action) {
-    case 'add':
-      borderClass = 'border-green-500!';
-      break;
-    case 'remove':
-      borderClass = 'border-red-500!';
-      break;
-    case 'request':
-      borderClass = 'border-orange-500!';
-      break;
-    case 'default':
-      borderClass = 'border-blue-500!';
-      break;
-  }
+  useEffect(() => {
+    setInput('');
+  }, [action]);
+
+  const handleAnimationEnd = () => {
+    if (!isOpen) setShouldRender(false);
+  };
+
+  if (!shouldRender) return null;
+
+  const filteredFriends = (friends || []).filter((friend) =>
+    (friend?.name || '').toLowerCase().includes(input.toLowerCase().trim())
+  );
+
+  const handleClose = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen(false);
+  };
+
+  const handleBack = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setAction('menu');
+  };
 
   return (
-    isOpen && (
-      <div
-        className={`glassmorphism-popup relative max-w-80 flex flex-col h-[25vh]
-					w-[25vw] rounded-xl overflow-hidden ${borderClass}`}
-      >
+    <div
+      data-state={isOpen ? 'open' : 'closed'}
+      onAnimationEnd={handleAnimationEnd}
+      className={`glass-panel absolute bottom-0 left-0 flex flex-col rounded-xl overflow-hidden ${styles.sidebarModal}`}
+    >
+      {/* Back Arrow Button (Top-Left) */}
+      {action !== 'menu' && (
         <button
-          className="glassmorphism-element border-slate-700! absolute top-1 right-4 rounded-xl w-6 h-6 duration-150 cursor-pointer hover:bg-sky-900! hover:text-white! active:scale-70"
-          onClick={() => setIsOpen(false)}
+          type="button"
+          aria-label="Back"
+          className="glass-element absolute top-2 left-2 z-10 w-8 h-8 p-1.5! rounded-xl duration-150 cursor-pointer hover:text-white! active:scale-70 flex items-center justify-center"
+          onClick={handleBack}
         >
-          X
+          <svg
+            className="w-full h-full"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
         </button>
-        <div className="flex-1 overflow-y-auto pr-10">
-          {action === 'request' ? (
-            <FriendsRequests
-              setFriends={setFriends}
-              requests={requests}
-              setRequests={setRequests}
-            />
-          ) : (
-            <FriendsList
-              friends={filteredFriends}
-              action={action}
-              setFriends={setFriends}
-              input={input}
-              setInput={setInput}
-            />
-          )}
-        </div>
-        <div className={`glassmorphism-popup ${borderClass}`}>
+      )}
+
+      {/* Close Button (Top-Right) */}
+      <button
+        type="button"
+        aria-label="Close"
+        className="glass-element absolute top-2 right-2 z-10 w-8 h-8 p-1.5! rounded-xl duration-150 cursor-pointer hover:text-white! active:scale-70 flex items-center justify-center"
+        onClick={handleClose}
+      >
+        <svg
+          className="w-full h-full"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto pt-10">
+        {action === 'menu' ? (
+          <div className="flex flex-col gap-2 py-2">
+            <button
+              type="button"
+              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-blue-600 hover:text-white cursor-pointer duration-150 font-medium"
+              onClick={() => setAction('default')}
+            >
+              Search Friends
+            </button>
+            <button
+              type="button"
+              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-orange-600 hover:text-white cursor-pointer duration-150 font-medium"
+              onClick={() => setAction('request')}
+            >
+              Pending Requests ({requests.length})
+            </button>
+            <button
+              type="button"
+              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-green-600 hover:text-white cursor-pointer duration-150 font-medium"
+              onClick={() => setAction('add')}
+            >
+              Add a friend
+            </button>
+            <button
+              type="button"
+              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-red-600 hover:text-white cursor-pointer duration-150 font-medium"
+              onClick={() => setAction('remove')}
+            >
+              Remove a friend
+            </button>
+          </div>
+        ) : action === 'request' ? (
+          <FriendsRequests requests={requests} onDataChanged={onDataChanged} />
+        ) : (
+          <FriendsList
+            friends={action === 'add' ? friends : filteredFriends}
+            action={action}
+            input={input}
+            setInput={setInput}
+            onDataChanged={onDataChanged}
+          />
+        )}
+      </div>
+
+      {/* Search Bar */}
+      {action !== 'menu' && (
+        <div className="glass-panel">
           <FriendsSearchBar action={action} input={input} setInput={setInput} />
         </div>
-      </div>
-    )
+      )}
+    </div>
   );
 }

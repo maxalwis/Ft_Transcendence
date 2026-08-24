@@ -1,4 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL;
+// Passer par le proxy Reverse Nginx en chemin relatif
+const API_URL = '/api';
 
 export async function fetchEventMessages(eventId: string) {
   const res = await fetch(`${API_URL}/events/${eventId}/messages`);

@@ -66,7 +66,7 @@ export default function RegisterPage() {
             Username{' '}
           </label>
           <input
-            className="glassmorphism-popup pl-2 flex items-center jutify-center rounded-2xl border-2"
+            className="glass-panel pl-2 flex items-center jutify-center rounded-2xl border-2"
             type="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -78,7 +78,7 @@ export default function RegisterPage() {
             Password{' '}
           </label>
           <input
-            className="glassmorphism-popup pl-2 flex items-center jutify-center rounded-lg border-2"
+            className="glass-panel pl-2 flex items-center jutify-center rounded-lg border-2"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -88,14 +88,14 @@ export default function RegisterPage() {
             Confirm Password{' '}
           </label>
           <input
-            className="glassmorphism-popup pl-2 flex items-center jutify-center rounded-lg border-2"
+            className="glass-panel pl-2 flex items-center jutify-center rounded-lg border-2"
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Confirm Password"
           />
           <button
-            className="mt-4 flex hover:scale-105 items-center glassmorphism-popup justify-center duration-500 ease-in-out hover:text-white hover:border-white/50 hover:bg-linear-to-r! from-teal-400 to-orange-300 cursor-pointer"
+            className="mt-4 flex hover:scale-105 items-center glass-panel justify-center duration-500 ease-in-out hover:text-white hover:border-white/50 hover:bg-linear-to-r! from-teal-400 to-orange-300 cursor-pointer"
             type="submit"
           >
             Create account

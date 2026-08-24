@@ -1,5 +1,6 @@
 import './AdminPanelLinks.css';
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import L from 'leaflet';
 
@@ -34,7 +35,7 @@ const dashboards: DashboardLink[] = [
     ),
   },
   {
-    name: 'Kibana',
+    name: 'Elasticsearch',
     url: 'http://localhost:5601',
     description: 'Logs, analytics & dashboard workspace',
     icon: (
@@ -53,29 +54,48 @@ const dashboards: DashboardLink[] = [
 
 const DropdownMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLAnchorElement>(null);
+  const [coords, setCoords] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+
+  const updatePosition = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.top,
+        left: rect.right + 8, // Positions dropdown 8px to the right of the button
+      });
+    }
+  };
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const isButton = buttonRef.current && buttonRef.current.contains(target);
+      const isMenu = document.getElementById('admin-links-dropdown')?.contains(target);
+
+      if (!isButton && !isMenu) {
         setIsOpen(false);
       }
     };
+
     document.addEventListener('mousedown', handleOutsideClick);
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    setIsOpen(!isOpen);
+    e.stopPropagation();
+    updatePosition();
+    setIsOpen((prev) => !prev);
   };
 
   return (
-    <div className="relative inline-block text-left" ref={menuRef}>
+    <>
       <a
+        ref={buttonRef}
         href="#"
         onClick={handleClick}
-        className="glassmorphism-element menu-dots-icon flex items-center justify-center w-10 h-10 cursor-pointer transition-transform active:scale-95 no-underline box-border text-center"
+        className="leaflet-control-btn flex items-center justify-center cursor-pointer transition-transform active:scale-95 no-underline box-border text-center"
         role="button"
         aria-label="Parameters"
         title="Parameters"
@@ -94,31 +114,47 @@ const DropdownMenu: React.FC = () => {
         </svg>
       </a>
 
-      {isOpen && (
-        <div className="glassmorphism-popup glassmorphism-animate-in absolute left-[calc(100%+8px)] top-0 w-64 z-50 p-3">
-          <div className="flex flex-col gap-2">
-            {dashboards.map((tool) => (
-              <button
-                key={tool.name}
-                onClick={() => window.open(tool.url, '_blank')}
-                className="flex items-center gap-3 p-2 rounded-xl bg-white/40 hover:bg-white/80 border border-blue-400/30 hover:border-blue-400/60 transition-all text-left group"
-              >
-                <div className="p-2 rounded-lg bg-blue-500/10 text-blue-900 group-hover:scale-110 transition-transform">
-                  {tool.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs font-bold text-stone-900 truncate">{tool.name}</div>
-                  <div className="text-[10px] text-stone-600 truncate">{tool.description}</div>
-                </div>
-                <span className="text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                  ↗
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+      {isOpen &&
+        createPortal(
+          <div
+            id="admin-links-dropdown"
+            style={{
+              position: 'fixed',
+              top: `${coords.top}px`,
+              left: `${coords.left}px`,
+              zIndex: 99999,
+            }}
+            className="glass-panel glass-animate-in w-64 p-3 pointer-events-auto"
+          >
+            <div className="flex flex-col gap-2">
+              {dashboards.map((tool) => (
+                <button
+                  key={tool.name}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(tool.url, '_blank');
+                    setIsOpen(false);
+                  }}
+                  className="flex items-center gap-3 p-2 rounded-xl bg-white/40 hover:bg-white/80 border border-blue-400/30 hover:border-blue-400/60 transition-all text-left group"
+                >
+                  <div className="p-2 rounded-lg bg-blue-500/10 text-blue-900 group-hover:scale-110 transition-transform">
+                    {tool.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-bold text-stone-900 truncate">{tool.name}</div>
+                    <div className="text-[10px] text-stone-600 truncate">{tool.description}</div>
+                  </div>
+                  <span className="text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    ↗
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>,
+          document.body
+        )}
+    </>
   );
 };
 
@@ -127,11 +163,7 @@ export const AdminPanelLinks: React.FC = () => {
     const topLeftContainer = document.querySelector('.leaflet-top.leaflet-left');
     if (!topLeftContainer) return;
 
-    const controlDiv = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-    controlDiv.style.border = 'none';
-    controlDiv.style.background = 'transparent';
-    controlDiv.style.boxShadow = 'none';
-    controlDiv.style.margin = '10px 0 0 10px';
+    const controlDiv = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-links');
 
     L.DomEvent.disableClickPropagation(controlDiv);
     L.DomEvent.disableScrollPropagation(controlDiv);
@@ -142,7 +174,9 @@ export const AdminPanelLinks: React.FC = () => {
     topLeftContainer.appendChild(controlDiv);
 
     return () => {
-      root.unmount();
+      queueMicrotask(() => {
+        root.unmount();
+      });
       controlDiv.remove();
     };
   }, []);

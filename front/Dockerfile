@@ -2,8 +2,17 @@ FROM docker.io/library/node:20-alpine
 
 WORKDIR /app
 
+# Copy dependency definitions first to leverage Docker layer caching
+COPY package*.json ./
+
+# Install dependencies during image build
+RUN npm install
+
+# Copy source code (will be overridden by bind mount in dev mode)
+COPY . .
+
 # Expose Vite's default development port
 EXPOSE 5173
 
-# Run the app with host binding enabled so it's accessible outside the container
+# Run the dev server
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

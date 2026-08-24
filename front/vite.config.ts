@@ -63,6 +63,13 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true,
       hmr: { protocol: 'wss', clientPort: Number(env.HTTPS_PORT) || 8443 },
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+      },
     },
   };
 });

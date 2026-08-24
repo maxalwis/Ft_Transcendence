@@ -5,11 +5,15 @@ import { MapQueryDto, NearbyQueryDto } from './dto/map-query.dto';
 @Controller('events')
 export class EventsController {
   private readonly logger = new Logger(EventsController.name);
-  constructor(private eventsService: EventsService) {}
+  constructor(private readonly eventsService: EventsService) {}
 
   @Get('map')
   findForMap(@Query() query: MapQueryDto) {
-    return this.eventsService.findForMap(query.bbox, query.from, query.to);
+    if (query.bbox) {
+      return this.eventsService.findForMap(query.bbox, query.from, query.to);
+    }
+
+    return this.eventsService.findAllForMap(query.from, query.to);
   }
 
   @Get('nearby')

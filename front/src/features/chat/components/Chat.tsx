@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import './Chat.css';
+import '../Chat.module.css';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
 import { fetchEventMessages, sendEventMessage } from '../chatService';
@@ -30,7 +30,8 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
         if (isMounted) setMessages(data);
       })
       .catch((err) => {
-        if (isMounted) setErrorMessage(err.message || 'Failed to load messages');
+        // CORRECTION 1: Utilisation de showError au lieu de setErrorMessage
+        if (isMounted) showError(err.message || 'Failed to load messages');
       })
       .finally(() => {
         if (isMounted) setLoading(false);
@@ -39,7 +40,7 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     return () => {
       isMounted = false;
     };
-  }, [eventId]);
+  }, [eventId, showError]);
 
   // Handle sending through the backend
   const handleSendMessage = async (text: string) => {

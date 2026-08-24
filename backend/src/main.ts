@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
-import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import { AppLogger } from './logger/app-logger.service';
@@ -9,11 +8,22 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
-  // On peut enlever Cors avec nginx
-  /*   app.enableCors({
-    origin: 'http://localhost:5173',
+  app.enableCors({
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void
+    ) => {
+      if (!origin || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Non autorisé par CORS'));
+      }
+    },
     credentials: true,
-  }); */
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With'],
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -28,5 +38,4 @@ async function bootstrap() {
   await app.listen(port);
   logger.log(`Server is running on http://localhost:${port}`);
 }
-
 bootstrap();
