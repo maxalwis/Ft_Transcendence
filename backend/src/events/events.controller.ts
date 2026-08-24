@@ -9,16 +9,30 @@ export class EventsController {
 
   @Get('map')
   findForMap(@Query() query: MapQueryDto) {
+    const priceStr = query.price !== undefined ? String(query.price) : undefined;
+
     if (query.bbox) {
-      return this.eventsService.findForMap(query.bbox, query.from, query.to);
+      return this.eventsService.findForMap(
+        query.bbox,
+        query.from,
+        query.to,
+        query.category,
+        priceStr,
+      );
     }
 
-    return this.eventsService.findAllForMap(query.from, query.to);
+    return this.eventsService.findAllForMap(
+      query.from,
+      query.to,
+      query.category,
+      priceStr,
+    );
   }
 
   @Get('nearby')
   findNearby(@Query() query: NearbyQueryDto) {
-    return this.eventsService.findNearby(query, query.from, query.to);
+    const priceStr = query.price !== undefined ? String(query.price) : undefined;
+    return this.eventsService.findNearby(query, query.from, query.to, query.category, priceStr);
   }
 
   @Get(':id')

@@ -43,7 +43,8 @@ export class IngestionService implements OnModuleInit {
       await this.handleDailyIngestionAndCleanup();
       this.logger.log('Mairie de Paris automatic data ingestion completed successfully!');
     } catch (error) {
-      this.logger.error('Failed to trigger automatic ingestion:', error.message);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error('Failed to trigger automatic ingestion:', errorMessage);
     }
   }
 
