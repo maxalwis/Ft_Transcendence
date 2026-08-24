@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import './Chat.css';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
-import { fetchEventMessages, sendEventMessage } from './chatService';
-import { useNotification } from '../../Context/NotificationContext';
+import { fetchEventMessages, sendEventMessage } from '../chatService';
+import { useNotification } from '../../../context/notifications/NotificationContext';
 
 export type Message = {
   id: number;

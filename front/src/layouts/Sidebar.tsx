@@ -1,4 +1,4 @@
-import Chat from './Chat/Chat';
+import Chat from '../features/chat/components/Chat';
 
 interface MySidebarProps {
   onClose: () => void;

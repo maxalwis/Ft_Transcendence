@@ -1,11 +1,11 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import LoginPage from './components/BottomBar/Auth/LoginPage';
+import LoginPage from './features/auth/components/LoginPage';
 import MyMap from './components/Map/MyMap';
-import { AdminPanelLinks } from './components/Dashboard/AdminPanelLinks';
-import { NotificationProvider } from './components/Context/NotificationContext';
-import RegisterPage from './components/BottomBar/Auth/RegisterPage';
-import { AuthProvider } from './components/Context/AuthContext';
+import { AdminPanelLinks } from './features/externalLinks/AdminPanelLinks';
+import { NotificationProvider } from './context/notifications/NotificationContext';
+import RegisterPage from './features/auth/components/RegisterPage';
+import { AuthProvider } from './context/auth/AuthContext';
 
 function App() {
   return (

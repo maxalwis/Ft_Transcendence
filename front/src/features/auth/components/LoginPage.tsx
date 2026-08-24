@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { SubmitEvent } from 'react';
-import { login } from '../../../api/api';
+import { login } from '../../../api/api.ts';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../Context/AuthContext.tsx';
+import { useAuth } from '../../../context/auth/AuthContext.tsx';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');

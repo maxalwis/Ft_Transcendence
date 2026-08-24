@@ -1,4 +1,4 @@
-import LoginButton from './Auth/Auth';
+import LoginButton from '../features/auth/components/Auth';
 
 export default function BottomBar() {
   return (

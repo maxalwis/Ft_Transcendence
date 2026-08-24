@@ -1,4 +1,4 @@
-import { useAuth } from '../../Context/AuthContext.tsx';
+import { useAuth } from '../../../context/auth/AuthContext.tsx';
 import { useNavigate } from 'react-router-dom';
 
 export default function LoginButton() {

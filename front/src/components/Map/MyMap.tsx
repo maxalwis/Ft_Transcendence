@@ -3,9 +3,9 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import L from 'leaflet';
 
 import 'leaflet/dist/leaflet.css';
-import MySidebar from '../Sidebar/Sidebar';
+import MySidebar from '../../layouts/Sidebar.tsx';
 import MarkerHoverCard from './MarkerHoverCard.tsx';
-import { createMarkerIcon, createClusterIcon } from './CustomIcons.tsx';
+import { createMarkerIcon, createClusterIcon } from '../../features/map/components/CustomIcons.tsx';
 
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
@@ -13,11 +13,11 @@ import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
 import Friends from '../Friends/Friends.tsx';
 import './Map.css';
-import NavBar from '../NavBar/NavBar.tsx';
-import Filters from '../Filters/Filters.tsx';
-import BottomBar from '../BottomBar/BottomBar.tsx';
+import NavBar from '../../layouts/NavBar.tsx';
+import Filters from '../../features/map/components/Filters.tsx';
+import BottomBar from '../../layouts/BottomBar.tsx';
 
-import { useAuth } from '../Context/AuthContext.tsx';
+import { useAuth } from '../../context/auth/AuthContext.tsx';
 
 const idfBounds = new L.LatLngBounds([48.65, 1.95], [49.05, 2.75]);
 
