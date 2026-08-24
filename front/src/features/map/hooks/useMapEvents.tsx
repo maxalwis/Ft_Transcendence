@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import type { EventItem, EventGroup } from '../../types/event';
+import type { EventItem, EventGroup, EventFilters } from '../../types/event';
 
-export function useMapEvents(showError: (msg: string) => void) {
+export function useMapEvents(showError: (msg: string) => void, filters: EventFilters) {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
@@ -12,7 +12,16 @@ export function useMapEvents(showError: (msg: string) => void) {
       try {
         setIsLoading(true);
         const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-        const response = await fetch(`${baseUrl}/events/map`);
+
+        const params = new URLSearchParams();
+        if (filters.startDate) params.set('from', filters.startDate);
+
+        if (filters.priceType === 'free') {
+          params.set('price', 'free');
+        } else if (filters.priceType === 'fee-based') {
+          params.set('price', 'payant');
+}
+        const response = await fetch(`${baseUrl}/events/map?${params.toString()}`);
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -34,7 +43,7 @@ export function useMapEvents(showError: (msg: string) => void) {
     };
 
     fetchAllEvents();
-  }, [showError]);
+  }, [showError, filters]);
 
   const eventGroups = useMemo<EventGroup[]>(() => {
     const groupsMap = new Map<string, EventItem[]>();

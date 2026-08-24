@@ -13,6 +13,7 @@ import NavBar from '../../../layouts/NavBar';
 import BottomBar from '../../../layouts/BottomBar';
 import Friends from '../../friends/components/Friends';
 import Filters from './Filters';
+import { EventFilters } from '../../../types/event';
 import { EventsDetails } from './EventsDetails';
 import { ClusterLayer } from './ClusterLayer';
 import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
@@ -54,7 +55,7 @@ export default function Map() {
     setActiveEventIndex,
     handlePrevEvent,
     handleNextEvent,
-  } = useMapEvents(showError);
+  } = useMapEvents(showError, filters);
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -146,7 +147,7 @@ export default function Map() {
       )}
 
       <Friends />
-      <Filters />
+      <Filters onApplyFilters={setFilters}/>
       <NavBar />
       <BottomBar />
 
