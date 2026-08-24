@@ -8,8 +8,11 @@ import {
   Delete,
   ParseIntPipe,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @Controller('users')
 export class UsersController {
@@ -21,8 +24,10 @@ export class UsersController {
   }
 
   @Get('search')
-  findFromUsername(@Query('name') name: string) {
-    return this.usersService.findFromUsername(name);
+  @UseGuards(JwtAuthGuard)
+  searchByUsername(@Query('username') name: string, @Req() req: any) {
+    const currentUserId = req.user?.id;
+    return this.usersService.searchByUsername(name, currentUserId);
   }
 
   @Get(':id')

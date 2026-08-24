@@ -3,7 +3,7 @@ const API_URL = `${baseUrl}/friends`;
 
 export interface User {
   id: number;
-  name: string;
+  username: string;
   avatar?: string;
   status: 'ONLINE' | 'OFFLINE' | 'IN_GAME';
 }
@@ -17,28 +17,35 @@ export interface PendingRequest {
   createdAt?: string;
 }
 
-export async function getFriends(): Promise<User[]> {
+export async function getFriends(accessToken: string): Promise<User[]> {
   const res = await fetch(API_URL, {
     credentials: 'include',
+    headers: { Authorization: `Bearer ${accessToken}` },
   });
   if (!res.ok) throw new Error('Erreur de récupération des amis');
   return res.json();
 }
 
-export async function getPendingRequests(): Promise<PendingRequest[]> {
+export async function getPendingRequests(accessToken: string): Promise<PendingRequest[]> {
   const res = await fetch(`${API_URL}/pending`, {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
     credentials: 'include',
   });
   if (!res.ok) throw new Error('Erreur lors de la récupération des demandes');
   return res.json();
 }
 
-export async function sendFriendRequest(receiverId: number) {
+export async function sendFriendRequest(receiverId: number, accessToken: string) {
   const res = await fetch(`${API_URL}/request/${receiverId}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
     credentials: 'include',
   });
   if (!res.ok) {
@@ -48,12 +55,25 @@ export async function sendFriendRequest(receiverId: number) {
   return res.json();
 }
 
-export async function acceptFriendRequest(senderId: number) {
+export async function acceptFriendRequest(senderId: number, accessToken: string) {
   const res = await fetch(`${API_URL}/accept/${senderId}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
     credentials: 'include',
   });
   if (!res.ok) throw new Error("Impossible d'accepter la demande");
+  return res.json();
+}
+
+export async function removeFriend(friendId: number, accessToken: string) {
+  const res = await fetch(`${API_URL}/${friendId}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    credentials: 'include',
+  });
+  if (!res.ok) throw new Error('Impossible de supprimer cet ami');
   return res.json();
 }

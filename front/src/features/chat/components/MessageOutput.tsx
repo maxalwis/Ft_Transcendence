@@ -3,10 +3,10 @@ import type { Message } from './Chat';
 
 type MessageOutputProps = {
   messages: Message[];
-  currentUserId?: number; // Pass current user ID to check if "isMe"
+  currentUserId?: number;
 };
 
-export default function MessageOutput({ messages, currentUserId = 1 }: MessageOutputProps) {
+export default function MessageOutput({ messages, currentUserId }: MessageOutputProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Automatically scroll to the bottom when new messages arrive
