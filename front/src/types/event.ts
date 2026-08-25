@@ -7,6 +7,8 @@ export interface EventItem {
   dateStart?: string;
   dateEnd?: string;
   coverUrl?: string;
+  priceType?: string;
+  priceDetail?: string;
   isNew?: boolean;
   interestedUsersCount?: number;
 }
@@ -23,4 +25,4 @@ export type EventFilters = {
   startDate: string;
   endDate: string;
   priceType: string;
-}
+};

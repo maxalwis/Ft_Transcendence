@@ -16,7 +16,7 @@ export class EventsService {
     const defaultToDate = to ? new Date(to) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
     return this.prisma.$queryRaw`
-        SELECT id, title, category, latitude, longitude, "dateStart", "dateEnd", "coverUrl"
+        SELECT id, title, category, latitude, longitude, "dateStart", "dateEnd", "coverUrl", "priceType", "priceDetail"
         FROM "Event"
         WHERE latitude IS NOT NULL AND longitude IS NOT NULL
             AND "dateEnd" >= ${fromDate}
@@ -32,7 +32,7 @@ export class EventsService {
     const toDate = to ? new Date(to) : undefined;
 
     return this.prisma.$queryRaw`
-      SELECT id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category
+      SELECT id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail"
       FROM "Event"
       WHERE location && ST_MakeEnvelope(
         ${minLon}, ${minLat}, ${maxLon}, ${maxLat}, 4326
@@ -59,7 +59,7 @@ export class EventsService {
 
     return this.prisma.$queryRaw`
       SELECT
-        id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category,
+        id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail",
         ST_Distance(
           location,
           ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326)::geography

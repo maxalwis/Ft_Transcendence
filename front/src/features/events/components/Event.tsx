@@ -9,15 +9,19 @@ interface EventProps {
 
 export default function Event({ event }: EventProps) {
   return (
-    <div className="flex h-full flex-col gap-3 overflow-hidden">
+    <div className="flex h-full flex-col gap-3 overflow-y-auto">
       <EventImage src={event.coverUrl} alt={event.title} />
       <EventDetails
         title={event.title}
         category={event.category?.[0]}
         dateStart={event.dateStart}
         dateEnd={event.dateEnd}
+        priceType={event.priceType}
+        priceDetail={event.priceDetail}
       />
-      <LikeButton eventId={event.id} interestedUsersCount={event.interestedUsersCount} />
+      <div className="flex items-center justify-center">
+        <LikeButton eventId={event.id} interestedUsersCount={event.interestedUsersCount} />
+      </div>
     </div>
   );
 }

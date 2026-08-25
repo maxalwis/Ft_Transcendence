@@ -53,7 +53,7 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     }
   };
 
-  if (loading) return <div className="text-gray-400 text-sm p-4">Loading messages...</div>;
+  if (loading) return <div className="text-gray-400 flex items-center justify-center text-sm p-4">Loading messages...</div>;
 
   return (
     <div className="flex flex-col h-full gap-3 relative">
