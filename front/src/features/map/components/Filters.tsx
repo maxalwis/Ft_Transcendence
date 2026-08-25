@@ -15,38 +15,25 @@ const PRICE_OPTIONS = [
 
 export default function Filters({ onApplyFilters }: FiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
 
   const [city, setCity] = useState('Paris');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [priceType, setPriceType] = useState('');
   
-  // États pour le double curseur de prix (max mis à 500)
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(500);
 
-  const handleOpen = () => {
-    setIsAnimating(true);
-    setIsOpen(true);
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-
-  const handleAnimationEnd = () => {
-    if (!isOpen) {
-      setIsAnimating(false);
-    }
-  };
-
   const handleApply = () => {
     if (onApplyFilters) {
-      const finalPrice = priceType === 'fee-based' ? `${minPrice}-${maxPrice}` : priceType;
-      onApplyFilters({ city, startDate, endDate, priceType: finalPrice });
+      onApplyFilters({ 
+        city, 
+        startDate, 
+        endDate, 
+        priceType 
+      });
     }
-    handleClose();
+    setIsOpen(false);
   };
 
   const handleReset = () => {
@@ -59,7 +46,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
     if (onApplyFilters) {
       onApplyFilters({ city: 'Paris', startDate: '', endDate: '', priceType: '' });
     }
-    handleClose();
+    setIsOpen(false);
   };
 
   return (
@@ -67,7 +54,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
       <button
         type="button"
         aria-label="Open Filters"
-        onClick={handleOpen}
+        onClick={() => setIsOpen(true)}
         className="glass-panel icon-btn fixed left-4 top-1/2 -translate-y-1/2 z-[9999] w-10 h-10 rounded-full shadow-lg cursor-pointer active:scale-95 flex items-center justify-center"
         style={{ color: 'var(--color-blue-dark)' }}
       >
@@ -76,12 +63,10 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
         </svg>
       </button>
 
-      {(isOpen || isAnimating) &&
+      {isOpen &&
         createPortal(
           <header
-            data-state={isOpen ? 'open' : 'closed'}
-            onAnimationEnd={handleAnimationEnd}
-            className="filterModal glass-panel h-auto w-64 fixed left-3 top-1/2 flex flex-col p-4 gap-4 z-[9999] rounded-xl shadow-2xl"
+            className="filterModal glass-panel h-auto w-64 fixed left-3 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 z-[9999] rounded-xl shadow-2xl"
             style={{ color: 'var(--color-blue-dark)' }}
           >
             <button
@@ -89,7 +74,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               aria-label="Close"
               className="glass-element icon-btn absolute top-2 right-2 z-10 w-8 h-8 p-1.5 rounded-xl duration-150 cursor-pointer active:scale-70 flex items-center justify-center"
               style={{ color: 'var(--color-blue-dark)' }}
-              onClick={handleClose}
+              onClick={() => setIsOpen(false)}
             >
               <svg className="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M18 6L6 18M6 6l12 12" />
@@ -121,7 +106,6 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               />
             </div>
 
-            {/* Section du double curseur de prix (max = 500) */}
             {priceType === 'fee-based' && (
               <div className="flex flex-col gap-2 bg-white/40 p-2 rounded-lg">
                 <label className="text-xs font-semibold">
