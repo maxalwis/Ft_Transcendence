@@ -25,7 +25,7 @@ export default function LoginButton() {
   if (user) {
     return (
       <button
-        className="h-10 w-25 cursor-pointer rounded-full text-white bg-red-600 duration-300 hover:zoom-98"
+        className="h-10 w-25 glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
         onClick={handleLogout}
       >
         Logout
@@ -35,7 +35,7 @@ export default function LoginButton() {
 
   return (
     <button
-      className=" h-10 w-25 cursor-pointer rounded-full text-white bg-sky-600 duration-300 hover:zoom-98"
+      className=" h-10 w-25 glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
       onClick={handleLogin}
     >
       Connexion

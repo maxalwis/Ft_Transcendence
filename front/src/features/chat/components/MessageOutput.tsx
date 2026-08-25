@@ -31,7 +31,7 @@ export default function MessageOutput({ messages, currentUserId }: MessageOutput
               className={`rounded-2xl px-3.5 py-2 text-sm break-all shadow-sm ${
                 isMe
                   ? 'glass-blue text-white rounded-br-xs'
-                  : 'glass-panel text-gray-200 border border-gray-700/50 rounded-bl-xs'
+                  : 'glass-panel text-slate-600 border border-gray-700/50 rounded-bl-xs'
               }`}
             >
               {message.content}
