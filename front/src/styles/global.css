@@ -123,6 +123,12 @@ input[type="submit"]:active {
     transform: scale(0.98);
 }
 
+.like-button {
+    padding: 2px 6px !important;
+    border-radius: 6px !important;
+    line-height: 1.25 !important;
+}
+
 button.icon-btn,
 .icon-btn {
     padding: 0 !important;

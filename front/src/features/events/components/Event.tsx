@@ -9,7 +9,7 @@ interface EventProps {
 
 export default function Event({ event }: EventProps) {
   return (
-    <div className="flex h-full flex-col gap-3 overflow-y-auto">
+    <div className="flex h-full flex-col gap-1 overflow-y-auto">
       <EventImage src={event.coverUrl} alt={event.title} />
       <EventDetails
         title={event.title}
