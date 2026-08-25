@@ -12,6 +12,7 @@ import NavBar from '../../../layouts/NavBar';
 import BottomBar from '../../../layouts/BottomBar';
 import Friends from '../../friends/components/Friends';
 import Filters from './Filters';
+import { EventFilters } from '../../../types/event';
 import { EventsDetails } from './EventsDetails';
 import { ClusterLayer } from './ClusterLayer';
 import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';

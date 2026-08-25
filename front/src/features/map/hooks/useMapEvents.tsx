@@ -1,6 +1,4 @@
-
 import { useState, useEffect, useMemo, useCallback } from 'react';
-// Correction du chemin d'import selon l'arborescence
 import type { EventItem, EventGroup } from '../../../types/event';
 
 export function useMapEvents(
@@ -23,9 +21,6 @@ export function useMapEvents(
       try {
         setIsLoading(true);
         
-        // --- DÉBOGAGE ---
-        console.log("FILTERS RECUS DANS LE HOOK :", filters);
-
         // Utilisation sécurisée de l'URL de base
         const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
         
@@ -38,8 +33,6 @@ export function useMapEvents(
 
         const queryString = params.toString();
         const url = `${baseUrl}/events/map${queryString ? `?${queryString}` : ''}`;
-
-        console.log("URL APPELÉE :", url); // --- DÉBOGAGE ---
 
         const response = await fetch(url);
 
