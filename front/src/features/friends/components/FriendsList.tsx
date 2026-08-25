@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import type { FriendAction } from './Friends';
-import { sendFriendRequest } from '../../../api/friends';
+import { sendFriendRequest, removeFriend } from '../../../api/friends';
 import type { User } from '../../../api/friends';
 import { searchUsers } from '../../../api/users';
 import type { UserSearchResult } from '../../../api/users';
+import { useAuth } from '../../../context/auth/AuthContext';
 
 type FriendsListProps = {
   friends: User[];
@@ -22,6 +23,7 @@ export default function FriendsList({
 }: FriendsListProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [results, setResults] = useState<UserSearchResult[]>([]);
+  const { accessToken } = useAuth();
 
   useEffect(() => {
     if (action !== 'add' || !input.trim()) {
@@ -30,7 +32,7 @@ export default function FriendsList({
     }
     const timeout = setTimeout(async () => {
       try {
-        const found = await searchUsers(input);
+        const found = await searchUsers(input, accessToken!);
         setResults(found);
         setErrorMsg(null);
       } catch (err) {
@@ -39,12 +41,12 @@ export default function FriendsList({
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [input, action]);
+  }, [input, action, accessToken]);
 
   const handleAddFriend = async (receiverId: number) => {
     setErrorMsg(null);
     try {
-      await sendFriendRequest(receiverId);
+      await sendFriendRequest(receiverId, accessToken!);
       setInput('');
       setResults([]);
       onDataChanged();
@@ -55,7 +57,7 @@ export default function FriendsList({
 
   const handleRemoveFriend = async (_friendId: number) => {
     try {
-      // TODO: appeler removeFriend(friendId) une fois l'endpoint DELETE ajouté côté backend
+      await removeFriend(_friendId, accessToken!);
       onDataChanged();
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Error during removal.');
@@ -72,7 +74,7 @@ export default function FriendsList({
               key={user.id}
               className="flex items-center justify-between px-3 py-2 rounded-full text-sm text-black"
             >
-              <span>{user?.name || 'Inconnu'}</span>
+              <span>{user?.username || 'Inconnu'}</span>
               <button
                 type="button"
                 onClick={() => handleAddFriend(user.id)}
@@ -109,7 +111,7 @@ export default function FriendsList({
                   }`}
                 />
               </div>
-              <span>{friend?.name || 'Inconnu'}</span>
+              <span>{friend?.username || 'Inconnu'}</span>
             </div>
             {action === 'remove' && (
               <button

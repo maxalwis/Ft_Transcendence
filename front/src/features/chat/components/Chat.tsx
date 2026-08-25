@@ -8,7 +8,7 @@ import { useNotification } from '../../../context/notifications/NotificationCont
 export type Message = {
   id: number;
   content: string;
-  user: { name?: string; email: string };
+  user: { username?: string; email: string };
   createdAt: string;
 };
 

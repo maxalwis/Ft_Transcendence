@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { PendingRequest } from '../../../api/friends';
 import { acceptFriendRequest } from '../../../api/friends';
+import { useAuth } from '../../../context/auth/AuthContext';
 
 type FriendsRequestsProps = {
   requests: PendingRequest[];
@@ -9,10 +10,11 @@ type FriendsRequestsProps = {
 
 export default function FriendsRequests({ requests, onDataChanged }: FriendsRequestsProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const { accessToken } = useAuth();
 
   const handleAccept = async (senderId: number) => {
     try {
-      await acceptFriendRequest(senderId);
+      await acceptFriendRequest(senderId, accessToken!);
       onDataChanged();
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Erreur lors de l'acceptation");
@@ -33,12 +35,12 @@ export default function FriendsRequests({ requests, onDataChanged }: FriendsRequ
       {requests.map((req: any) => {
         // Extraction sécurisée du nom du demandeur (sender)
         const displayName =
-          req.sender?.name || req.senderName || req.name || `Utilisateur #${req.senderId || req.id}`;
+          req.sender?.username || `Utilisateur #${req.senderId || req.id}`;
         const targetId = req.senderId || req.sender?.id || req.id;
 
         return (
           <div
-            key={req.id || targetId}
+            key={req.id}
             className="flex items-center justify-between gap-2 rounded-lg bg-white/10 px-3 py-2 text-sm text-black"
           >
             <span className="font-medium">{displayName}</span>
