@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { EventFil, FiltersProps } from '../types/filters';
-import styles from '../Map.module.css';
+import { EventFilters } from '../../../types/event';
 import CustomSelect from './CustomSelect';
+
+export type FiltersProps = {
+  onApplyFilters?: (filters: EventFilters) => void;
+};
 
 const PRICE_OPTIONS = [
   { value: '', label: 'All' },
@@ -18,6 +21,10 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [priceType, setPriceType] = useState('');
+  
+  // États pour le double curseur de prix (max mis à 500)
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(500);
 
   const handleOpen = () => {
     setIsAnimating(true);
@@ -25,7 +32,6 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
   };
 
   const handleClose = () => {
-    // Keep isAnimating true so the close animation can play before unmounting
     setIsOpen(false);
   };
 
@@ -37,8 +43,10 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
 
   const handleApply = () => {
     if (onApplyFilters) {
-      onApplyFilters({ city, startDate, endDate, priceType });
+      const finalPrice = priceType === 'fee-based' ? `${minPrice}-${maxPrice}` : priceType;
+      onApplyFilters({ city, startDate, endDate, priceType: finalPrice });
     }
+    handleClose();
   };
 
   const handleReset = () => {
@@ -46,13 +54,16 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
     setStartDate('');
     setEndDate('');
     setPriceType('');
+    setMinPrice(0);
+    setMaxPrice(500);
     if (onApplyFilters) {
       onApplyFilters({ city: 'Paris', startDate: '', endDate: '', priceType: '' });
     }
+    handleClose();
   };
+
   return (
     <>
-      {/* Trigger Button: Kept fixed on the left border */}
       <button
         type="button"
         aria-label="Open Filters"
@@ -70,7 +81,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
           <header
             data-state={isOpen ? 'open' : 'closed'}
             onAnimationEnd={handleAnimationEnd}
-            className={`${styles.filterModal || styles.sidebarModal || 'filterModal'} glass-panel h-auto w-64 fixed left-3 top-1/2 flex flex-col p-4 gap-4 z-[9999] rounded-xl shadow-2xl`}
+            className="filterModal glass-panel h-auto w-64 fixed left-3 top-1/2 flex flex-col p-4 gap-4 z-[9999] rounded-xl shadow-2xl"
             style={{ color: 'var(--color-blue-dark)' }}
           >
             <button
@@ -80,44 +91,28 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               style={{ color: 'var(--color-blue-dark)' }}
               onClick={handleClose}
             >
-              <svg
-                className="w-full h-full"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
+              <svg className="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M18 6L6 18M6 6l12 12" />
               </svg>
             </button>
 
-            <h3
-              className="text-lg font-bold text-center pb-2 pr-6"
-              style={{ color: 'var(--color-blue-dark)', borderColor: 'var(--glass-border)' }}
-            >
+            <h3 className="text-lg font-bold text-center pb-2 pr-6" style={{ color: 'var(--color-blue-dark)' }}>
               Events Filters
             </h3>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold" style={{ color: 'var(--color-blue-dark)' }}>
-                Ville / Localisation
-              </label>
+              <label className="text-xs font-semibold">Ville / Localisation</label>
               <input
                 type="text"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="Ex: Paris"
                 className="px-2 py-1 border border-white/20 rounded text-xs bg-white/90"
-                style={{ color: 'var(--color-blue-dark)' }}
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold" style={{ color: 'var(--color-blue-dark)' }}>
-                Price category
-              </label>
+              <label className="text-xs font-semibold">Price category</label>
               <CustomSelect
                 options={PRICE_OPTIONS}
                 value={priceType}
@@ -126,16 +121,40 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               />
             </div>
 
+            {/* Section du double curseur de prix (max = 500) */}
+            {priceType === 'fee-based' && (
+              <div className="flex flex-col gap-2 bg-white/40 p-2 rounded-lg">
+                <label className="text-xs font-semibold">
+                  Price range: {minPrice}€ - {maxPrice}€
+                </label>
+                <div className="flex flex-col gap-2">
+                  <input
+                    type="range"
+                    min="0"
+                    max="500"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(Math.min(Number(e.target.value), maxPrice))}
+                    className="w-full accent-blue-600 cursor-pointer"
+                  />
+                  <input
+                    type="range"
+                    min="0"
+                    max="500"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(Math.max(Number(e.target.value), minPrice))}
+                    className="w-full accent-blue-600 cursor-pointer"
+                  />
+                </div>
+              </div>
+            )}
+
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold" style={{ color: 'var(--color-blue-dark)' }}>
-                From :
-              </label>
+              <label className="text-xs font-semibold">From :</label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 className="w-full px-2 py-1 border border-white/20 rounded bg-white text-xs"
-                style={{ color: 'var(--color-blue-dark)' }}
               />
             </div>
 
@@ -143,16 +162,14 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               <button
                 type="button"
                 onClick={handleApply}
-                className="w-1/2 py-1.5 rounded text-xs font-semibold cursor-pointer"
-                style={{ color: 'var(--color-blue-dark)' }}
+                className="w-1/2 py-1.5 rounded text-xs font-semibold cursor-pointer bg-blue-600 text-white"
               >
                 Filtrer
               </button>
               <button
                 type="button"
                 onClick={handleReset}
-                className="w-1/2 py-1.5 rounded text-xs font-semibold cursor-pointer"
-                style={{ color: 'var(--color-blue-dark)' }}
+                className="w-1/2 py-1.5 rounded text-xs font-semibold cursor-pointer bg-gray-200"
               >
                 Reset
               </button>

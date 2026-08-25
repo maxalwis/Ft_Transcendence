@@ -23,4 +23,5 @@ export type EventFilters = {
   startDate: string;
   endDate: string;
   priceType: string;
+  category?: string; 
 }

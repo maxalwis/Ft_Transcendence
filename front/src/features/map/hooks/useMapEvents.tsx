@@ -1,7 +1,18 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import type { EventItem, EventGroup } from '../../types/event';
 
-export function useMapEvents(showError: (msg: string) => void) {
+import { useState, useEffect, useMemo, useCallback } from 'react';
+// Correction du chemin d'import selon l'arborescence
+import type { EventItem, EventGroup } from '../../../types/event';
+
+export function useMapEvents(
+  showError: (msg: string) => void,
+  filters?: {
+    city?: string;
+    startDate?: string;
+    endDate?: string;
+    priceType?: string;
+    category?: string;
+  }
+) {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
@@ -11,8 +22,26 @@ export function useMapEvents(showError: (msg: string) => void) {
     const fetchAllEvents = async () => {
       try {
         setIsLoading(true);
-        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-        const response = await fetch(`${baseUrl}/events/map`);
+        
+        // --- DÉBOGAGE ---
+        console.log("FILTERS RECUS DANS LE HOOK :", filters);
+
+        // Utilisation sécurisée de l'URL de base
+        const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+        
+        const params = new URLSearchParams();
+        if (filters?.city) params.append('city', filters.city);
+        if (filters?.startDate) params.append('startDate', filters.startDate);
+        if (filters?.endDate) params.append('endDate', filters.endDate);
+        if (filters?.priceType) params.append('price', filters.priceType);
+        if (filters?.category) params.append('category', filters.category);
+
+        const queryString = params.toString();
+        const url = `${baseUrl}/events/map${queryString ? `?${queryString}` : ''}`;
+
+        console.log("URL APPELÉE :", url); // --- DÉBOGAGE ---
+
+        const response = await fetch(url);
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -34,7 +63,7 @@ export function useMapEvents(showError: (msg: string) => void) {
     };
 
     fetchAllEvents();
-  }, [showError]);
+  }, [showError, filters]);
 
   const eventGroups = useMemo<EventGroup[]>(() => {
     const groupsMap = new Map<string, EventItem[]>();

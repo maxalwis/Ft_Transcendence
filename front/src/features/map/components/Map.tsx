@@ -1,4 +1,3 @@
-// External Libraries
 import { useState, useRef, useCallback } from 'react';
 import { MapContainer } from 'react-leaflet';
 
@@ -25,24 +24,29 @@ import { MapEventsHandler } from './MapHelper';
 // Constants & Configuration
 import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
 
-// Local Styles
-import '../Map.module.css';
-
 export default function Map() {
   const { showError } = useNotification();
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
-    // État local pour stocker les filtres actifs
-  const [filters, setFilters] = useState({
+  // État local pour stocker les filtres actifs avec category optionnelle
+  const [filters, setFilters] = useState<{
+    city: string;
+    startDate: string;
+    endDate: string;
+    priceType: string;
+    category?: string;
+  }>({
     city: 'Paris',
     startDate: '',
     endDate: '',
     priceType: '',
+    category: '',
   });
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // On passe 'filters' ici pour que le hook réagisse aux changements de filtres
   const {
     isLoading,
     eventGroups,
@@ -54,7 +58,7 @@ export default function Map() {
     setActiveEventIndex,
     handlePrevEvent,
     handleNextEvent,
-  } = useMapEvents(showError);
+  } = useMapEvents(showError, filters); 
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -146,8 +150,16 @@ export default function Map() {
       )}
 
       <Friends />
-      <Filters />
-      <NavBar />
+      <Filters onApplyFilters={(newFilters) => setFilters(newFilters)} />
+      
+      {/* NavBar correctement connectée à l'état des filtres */}
+      <NavBar 
+        activeCategory={filters.category}
+        onSelectCategory={(category) => 
+          setFilters((prev) => ({ ...prev, category }))
+        }
+      />
+      
       <BottomBar />
 
       {activeSidebarEventId && (
