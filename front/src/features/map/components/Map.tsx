@@ -35,7 +35,7 @@ export default function Map() {
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
-    // État local pour stocker les filtres actifs
+  // État local pour stocker les filtres actifs
   const [filters, setFilters] = useState({
     city: 'Paris',
     startDate: '',

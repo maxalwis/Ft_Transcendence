@@ -1,12 +1,26 @@
 @keyframes slideInFromLeft {
-  0% { opacity: 0; transform: translateX(-100%); }
-  70% { transform: translateX(8px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  70% {
+    transform: translateX(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes slideOutToLeft {
-  0% { opacity: 1; transform: translateX(0); }
-  100% { opacity: 0; transform: translateX(-100%); }
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
 }
 
 .warning {

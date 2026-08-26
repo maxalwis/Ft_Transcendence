@@ -5,6 +5,7 @@ import Map from './features/map/components/Map';
 import { AdminPanelLinks } from './features/externalLinks/AdminPanelLinks';
 import { NotificationProvider } from './context/notifications/NotificationContext';
 import RegisterPage from './features/auth/components/RegisterPage';
+import OAuthCallbackPage from './features/auth/components/OAuthCallbackPage';
 import { AuthProvider } from './context/auth/AuthContext';
 import './styles/variables.css';
 import './styles/global.css';
@@ -20,6 +21,7 @@ function App() {
               <Route path="/" element={<Map />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
             </Routes>
           </div>
 

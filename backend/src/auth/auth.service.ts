@@ -3,6 +3,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { User } from '../generated/prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -13,8 +14,8 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, pass: string) {
-    const user = await this.usersService.findFromEmail(email);
-    if (!user) {
+    const user = await this.usersService.findFromEmailOrNull(email);
+    if (!user || !user.password) { //inexistant ou OAuth
       return null;
     }
 
@@ -27,7 +28,22 @@ export class AuthService {
     return result; // result contient tout user sauf password
   }
 
-  async login(user: any) {
+  async validateOAuthUser(profile: {
+    email: string;
+    username: string;
+    provider: string;
+    providerId: string;
+  }) {
+    let user = await this.usersService.findFromEmailOrNull(profile.email);
+
+    if (!user) {
+      user = await this.usersService.createOAuth(profile);
+    }
+
+    return user;
+  }
+
+  async login(user: { id: number; email: string }) {
     const payload = { sub: user.id, email: user.email };
 
     const accessToken = await this.jwtService.signAsync(payload, {
