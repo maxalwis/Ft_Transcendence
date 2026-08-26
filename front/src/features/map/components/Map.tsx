@@ -127,7 +127,11 @@ export default function Map() {
       {currentEvent && activeGroup && hoverPos && (
         <EventsDetails
           position={hoverPos}
+          eventId={currentEvent.id}
           title={currentEvent.title}
+          dateStart={currentEvent.dateStart}
+          dateEnd={currentEvent.dateEnd}
+          priceType={currentEvent.priceType}
           category={currentEvent.category?.[0] || 'Event'}
           isOpen={true}
           closingTime={
@@ -136,7 +140,7 @@ export default function Map() {
                   hour: '2-digit',
                   minute: '2-digit',
                 })
-              : '11:00 PM'
+              : 'Date inconnue'
           }
           interestedUsersCount={currentEvent.interestedUsersCount || 0}
           imageUrl={currentEvent.coverUrl}

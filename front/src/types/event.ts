@@ -9,6 +9,7 @@ export interface EventItem {
   coverUrl?: string;
   priceType?: string;
   priceDetail?: string;
+  accessLink?: string;
   isNew?: boolean;
   interestedUsersCount?: number;
 }
