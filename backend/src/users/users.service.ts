@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { User, Prisma } from '../generated/prisma/client';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -18,26 +19,36 @@ export class UsersService {
     return user;
   }
 
-  async findByName(name: string): Promise<Pick<User, 'id' | 'name' | 'avatar' | 'status'>[]> {
-    if (!name || name.trim().length === 0) {
-      return [];
-    }
-
-    return this.prisma.user.findMany({
-      where: {
-        name: {
-          contains: name,
-          mode: 'insensitive',
-        },
-      },
-      select: { id: true, name: true, avatar: true, status: true },
-      take: 10,
-    });
+  async findFromEmail(email: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) throw new NotFoundException(`${email} was not found`);
+    return user;
   }
 
-  async create(data: { name: string; email: string }): Promise<User> {
+  async findFromUsername(username: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { username } });
+    if (!user) throw new NotFoundException(`User ${username} was not found`);
+    return user;
+  }
+
+  // fonction pour chercher les users à ajouter dans la liste d'amis
+  async searchByUsername(query: string, excludeUserId?: number): Promise<User[]> {
+  return this.prisma.user.findMany({
+    where: {
+      username: {
+        contains: query,
+        mode: 'insensitive', // recherche insensible à la casse
+      },
+      ...(excludeUserId && { id: { not: excludeUserId } }),
+    },
+    take: 20, // renvoie 20 users max
+  });
+}
+
+  async create(data: { username: string; email: string; password: string }): Promise<User> {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
     try {
-      return await this.prisma.user.create({ data });
+      return await this.prisma.user.create({ data: { ...data, password: hashedPassword } });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new ConflictException('Email address already in use');
@@ -46,7 +57,7 @@ export class UsersService {
     }
   }
 
-  async update(id: number, data: { name?: string; email?: string }): Promise<User> {
+  async update(id: number, data: { username?: string; email?: string }): Promise<User> {
     await this.findOne(id); // Lève une NotFoundException si l'ID n'existe pas
 
     try {

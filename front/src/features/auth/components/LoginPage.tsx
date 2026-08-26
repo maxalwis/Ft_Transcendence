@@ -1,13 +1,27 @@
 import { useState } from 'react';
 import type { SubmitEvent } from 'react';
+import { login } from '../../../api/api.ts';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/auth/AuthContext.tsx';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  /* 	const [username, setUsername] = useState(''); */
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { setAuth } = useAuth();
 
-  const handleSubmit = (e: SubmitEvent) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // logique de connexion username/mdp — a brancher plus tard sur le backend
+    setError(null);
+    try {
+      const data = await login(email, password);
+      setAuth(data.user, data.accessToken);
+      navigate('/');
+    } catch (err) {
+      setError('Identifiants invalides');
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -34,16 +48,26 @@ export default function LoginPage() {
         <h1 className="font-extrabold text-3xl">Sign in to your account</h1>
 
         <form className="flex flex-col p-4" onSubmit={handleSubmit}>
-          <label className="mb-1 mt-3" htmlFor="username">
+          {/* 				<label
+					className='mb-1 mt-3'
+					htmlFor="username"> Username </label>
+				<input
+					className='glassmorphism-popup pl-2 flex items-center jutify-center rounded-2xl border-2'
+					type="username"
+					value={username}
+					onChange={(e) => setUsername(e.target.value)}
+					placeholder="Username"/> */}
+
+          <label className="mb-1 mt-3" htmlFor="email">
             {' '}
-            Username{' '}
+            Email{' '}
           </label>
           <input
             className="glass-panel pl-2 flex items-center jutify-center rounded-2xl border-2"
-            type="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
           />
 
           <label className="mb-1 mt-3" htmlFor="password">

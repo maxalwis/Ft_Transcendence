@@ -2,6 +2,8 @@ import FriendsSidebar from './FriendsSidebar';
 import { getFriends, getPendingRequests } from '../../../api/friends';
 import type { User, PendingRequest } from '../../../api/friends';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../../../context/auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import styles from '../Friends.module.css';
 
 export type FriendAction = 'menu' | 'default' | 'add' | 'remove' | 'request';
@@ -22,9 +24,16 @@ export default function Friends() {
   const [requests, setRequests] = useState<PendingRequest[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const { user, accessToken } = useAuth();
+  const navigate = useNavigate();
+
   const loadData = async () => {
+    if (!accessToken) return;
     try {
-      const [friendsList, pendingList] = await Promise.all([getFriends(), getPendingRequests()]);
+      const [friendsList, pendingList] = await Promise.all([
+        getFriends(accessToken),
+        getPendingRequests(accessToken)
+      ]);
       setFriends(friendsList);
       setRequests(pendingList);
       setErrorMsg(null);
@@ -35,7 +44,7 @@ export default function Friends() {
 
   useEffect(() => {
     if (isOpen) loadData();
-  }, [isOpen]);
+  }, [isOpen, accessToken]);
 
   return (
     <div className={styles.friendsContainer}>
@@ -43,6 +52,10 @@ export default function Friends() {
       <button
         className="glass-panel p-2 cursor-pointer duration-500 active:scale-70 whitespace-nowrap"
         onClick={() => {
+          if (!user) {
+            navigate('/login');
+            return;
+          }
           setAction('menu');
           setIsOpen(true);
         }}

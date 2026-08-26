@@ -8,9 +8,9 @@
   border: 1px solid var(--color-orange-border) !important;
   border-radius: var(--radius-lg) !important;
   box-shadow: var(--glass-shadow) !important;
-  
+
   /* CRITICAL: Overrides Leaflet's default overflow:hidden so popover isn't clipped */
-  overflow: visible !important; 
+  overflow: visible !important;
   pointer-events: auto !important;
   position: relative !important;
 }

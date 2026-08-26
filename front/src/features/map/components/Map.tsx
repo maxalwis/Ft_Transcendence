@@ -21,12 +21,14 @@ import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
 import { useNotification } from '../../../context/notifications/NotificationContext';
 import { useMapEvents } from '../hooks/useMapEvents';
 import { MapEventsHandler } from './MapHelper';
+import { useAuth } from '../../../context/auth/AuthContext';
 
 // Constants & Configuration
 import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
 
 export default function Map() {
   const { showError } = useNotification();
+  const { user } = useAuth();
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
@@ -166,7 +168,7 @@ export default function Map() {
       {activeSidebarEventId && (
         <SideBar
           eventId={activeSidebarEventId}
-          currentUserId={1}
+          currentUserId={user?.id}
           onClose={() => {
             setActiveSidebarEventId(null);
             setHoverPos(null);

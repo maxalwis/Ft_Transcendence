@@ -79,17 +79,40 @@ export class FriendsService {
   }
 
   async getUserFriends(userId: number) {
-    return this.prisma.friendship.findMany({
+    const friendships = await this.prisma.friendship.findMany({
       where: {
         OR: [
           { senderId: userId, status: 'ACCEPTED' },
           { receiverId: userId, status: 'ACCEPTED' },
         ],
       },
-      include: {
-        sender: true,
-        receiver: true,
-      },
+      include: { sender: true, receiver: true },
     });
+
+    // On extrait le "vrai" ami : celui des deux qui n'est pas l'utilisateur courant
+    return friendships.map((f) =>
+      f.senderId === userId ? f.receiver : f.sender
+    );
   }
+
+  async removeFriend(userId: number, friendId: number) {
+  const friendship = await this.prisma.friendship.findFirst({
+    where: {
+      OR: [
+        { senderId: userId, receiverId: friendId },
+        { senderId: friendId, receiverId: userId },
+      ],
+      status: 'ACCEPTED',
+    },
+  });
+
+  if (!friendship) {
+    throw new NotFoundException('Cette amitié n\'existe pas.');
+  }
+
+  return this.prisma.friendship.delete({
+    where: { id: friendship.id },
+  });
 }
+}
+

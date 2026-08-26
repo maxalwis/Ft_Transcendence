@@ -60,8 +60,9 @@ CREATE TABLE "Message" (
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
     "avatar" TEXT,
     "status" "UserStatus" NOT NULL DEFAULT 'OFFLINE',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -86,7 +87,7 @@ CREATE TABLE "Friendship" (
 CREATE UNIQUE INDEX "Event_source_externalId_key" ON "Event"("source", "externalId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
