@@ -15,7 +15,8 @@ export class AuthService {
 
   async validateUser(email: string, pass: string) {
     const user = await this.usersService.findFromEmailOrNull(email);
-    if (!user || !user.password) { //inexistant ou OAuth
+    if (!user || !user.password) {
+      //inexistant ou OAuth
       return null;
     }
 

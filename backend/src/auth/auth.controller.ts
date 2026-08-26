@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { GoogleAuthGuard } from './guards/google-oauth.guard';
+import { FortyTwoAuthGuard } from './guards/fortytwo-oauth.guard';
 import { AuthService } from './auth.service';
 import type { Response, Request } from 'express';
 import { UsersService } from '../users/users.service';
@@ -21,7 +22,7 @@ import { CreateLocalUserDto } from '../users/dto/create-user.dto';
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private usersService: UsersService,
+    private usersService: UsersService
   ) {}
 
   @Post('register')
@@ -96,6 +97,33 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   async googleCallback(@Req() req: Request, @Res() res: Response) {
+    if (!req.user) {
+      throw new UnauthorizedException();
+    }
+
+    const { refreshToken } = await this.authService.login(req.user);
+
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/api/auth/refresh',
+    });
+
+    res.redirect('https://localhost:8443/oauth/callback');
+  }
+
+  // --- OAuth 42 ---
+  @Get('42')
+  @UseGuards(FortyTwoAuthGuard)
+  async fortyTwoAuth() {
+    // Ne fait rien : le guard intercepte et redirige vers 42
+  }
+
+  @Get('42/callback')
+  @UseGuards(FortyTwoAuthGuard)
+  async fortyTwoCallback(@Req() req: Request, @Res() res: Response) {
     if (!req.user) {
       throw new UnauthorizedException();
     }

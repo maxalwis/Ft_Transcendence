@@ -8,6 +8,7 @@ import { UsersModule } from '../users/users.module';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { FortyTwoStrategy } from './strategies/fortytwo.strategy';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
       }),
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy, FortyTwoStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })
