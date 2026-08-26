@@ -9,6 +9,7 @@ export interface EventItem {
   coverUrl?: string;
   isNew?: boolean;
   interestedUsersCount?: number;
+  price?: number; // Ajouté pour le prix de l'événement
 }
 
 export interface EventGroup {
@@ -23,5 +24,7 @@ export type EventFilters = {
   startDate: string;
   endDate: string;
   priceType: string;
-  category?: string; 
+  category?: string;
+  minPrice?: number | string;
+  maxPrice?: number | string;
 }

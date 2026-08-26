@@ -11,29 +11,17 @@ export class EventsService {
   private getPriceCondition(price?: string) {
     if (!price) return Prisma.empty;
 
-    const trimmed = price.trim();
+    const trimmed = price.trim().toLowerCase();
 
-    if (trimmed.toLowerCase() === 'free') {
-      return Prisma.sql`AND ("priceType" ILIKE '%gratuit%' OR "priceType" ILIKE '%free%' OR "priceDetail" ILIKE '%gratuit%' OR "priceDetail" ILIKE '%free%')`;
+    if (trimmed === 'free') {
+      return Prisma.sql`AND ("priceType" ILIKE '%gratuit%' OR "priceType" ILIKE '%free%' OR "priceDetail" ILIKE '%gratuit%' OR "priceDetail" ILIKE '%free%' OR "priceDetail" LIKE '%0 €%' OR "priceDetail" LIKE '%0.00%')`;
     }
 
-    if (trimmed.includes('-')) {
-      const [minStr, maxStr] = trimmed.split('-');
-      const minVal = parseFloat(minStr);
-      const maxVal = parseFloat(maxStr);
-
-      if (isNaN(minVal) || isNaN(maxVal)) {
-        return Prisma.empty;
-      }
-
-      return Prisma.sql`AND (
-        "priceDetail" ~ '[0-9]' AND
-        CAST(regexp_replace("priceDetail", '[^0-9.]', '', 'g') AS NUMERIC) BETWEEN ${minVal} AND ${maxVal}
-      )`;
+    if (trimmed === 'fee-based' || trimmed === 'payant' || price.includes('-')) {
+      return Prisma.sql`AND NOT ("priceType" ILIKE '%gratuit%' OR "priceType" ILIKE '%free%' OR "priceDetail" ILIKE '%gratuit%' OR "priceDetail" ILIKE '%free%' OR "priceDetail" LIKE '%0 €%' OR "priceDetail" LIKE '%0.00%')`;
     }
 
-    const priceSearch = `%${trimmed}%`;
-    return Prisma.sql`AND ("priceType" ILIKE ${priceSearch} OR "priceDetail" ILIKE ${priceSearch})`;
+    return Prisma.empty;
   }
 
   private getCategoryCondition(category?: string) {
@@ -49,13 +37,68 @@ export class EventsService {
     return Prisma.sql`AND EXISTS (SELECT 1 FROM unnest(category) c WHERE LOWER(TRIM(c)) = LOWER(TRIM(${category})))`;
   }
 
+  private matchesPriceRange(ev: { priceDetail?: string | null; priceType?: string | null }, priceFilter: string): boolean {
+    const rawDetail = (ev.priceDetail || ev.priceType || '');
+    const detail = rawDetail.replace(/<[^>]*>?/gm, ' ').toLowerCase();
+
+    const isFreeEvent = 
+      detail.includes('gratuit') || 
+      detail.includes('free') || 
+      detail === '0' || 
+      detail === '0.00' ||
+      detail.includes('0 €') ||
+      detail === ''; // Exclut les événements sans détail de prix pour les filtres payants
+
+    const filterLower = priceFilter.toLowerCase();
+
+    if (filterLower === 'free') {
+      return isFreeEvent;
+    }
+
+    if (filterLower === 'fee-based' || filterLower === 'payant' || priceFilter.includes('-')) {
+      if (isFreeEvent) return false;
+
+      if (!priceFilter.includes('-')) {
+        return true; 
+      }
+
+      const [minStr, maxStr] = priceFilter.split('-');
+      const minVal = parseFloat(minStr);
+      const maxVal = parseFloat(maxStr);
+
+      if (!isNaN(minVal) && !isNaN(maxVal)) {
+        const matches = detail.match(/(\d+[\d.,]*)\s*(?:€|eur|euros?)/g);
+        
+        let prices: number[] = [];
+        if (matches && matches.length > 0) {
+          prices = matches.map((m: string) => parseFloat(m.replace(/[^\d,.]/g, '').replace(',', '.'))).filter((p: number) => !isNaN(p));
+        }
+
+        if (prices.length === 0) {
+          const rawMatches = detail.match(/(\d+[\d.,]*)/g);
+          if (!rawMatches) return false; // Masque par sécurité si aucun prix chiffré n'est trouvé
+          prices = rawMatches.map((m: string) => parseFloat(m.replace(',', '.'))).filter((p: number) => !isNaN(p));
+        }
+
+        if (prices.length === 0) return false;
+
+        const eventMin = Math.min(...prices);
+        const eventMax = Math.max(...prices);
+
+        return eventMin <= maxVal && eventMax >= minVal;
+      }
+    }
+
+    return true;
+  }
+
   async findAllForMap(from?: string, to?: string, category?: string, price?: string) {
     const fromDate = from ? new Date(from) : new Date();
     const defaultToDate = to ? new Date(to) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
     const priceCondition = this.getPriceCondition(price);
     const categoryCondition = this.getCategoryCondition(category);
 
-    return this.prisma.$queryRaw`
+    const events: any[] = await this.prisma.$queryRaw`
         SELECT id, title, category, latitude, longitude, "dateStart", "dateEnd", "priceType", "priceDetail"
         FROM "Event"
         WHERE latitude IS NOT NULL AND longitude IS NOT NULL
@@ -66,6 +109,12 @@ export class EventsService {
         ORDER BY "dateStart" ASC
         LIMIT 5000
     `;
+
+    if (price) {
+      return events.filter(ev => this.matchesPriceRange(ev, price));
+    }
+
+    return events;
   }
 
   async findForMap(bbox: BoundingBox, from?: string, to?: string, category?: string, price?: string) {
@@ -75,7 +124,7 @@ export class EventsService {
     const priceCondition = this.getPriceCondition(price);
     const categoryCondition = this.getCategoryCondition(category);
 
-    return this.prisma.$queryRaw`
+    const events: any[] = await this.prisma.$queryRaw`
       SELECT id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail"
       FROM "Event"
       WHERE location && ST_MakeEnvelope(
@@ -87,10 +136,23 @@ export class EventsService {
         ${priceCondition}
       LIMIT 500
     `;
+
+    if (price) {
+      return events.filter(ev => this.matchesPriceRange(ev, price));
+    }
+
+    return events;
   }
 
   async findOne(id: string) {
-    const event = await this.prisma.event.findUnique({ where: { id } });
+    const events = await this.prisma.$queryRaw<any[]>`
+      SELECT id, title, description, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail"
+      FROM "Event"
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+
+    const event = events[0];
     if (!event) {
       throw new NotFoundException(`Event ${id} not found`);
     }
@@ -105,7 +167,7 @@ export class EventsService {
     const priceCondition = this.getPriceCondition(price);
     const categoryCondition = this.getCategoryCondition(category);
 
-    return this.prisma.$queryRaw`
+    const events: any[] = await this.prisma.$queryRaw`
       SELECT
         id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail",
         ST_Distance(
@@ -125,5 +187,11 @@ export class EventsService {
       ORDER BY distance ASC
       LIMIT 100
     `;
+
+    if (price) {
+      return events.filter(ev => this.matchesPriceRange(ev, price));
+    }
+
+    return events;
   }
 }

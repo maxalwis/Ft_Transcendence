@@ -1,0 +1,13 @@
+{
+  "welcome": "Bienvenido a nuestro sitio web",
+  "buttons": {
+    "submit": "Enviar"
+  },
+  "nav": {
+    "all": "Todos",
+    "culture": "Cultura",
+    "sports": "Deportes",
+    "music": "Música",
+    "family": "Familia"
+  }
+}

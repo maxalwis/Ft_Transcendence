@@ -1,21 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Chat from '../features/chat/components/Chat';
-import Friends from '../features/friends/components/Friends';
+import type { EventItem } from '../types/event';
 
 interface SideBarProps {
   onClose: () => void;
   eventId?: string;
   currentUserId?: number;
+  events?: EventItem[];
 }
 
-export default function SideBar({ onClose, eventId, currentUserId }: SideBarProps) {
-  const [activeTab, setActiveTab] = useState<'chat' | 'friends'>('chat');
+export default function SideBar({ onClose, eventId, currentUserId, events = [] }: SideBarProps) {
+  const [eventDetails, setEventDetails] = useState<EventItem | null>(null);
+
+  // Cherche d'abord dans la liste globale filtrée, sinon fait un fetch
+  useEffect(() => {
+    if (!eventId) {
+      setEventDetails(null);
+      return;
+    }
+
+    const foundInList = events.find((ev) => ev.id === eventId);
+    if (foundInList) {
+      setEventDetails(foundInList);
+      return;
+    }
+
+    const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
+    fetch(`${baseUrl}/events/${eventId}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setEventDetails(data))
+      .catch(() => setEventDetails(null));
+  }, [eventId, events]);
 
   return (
     <div className="glass-panel fixed top-2 right-3 w-[20vw] h-[96.5vh] rounded-xl p-5 shadow-lg z-1000 flex flex-col">
       <div>
         <button
-          className="glass-panel hover:bg-red-500/20 hover:border-red-500/50 w-6 h-6 rounded-full cursor-pointer shadow-md shadow-red-500/10 absolute right-3 flex items-center justify-center text-gray-300 hover:text-red-400 transition-all"
+          className="glass-panel hover:bg-red-500/25 hover:border-red-500/50 w-6 h-6 rounded-full cursor-pointer shadow-md shadow-red-500/10 absolute right-3 flex items-center justify-center text-gray-300 hover:text-red-400 transition-all"
           onClick={onClose}
           aria-label="Close"
         >
@@ -36,44 +57,49 @@ export default function SideBar({ onClose, eventId, currentUserId }: SideBarProp
       </div>
 
       {/* Section Événements (30%) */}
-      <div className="h-[30%] overflow-hidden border-b border-teal-200/20 pb-2">
-        Event Details
+      <div className="h-[30%] overflow-hidden border-b border-teal-200/20 pb-2 flex flex-col gap-2">
+        {eventDetails ? (
+          <>
+            <h3 className="text-sm font-bold text-slate-200 truncate">{eventDetails.title}</h3>
+            {eventDetails.coverUrl && (
+              <img src={eventDetails.coverUrl} alt={eventDetails.title} className="w-full h-16 object-cover rounded-md" />
+            )}
+            <div className="flex justify-between items-center text-xs text-slate-300">
+              <span>Prix :</span>
+              <span 
+                className="font-bold text-teal-400 truncate max-w-[120px]" 
+                title={(eventDetails as any).priceDetail || (eventDetails as any).priceType || 'Gratuit'}
+              >
+                {(() => {
+                  const rawPrice = (eventDetails as any).priceDetail || (eventDetails as any).priceType;
+                  if (!rawPrice) return 'Gratuit';
+                  // Nettoie proprement les balises HTML éventuelles (ex: <p>, etc.)
+                  const cleanText = rawPrice.replace(/<[^>]*>?/gm, '');
+                  return cleanText.trim() || 'Gratuit';
+                })()}
+              </span>
+            </div>
+          </>
+        ) : (
+          <div className="text-gray-400 text-sm flex items-center justify-center h-full">
+            Event Details
+          </div>
+        )}
       </div>
 
-      {/* Section Chat / Amis (70%) avec onglets */}
+      {/* Section Chat (70%) */}
       <div className="h-[70%] flex flex-col overflow-hidden pt-2">
         <div className="flex gap-2 mb-2 border-b border-teal-200/20 pb-1">
-          <button
-            onClick={() => setActiveTab('chat')}
-            className={`text-sm font-bold pb-1 cursor-pointer transition-colors ${
-              activeTab === 'chat'
-                ? 'text-teal-400 border-b-2 border-teal-400'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
+          <span className="text-sm font-bold pb-1 text-teal-400 border-b-2 border-teal-400">
             Chat
-          </button>
-          <button
-            onClick={() => setActiveTab('friends')}
-            className={`text-sm font-bold pb-1 cursor-pointer transition-colors ${
-              activeTab === 'friends'
-                ? 'text-teal-400 border-b-2 border-teal-400'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Amis
-          </button>
+          </span>
         </div>
 
         <div className="flex-1 overflow-hidden">
-          {activeTab === 'chat' ? (
-            eventId && currentUserId ? (
-              <Chat eventId={eventId} currentUserId={currentUserId} />
-            ) : (
-              <div className="text-gray-400 text-sm p-4">Select an event to view chat.</div>
-            )
+          {eventId && currentUserId ? (
+            <Chat eventId={eventId} currentUserId={currentUserId} />
           ) : (
-            <Friends />
+            <div className="text-gray-400 text-sm p-4">Select an event to view chat.</div>
           )}
         </div>
       </div>

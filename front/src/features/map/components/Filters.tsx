@@ -26,11 +26,14 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
 
   const handleApply = () => {
     if (onApplyFilters) {
+      // Si priceType est 'fee-based', on envoie uniquement la fourchette "min-max" (ex: "0-500") dans priceType
+      const finalPriceType = priceType === 'fee-based' ? `${minPrice}-${maxPrice}` : priceType;
+
       onApplyFilters({ 
         city, 
         startDate, 
         endDate, 
-        priceType 
+        priceType: finalPriceType,
       });
     }
     setIsOpen(false);
@@ -44,7 +47,12 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
     setMinPrice(0);
     setMaxPrice(500);
     if (onApplyFilters) {
-      onApplyFilters({ city: 'Paris', startDate: '', endDate: '', priceType: '' });
+      onApplyFilters({ 
+        city: 'Paris', 
+        startDate: '', 
+        endDate: '', 
+        priceType: '',
+      });
     }
     setIsOpen(false);
   };

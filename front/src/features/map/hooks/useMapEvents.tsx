@@ -9,6 +9,8 @@ export function useMapEvents(
     endDate?: string;
     priceType?: string;
     category?: string;
+    minPrice?: number | string;
+    maxPrice?: number | string;
   }
 ) {
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -30,6 +32,14 @@ export function useMapEvents(
         if (filters?.endDate) params.append('endDate', filters.endDate);
         if (filters?.priceType) params.append('price', filters.priceType);
         if (filters?.category) params.append('category', filters.category);
+        
+        // Ajout des paramètres de prix min et max pour qu'ils soient transmis au backend
+        if (filters?.minPrice !== undefined && filters?.minPrice !== '') {
+          params.append('minPrice', String(filters.minPrice));
+        }
+        if (filters?.maxPrice !== undefined && filters?.maxPrice !== '') {
+          params.append('maxPrice', String(filters.maxPrice));
+        }
 
         const queryString = params.toString();
         const url = `${baseUrl}/events/map${queryString ? `?${queryString}` : ''}`;

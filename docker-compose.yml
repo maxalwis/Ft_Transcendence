@@ -78,6 +78,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       NODE_ENV: development
       PORT: ${BACKEND_PORT:-3000}
+      JWT_SECRET: "votre_secret_jwt_super_securise"
     ports:
       - '${BACKEND_PORT:-3000}:3000'
     volumes:
@@ -174,6 +175,7 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
       - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:z
+      - ./elasticsearch/config/empty-aws-config:/usr/share/elasticsearch/.aws/config:ro,z
     networks:
       - transcendence_network
     healthcheck:
@@ -230,6 +232,12 @@ services:
         condition: service_healthy
     networks:
       - transcendence_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601/api/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     logging:
       driver: 'json-file'
     profiles:
