@@ -36,9 +36,7 @@ export default function SideBar({ onClose, eventId, currentUserId }: SideBarProp
       </div>
 
       {/* Section Événements (30%) */}
-      <div className="h-[30%] overflow-hidden border-b border-teal-200/20 pb-2">
-        Event Details
-      </div>
+      <div className="h-[30%] overflow-hidden border-b border-teal-200/20 pb-2">Event Details</div>
 
       {/* Section Chat / Amis (70%) avec onglets */}
       <div className="h-[70%] flex flex-col overflow-hidden pt-2">

@@ -15,7 +15,7 @@ export interface EventsDetailsProps {
   interestedFriends?: Friend[];
   imageUrl?: string;
   position: { x: number; y: number };
-  
+
   // Group Carousel Props
   totalInGroup?: number;
   currentIndex?: number;
@@ -265,9 +265,7 @@ export function EventsDetails({
                 />
               </g>
             </svg>
-            <span style={{ fontWeight: 600, color: '#1f1f1f' }}>
-              {interestedUsersCount}
-            </span>
+            <span style={{ fontWeight: 600, color: '#1f1f1f' }}>{interestedUsersCount}</span>
             <span>interested</span>
           </div>
 
@@ -309,9 +307,7 @@ export function EventsDetails({
         </div>
 
         {/* Category */}
-        <div style={{ fontSize: '13px', color: '#5f6368', marginBottom: '4px' }}>
-          {category}
-        </div>
+        <div style={{ fontSize: '13px', color: '#5f6368', marginBottom: '4px' }}>{category}</div>
 
         {/* Opening Status */}
         <div style={{ fontSize: '13px' }}>

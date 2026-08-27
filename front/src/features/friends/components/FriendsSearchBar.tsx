@@ -36,16 +36,16 @@ export default function FriendsSearchBar({ action, input, setInput }: InputProps
           className="glass-element icon-btn rounded-xl w-6 h-6 duration-150 cursor-pointer hover:text-white! active:scale-70"
         >
           <svg
-          className="w-full h-full"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M18 6L6 18M6 6l12 12" />
-        </svg>
+            className="w-full h-full"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
         </button>
       ) : null}
     </div>
