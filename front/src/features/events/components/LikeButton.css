@@ -14,9 +14,20 @@
 }
 
 .like-button svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
+}
+
+.like-button__icon {
+  fill: none;
+  stroke: #ff4000;
+  stroke-width: 7%;
+}
+
+.like-button__icon--liked {
+  fill: hsl(12, 87%, 50%);
+  stroke: #cf2b3c;
 }
 
 .like-button span {
