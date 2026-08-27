@@ -34,8 +34,7 @@ export default function FriendsRequests({ requests, onDataChanged }: FriendsRequ
       {errorMsg && <p className="text-xs text-red-500">{errorMsg}</p>}
       {requests.map((req: any) => {
         // Extraction sécurisée du nom du demandeur (sender)
-        const displayName =
-          req.sender?.username || `Utilisateur #${req.senderId || req.id}`;
+        const displayName = req.sender?.username || `Utilisateur #${req.senderId || req.id}`;
         const targetId = req.senderId || req.sender?.id || req.id;
 
         return (

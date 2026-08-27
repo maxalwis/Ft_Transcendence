@@ -51,7 +51,7 @@ export default function FriendsList({
       setResults([]);
       onDataChanged();
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Error during sending.");
+      setErrorMsg(err instanceof Error ? err.message : 'Error during sending.');
     }
   };
 

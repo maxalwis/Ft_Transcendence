@@ -25,13 +25,11 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href =
-      'https://accounts.google.com/o/oauth2/auth?client_id=513700796427-64gvloa5ugr6ugebfne104u5v44u1en7.apps.googleusercontent.com&redirect_uri=https://localhost:8443&response_type=code&scope=email%20profile';
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
   };
 
   const handle42Login = () => {
-    window.location.href =
-      'https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-eafc486920117f3b35ec72b7d5397bd65f1a26b0a04ba905103413815298e2f7&redirect_uri=https%3A%2F%2Flocalhost%3A8443&response_type=code';
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/42`;
   };
 
   const home = () => {
@@ -91,19 +89,19 @@ export default function LoginPage() {
 
         <div className="flex items-center justify-center gap-2">
           <button
-            className="glass-panel hover:scale-3d ease-in p-2 h-11 w-11 flex justify-center items-center cursor-pointer"
+            className="glass-panel hover:scale-3d ease-in p-2 h-13 w-13 flex justify-center items-center cursor-pointer"
             onClick={handleGoogleLogin}
           >
             <img src="https://img.icons8.com/?size=25&id=17949&format=png&color=000000"></img>
           </button>
           <button
-            className="glass-panel hover:scale-3d ease-in p-2 h-11 w-11 flex justify-center items-center cursor-pointer"
+            className="glass-panel hover:scale-3d ease-in p-2 h-13 w-13 flex justify-center items-center cursor-pointer"
             onClick={handle42Login}
           >
             <img src="https://cdn.simpleicons.org/42?viewbox=auto&size=20"></img>
           </button>
           <button
-            className="glass-panel hover:scale-3d ease-in p-2 h-11 w-11 cursor-pointer flex justify-center items-center"
+            className="glass-panel hover:scale-3d ease-in p-2 h-13 w-13 cursor-pointer flex justify-center items-center"
             onClick={home}
           >
             <img src="https://img.icons8.com/?size=25&id=83326&format=png&color=000000"></img>
