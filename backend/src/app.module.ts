@@ -17,7 +17,7 @@ import { FriendsModule } from './friends/friends.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 500 }]),
     HealthModule,
     PrismaModule,
     IngestionModule,
