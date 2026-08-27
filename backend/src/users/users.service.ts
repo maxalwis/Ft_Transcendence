@@ -33,17 +33,17 @@ export class UsersService {
 
   // fonction pour chercher les users à ajouter dans la liste d'amis
   async searchByUsername(query: string, excludeUserId?: number): Promise<User[]> {
-  return this.prisma.user.findMany({
-    where: {
-      username: {
-        contains: query,
-        mode: 'insensitive', // recherche insensible à la casse
+    return this.prisma.user.findMany({
+      where: {
+        username: {
+          contains: query,
+          mode: 'insensitive', // recherche insensible à la casse
+        },
+        ...(excludeUserId && { id: { not: excludeUserId } }),
       },
-      ...(excludeUserId && { id: { not: excludeUserId } }),
-    },
-    take: 20, // renvoie 20 users max
-  });
-}
+      take: 20, // renvoie 20 users max
+    });
+  }
 
   async create(data: { username: string; email: string; password: string }): Promise<User> {
     const hashedPassword = await bcrypt.hash(data.password, 10);

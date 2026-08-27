@@ -32,7 +32,7 @@ async function bootstrap() {
       enableDebugMessages: true,
     })
   );
-  
+
   // OpenAPI docs for the public API (served at /docs; /api/docs behind nginx)
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Transcendence Public API')

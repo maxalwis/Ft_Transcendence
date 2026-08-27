@@ -1,13 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsDate,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsNotEmpty,
-} from 'class-validator';
+import { IsArray, IsDate, IsNumber, IsOptional, IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateEventDto {
   @ApiProperty({ example: 'manual', description: 'Origin of the event' })
