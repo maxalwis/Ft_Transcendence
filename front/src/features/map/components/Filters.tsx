@@ -20,20 +20,14 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [priceType, setPriceType] = useState('');
-  
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(500);
 
   const handleApply = () => {
     if (onApplyFilters) {
-      // Si priceType est 'fee-based', on envoie uniquement la fourchette "min-max" (ex: "0-500") dans priceType
-      const finalPriceType = priceType === 'fee-based' ? `${minPrice}-${maxPrice}` : priceType;
-
       onApplyFilters({ 
         city, 
         startDate, 
         endDate, 
-        priceType: finalPriceType,
+        priceType,
       });
     }
     setIsOpen(false);
@@ -44,8 +38,6 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
     setStartDate('');
     setEndDate('');
     setPriceType('');
-    setMinPrice(0);
-    setMaxPrice(500);
     if (onApplyFilters) {
       onApplyFilters({ 
         city: 'Paris', 
@@ -113,32 +105,6 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
                 placeholder="Select category"
               />
             </div>
-
-            {priceType === 'fee-based' && (
-              <div className="flex flex-col gap-2 bg-white/40 p-2 rounded-lg">
-                <label className="text-xs font-semibold">
-                  Price range: {minPrice}€ - {maxPrice}€
-                </label>
-                <div className="flex flex-col gap-2">
-                  <input
-                    type="range"
-                    min="0"
-                    max="500"
-                    value={minPrice}
-                    onChange={(e) => setMinPrice(Math.min(Number(e.target.value), maxPrice))}
-                    className="w-full accent-blue-600 cursor-pointer"
-                  />
-                  <input
-                    type="range"
-                    min="0"
-                    max="500"
-                    value={maxPrice}
-                    onChange={(e) => setMaxPrice(Math.max(Number(e.target.value), minPrice))}
-                    className="w-full accent-blue-600 cursor-pointer"
-                  />
-                </div>
-              </div>
-            )}
 
             <div className="flex flex-col gap-1">
               <label className="text-xs font-semibold">From :</label>

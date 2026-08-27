@@ -14,11 +14,22 @@ export class EventsService {
     const trimmed = price.trim().toLowerCase();
 
     if (trimmed === 'free') {
-      return Prisma.sql`AND ("priceType" ILIKE '%gratuit%' OR "priceType" ILIKE '%free%' OR "priceDetail" ILIKE '%gratuit%' OR "priceDetail" ILIKE '%free%' OR "priceDetail" LIKE '%0 €%' OR "priceDetail" LIKE '%0.00%')`;
+      // Filtrage strict : on exclut les textes piégés contenant des exceptions ou des tarifs
+      return Prisma.sql`AND (
+        LOWER("priceType") IN ('gratuit', 'free', 'gratuite') 
+        OR LOWER("priceDetail") IN ('gratuit', 'free', '0', '0.0€', '0 €', '0.00 €')
+        OR ("priceDetail" ILIKE '%gratuit%' AND "priceDetail" NOT ILIKE '%sauf%' AND "priceDetail" NOT ILIKE '%€%')
+        OR "priceDetail" ILIKE '%free%'
+      )`;
     }
 
-    if (trimmed === 'fee-based' || trimmed === 'payant' || price.includes('-')) {
-      return Prisma.sql`AND NOT ("priceType" ILIKE '%gratuit%' OR "priceType" ILIKE '%free%' OR "priceDetail" ILIKE '%gratuit%' OR "priceDetail" ILIKE '%free%' OR "priceDetail" LIKE '%0 €%' OR "priceDetail" LIKE '%0.00%')`;
+    if (trimmed === 'fee-based' || trimmed === 'payant') {
+      return Prisma.sql`AND NOT (
+        LOWER("priceType") IN ('gratuit', 'free', 'gratuite') 
+        OR LOWER("priceDetail") IN ('gratuit', 'free', '0', '0.0€', '0 €', '0.00 €')
+        OR ("priceDetail" ILIKE '%gratuit%' AND "priceDetail" NOT ILIKE '%sauf%' AND "priceDetail" NOT ILIKE '%€%')
+        OR "priceDetail" ILIKE '%free%'
+      )`;
     }
 
     return Prisma.empty;
@@ -35,61 +46,6 @@ export class EventsService {
     }
 
     return Prisma.sql`AND EXISTS (SELECT 1 FROM unnest(category) c WHERE LOWER(TRIM(c)) = LOWER(TRIM(${category})))`;
-  }
-
-  private matchesPriceRange(ev: { priceDetail?: string | null; priceType?: string | null }, priceFilter: string): boolean {
-    const rawDetail = (ev.priceDetail || ev.priceType || '');
-    const detail = rawDetail.replace(/<[^>]*>?/gm, ' ').toLowerCase();
-
-    const isFreeEvent = 
-      detail.includes('gratuit') || 
-      detail.includes('free') || 
-      detail === '0' || 
-      detail === '0.00' ||
-      detail.includes('0 €') ||
-      detail === ''; // Exclut les événements sans détail de prix pour les filtres payants
-
-    const filterLower = priceFilter.toLowerCase();
-
-    if (filterLower === 'free') {
-      return isFreeEvent;
-    }
-
-    if (filterLower === 'fee-based' || filterLower === 'payant' || priceFilter.includes('-')) {
-      if (isFreeEvent) return false;
-
-      if (!priceFilter.includes('-')) {
-        return true; 
-      }
-
-      const [minStr, maxStr] = priceFilter.split('-');
-      const minVal = parseFloat(minStr);
-      const maxVal = parseFloat(maxStr);
-
-      if (!isNaN(minVal) && !isNaN(maxVal)) {
-        const matches = detail.match(/(\d+[\d.,]*)\s*(?:€|eur|euros?)/g);
-        
-        let prices: number[] = [];
-        if (matches && matches.length > 0) {
-          prices = matches.map((m: string) => parseFloat(m.replace(/[^\d,.]/g, '').replace(',', '.'))).filter((p: number) => !isNaN(p));
-        }
-
-        if (prices.length === 0) {
-          const rawMatches = detail.match(/(\d+[\d.,]*)/g);
-          if (!rawMatches) return false; // Masque par sécurité si aucun prix chiffré n'est trouvé
-          prices = rawMatches.map((m: string) => parseFloat(m.replace(',', '.'))).filter((p: number) => !isNaN(p));
-        }
-
-        if (prices.length === 0) return false;
-
-        const eventMin = Math.min(...prices);
-        const eventMax = Math.max(...prices);
-
-        return eventMin <= maxVal && eventMax >= minVal;
-      }
-    }
-
-    return true;
   }
 
   async findAllForMap(from?: string, to?: string, category?: string, price?: string) {
@@ -109,10 +65,6 @@ export class EventsService {
         ORDER BY "dateStart" ASC
         LIMIT 5000
     `;
-
-    if (price) {
-      return events.filter(ev => this.matchesPriceRange(ev, price));
-    }
 
     return events;
   }
@@ -136,10 +88,6 @@ export class EventsService {
         ${priceCondition}
       LIMIT 500
     `;
-
-    if (price) {
-      return events.filter(ev => this.matchesPriceRange(ev, price));
-    }
 
     return events;
   }
@@ -187,10 +135,6 @@ export class EventsService {
       ORDER BY distance ASC
       LIMIT 100
     `;
-
-    if (price) {
-      return events.filter(ev => this.matchesPriceRange(ev, price));
-    }
 
     return events;
   }

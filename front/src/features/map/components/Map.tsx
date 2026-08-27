@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { MapContainer } from 'react-leaflet';
 
 // Third-Party Styles
@@ -12,8 +12,7 @@ import NavBar from '../../../layouts/NavBar';
 import BottomBar from '../../../layouts/BottomBar';
 import Friends from '../../friends/components/Friends';
 import Filters from './Filters';
-import { EventFilters } from '../../../types/event';
-import { EventsDetails } from './EventsDetails';
+import EventsDetails from './EventsDetails';
 import { ClusterLayer } from './ClusterLayer';
 import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
 
@@ -32,7 +31,6 @@ export default function Map() {
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
-  // État local pour stocker les filtres actifs avec category optionnelle
   const [filters, setFilters] = useState<{
     city: string;
     startDate: string;
@@ -49,7 +47,6 @@ export default function Map() {
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // On passe 'filters' ici pour que le hook réagisse aux changements de filtres
   const {
     isLoading,
     eventGroups,
@@ -61,7 +58,7 @@ export default function Map() {
     setActiveEventIndex,
     handlePrevEvent,
     handleNextEvent,
-  } = useMapEvents(showError, filters); 
+  } = useMapEvents(showError, filters);
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -131,6 +128,8 @@ export default function Map() {
           position={hoverPos}
           title={currentEvent.title}
           category={currentEvent.category?.[0] || 'Event'}
+          priceDetail={currentEvent.priceDetail}
+          priceType={currentEvent.priceType}
           isOpen={true}
           closingTime={
             currentEvent.dateEnd
@@ -145,7 +144,7 @@ export default function Map() {
           totalInGroup={activeGroup.events.length}
           currentIndex={activeEventIndex}
           onPrev={handlePrevEvent}
-          onNext={(e) => handleNextEvent(e, activeGroup.events.length - 1)}
+          onNext={(e: React.MouseEvent) => handleNextEvent(e, activeGroup.events.length - 1)}
           onClick={() => setActiveSidebarEventId(currentEvent.id)}
           onMouseEnter={cancelCloseTimeout}
           onMouseLeave={handleMouseLeave}
@@ -154,15 +153,12 @@ export default function Map() {
 
       <Friends />
       <Filters onApplyFilters={(newFilters) => setFilters(newFilters)} />
-      
-      {/* NavBar correctement connectée à l'état des filtres */}
-      <NavBar 
+
+      <NavBar
         activeCategory={filters.category}
-        onSelectCategory={(category) => 
-          setFilters((prev) => ({ ...prev, category }))
-        }
+        onSelectCategory={(category) => setFilters((prev) => ({ ...prev, category }))}
       />
-      
+
       <BottomBar />
 
       {activeSidebarEventId && (

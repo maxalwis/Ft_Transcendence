@@ -68,16 +68,10 @@ export default function SideBar({ onClose, eventId, currentUserId, events = [] }
               <span>Prix :</span>
               <span 
                 className="font-bold text-teal-400 truncate max-w-[120px]" 
-                title={(eventDetails as any).priceDetail || (eventDetails as any).priceType || 'Gratuit'}
-              >
-                {(() => {
-                  const rawPrice = (eventDetails as any).priceDetail || (eventDetails as any).priceType;
-                  if (!rawPrice) return 'Gratuit';
-                  // Nettoie proprement les balises HTML éventuelles (ex: <p>, etc.)
-                  const cleanText = rawPrice.replace(/<[^>]*>?/gm, '');
-                  return cleanText.trim() || 'Gratuit';
-                })()}
-              </span>
+                dangerouslySetInnerHTML={{ 
+                  __html: (eventDetails as any).priceDetail || (eventDetails as any).priceType || 'Gratuit' 
+                }}
+              />
             </div>
           </>
         ) : (
