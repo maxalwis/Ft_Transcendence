@@ -89,19 +89,19 @@ export default function LoginPage() {
 
         <div className="flex items-center justify-center gap-2">
           <button
-            className="glass-panel hover:scale-3d ease-in p-2 h-11 w-11 flex justify-center items-center cursor-pointer"
+            className="glass-panel hover:scale-3d ease-in p-2 h-13 w-13 flex justify-center items-center cursor-pointer"
             onClick={handleGoogleLogin}
           >
             <img src="https://img.icons8.com/?size=25&id=17949&format=png&color=000000"></img>
           </button>
           <button
-            className="glass-panel hover:scale-3d ease-in p-2 h-11 w-11 flex justify-center items-center cursor-pointer"
+            className="glass-panel hover:scale-3d ease-in p-2 h-13 w-13 flex justify-center items-center cursor-pointer"
             onClick={handle42Login}
           >
             <img src="https://cdn.simpleicons.org/42?viewbox=auto&size=20"></img>
           </button>
           <button
-            className="glass-panel hover:scale-3d ease-in p-2 h-11 w-11 cursor-pointer flex justify-center items-center"
+            className="glass-panel hover:scale-3d ease-in p-2 h-13 w-13 cursor-pointer flex justify-center items-center"
             onClick={home}
           >
             <img src="https://img.icons8.com/?size=25&id=83326&format=png&color=000000"></img>

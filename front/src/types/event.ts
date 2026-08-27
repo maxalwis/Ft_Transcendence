@@ -7,6 +7,9 @@ export interface EventItem {
   dateStart?: string;
   dateEnd?: string;
   coverUrl?: string;
+  priceType?: string;
+  priceDetail?: string;
+  accessLink?: string;
   isNew?: boolean;
   interestedUsersCount?: number;
 }
