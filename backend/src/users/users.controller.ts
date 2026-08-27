@@ -19,6 +19,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAll() {
     return this.usersService.findAll();
   }
@@ -31,16 +32,13 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOne(id);
   }
 
-  @Post()
-  create(@Body() body: { username: string; email: string; password: string }) {
-    return this.usersService.create(body);
-  }
-
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { username?: string; email?: string }
@@ -49,6 +47,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }

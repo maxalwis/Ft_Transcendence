@@ -41,6 +41,19 @@ async function refreshAccessToken(): Promise<boolean> {
   return true;
 }
 
+// Version publique, utilisée après un login OAuth : renvoie aussi le user,
+// contrairement à refreshAccessToken (interne, juste utilisée pour le retry sur 401).
+export async function refresh() {
+  const res = await fetch(`${API_URL}/auth/refresh`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  if (!res.ok) throw new Error('Refresh failed');
+  const data = await res.json();
+  setAccessToken(data.accessToken);
+  return data; // { accessToken, user }
+}
+
 export async function login(username: string, password: string) {
   const res = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
