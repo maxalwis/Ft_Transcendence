@@ -3,6 +3,7 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import { AppLogger } from './logger/app-logger.service';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -31,6 +32,17 @@ async function bootstrap() {
       enableDebugMessages: true,
     })
   );
+  
+  // OpenAPI docs for the public API (served at /docs; /api/docs behind nginx)
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Transcendence Public API')
+    .setDescription('Public API to query and manage Paris events. Requires an API key.')
+    .setVersion('1.0')
+    .addServer('/api')
+    .addApiKey({ type: 'apiKey', name: 'X-API-Key', in: 'header' }, 'api-key')
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('docs', app, document);
 
   app.enableShutdownHooks();
 
