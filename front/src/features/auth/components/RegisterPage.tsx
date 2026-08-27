@@ -1,16 +1,45 @@
 import { useState } from 'react';
 import type { SubmitEvent } from 'react';
 export default function RegisterPage() {
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: SubmitEvent) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // logique de connexion username/mdp — a brancher plus tard sur le backend
+    setError('');
+
+    if (password !== confirmPassword) {
+      setError('Les mots de passe ne correspondent pas');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // pour que le cookie soit géré correctement si besoin
+        body: JSON.stringify({ username, password, email }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.message || 'Erreur lors de la création du compte');
+        return;
+      }
+
+      // succès → redirection vers login, ou connexion automatique
+      window.location.href = '/login';
+    } catch (err) {
+      setError('Impossible de contacter le serveur');
+    }
   };
 
   const login = () => {
-    window.location.href = `https://localhost:${import.meta.env.HTTPS_PORT || 8443}/login/`;
+    window.location.href = `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/login/`;
+    // window.location.href = "http://localhost:5173/login";
   };
 
   return (
@@ -19,6 +48,19 @@ export default function RegisterPage() {
         <h1 className="font-extrabold text-3xl">Create an account</h1>
 
         <form className="flex flex-col p-4" onSubmit={handleSubmit}>
+          <label className="mb-1 mt-3" htmlFor="email">
+            {' '}
+            Email{' '}
+          </label>
+          <input
+            id="email"
+            className="glassmorphism-popup pl-2 flex items-center jutify-center rounded-2xl border-2"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+          />
+
           <label className="mb-1 mt-3" htmlFor="username">
             {' '}
             Username{' '}
@@ -48,9 +90,9 @@ export default function RegisterPage() {
           <input
             className="glass-panel pl-2 flex items-center jutify-center rounded-lg border-2"
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm Password"
           />
           <button
             className="mt-4 flex hover:scale-105 items-center glass-panel justify-center duration-500 ease-in-out hover:text-white hover:border-white/50 hover:bg-linear-to-r! from-teal-400 to-orange-300 cursor-pointer"

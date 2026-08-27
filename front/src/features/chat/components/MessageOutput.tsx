@@ -3,10 +3,10 @@ import type { Message } from './Chat';
 
 type MessageOutputProps = {
   messages: Message[];
-  currentUserId?: number; // Pass current user ID to check if "isMe"
+  currentUserId?: number;
 };
 
-export default function MessageOutput({ messages, currentUserId = 1 }: MessageOutputProps) {
+export default function MessageOutput({ messages, currentUserId }: MessageOutputProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Automatically scroll to the bottom when new messages arrive
@@ -19,7 +19,7 @@ export default function MessageOutput({ messages, currentUserId = 1 }: MessageOu
       {messages.map((message) => {
         // Check if the message was sent by the current logged-in user
         const isMe = message.userId === currentUserId;
-        const displayName = message.user?.name || message.user?.email || 'Unknown User';
+        const displayName = message.user?.username || message.user?.email || 'Unknown User';
 
         return (
           <div
@@ -31,7 +31,7 @@ export default function MessageOutput({ messages, currentUserId = 1 }: MessageOu
               className={`rounded-2xl px-3.5 py-2 text-sm break-all shadow-sm ${
                 isMe
                   ? 'glass-blue text-white rounded-br-xs'
-                  : 'glass-panel text-gray-200 border border-gray-700/50 rounded-bl-xs'
+                  : 'glass-panel text-slate-600 border border-gray-700/50 rounded-bl-xs'
               }`}
             >
               {message.content}

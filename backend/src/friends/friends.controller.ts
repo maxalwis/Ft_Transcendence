@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Patch, Param, ParseIntPipe, Req } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, ParseIntPipe, Req, UseGuards, UnauthorizedException, Delete } from '@nestjs/common';
 import { FriendsService } from './friends.service';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @Controller('friends')
+@UseGuards(JwtAuthGuard)
 export class FriendsController {
   constructor(private readonly friendsService: FriendsService) {}
 
   private getUserIdFromReq(req: any): number {
-    return req.user?.id || 1;
+    return req.user?.id ?? (() => { throw new UnauthorizedException(); })();
   }
 
   @Get('pending')
@@ -29,7 +31,7 @@ export class FriendsController {
     @Req() req: any,
     @Param('senderId', ParseIntPipe) senderId: number,
   ) {
-    const currentUserId = req.user?.id || 2;
+    const currentUserId = this.getUserIdFromReq(req);
     return this.friendsService.acceptFriendRequest(senderId, currentUserId);
   }
 
@@ -38,4 +40,10 @@ export class FriendsController {
     const currentUserId = this.getUserIdFromReq(req);
     return this.friendsService.getUserFriends(currentUserId);
   }
+
+  @Delete(':friendId')
+  removeFriend(@Req() req: any, @Param('friendId', ParseIntPipe) friendId: number) {
+    const currentUserId = this.getUserIdFromReq(req);
+    return this.friendsService.removeFriend(currentUserId, friendId);
+}
 }
