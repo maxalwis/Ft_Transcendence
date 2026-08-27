@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import { AppLogger } from './logger/app-logger.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { PublicApiModule } from './public-api/public-api.module';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -41,7 +42,9 @@ async function bootstrap() {
     .addServer('/api')
     .addApiKey({ type: 'apiKey', name: 'X-API-Key', in: 'header' }, 'api-key')
     .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  const document = SwaggerModule.createDocument(app, swaggerConfig, {
+    include: [PublicApiModule],
+    });
   SwaggerModule.setup('docs', app, document);
 
   app.enableShutdownHooks();
