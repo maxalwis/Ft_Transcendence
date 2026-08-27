@@ -50,9 +50,7 @@ export default function CustomSelect({
       >
         <span>{selectedOption ? selectedOption.label : placeholder}</span>
         <svg
-          className={`w-3.5 h-3.5 transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
+          className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           style={{ color: 'var(--color-blue-dark)' }}
           fill="none"
           viewBox="0 0 24 24"
@@ -87,8 +85,12 @@ export default function CustomSelect({
                 onMouseEnter={() => setHoveredValue(option.value)}
                 onMouseLeave={() => setHoveredValue(null)}
                 style={{
-                  color: isSelected || isHovered ? 'var(--color-orange-primary)' : 'var(--color-blue-dark)',
-                  backgroundColor: isSelected || isHovered ? 'var(--color-orange-hover)' : '#ffffff',
+                  color:
+                    isSelected || isHovered
+                      ? 'var(--color-orange-primary)'
+                      : 'var(--color-blue-dark)',
+                  backgroundColor:
+                    isSelected || isHovered ? 'var(--color-orange-hover)' : '#ffffff',
                 }}
                 className="px-3 py-1.5 text-xs font-medium cursor-pointer transition-colors"
               >

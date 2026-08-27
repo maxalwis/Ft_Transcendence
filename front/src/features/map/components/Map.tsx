@@ -35,7 +35,7 @@ export default function Map() {
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
-    // État local pour stocker les filtres actifs
+  // État local pour stocker les filtres actifs
   const [filters, setFilters] = useState({
     city: 'Paris',
     startDate: '',
@@ -47,6 +47,7 @@ export default function Map() {
 
   const {
     isLoading,
+    events,
     eventGroups,
     activeGroup,
     currentEvent,
@@ -57,6 +58,10 @@ export default function Map() {
     handlePrevEvent,
     handleNextEvent,
   } = useMapEvents(showError);
+
+  const selectedSidebarEvent = activeSidebarEventId
+    ? events.find((event) => event.id === activeSidebarEventId) || null
+    : null;
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -124,7 +129,11 @@ export default function Map() {
       {currentEvent && activeGroup && hoverPos && (
         <EventsDetails
           position={hoverPos}
+          eventId={currentEvent.id}
           title={currentEvent.title}
+          dateStart={currentEvent.dateStart}
+          dateEnd={currentEvent.dateEnd}
+          priceType={currentEvent.priceType}
           category={currentEvent.category?.[0] || 'Event'}
           isOpen={true}
           closingTime={
@@ -133,7 +142,7 @@ export default function Map() {
                   hour: '2-digit',
                   minute: '2-digit',
                 })
-              : '11:00 PM'
+              : 'Date inconnue'
           }
           interestedUsersCount={currentEvent.interestedUsersCount || 0}
           imageUrl={currentEvent.coverUrl}
@@ -156,6 +165,8 @@ export default function Map() {
         <SideBar
           eventId={activeSidebarEventId}
           currentUserId={user?.id}
+        //   currentUserId={1}
+          event={selectedSidebarEvent}
           onClose={() => {
             setActiveSidebarEventId(null);
             setHoverPos(null);
