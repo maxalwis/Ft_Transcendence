@@ -23,17 +23,15 @@ export function useMapEvents(
       try {
         setIsLoading(true);
         
-        // Utilisation sécurisée de l'URL de base
         const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
         
         const params = new URLSearchParams();
         if (filters?.city) params.append('city', filters.city);
-        if (filters?.startDate) params.append('startDate', filters.startDate);
-        if (filters?.endDate) params.append('endDate', filters.endDate);
+        if (filters?.startDate) params.append('from', filters.startDate);
+        if (filters?.endDate) params.append('to', filters.endDate);
         if (filters?.priceType) params.append('price', filters.priceType);
         if (filters?.category) params.append('category', filters.category);
         
-        // Ajout des paramètres de prix min et max pour qu'ils soient transmis au backend
         if (filters?.minPrice !== undefined && filters?.minPrice !== '') {
           params.append('minPrice', String(filters.minPrice));
         }
@@ -63,13 +61,17 @@ export function useMapEvents(
             access_link?: string;
           }
         > = await response.json();
+
         const data: EventItem[] = rawData.map((event) => ({
           ...event,
+          latitude: Number(event.latitude),
+          longitude: Number(event.longitude),
           dateStart: event.dateStart ?? event.date_start,
           dateEnd: event.dateEnd ?? event.date_end,
           priceType: event.priceType ?? event.price_type,
           accessLink: event.accessLink ?? event.access_link,
         }));
+        
         setEvents(data);
       } catch (err: unknown) {
         console.error('Failed to fetch map events:', err);
@@ -109,8 +111,8 @@ export function useMapEvents(
 
     return Array.from(groupsMap.entries()).map(([key, groupEvents]) => ({
       id: key,
-      latitude: groupEvents[0].latitude,
-      longitude: groupEvents[0].longitude,
+      latitude: Number(groupEvents[0].latitude),
+      longitude: Number(groupEvents[0].longitude),
       events: groupEvents,
     }));
   }, [events]);

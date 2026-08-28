@@ -31,7 +31,7 @@ export default function Map() {
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
-<<<<<<< HEAD
+  // État local pour stocker les filtres actifs avec typage complet
   const [filters, setFilters] = useState<{
     city: string;
     startDate: string;
@@ -39,10 +39,6 @@ export default function Map() {
     priceType: string;
     category?: string;
   }>({
-=======
-  // État local pour stocker les filtres actifs
-  const [filters, setFilters] = useState({
->>>>>>> dev
     city: 'Paris',
     startDate: '',
     endDate: '',
@@ -136,14 +132,10 @@ export default function Map() {
       {currentEvent && activeGroup && hoverPos && (
         <EventsDetails
           position={hoverPos}
-          eventId={currentEvent.id}
           title={currentEvent.title}
           dateStart={currentEvent.dateStart}
           dateEnd={currentEvent.dateEnd}
-          priceType={currentEvent.priceType}
           category={currentEvent.category?.[0] || 'Event'}
-          priceDetail={currentEvent.priceDetail}
-          priceType={currentEvent.priceType}
           isOpen={true}
           closingTime={
             currentEvent.dateEnd
@@ -158,7 +150,7 @@ export default function Map() {
           totalInGroup={activeGroup.events.length}
           currentIndex={activeEventIndex}
           onPrev={handlePrevEvent}
-          onNext={(e: React.MouseEvent) => handleNextEvent(e, activeGroup.events.length - 1)}
+          onNext={() => handleNextEvent(undefined, activeGroup.events.length - 1)}
           onClick={() => setActiveSidebarEventId(currentEvent.id)}
           onMouseEnter={cancelCloseTimeout}
           onMouseLeave={handleMouseLeave}
@@ -179,8 +171,6 @@ export default function Map() {
         <SideBar
           eventId={activeSidebarEventId}
           currentUserId={user?.id}
-        //   currentUserId={1}
-          event={selectedSidebarEvent}
           onClose={() => {
             setActiveSidebarEventId(null);
             setHoverPos(null);

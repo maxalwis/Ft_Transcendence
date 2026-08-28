@@ -14,9 +14,9 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     super({
       authorizationURL: 'https://api.intra.42.fr/oauth/authorize',
       tokenURL: 'https://api.intra.42.fr/oauth/token',
-      clientID: config.getOrThrow<string>('FORTYTWO_CLIENT_ID'),
-      clientSecret: config.getOrThrow<string>('FORTYTWO_CLIENT_SECRET'),
-      callbackURL: config.getOrThrow<string>('FORTYTWO_CALLBACK_URL'),
+      clientID: process.env.FORTYTWO_CLIENT_ID || config.get<string>('FORTYTWO_CLIENT_ID') || 'dummy_42_id',
+      clientSecret: process.env.FORTYTWO_CLIENT_SECRET || config.get<string>('FORTYTWO_CLIENT_SECRET') || 'dummy_42_secret',
+      callbackURL: process.env.FORTYTWO_CALLBACK_URL || config.get<string>('FORTYTWO_CALLBACK_URL') || 'http://localhost:3000/auth/42/callback',
     });
   }
 

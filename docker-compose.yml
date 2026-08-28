@@ -79,6 +79,12 @@ services:
       NODE_ENV: development
       PORT: ${BACKEND_PORT:-3000}
       JWT_SECRET: "votre_secret_jwt_super_securise"
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL}
+      FORTYTWO_CLIENT_ID: ${FORTYTWO_CLIENT_ID}
+      FORTYTWO_CLIENT_SECRET: ${FORTYTWO_CLIENT_SECRET}
+      FORTYTWO_CALLBACK_URL: ${FORTYTWO_CALLBACK_URL}
     ports:
       - '${BACKEND_PORT:-3000}:3000'
     volumes:
@@ -95,7 +101,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    command: ['sh', '-c', 'npx prisma generate && npx prisma migrate deploy && exec npm run start']
+    command: ['sh', '-c', 'npx prisma generate && npx prisma migrate deploy && npm run build && exec npm run start']
 
   worker:
     image: localhost/transcendence_worker:latest
