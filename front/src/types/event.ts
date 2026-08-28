@@ -7,6 +7,9 @@ export interface EventItem {
   dateStart?: string;
   dateEnd?: string;
   coverUrl?: string;
+  priceType?: string;
+  priceDetail?: string;
+  accessLink?: string;
   isNew?: boolean;
   interestedUsersCount?: number;
   price?: number;
@@ -26,7 +29,11 @@ export type EventFilters = {
   startDate: string;
   endDate: string;
   priceType: string;
+<<<<<<< HEAD
   category?: string;
   minPrice?: number | string;
   maxPrice?: number | string;
 };
+=======
+};
+>>>>>>> dev

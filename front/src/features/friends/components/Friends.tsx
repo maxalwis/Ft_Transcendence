@@ -32,7 +32,7 @@ export default function Friends() {
     try {
       const [friendsList, pendingList] = await Promise.all([
         getFriends(accessToken),
-        getPendingRequests(accessToken)
+        getPendingRequests(accessToken),
       ]);
       setFriends(friendsList);
       setRequests(pendingList);

@@ -31,6 +31,7 @@ export default function Map() {
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
+<<<<<<< HEAD
   const [filters, setFilters] = useState<{
     city: string;
     startDate: string;
@@ -38,6 +39,10 @@ export default function Map() {
     priceType: string;
     category?: string;
   }>({
+=======
+  // État local pour stocker les filtres actifs
+  const [filters, setFilters] = useState({
+>>>>>>> dev
     city: 'Paris',
     startDate: '',
     endDate: '',
@@ -49,6 +54,7 @@ export default function Map() {
 
   const {
     isLoading,
+    events,
     eventGroups,
     activeGroup,
     currentEvent,
@@ -59,6 +65,10 @@ export default function Map() {
     handlePrevEvent,
     handleNextEvent,
   } = useMapEvents(showError, filters);
+
+  const selectedSidebarEvent = activeSidebarEventId
+    ? events.find((event) => event.id === activeSidebarEventId) || null
+    : null;
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -126,7 +136,11 @@ export default function Map() {
       {currentEvent && activeGroup && hoverPos && (
         <EventsDetails
           position={hoverPos}
+          eventId={currentEvent.id}
           title={currentEvent.title}
+          dateStart={currentEvent.dateStart}
+          dateEnd={currentEvent.dateEnd}
+          priceType={currentEvent.priceType}
           category={currentEvent.category?.[0] || 'Event'}
           priceDetail={currentEvent.priceDetail}
           priceType={currentEvent.priceType}
@@ -137,7 +151,7 @@ export default function Map() {
                   hour: '2-digit',
                   minute: '2-digit',
                 })
-              : '11:00 PM'
+              : 'Date inconnue'
           }
           interestedUsersCount={currentEvent.interestedUsersCount || 0}
           imageUrl={currentEvent.coverUrl}
@@ -165,6 +179,8 @@ export default function Map() {
         <SideBar
           eventId={activeSidebarEventId}
           currentUserId={user?.id}
+        //   currentUserId={1}
+          event={selectedSidebarEvent}
           onClose={() => {
             setActiveSidebarEventId(null);
             setHoverPos(null);

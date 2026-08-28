@@ -17,7 +17,7 @@ export default function RegisterPage() {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // pour que le cookie soit géré correctement si besoin

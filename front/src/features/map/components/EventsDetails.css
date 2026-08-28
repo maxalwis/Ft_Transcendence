@@ -1,0 +1,136 @@
+.events-details-popup {
+  position: fixed;
+  width: 300px;
+  z-index: 1000;
+}
+
+.events-details-popup--up {
+  transform-origin: bottom center;
+  animation: markerPopupAnimationUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.events-details-popup--down {
+  transform-origin: top center;
+  animation: markerPopupAnimationDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.events-details-image-container {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 130px;
+  padding: 10px 10px 0;
+}
+
+.events-details-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+}
+
+.events-details-content {
+  padding: 14px 18px 18px;
+}
+
+.events-details-title {
+  margin: 0 0 8px;
+  color: #1f1f1f;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.events-details-category {
+  margin-top: 10px;
+  margin-bottom: 2%;
+  color: #5f6368;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.events-details-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  color: #5f6368;
+  font-size: 13px;
+}
+
+.events-details-meta span {
+  font-size: inherit;
+}
+
+.events-details-end-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.events-details-carousel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.events-details-carousel-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 85%);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 15%);
+  pointer-events: auto;
+}
+
+.events-details-carousel-button:not(:disabled) {
+  cursor: pointer;
+}
+
+.events-details-carousel-button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.events-details-carousel-counter {
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.684);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@keyframes markerPopupAnimationUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -100%) scale(0.6);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+}
+
+@keyframes markerPopupAnimationDown {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0%) scale(0.6);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0%) scale(1);
+  }
+}

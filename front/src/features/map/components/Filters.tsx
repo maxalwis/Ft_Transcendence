@@ -20,6 +20,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [priceType, setPriceType] = useState('');
+  const [priceRange, setPriceRange] = useState([0, 500]);
 
   const handleApply = () => {
     if (onApplyFilters) {
@@ -54,8 +55,13 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
       <button
         type="button"
         aria-label="Open Filters"
+<<<<<<< HEAD
         onClick={() => setIsOpen(true)}
         className="glass-panel icon-btn fixed left-4 top-1/2 -translate-y-1/2 z-[9999] w-10 h-10 rounded-full shadow-lg cursor-pointer active:scale-95 flex items-center justify-center"
+=======
+        onClick={handleOpen}
+        className="glass-panel icon-btn fixed left-4 top-1/2 -translate-y-1/2 z-9999 w-10 h-10 rounded-full shadow-lg cursor-pointer active:scale-95 flex items-center justify-center"
+>>>>>>> dev
         style={{ color: 'var(--color-blue-dark)' }}
       >
         <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
@@ -66,7 +72,13 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
       {isOpen &&
         createPortal(
           <header
+<<<<<<< HEAD
             className="filterModal glass-panel h-auto w-64 fixed left-3 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 z-[9999] rounded-xl shadow-2xl"
+=======
+            data-state={isOpen ? 'open' : 'closed'}
+            onAnimationEnd={handleAnimationEnd}
+            className={`${styles.filterModal || styles.sidebarModal || 'filterModal'} glass-panel h-auto w-64 fixed left-3 top-1/2 flex flex-col p-4 gap-4 z-9999 rounded-xl shadow-2xl`}
+>>>>>>> dev
             style={{ color: 'var(--color-blue-dark)' }}
           >
             <button
@@ -101,9 +113,32 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               <CustomSelect
                 options={PRICE_OPTIONS}
                 value={priceType}
-                onChange={(val) => setPriceType(val)}
+				onChange={(val) => setPriceType(val)}
                 placeholder="Select category"
               />
+				{priceType === 'fee-based' && (
+					<div>
+						<label>Price range: {priceRange[0]}€ - {priceRange[1]}€</label>
+						<input
+						type="range"
+						min={0}
+						max={500}
+						value={priceRange[0]}
+						onChange={(e) => {const newMin = Math.min(Number(e.target.value), priceRange[1]);
+						setPriceRange([newMin, priceRange[1]]);
+						}}
+						/>
+						<input
+						type="range"
+						min={0}
+						max={500}
+						value={priceRange[1]}
+						onChange={(e) => {const newMax = Math.max(Number(e.target.value), priceRange[0]);
+						setPriceRange([priceRange[0], newMax]);
+						}}
+						/>
+					</div>
+				)}
             </div>
 
             <div className="flex flex-col gap-1">

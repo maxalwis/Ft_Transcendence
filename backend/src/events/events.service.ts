@@ -14,7 +14,6 @@ export class EventsService {
     const trimmed = price.trim().toLowerCase();
 
     if (trimmed === 'free') {
-      // Filtrage strict : on exclut les textes piégés contenant des exceptions ou des tarifs
       return Prisma.sql`AND (
         LOWER("priceType") IN ('gratuit', 'free', 'gratuite') 
         OR LOWER("priceDetail") IN ('gratuit', 'free', '0', '0.0€', '0 €', '0.00 €')
@@ -54,8 +53,8 @@ export class EventsService {
     const priceCondition = this.getPriceCondition(price);
     const categoryCondition = this.getCategoryCondition(category);
 
-    const events: any[] = await this.prisma.$queryRaw`
-        SELECT id, title, category, latitude, longitude, "dateStart", "dateEnd", "priceType", "priceDetail"
+    return this.prisma.$queryRaw`
+        SELECT id, title, category, latitude, longitude, "dateStart", "dateEnd", "coverUrl", "priceType", "priceDetail", "accessLink"
         FROM "Event"
         WHERE latitude IS NOT NULL AND longitude IS NOT NULL
             AND "dateEnd" >= ${fromDate}
@@ -65,8 +64,6 @@ export class EventsService {
         ORDER BY "dateStart" ASC
         LIMIT 5000
     `;
-
-    return events;
   }
 
   async findForMap(bbox: BoundingBox, from?: string, to?: string, category?: string, price?: string) {
@@ -76,8 +73,8 @@ export class EventsService {
     const priceCondition = this.getPriceCondition(price);
     const categoryCondition = this.getCategoryCondition(category);
 
-    const events: any[] = await this.prisma.$queryRaw`
-      SELECT id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail"
+    return this.prisma.$queryRaw`
+      SELECT id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail", "accessLink"
       FROM "Event"
       WHERE location && ST_MakeEnvelope(
         ${minLon}, ${minLat}, ${maxLon}, ${maxLat}, 4326
@@ -88,13 +85,11 @@ export class EventsService {
         ${priceCondition}
       LIMIT 500
     `;
-
-    return events;
   }
 
   async findOne(id: string) {
     const events = await this.prisma.$queryRaw<any[]>`
-      SELECT id, title, description, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail"
+      SELECT id, title, description, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail", "accessLink"
       FROM "Event"
       WHERE id = ${id}
       LIMIT 1
@@ -115,9 +110,9 @@ export class EventsService {
     const priceCondition = this.getPriceCondition(price);
     const categoryCondition = this.getCategoryCondition(category);
 
-    const events: any[] = await this.prisma.$queryRaw`
+    return this.prisma.$queryRaw`
       SELECT
-        id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail",
+        id, title, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail", "accessLink",
         ST_Distance(
           location,
           ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326)::geography
@@ -135,7 +130,5 @@ export class EventsService {
       ORDER BY distance ASC
       LIMIT 100
     `;
-
-    return events;
   }
 }

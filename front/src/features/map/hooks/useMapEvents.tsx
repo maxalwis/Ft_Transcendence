@@ -55,11 +55,27 @@ export function useMapEvents(
           throw new Error(message);
         }
 
-        const data: EventItem[] = await response.json();
+        const rawData: Array<
+          EventItem & {
+            date_start?: string;
+            date_end?: string;
+            price_type?: string;
+            access_link?: string;
+          }
+        > = await response.json();
+        const data: EventItem[] = rawData.map((event) => ({
+          ...event,
+          dateStart: event.dateStart ?? event.date_start,
+          dateEnd: event.dateEnd ?? event.date_end,
+          priceType: event.priceType ?? event.price_type,
+          accessLink: event.accessLink ?? event.access_link,
+        }));
         setEvents(data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to fetch map events:', err);
-        showError(err.message || 'An error occurred while loading map events.');
+        showError(
+          err instanceof Error ? err.message : 'An error occurred while loading map events.'
+        );
       } finally {
         setIsLoading(false);
       }

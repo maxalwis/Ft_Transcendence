@@ -8,7 +8,10 @@ export interface UserSearchResult {
   status: 'ONLINE' | 'OFFLINE' | 'IN_GAME';
 }
 
-export async function searchUsers(username: string, accessToken: string): Promise<UserSearchResult[]> {
+export async function searchUsers(
+  username: string,
+  accessToken: string
+): Promise<UserSearchResult[]> {
   if (!username.trim()) return [];
 
   const res = await fetch(`${API_URL}/search?username=${encodeURIComponent(username)}`, {
