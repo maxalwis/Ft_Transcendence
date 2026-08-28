@@ -50,7 +50,9 @@ export default function SideBar({ onClose, eventId, currentUserId, event }: Side
           {eventId && currentUserId ? (
             <Chat eventId={eventId} currentUserId={currentUserId} />
           ) : (
-            <div className="text-gray-400 text-sm p-4 flex items-center justify-center">Connect to view chat.</div>
+            <div className="text-gray-400 text-sm p-4 flex items-center justify-center">
+              Connect to view chat.
+            </div>
           )}
         </div>
       </div>

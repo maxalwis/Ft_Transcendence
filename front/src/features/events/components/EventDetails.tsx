@@ -34,46 +34,45 @@ function formatPriceType(value?: string) {
 }
 
 export default function EventDetails({
-	title,
-	category,
-	dateStart,
-	dateEnd,
-	priceType,
-	priceDetail,
-	accessLink, }: EventDetailsProps)
-{
-	const formattedPriceType = formatPriceType(priceType);
-	const cleanedPriceDetail = cleanText(priceDetail);
-	const isPaid = formattedPriceType.toLowerCase().includes('payant');
+  title,
+  category,
+  dateStart,
+  dateEnd,
+  priceType,
+  priceDetail,
+  accessLink,
+}: EventDetailsProps) {
+  const formattedPriceType = formatPriceType(priceType);
+  const cleanedPriceDetail = cleanText(priceDetail);
+  const isPaid = formattedPriceType.toLowerCase().includes('payant');
 
-	return (
-	<div className="min-w-0 leading-tight">
-		<h2 className="mb-2! font-extrabold! text-black/90!">{title}</h2>
-		<p className="mb-1! text-sm font-semibold text-slate-600!">{category || 'Événement'}</p>
-		<p className="mb-1! text-xs">
-		{formatDate(dateStart)}
-		{dateEnd ? ` - ${formatDate(dateEnd)}` : ''}
-		</p>
-		{formattedPriceType && (
-		<p className="mb-1! text-xs text-slate-200">
-			{formattedPriceType}
-			{isPaid && cleanedPriceDetail ? ` - ${cleanedPriceDetail}` : ''}
-		</p>
-		)}
-		{accessLink && (
-		<>
-		<div className="mb-1 text-xs font-semibold text-slate-600">
-			Lien :
-		</div>
-		<a
-			href={accessLink}
-			target="_blank"
-			rel="noreferrer"
-			className="mb-1! block! text-xs! text-blue-900! underline!">
-			{accessLink}
-		</a>
-		</>
-		)}
-	</div>
-	);
+  return (
+    <div className="min-w-0 leading-tight">
+      <h2 className="mb-2! font-extrabold! text-black/90!">{title}</h2>
+      <p className="mb-1! text-sm font-semibold text-slate-600!">{category || 'Événement'}</p>
+      <p className="mb-1! text-xs">
+        {formatDate(dateStart)}
+        {dateEnd ? ` - ${formatDate(dateEnd)}` : ''}
+      </p>
+      {formattedPriceType && (
+        <p className="mb-1! text-xs text-slate-200">
+          {formattedPriceType}
+          {isPaid && cleanedPriceDetail ? ` - ${cleanedPriceDetail}` : ''}
+        </p>
+      )}
+      {accessLink && (
+        <>
+          <div className="mb-1 text-xs font-semibold text-slate-600">Lien :</div>
+          <a
+            href={accessLink}
+            target="_blank"
+            rel="noreferrer"
+            className="mb-1! block! text-xs! text-blue-900! underline!"
+          >
+            {accessLink}
+          </a>
+        </>
+      )}
+    </div>
+  );
 }

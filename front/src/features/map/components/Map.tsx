@@ -165,7 +165,7 @@ export default function Map() {
         <SideBar
           eventId={activeSidebarEventId}
           currentUserId={user?.id}
-        //   currentUserId={1}
+          //   currentUserId={1}
           event={selectedSidebarEvent}
           onClose={() => {
             setActiveSidebarEventId(null);

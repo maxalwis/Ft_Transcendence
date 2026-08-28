@@ -112,4 +112,19 @@ export class FriendsService {
       where: { id: friendship.id },
     });
   }
+
+  // utilisé pour events-interest, plus léger que getUserFriends (renvoie seulement des id)
+  async getFriendIds(userId: number): Promise<number[]> {
+    const friendships = await this.prisma.friendship.findMany({
+      where: {
+        OR: [
+          { senderId: userId, status: 'ACCEPTED' },
+          { receiverId: userId, status: 'ACCEPTED' },
+        ],
+      },
+      select: { senderId: true, receiverId: true },
+    });
+
+    return friendships.map((f) => (f.senderId === userId ? f.receiverId : f.senderId));
+  }
 }

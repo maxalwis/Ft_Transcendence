@@ -85,6 +85,16 @@ CREATE TABLE "Friendship" (
     CONSTRAINT "Friendship_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "EventInterest" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "eventId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "EventInterest_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Event_source_externalId_key" ON "Event"("source", "externalId");
 
@@ -100,6 +110,15 @@ CREATE UNIQUE INDEX "User_provider_providerId_key" ON "User"("provider", "provid
 -- CreateIndex
 CREATE UNIQUE INDEX "Friendship_senderId_receiverId_key" ON "Friendship"("senderId", "receiverId");
 
+-- CreateIndex
+CREATE INDEX "EventInterest_eventId_idx" ON "EventInterest"("eventId");
+
+-- CreateIndex
+CREATE INDEX "EventInterest_userId_idx" ON "EventInterest"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "EventInterest_userId_eventId_key" ON "EventInterest"("userId", "eventId");
+
 -- AddForeignKey
 ALTER TABLE "Message" ADD CONSTRAINT "Message_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -111,3 +130,9 @@ ALTER TABLE "Friendship" ADD CONSTRAINT "Friendship_senderId_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "Friendship" ADD CONSTRAINT "Friendship_receiverId_fkey" FOREIGN KEY ("receiverId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "EventInterest" ADD CONSTRAINT "EventInterest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "EventInterest" ADD CONSTRAINT "EventInterest_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event"("id") ON DELETE CASCADE ON UPDATE CASCADE;
