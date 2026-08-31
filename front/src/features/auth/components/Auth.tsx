@@ -19,6 +19,7 @@ export default function LoginButton() {
       // on ignore une éventuelle erreur réseau, on déconnecte quand même côté client
     } finally {
       logout();
+      window.location.reload();
     }
   };
 
