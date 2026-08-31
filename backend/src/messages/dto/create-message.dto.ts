@@ -6,10 +6,7 @@ export class CreateMessageDto {
   @IsNotEmpty()
   content!: string;
 
-  @IsNumber()
-  @Type(() => Number)
-  @IsNotEmpty()
-  userId!: number;
+  // par sécurité, le userId est retiré du body
 
   @IsString()
   @IsOptional()

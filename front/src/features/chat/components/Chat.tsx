@@ -4,10 +4,12 @@ import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
 import { fetchEventMessages, sendEventMessage } from '../chatService';
 import { useNotification } from '../../../context/notifications/NotificationContext';
+import { useAuth } from '../../../context/auth/AuthContext';
 
 export type Message = {
   id: number;
   content: string;
+  userId: number;
   user: { username?: string; email: string };
   createdAt: string;
 };
@@ -21,11 +23,13 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const { showError } = useNotification();
+  const { accessToken } = useAuth();
 
   // Fetch messages on mount or when event changes
   useEffect(() => {
+    if (!accessToken) return;
     let isMounted = true;
-    fetchEventMessages(eventId)
+    fetchEventMessages(eventId, accessToken)
       .then((data) => {
         if (isMounted) setMessages(data);
       })
@@ -40,12 +44,16 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     return () => {
       isMounted = false;
     };
-  }, [eventId, showError]);
+  }, [eventId, accessToken, showError]);
 
   // Handle sending through the backend
   const handleSendMessage = async (text: string) => {
+    if (!accessToken) {
+      showError('You must be logged in to send a message.');
+      return;
+    }
     try {
-      const newMessage = await sendEventMessage(eventId, text, currentUserId);
+      const newMessage = await sendEventMessage(eventId, text, accessToken);
       setMessages((prev) => [...prev, newMessage]);
     } catch (err: any) {
       console.error('Error sending message:', err);

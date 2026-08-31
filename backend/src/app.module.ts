@@ -12,6 +12,7 @@ import { LoggerMiddleware } from './logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { FriendsModule } from './friends/friends.module';
 import { EventsInterestsModule } from './events-interest/events-interest.module';
+import { RealtimeModule } from './realtime/realtime.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { EventsInterestsModule } from './events-interest/events-interest.module'
     AuthModule,
     FriendsModule,
     EventsInterestsModule,
+    RealtimeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

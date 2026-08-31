@@ -7,8 +7,8 @@ import { User, Message } from '../generated/prisma/client';
 export class MessagesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createMessageDto: CreateMessageDto): Promise<Message> {
-    const { content, userId, eventId } = createMessageDto;
+  async create(userId: number, createMessageDto: CreateMessageDto): Promise<Message> {
+    const { content, eventId } = createMessageDto;
 
     if (!eventId) {
       throw new NotFoundException('Event ID is required');
