@@ -71,7 +71,7 @@ async function main() {
 
   if (existingEvents.length === 0) {
     throw new Error(
-      "Aucun event trouvé en base. Lancez d'abord votre pipeline de récupération API avant de seed les users.",
+      "Aucun event trouvé en base. Lancez d'abord votre pipeline de récupération API avant de seed les users."
     );
   }
 
@@ -109,17 +109,14 @@ async function main() {
 
       const user = await prisma.user.create({
         data: {
-          username: faker.internet.username().toLowerCase() + faker.number.int({ min: 1, max: 999 }),
+          username:
+            faker.internet.username().toLowerCase() + faker.number.int({ min: 1, max: 999 }),
           email: faker.internet.email().toLowerCase(),
           password: isOAuth ? null : hashedPassword,
           provider: isOAuth ? faker.helpers.arrayElement(['google', 'github']) : null,
           providerId: isOAuth ? faker.string.uuid() : null,
           avatar: faker.image.avatarGitHub(),
-          status: weightedBoolean(0.15)
-            ? 'ONLINE'
-            : weightedBoolean(0.05)
-              ? 'IN_GAME'
-              : 'OFFLINE',
+          status: weightedBoolean(0.15) ? 'ONLINE' : weightedBoolean(0.05) ? 'IN_GAME' : 'OFFLINE',
           createdAt,
           updatedAt: isPowerUser
             ? faker.date.recent({ days: 3 })
@@ -149,7 +146,7 @@ async function main() {
       const numRequests = faker.number.int({ min: 0, max: AVG_FRIEND_REQUESTS_PER_USER * 2 });
       const potentialFriends = randomSubset(
         users.filter((u) => u.id !== user.id),
-        numRequests,
+        numRequests
       );
 
       for (const friend of potentialFriends) {
@@ -212,7 +209,7 @@ async function main() {
 
         const friends = acceptedFriendMap.get(user.id) ?? new Set();
         const interestedFriendsCount = [...friends].filter((fid) =>
-          interestSet.has(`${fid}-${event.id}`),
+          interestSet.has(`${fid}-${event.id}`)
         ).length;
         p += interestedFriendsCount * 0.08;
         p = Math.min(p, 0.9);
@@ -223,9 +220,9 @@ async function main() {
               userId: user.id,
               eventId: event.id,
               createdAt: safeBetween(
-				event.createdAt,
-				event.dateStart < new Date() ? event.dateStart : new Date(),
-			  ),
+                event.createdAt,
+                event.dateStart < new Date() ? event.dateStart : new Date()
+              ),
             },
           });
           interestSet.add(`${user.id}-${event.id}`);
@@ -255,7 +252,7 @@ async function main() {
         event.popularityTier === 'hype' ? 8 : event.popularityTier === 'normal' ? 3 : 0.5;
 
       const numMessages = Math.round(
-        faker.number.int({ min: 0, max: 10 }) * chatActivityMultiplier,
+        faker.number.int({ min: 0, max: 10 }) * chatActivityMultiplier
       );
 
       for (let i = 0; i < numMessages; i++) {
@@ -275,7 +272,9 @@ async function main() {
   }
 
   console.log('✅ Seed terminé !');
-  console.log(`   ${users.length} users (mot de passe commun : "${FAKE_PASSWORD}" pour les non-OAuth)`);
+  console.log(
+    `   ${users.length} users (mot de passe commun : "${FAKE_PASSWORD}" pour les non-OAuth)`
+  );
   console.log(`   ${events.length} events (existants, non modifiés)`);
   console.log(`   ${friendshipPairs.size} demandes d'amitié créées`);
   console.log(`   ${interestSet.size} intérêts au total`);
