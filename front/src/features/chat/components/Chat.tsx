@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
-import '../Chat.module.css';
+import { useEffect, useState, useCallback } from 'react';
+import styles from './chat.module.css';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
 import { fetchEventMessages, sendEventMessage } from '../chatService';
 import { useNotification } from '../../../context/notifications/NotificationContext';
 import { useAuth } from '../../../context/auth/AuthContext';
+import { useChatSocket } from '../hooks/useChatSocket';
 
 export type Message = {
   id: number;
@@ -46,6 +47,14 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     };
   }, [eventId, accessToken, showError]);
 
+  // Ajoute le message reçu en temps réel, en évitant les doublons
+  // (utile si le message optimiste de handleSendMessage arrive avant l'echo du socket)
+  const handleNewMessage = useCallback((msg: Message) => {
+    setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
+  }, []);
+
+  useChatSocket(eventId, handleNewMessage);
+
   // Handle sending through the backend
   const handleSendMessage = async (text: string) => {
     if (!accessToken) {
@@ -54,7 +63,9 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     }
     try {
       const newMessage = await sendEventMessage(eventId, text, accessToken);
-      setMessages((prev) => [...prev, newMessage]);
+      setMessages((prev) =>
+        prev.some((m) => m.id === newMessage.id) ? prev : [...prev, newMessage]
+      );
     } catch (err: any) {
       console.error('Error sending message:', err);
       showError(`Error while trying to send the message: ${err.message}`);
