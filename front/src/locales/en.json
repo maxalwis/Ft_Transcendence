@@ -1,0 +1,62 @@
+{
+  "welcome": "Welcome to our site",
+  "buttons": {
+    "submit": "Submit"
+  },
+  "nav": {
+    "all": "All",
+    "culture": "Culture",
+    "sports": "Sports",
+    "music": "Music",
+    "family": "Family"
+  },
+  "events": {
+    "defaultCategory": "Event",
+    "unknownDate": "Unknown date",
+    "linkLabel": "Link:"
+  },
+  "filters": {
+    "title": "Events Filters",
+    "cityLabel": "City / Location",
+    "cityPlaceholder": "Ex: Paris",
+    "priceCategory": "Price category",
+    "selectCategory": "Select category",
+    "fromDate": "From :",
+    "apply": "Apply",
+    "reset": "Reset",
+    "allPrices": "All",
+    "free": "Free",
+    "feeBased": "Fee-based"
+  },
+  "friends": {
+    "buttonTitle": "Friends",
+    "errorLoading": "Error loading.",
+    "sidebarTitle": "My Friends",
+    "searchPlaceholder": "Search...",
+    "addTab": "Add",
+    "requestsTab": "Requests",
+    "noFriends": "No friends yet",
+    "remove": "Remove"
+  },
+  "chat": {
+    "title": "Chat",
+    "connectPrompt": "Connect to view chat.",
+    "loadingMessages": "Loading messages...",
+    "errorLoadMessages": "Failed to load messages",
+    "errorSend": "Error while trying to send the message",
+    "placeholder": "Type your message...",
+    "send": "Send"
+  },
+  "auth": {
+    "signInTitle": "Sign in to your account",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "loginButton": "Log in",
+    "noAccount": "No account ?",
+    "createAccount": "Create an account"
+  },
+  "notifications": {
+  "defaultError": "An error occurred",
+  "defaultSuccess": "Operation successful"
+  }
+}

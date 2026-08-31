@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Chat from '../features/chat/components/Chat';
 import Event from '../features/events/components/Event';
 import type { EventItem } from '../types/event';
+import { useTranslation } from 'react-i18next';
 
 interface SideBarProps {
   onClose: () => void;
@@ -12,6 +13,7 @@ interface SideBarProps {
 }
 
 export default function SideBar({ onClose, eventId, currentUserId, events = [], event }: SideBarProps) {
+  const { t } = useTranslation();
   const [eventDetails, setEventDetails] = useState<EventItem | null>(event || null);
 
   useEffect(() => {
@@ -67,7 +69,7 @@ export default function SideBar({ onClose, eventId, currentUserId, events = [], 
           <Event event={eventDetails} />
         ) : (
           <div className="text-gray-400 text-sm flex items-center justify-center h-full">
-            Select an event.
+            {t('sidebar.selectEvent', 'Select an event.')}
           </div>
         )}
       </div>
@@ -75,7 +77,7 @@ export default function SideBar({ onClose, eventId, currentUserId, events = [], 
       <div className="h-[70%] flex flex-col overflow-hidden pt-2">
         <div className="flex gap-2 mb-2 border-b border-teal-200/20 pb-1">
           <span className="text-sm font-bold pb-1 text-teal-400 border-b-2 border-teal-400">
-            Chat
+            {t('chat.title', 'Chat')}
           </span>
         </div>
 
@@ -84,7 +86,7 @@ export default function SideBar({ onClose, eventId, currentUserId, events = [], 
             <Chat eventId={eventId} currentUserId={currentUserId} />
           ) : (
             <div className="text-gray-400 text-sm p-4 flex items-center justify-center">
-              Connect to view chat.
+              {t('chat.connectPrompt', 'Connect to view chat.')}
             </div>
           )}
         </div>

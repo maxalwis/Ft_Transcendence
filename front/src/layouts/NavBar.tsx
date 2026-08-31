@@ -1,29 +1,62 @@
+import { useTranslation } from 'react-i18next';
+
 export type NavBarProps = {
   onSelectCategory?: (category: string) => void;
   activeCategory?: string;
 };
 
 export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps) {
+  const { t, i18n } = useTranslation();
+
   const categories = [
-    { label: 'All', value: '' },
-    { label: 'Culture', value: 'Culture' },
-    { label: 'Sports', value: 'Sport' },
-    { label: 'Music', value: 'Concert' },
-    { label: 'Family', value: 'Enfants' },
+    { label: t('nav.all'), value: '' },
+    { label: t('nav.culture'), value: 'Culture' },
+    { label: t('nav.sports'), value: 'Sport' },
+    { label: t('nav.music'), value: 'Concert' },
+    { label: t('nav.family'), value: 'Enfants' },
   ];
 
   return (
-    <div className="fixed top-2 w-full flex flex-row items-center justify-between px-6 py-3 z-500 pointer-events-none">
-      <nav className="flex items-center gap-3 absolute top-2 left-1/2 -translate-x-1/2 pointer-events-auto">
+    <div className="relative w-full flex items-center justify-center z-50 pointer-events-none">
+      {/* Boutons de traduction positionnés en haut à droite */}
+      <div className="absolute right-0 top-0 flex items-center gap-2 pointer-events-auto">
+        <button
+          type="button"
+          onClick={() => i18n.changeLanguage('fr')}
+          title="Français"
+          className="cursor-pointer text-lg bg-transparent border-none hover:scale-110 transition-transform"
+        >
+          🇫🇷
+        </button>
+        <button
+          type="button"
+          onClick={() => i18n.changeLanguage('en')}
+          title="English"
+          className="cursor-pointer text-lg bg-transparent border-none hover:scale-110 transition-transform"
+        >
+          🇬🇧
+        </button>
+        <button
+          type="button"
+          onClick={() => i18n.changeLanguage('es')}
+          title="Español"
+          className="cursor-pointer text-lg bg-transparent border-none hover:scale-110 transition-transform"
+        >
+          🇪🇸
+        </button>
+      </div>
+
+      {/* Barre de navigation des catégories centrée */}
+      <nav className="flex items-center gap-3 pointer-events-auto">
         {categories.map((cat) => {
           const isActive = (activeCategory || '') === cat.value;
           return (
             <button
-              key={cat.label}
+              key={cat.value || 'all'}
               type="button"
               onClick={() => onSelectCategory?.(cat.value)}
               className={`glass-panel cursor-pointer hover:zoom-98 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                isActive ? 'bg-blue-600 text-white shadow-md' : ''
+                isActive ? 'bg-blue-600 text-white shadow-md' : 'bg-white/70 backdrop-blur-md'
               }`}
             >
               {cat.label}

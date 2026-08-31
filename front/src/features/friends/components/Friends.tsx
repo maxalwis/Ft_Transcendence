@@ -4,6 +4,7 @@ import type { User, PendingRequest } from '../../../api/friends';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styles from '../Friends.module.css';
 
 export type FriendAction = 'menu' | 'default' | 'add' | 'remove' | 'request';
@@ -18,6 +19,7 @@ export type OpenState = {
 };
 
 export default function Friends() {
+  const { t } = useTranslation();
   const [action, setAction] = useState<FriendAction>('menu');
   const [isOpen, setIsOpen] = useState(false);
   const [friends, setFriends] = useState<User[]>([]);
@@ -38,7 +40,7 @@ export default function Friends() {
       setRequests(pendingList);
       setErrorMsg(null);
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Erreur de chargement.');
+      setErrorMsg(err instanceof Error ? err.message : t('friends.errorLoading', 'Erreur de chargement.'));
     }
   };
 
@@ -60,7 +62,7 @@ export default function Friends() {
           setIsOpen(true);
         }}
       >
-        Friends
+        {t('friends.buttonTitle', 'Friends')}
       </button>
 
       <FriendsSidebar

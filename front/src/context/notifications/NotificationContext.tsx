@@ -1,17 +1,22 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { WarningNotification } from './WarningNotification';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationContextType {
-  showError: (message: string) => void;
+  showError: (message?: string) => void;
   clearNotification: () => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
+  const { t } = useTranslation();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const showError = (msg: string) => setErrorMessage(msg);
+  const showError = useCallback((msg?: string) => {
+    setErrorMessage(msg || t('notifications.defaultError', 'Une erreur est survenue'));
+  }, [t]);
+
   const clearNotification = () => setErrorMessage(null);
 
   return React.createElement(

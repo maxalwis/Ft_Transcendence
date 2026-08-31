@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { EventFilters } from '../../../types/event';
 import CustomSelect from './CustomSelect';
 
@@ -7,19 +8,20 @@ export type FiltersProps = {
   onApplyFilters?: (filters: EventFilters) => void;
 };
 
-const PRICE_OPTIONS = [
-  { value: '', label: 'All' },
-  { value: 'free', label: 'Free' },
-  { value: 'fee-based', label: 'Fee-based' },
-];
-
 export default function Filters({ onApplyFilters }: FiltersProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const [city, setCity] = useState('Paris');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [priceType, setPriceType] = useState('');
+
+  const PRICE_OPTIONS = [
+    { value: '', label: t('filters.allPrices', 'All') },
+    { value: 'free', label: t('filters.free', 'Free') },
+    { value: 'fee-based', label: t('filters.feeBased', 'Fee-based') },
+  ];
 
   const handleApply = () => {
     if (onApplyFilters) {
@@ -82,32 +84,32 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
             </button>
 
             <h3 className="text-lg font-bold text-center pb-2 pr-6" style={{ color: 'var(--color-blue-dark)' }}>
-              Events Filters
+              {t('filters.title', 'Events Filters')}
             </h3>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold">Ville / Localisation</label>
+              <label className="text-xs font-semibold">{t('filters.cityLabel', 'Ville / Localisation')}</label>
               <input
                 type="text"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                placeholder="Ex: Paris"
+                placeholder={t('filters.cityPlaceholder', 'Ex: Paris')}
                 className="px-2 py-1 border border-white/20 rounded text-xs bg-white/90"
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold">Price category</label>
+              <label className="text-xs font-semibold">{t('filters.priceCategory', 'Price category')}</label>
               <CustomSelect
                 options={PRICE_OPTIONS}
                 value={priceType}
                 onChange={(val) => setPriceType(val)}
-                placeholder="Select category"
+                placeholder={t('filters.selectCategory', 'Select category')}
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold">From :</label>
+              <label className="text-xs font-semibold">{t('filters.fromDate', 'From :')}</label>
               <input
                 type="date"
                 min="2026-08-01"
@@ -135,14 +137,14 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
                 onClick={handleApply}
                 className="w-1/2 py-1.5 rounded text-xs font-semibold cursor-pointer bg-blue-600 text-white"
               >
-                Filtrer
+                {t('filters.apply', 'Filtrer')}
               </button>
               <button
                 type="button"
                 onClick={handleReset}
                 className="w-1/2 py-1.5 rounded text-xs font-semibold cursor-pointer bg-gray-200"
               >
-                Reset
+                {t('filters.reset', 'Reset')}
               </button>
             </div>
           </header>,

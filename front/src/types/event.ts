@@ -13,8 +13,6 @@ export interface EventItem {
   isNew?: boolean;
   interestedUsersCount?: number;
   price?: number;
-  priceDetail?: string; // Ajouté
-  priceType?: string;   // Ajouté
 }
 
 export interface EventGroup {
@@ -29,11 +27,7 @@ export type EventFilters = {
   startDate: string;
   endDate: string;
   priceType: string;
-<<<<<<< HEAD
   category?: string;
   minPrice?: number | string;
   maxPrice?: number | string;
 };
-=======
-};
->>>>>>> dev

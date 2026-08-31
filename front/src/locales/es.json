@@ -1,0 +1,62 @@
+{
+  "welcome": "Bienvenido a nuestro sitio",
+  "buttons": {
+    "submit": "Enviar"
+  },
+  "nav": {
+    "all": "Todos",
+    "culture": "Cultura",
+    "sports": "Deportes",
+    "music": "Música",
+    "family": "Familia"
+  },
+  "events": {
+    "defaultCategory": "Evento",
+    "unknownDate": "Fecha desconocida",
+    "linkLabel": "Enlace:"
+  },
+  "filters": {
+    "title": "Filtros de eventos",
+    "cityLabel": "Ciudad / Ubicación",
+    "cityPlaceholder": "Ej: París",
+    "priceCategory": "Categoría de precio",
+    "selectCategory": "Seleccionar categoría",
+    "fromDate": "Desde :",
+    "apply": "Filtrar",
+    "reset": "Restablecer",
+    "allPrices": "Todos",
+    "free": "Gratis",
+    "feeBased": "De pago"
+  },
+  "friends": {
+    "buttonTitle": "Amigos",
+    "errorLoading": "Error de carga.",
+    "sidebarTitle": "Mis amigos",
+    "searchPlaceholder": "Buscar...",
+    "addTab": "Añadir",
+    "requestsTab": "Solicitudes",
+    "noFriends": "No hay amigos aún",
+    "remove": "Eliminar"
+  },
+  "chat": {
+    "title": "Chat",
+    "connectPrompt": "Conéctate para ver el chat.",
+    "loadingMessages": "Cargando mensajes...",
+    "errorLoadMessages": "Error al cargar los mensajes",
+    "errorSend": "Error al intentar enviar el mensaje",
+    "placeholder": "Escribe tu mensaje...",
+    "send": "Enviar"
+  },
+  "auth": {
+    "signInTitle": "Inicia sesión en tu cuenta",
+    "emailLabel": "Email",
+    "passwordLabel": "Contraseña",
+    "loginButton": "Iniciar sesión",
+    "noAccount": "¿No tienes cuenta?",
+    "createAccount": "Crear una cuenta"
+  },
+  "notifications": {
+  "defaultError": "Se ha producido un error",
+  "defaultSuccess": "Operación exitosa"
+  }
+}

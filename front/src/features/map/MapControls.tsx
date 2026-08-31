@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import { useTranslation } from 'react-i18next';
 
 export function MyTileLayer() {
   return (
@@ -17,7 +18,9 @@ export function MapClickHandler({ closeSidebar }: { closeSidebar: () => void }) 
 }
 
 export function GlassZoomControl() {
+  const { t } = useTranslation(); // Exemple d'utilisation du hook si tu souhaites ajouter des textes traduits ici
   const map = useMap();
+  
   useEffect(() => {
     const zoomControl = L.control.zoom({ position: 'topleft' });
     zoomControl.addTo(map);
@@ -25,5 +28,6 @@ export function GlassZoomControl() {
       zoomControl.remove();
     };
   }, [map]);
+  
   return null;
 }
