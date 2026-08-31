@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { SubmitEvent } from 'react';
-export default function RegisterPage() {
+
+export default function RegisterPage()
+{
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
