@@ -4,6 +4,8 @@ interface User {
   id: number;
   email: string;
   username: string;
+  provider?: string | null;
+  avatarUrl?: string | null;
 }
 
 interface AuthContextType {
@@ -11,6 +13,7 @@ interface AuthContextType {
   accessToken: string | null;
   isLoading: boolean;
   setAuth: (user: User, token: string) => void;
+  updateUser: (user: Partial<User>) => void;
   logout: () => void;
 }
 
@@ -24,6 +27,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const setAuth = (user: User, token: string) => {
     setUser(user);
     setAccessToken(token);
+  };
+
+  const updateUser = (partialUser: Partial<User>) => {
+    setUser((currentUser) => {
+      if (!currentUser) return currentUser;
+      return { ...currentUser, ...partialUser };
+    });
   };
 
   const logout = () => {
@@ -54,15 +64,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, accessToken, isLoading, setAuth, logout }}>
+    <AuthContext.Provider value={{ user, accessToken, isLoading, setAuth, updateUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-	const context = useContext(AuthContext);
-	if (!context) 
-		throw new Error('useAuth must be used within AuthProvider');
-	return context;
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  return context;
 }

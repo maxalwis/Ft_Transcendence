@@ -41,7 +41,7 @@ export class AuthController {
 
     return {
       accessToken,
-      user: { id: user.id, email: user.email, username: user.username },
+      user: { id: user.id, email: user.email, username: user.username, provider: user.provider },
     };
   }
 
@@ -65,7 +65,12 @@ export class AuthController {
 
     return {
       accessToken,
-      user: { id: req.user.id, email: req.user.email, username: req.user.username },
+      user: {
+        id: req.user.id,
+        email: req.user.email,
+        username: req.user.username,
+        provider: req.user.provider,
+      },
     };
   }
 

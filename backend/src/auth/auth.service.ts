@@ -79,7 +79,13 @@ export class AuthService {
 
       return {
         accessToken: newAccessToken,
-        user: { id: user.id, email: user.email, username: user.username },
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          provider: user.provider,
+          isOAuth: user.password === null,
+        },
       };
     } catch {
       throw new UnauthorizedException('Refresh token invalid or expired');
