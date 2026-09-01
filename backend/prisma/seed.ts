@@ -33,7 +33,7 @@ const SEED_MESSAGES = true;
 
 // ---- Paramètres -----------------------------------------------------------
 
-const NUM_USERS = 300;
+const NUM_USERS = 150;
 const POWER_USER_RATIO = 0.1;
 const AVG_FRIEND_REQUESTS_PER_USER = 6;
 const FAKE_PASSWORD = 'password123'; // hashé une seule fois, réutilisé pour tous
@@ -58,7 +58,7 @@ function safeBetween(from: Date, to: Date): Date {
 }
 
 async function main() {
-  console.log('🧹 Nettoyage des données fake (users/friendships/interests/messages)...');
+  console.log('Nettoyage des données fake (users/friendships/interests/messages)...');
   // On ne touche PAS aux events, ils viennent de l'API
   if (SEED_MESSAGES) await prisma.message.deleteMany();
   if (SEED_INTERESTS) await prisma.eventInterest.deleteMany();
@@ -66,7 +66,7 @@ async function main() {
   if (SEED_USERS) await prisma.user.deleteMany();
 
   // ---- 0. Events existants ----------------------------------------------
-  console.log('🎉 Récupération des events existants...');
+  console.log('Récupération des events existants...');
   const existingEvents = await prisma.event.findMany();
 
   if (existingEvents.length === 0) {
@@ -98,7 +98,7 @@ async function main() {
   let users: Array<Awaited<ReturnType<typeof prisma.user.create>> & { isPowerUser: boolean }> = [];
 
   if (SEED_USERS) {
-    console.log('👤 Création des users...');
+    console.log('Création des users...');
     const hashedPassword = await bcrypt.hash(FAKE_PASSWORD, 10);
 
     for (let i = 0; i < NUM_USERS; i++) {
@@ -129,7 +129,7 @@ async function main() {
       users.push({ ...user, isPowerUser });
     }
   } else {
-    console.log('⏭️  SEED_USERS désactivé, récupération des users existants...');
+    console.log('SEED_USERS désactivé, récupération des users existants...');
     const existingUsers = await prisma.user.findMany();
     users = existingUsers.map((u) => ({ ...u, isPowerUser: false }));
   }
@@ -140,7 +140,7 @@ async function main() {
   const acceptedFriendMap = new Map<number, Set<number>>();
 
   if (SEED_FRIENDSHIPS) {
-    console.log('🤝 Création des amitiés...');
+    console.log('Création des amitiés...');
 
     for (const user of users) {
       const numRequests = faker.number.int({ min: 0, max: AVG_FRIEND_REQUESTS_PER_USER * 2 });
@@ -178,7 +178,7 @@ async function main() {
       }
     }
   } else {
-    console.log('⏭️  SEED_FRIENDSHIPS désactivé, récupération des amitiés ACCEPTED existantes...');
+    console.log('SEED_FRIENDSHIPS désactivé, récupération des amitiés ACCEPTED existantes...');
     const existingFriendships = await prisma.friendship.findMany({ where: { status: 'ACCEPTED' } });
     for (const f of existingFriendships) {
       if (!acceptedFriendMap.has(f.senderId)) acceptedFriendMap.set(f.senderId, new Set());
@@ -192,7 +192,7 @@ async function main() {
   const interestSet = new Set<string>();
 
   if (SEED_INTERESTS) {
-    console.log('❤️ Création des intérêts (avec effet social)...');
+    console.log('Création des intérêts (avec effet social)...');
 
     const baseProbability = (tier: string, isFree: boolean) => {
       let p = tier === 'hype' ? 0.35 : tier === 'normal' ? 0.15 : 0.05;
@@ -230,7 +230,7 @@ async function main() {
       }
     }
   } else {
-    console.log('⏭️  SEED_INTERESTS désactivé, récupération des intérêts existants...');
+    console.log('SEED_INTERESTS désactivé, récupération des intérêts existants...');
     const existingInterests = await prisma.eventInterest.findMany();
     for (const i of existingInterests) {
       interestSet.add(`${i.userId}-${i.eventId}`);
@@ -239,7 +239,7 @@ async function main() {
 
   // ---- 4. Messages (corrélés à la popularité) ------------------------------
   if (SEED_MESSAGES) {
-    console.log('💬 Création des messages...');
+    console.log('Création des messages...');
 
     for (const event of events) {
       const interestedUserIds = [...interestSet]
@@ -268,10 +268,10 @@ async function main() {
       }
     }
   } else {
-    console.log('⏭️  SEED_MESSAGES désactivé.');
+    console.log('SEED_MESSAGES désactivé.');
   }
 
-  console.log('✅ Seed terminé !');
+  console.log('Seed terminé !');
   console.log(
     `   ${users.length} users (mot de passe commun : "${FAKE_PASSWORD}" pour les non-OAuth)`
   );
