@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { ValidationPipe, Logger, RequestMethod } from '@nestjs/common';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import { AppLogger } from './logger/app-logger.service';
@@ -10,6 +10,9 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
+  app.setGlobalPrefix('api', {
+    exclude: [{ path: 'health', method: RequestMethod.GET }],
+  });
   app.enableCors({
     origin: (
       origin: string | undefined,
@@ -18,7 +21,7 @@ async function bootstrap() {
       if (!origin || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
         callback(null, true);
       } else {
-        callback(new Error('Non autorisé par CORS'));
+        callback(new Error('Unauthorized by CORS'));
       }
     },
     credentials: true,

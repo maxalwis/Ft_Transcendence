@@ -1,13 +1,11 @@
-import { useAuth } from '../../../context/auth/AuthContext.tsx';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/auth/AuthContext';
 
-export default function LoginButton() {
+interface LoginButtonProps {
+  onOpenAuth: () => void;
+}
+
+export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogin = () => {
-    window.location.href = `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/login/`;
-  };
 
   const handleLogout = async () => {
     try {
@@ -16,7 +14,7 @@ export default function LoginButton() {
         credentials: 'include',
       });
     } catch {
-      // on ignore une éventuelle erreur réseau, on déconnecte quand même côté client
+      // ignore network errors on logout
     } finally {
       logout();
     }
@@ -35,10 +33,10 @@ export default function LoginButton() {
 
   return (
     <button
-      className=" h-10 w-25 glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
-      onClick={handleLogin}
+      className="h-10 w-25 glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
+      onClick={onOpenAuth}
     >
-      Connexion
+      Login
     </button>
   );
 }

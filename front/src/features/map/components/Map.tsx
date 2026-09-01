@@ -12,7 +12,7 @@ import NavBar from '../../../layouts/NavBar';
 import BottomBar from '../../../layouts/BottomBar';
 import Friends from '../../friends/components/Friends';
 import Filters from './Filters';
-import EventsDetails from './EventsDetails';
+import EventPreview from '../../events/components/EventPreview';
 import { ClusterLayer } from './ClusterLayer';
 import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
 
@@ -25,7 +25,14 @@ import { useAuth } from '../../../context/auth/AuthContext';
 // Constants & Configuration
 import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
 
-export default function Map() {
+// Local Styles
+import '../Map.module.css';
+
+interface MapProps {
+  onOpenAuth: () => void;
+}
+
+export default function Map({ onOpenAuth }: MapProps) {
   const { showError } = useNotification();
   const { user } = useAuth();
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
@@ -50,7 +57,6 @@ export default function Map() {
 
   const {
     isLoading,
-    events,
     eventGroups,
     activeGroup,
     currentEvent,
@@ -61,10 +67,6 @@ export default function Map() {
     handlePrevEvent,
     handleNextEvent,
   } = useMapEvents(showError, filters);
-
-  const selectedSidebarEvent = activeSidebarEventId
-    ? events.find((event) => event.id === activeSidebarEventId) || null
-    : null;
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -130,21 +132,14 @@ export default function Map() {
       </MapContainer>
 
       {currentEvent && activeGroup && hoverPos && (
-        <EventsDetails
+        <EventPreview
           position={hoverPos}
           title={currentEvent.title}
           dateStart={currentEvent.dateStart}
           dateEnd={currentEvent.dateEnd}
           category={currentEvent.category?.[0] || 'Event'}
           isOpen={true}
-          closingTime={
-            currentEvent.dateEnd
-              ? new Date(currentEvent.dateEnd).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })
-              : 'Date inconnue'
-          }
+          eventId={currentEvent.id}
           interestedUsersCount={currentEvent.interestedUsersCount || 0}
           imageUrl={currentEvent.coverUrl}
           totalInGroup={activeGroup.events.length}
@@ -157,7 +152,6 @@ export default function Map() {
         />
       )}
 
-      <Friends />
       <Filters onApplyFilters={(newFilters) => setFilters(newFilters)} />
 
       <NavBar
@@ -165,7 +159,7 @@ export default function Map() {
         onSelectCategory={(category) => setFilters((prev) => ({ ...prev, category }))}
       />
 
-      <BottomBar />
+      <BottomBar onOpenAuth={onOpenAuth} />
 
       {activeSidebarEventId && (
         <SideBar

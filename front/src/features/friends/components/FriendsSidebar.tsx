@@ -13,6 +13,7 @@ type FriendsSidebarProps = OpenState & {
   requests: PendingRequest[];
   errorMsg: string | null;
   onDataChanged: () => void;
+  isLoggedIn: boolean;
 };
 
 export default function FriendsSidebar({
@@ -23,6 +24,7 @@ export default function FriendsSidebar({
   friends,
   requests,
   onDataChanged,
+  isLoggedIn,
 }: FriendsSidebarProps) {
   const [input, setInput] = useState('');
   const [shouldRender, setShouldRender] = useState(isOpen);
@@ -62,7 +64,7 @@ export default function FriendsSidebar({
       className={`glass-panel absolute bottom-0 left-0 flex flex-col rounded-xl overflow-hidden ${styles.sidebarModal}`}
     >
       {/* Back Arrow Button (Top-Left) */}
-      {action !== 'menu' && (
+      {isLoggedIn && action !== 'menu' && (
         <button
           type="button"
           aria-label="Back"
@@ -105,7 +107,13 @@ export default function FriendsSidebar({
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto pt-10">
-        {action === 'menu' ? (
+        {!isLoggedIn ? (
+          <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+            <p className="text-sm font-medium">
+              You need to be logged in to view and manage your friends list.
+            </p>
+          </div>
+        ) : action === 'menu' ? (
           <div className="flex flex-col gap-2 py-2">
             <button
               type="button"
@@ -150,7 +158,7 @@ export default function FriendsSidebar({
       </div>
 
       {/* Search Bar */}
-      {action !== 'menu' && (
+      {isLoggedIn && action !== 'menu' && (
         <div className="glass-panel">
           <FriendsSearchBar action={action} input={input} setInput={setInput} />
         </div>

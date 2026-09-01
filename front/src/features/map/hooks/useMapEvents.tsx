@@ -40,7 +40,7 @@ export function useMapEvents(
         }
 
         const queryString = params.toString();
-        const url = `${baseUrl}/events/map${queryString ? `?${queryString}` : ''}`;
+        const url = `api/events/map${queryString ? `?${queryString}` : ''}`;
 
         const response = await fetch(url);
 

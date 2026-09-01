@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { EventFilters } from '../../../types/event';
+import styles from '../Map.module.css';
 import CustomSelect from './CustomSelect';
 
 export type FiltersProps = {
@@ -11,6 +12,7 @@ export type FiltersProps = {
 export default function Filters({ onApplyFilters }: FiltersProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const [city, setCity] = useState('Paris');
   const [startDate, setStartDate] = useState('');
@@ -22,13 +24,24 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
     { value: 'free', label: t('filters.free', 'Free') },
     { value: 'fee-based', label: t('filters.feeBased', 'Fee-based') },
   ];
+  useEffect(() => {
+    if (isOpen) {
+      setIsAnimating(true);
+    }
+  }, [isOpen]);
+
+  const handleAnimationEnd = () => {
+    if (!isOpen) {
+      setIsAnimating(false);
+    }
+  };
 
   const handleApply = () => {
     if (onApplyFilters) {
-      onApplyFilters({ 
-        city, 
-        startDate, 
-        endDate, 
+      onApplyFilters({
+        city,
+        startDate,
+        endDate,
         priceType,
       } as any);
     }
@@ -41,10 +54,10 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
     setEndDate('');
     setPriceType('');
     if (onApplyFilters) {
-      onApplyFilters({ 
-        city: 'Paris', 
-        startDate: '', 
-        endDate: '', 
+      onApplyFilters({
+        city: 'Paris',
+        startDate: '',
+        endDate: '',
         priceType: '',
       } as any);
     }
@@ -65,10 +78,12 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
         </svg>
       </button>
 
-      {isOpen &&
+      {(isOpen || isAnimating) &&
         createPortal(
-          <header
-            className="filterModal glass-panel h-auto w-64 fixed left-3 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 z-[9999] rounded-xl shadow-2xl"
+          <div
+            onAnimationEnd={handleAnimationEnd}
+            data-state={isOpen ? 'open' : 'closed'}
+            className={`${styles.filterModal || styles.sidebarModal || 'filterModal'} glass-panel h-auto w-64 fixed left-3 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 z-[9999] rounded-xl shadow-2xl`}
             style={{ color: 'var(--color-blue-dark)' }}
           >
             <button
@@ -78,12 +93,20 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               style={{ color: 'var(--color-blue-dark)' }}
               onClick={() => setIsOpen(false)}
             >
-              <svg className="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <svg
+                className="w-full h-full"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
                 <path d="M18 6L6 18M6 6l12 12" />
               </svg>
             </button>
 
-            <h3 className="text-lg font-bold text-center pb-2 pr-6" style={{ color: 'var(--color-blue-dark)' }}>
+            <h3 
+              className="text-lg font-bold text-center pb-2 pr-6" 
+              style={{ color: 'var(--color-blue-dark)', borderColor: 'var(--glass-border)' }}>
               {t('filters.title', 'Events Filters')}
             </h3>
 
@@ -119,10 +142,10 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
                   const newDate = e.target.value;
                   setStartDate(newDate);
                   if (onApplyFilters) {
-                    onApplyFilters({ 
-                      city, 
-                      startDate: newDate, 
-                      endDate, 
+                    onApplyFilters({
+                      city,
+                      startDate: newDate,
+                      endDate,
                       priceType,
                     } as any);
                   }
@@ -135,7 +158,8 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               <button
                 type="button"
                 onClick={handleApply}
-                className="w-1/2 py-1.5 rounded text-xs font-semibold cursor-pointer bg-blue-600 text-white"
+                className="w-1/2 py-1.5 rounded text-xs font-semibold cursor-pointer"
+                style={{ color: 'var(--color-blue-dark)' }}
               >
                 {t('filters.apply', 'Filtrer')}
               </button>
@@ -147,7 +171,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
                 {t('filters.reset', 'Reset')}
               </button>
             </div>
-          </header>,
+          </div>,
           document.body
         )}
     </>

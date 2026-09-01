@@ -107,7 +107,13 @@ input[type='reset'] {
   font-size: var(--font-size-base);
   padding: 0.5rem 1rem;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  user-select: none;
+}
+
+/* Base text pointer fix: prevents child text from hijacking mouse target */
+button * {
+  pointer-events: none;
 }
 
 button:hover,
@@ -116,11 +122,12 @@ input[type='button']:hover,
 input[type='reset']:hover {
   background: var(--color-orange-hover) !important;
   border-color: var(--color-orange-border);
+  transform: zoom(0.98);
 }
 
 button:active,
 input[type='submit']:active {
-  transform: scale(0.98);
+  transform: zoom(0.92);
 }
 
 button.icon-btn,
@@ -182,10 +189,7 @@ pre {
   border: 1px solid var(--color-orange-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-shadow);
-  overflow: hidden;
   pointer-events: auto;
-  isolation: isolate;
-  transform: translateZ(0);
 }
 
 .glass-blue {
