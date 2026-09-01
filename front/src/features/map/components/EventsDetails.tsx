@@ -10,6 +10,7 @@ export interface Friend {
 export interface EventsDetailsProps {
   eventId?: string;
   title?: string;
+  isTranslating?: boolean;
   dateStart?: string;
   dateEnd?: string;
   priceType?: string;
@@ -52,6 +53,7 @@ function formatDate(value?: string) {
 export function EventsDetails({
   eventId,
   title = 'Event Title',
+  isTranslating = false,
   dateStart,
   dateEnd,
   priceType,
@@ -125,7 +127,11 @@ export function EventsDetails({
       </div>
 
       <div className="events-details-content">
-        <h2 className="events-details-title">{title}</h2>
+        {isTranslating ? (
+          <div className="events-details-title-skeleton" />
+        ) : (
+          <h2 className="events-details-title">{title}</h2>
+        )}
         <h3 className="events-details-category text-slate-600!">{category}</h3>
         <div className="events-details-meta">
           <span>{formattedPrice || 'Prix non précisé'}</span>

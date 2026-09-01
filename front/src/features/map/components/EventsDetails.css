@@ -111,6 +111,15 @@
   font-weight: 600;
 }
 
+.events-details-title-skeleton {
+  height: 1.5rem;
+  width: 70%;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  background-color: #e2e8f0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
 @keyframes markerPopupAnimationUp {
   0% {
     opacity: 0;
@@ -132,5 +141,15 @@
   100% {
     opacity: 1;
     transform: translate(-50%, 0%) scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
   }
 }

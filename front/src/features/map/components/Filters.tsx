@@ -122,32 +122,36 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               <CustomSelect
                 options={PRICE_OPTIONS}
                 value={priceType}
-				onChange={(val) => setPriceType(val)}
+                onChange={(val) => setPriceType(val)}
                 placeholder="Select category"
               />
-				{priceType === 'fee-based' && (
-					<div>
-						<label>Price range: {priceRange[0]}€ - {priceRange[1]}€</label>
-						<input
-						type="range"
-						min={0}
-						max={500}
-						value={priceRange[0]}
-						onChange={(e) => {const newMin = Math.min(Number(e.target.value), priceRange[1]);
-						setPriceRange([newMin, priceRange[1]]);
-						}}
-						/>
-						<input
-						type="range"
-						min={0}
-						max={500}
-						value={priceRange[1]}
-						onChange={(e) => {const newMax = Math.max(Number(e.target.value), priceRange[0]);
-						setPriceRange([priceRange[0], newMax]);
-						}}
-						/>
-					</div>
-				)}
+              {priceType === 'fee-based' && (
+                <div>
+                  <label>
+                    Price range: {priceRange[0]}€ - {priceRange[1]}€
+                  </label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={500}
+                    value={priceRange[0]}
+                    onChange={(e) => {
+                      const newMin = Math.min(Number(e.target.value), priceRange[1]);
+                      setPriceRange([newMin, priceRange[1]]);
+                    }}
+                  />
+                  <input
+                    type="range"
+                    min={0}
+                    max={500}
+                    value={priceRange[1]}
+                    onChange={(e) => {
+                      const newMax = Math.max(Number(e.target.value), priceRange[0]);
+                      setPriceRange([priceRange[0], newMax]);
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-1">

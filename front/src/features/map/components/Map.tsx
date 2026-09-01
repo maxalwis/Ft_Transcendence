@@ -23,6 +23,9 @@ import { useMapEvents } from '../hooks/useMapEvents';
 import { MapEventsHandler } from './MapHelper';
 import { useAuth } from '../../../context/auth/AuthContext';
 
+import { useLanguage } from '../../../context/language/LanguageContext';
+import { useTranslatedEvent } from '../../events/hooks/useTranslatedEvent';
+
 // Constants & Configuration
 import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
 
@@ -32,6 +35,7 @@ import '../Map.module.css';
 export default function Map() {
   const { showError } = useNotification();
   const { user } = useAuth();
+  const { lang } = useLanguage();
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
@@ -58,6 +62,15 @@ export default function Map() {
     handlePrevEvent,
     handleNextEvent,
   } = useMapEvents(showError);
+
+  const { data: translatedHoverEvent, loading: hoverLoading } = useTranslatedEvent(
+    currentEvent?.id ?? '',
+    lang
+  );
+  const isHoverTranslating = lang !== 'fr' && hoverLoading && !translatedHoverEvent;
+  const displayedHoverTitle = isHoverTranslating
+    ? undefined
+    : (translatedHoverEvent?.title ?? currentEvent?.title ?? '');
 
   const selectedSidebarEvent = activeSidebarEventId
     ? events.find((event) => event.id === activeSidebarEventId) || null
@@ -130,7 +143,8 @@ export default function Map() {
         <EventsDetails
           position={hoverPos}
           eventId={currentEvent.id}
-          title={currentEvent.title}
+          title={displayedHoverTitle}
+          isTranslating={isHoverTranslating}
           dateStart={currentEvent.dateStart}
           dateEnd={currentEvent.dateEnd}
           priceType={currentEvent.priceType}
@@ -165,7 +179,7 @@ export default function Map() {
         <SideBar
           eventId={activeSidebarEventId}
           currentUserId={user?.id}
-        //   currentUserId={1}
+          //   currentUserId={1}
           event={selectedSidebarEvent}
           onClose={() => {
             setActiveSidebarEventId(null);

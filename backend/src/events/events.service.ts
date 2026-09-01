@@ -3,10 +3,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '../generated/prisma/client';
 import { BoundingBox } from './dto/bounding-box.interface';
 import { NearbyQueryDto } from './dto/map-query.dto';
+import { TranslationsService } from '../translations/translations.service';
 
 @Injectable()
 export class EventsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private translations: TranslationsService
+  ) {}
 
   // Fetch all markers up to 5,000 without requiring a bounding box
   async findAllForMap(from?: string, to?: string) {
@@ -43,12 +47,29 @@ export class EventsService {
     `;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, lang: string = 'fr') {
     const event = await this.prisma.event.findUnique({ where: { id } });
     if (!event) {
       throw new NotFoundException(`Event ${id} not found`);
     }
-    return event;
+
+    // A DECOMMENTER SI BESOIN DE LA TRADUCTION DE LA DESCRIPTION AUSSI
+    /* const [title, description] = await Promise.all([
+      this.translations.getTranslatedTitle(id, lang),
+      this.translations.getTranslatedDescription(id, lang),
+    ]);
+
+    return {
+      ...event,
+      title,
+      description,
+    }; */
+
+    const title = await this.translations.getTranslatedTitle(id, lang);
+    return {
+      ...event,
+      title,
+    };
   }
 
   async findNearby(query: NearbyQueryDto, from?: string, to?: string) {
