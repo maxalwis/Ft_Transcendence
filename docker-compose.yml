@@ -78,6 +78,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       NODE_ENV: development
       PORT: ${BACKEND_PORT:-3000}
+      PUBLIC_API_KEY: ${PUBLIC_API_KEY}
     ports:
       - '${BACKEND_PORT:-3000}:3000'
     volumes:
