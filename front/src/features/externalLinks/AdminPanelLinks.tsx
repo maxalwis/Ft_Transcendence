@@ -7,7 +7,6 @@ import L from 'leaflet';
 interface DashboardLink {
   name: string;
   url: string;
-  description: string;
   icon: React.ReactNode;
 }
 
@@ -15,7 +14,6 @@ const dashboards: DashboardLink[] = [
   {
     name: 'Prisma Studio',
     url: 'http://localhost:5555',
-    description: 'Database GUI & management tool',
     icon: (
       <svg
         className="w-5 h-5"
@@ -37,7 +35,6 @@ const dashboards: DashboardLink[] = [
   {
     name: 'Elasticsearch',
     url: 'http://localhost:5601',
-    description: 'Logs, analytics & dashboard workspace',
     icon: (
       <svg
         className="w-5 h-5"
@@ -133,7 +130,7 @@ const DropdownMenu: React.FC = () => {
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    window.open(tool.url, '_blank');
+                    window.open(tool.url, '_blank', 'noopener,noreferrer');
                     setIsOpen(false);
                   }}
                   className="flex items-center gap-3 p-2 rounded-xl bg-white/40 hover:bg-white/80 border border-blue-400/30 hover:border-blue-400/60 transition-all text-left group"
@@ -143,7 +140,6 @@ const DropdownMenu: React.FC = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-bold text-stone-900 truncate">{tool.name}</div>
-                    <div className="text-[10px] text-stone-600 truncate">{tool.description}</div>
                   </div>
                   <span className="text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
                     ↗

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import FriendsList from './FriendsList';
 import FriendsRequests from './FriendRequests';
 import FriendsSearchBar from './FriendsSearchBar';
@@ -26,6 +27,7 @@ export default function FriendsSidebar({
   onDataChanged,
   isLoggedIn,
 }: FriendsSidebarProps) {
+  const { t } = useTranslation();
   const [input, setInput] = useState('');
   const [shouldRender, setShouldRender] = useState(isOpen);
 
@@ -110,7 +112,7 @@ export default function FriendsSidebar({
         {!isLoggedIn ? (
           <div className="flex flex-col items-center justify-center h-full p-4 text-center">
             <p className="text-sm font-medium">
-              You need to be logged in to view and manage your friends list.
+              {t('friendsSidebar.notLoggedIn')}
             </p>
           </div>
         ) : action === 'menu' ? (
@@ -120,28 +122,28 @@ export default function FriendsSidebar({
               className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-blue-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('default')}
             >
-              Search Friends
+              {t('friendsSidebar.search')}
             </button>
             <button
               type="button"
               className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-orange-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('request')}
             >
-              Pending Requests ({requests.length})
+              {t('friendsSidebar.pendingRequests', { count: requests.length })}
             </button>
             <button
               type="button"
               className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-green-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('add')}
             >
-              Add a friend
+              {t('friendsSidebar.add')}
             </button>
             <button
               type="button"
               className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-red-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('remove')}
             >
-              Remove a friend
+              {t('friendsSidebar.remove')}
             </button>
           </div>
         ) : action === 'request' ? (

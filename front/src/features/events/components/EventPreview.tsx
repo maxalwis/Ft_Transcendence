@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useState, useLayoutEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from '../Event.module.css';
 import LikeButton from './LikeButton';
 
@@ -38,11 +39,11 @@ const CARD_WIDTH = 300;
 const MARKER_HEIGHT = 60; // Height of map marker
 const GAP = 8; // Offset gap
 
-function formatDate(value?: string) {
-  if (!value) return 'Undefined date';
+function formatDate(value?: string, locale = 'fr-FR', undefinedText = 'Undefined date') {
+  if (!value) return undefinedText;
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Undefined date';
-  return date.toLocaleDateString('fr-FR', {
+  if (Number.isNaN(date.getTime())) return undefinedText;
+  return date.toLocaleDateString(locale, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -69,6 +70,7 @@ export default function EventPreview({
   onMouseEnter,
   onMouseLeave,
 }: EventDetailsProps) {
+  const { t, i18n } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [cardHeight, setCardHeight] = useState<number | null>(null);
 
@@ -93,6 +95,9 @@ export default function EventPreview({
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
+
+  const currentLocale =
+    i18n.language === 'es' ? 'es-ES' : i18n.language === 'en' ? 'en-US' : 'fr-FR';
 
   const posY = position.y;
   const posX = position.x - CARD_WIDTH / 2;
@@ -125,11 +130,13 @@ export default function EventPreview({
 
   const normalizedPrice = priceType?.trim().toLowerCase();
   const formattedPrice =
-    normalizedPrice?.includes('fee-based') || normalizedPrice?.includes('payant')
-      ? 'Payant'
-      : normalizedPrice?.includes('free') || normalizedPrice?.includes('gratuit')
-        ? 'Gratuit'
-        : priceType?.trim();
+    normalizedPrice?.includes('fee-based') || normalizedPrice?.includes('payant') || normalizedPrice?.includes('pago')
+      ? t('eventPreview.price.feeBased')
+      : normalizedPrice?.includes('free') || normalizedPrice?.includes('gratuit') || normalizedPrice?.includes('gratis')
+        ? t('eventPreview.price.free')
+        : priceType?.trim() || t('eventPreview.price.unspecified');
+
+  const undefinedDateText = t('eventPreview.undefinedDate');
 
   return (
     <div
@@ -154,7 +161,11 @@ export default function EventPreview({
       {/* Image Container */}
       <div className={styles['events-details-image-container']}>
         {imageUrl && (
-          <img src={imageUrl} alt={title || 'Event'} className={styles['events-details-image']} />
+          <img
+            src={imageUrl}
+            alt={title || t('eventPreview.defaultAlt')}
+            className={styles['events-details-image']}
+          />
         )}
 
         {/* Category & Extend Overlay */}
@@ -162,8 +173,8 @@ export default function EventPreview({
           <button
             type="button"
             onClick={handleExtendClick}
-            title="Voir les détails"
-            className={`styles['events-details-details-overlay']p-1 rounded-md bg-transparent border-none text-white transition-colors cursor-pointer flex items-center justify-center pointer-events-auto hover:opacity-80`}
+            title={t('eventPreview.seeDetails')}
+            className={`${styles['events-details-details-overlay']} p-1 rounded-md bg-transparent border-none text-white transition-colors cursor-pointer flex items-center justify-center pointer-events-auto hover:opacity-80`}
           >
             <svg
               width="14"
@@ -175,7 +186,6 @@ export default function EventPreview({
               strokeLinecap="round"
               strokeLinejoin="round"
               className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
-              
             >
               <polyline points="15 3 21 3 21 9" />
               <polyline points="9 21 3 21 3 15" />
@@ -216,10 +226,10 @@ export default function EventPreview({
         <h2 className={styles['events-details-title']}>{title}</h2>
         <h3 className={`${styles['events-details-category']} text-slate-600!`}>{category}</h3>
         <div className={styles['events-details-meta']}>
-          <span>{formattedPrice || 'Prix non précisé'}</span>
-          <span> Debut : {formatDate(dateStart)}</span>
+          <span>{formattedPrice}</span>
+          <span>{t('eventPreview.start')}: {formatDate(dateStart, currentLocale, undefinedDateText)}</span>
           <div className={styles['events-details-end-row']}>
-            <span> Fin : {formatDate(dateEnd)}</span>
+            <span>{t('eventPreview.end')}: {formatDate(dateEnd, currentLocale, undefinedDateText)}</span>
             {Boolean(eventId) && (
               <LikeButton eventId={eventId!} interestedUsersCount={interestedUsersCount} iconOnly />
             )}

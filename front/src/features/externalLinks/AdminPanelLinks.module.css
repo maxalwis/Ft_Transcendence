@@ -1,20 +1,3 @@
-/* AdminPanelLinks.css */
-
-/* Override Leaflet container defaults to allow absolute popovers */
-:global(.leaflet-control.leaflet-links) {
-  background: rgba(255, 103, 18, 0) !important;
-  backdrop-filter: var(--glass-blur) !important;
-  -webkit-backdrop-filter: var(--glass-blur) !important;
-  border: 1px solid var(--color-orange-border) !important;
-  border-radius: var(--radius-lg) !important;
-  box-shadow: var(--glass-shadow) !important;
-
-  /* CRITICAL: Overrides Leaflet's default overflow:hidden so popover isn't clipped */
-  overflow: visible !important;
-  pointer-events: auto !important;
-  position: relative !important;
-}
-
 /* Base button styling */
 :global(.menu-dots-icon) {
   background: transparent !important;

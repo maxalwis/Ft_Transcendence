@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/AuthContext';
 
 interface LoginButtonProps {
@@ -5,6 +6,7 @@ interface LoginButtonProps {
 }
 
 export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
 
   const handleLogout = async () => {
@@ -23,20 +25,22 @@ export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
   if (user) {
     return (
       <button
-        className="h-10 w-25 glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
+        type="button"
+        className="h-10 glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
         onClick={handleLogout}
       >
-        Logout
+        {t('authBtn.logout')}
       </button>
     );
   }
 
   return (
     <button
-      className="h-10 w-25 glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
+      type="button"
+      className="h-10 glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
       onClick={onOpenAuth}
     >
-      Login
+      {t('authBtn.login')}
     </button>
   );
 }

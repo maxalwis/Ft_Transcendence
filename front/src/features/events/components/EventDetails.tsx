@@ -10,7 +10,6 @@ interface EventDetailsProps {
   accessLink?: string;
 }
 
-// La fonction accepte maintenant une locale directement
 function formatDate(value?: string, locale = 'fr-FR', unknownText = 'Date inconnue') {
   if (!value) return unknownText;
 
@@ -51,7 +50,7 @@ export default function EventDetails({
 }: EventDetailsProps) {
   const { t, i18n } = useTranslation();
 
-  // Détermination de la locale pour toLocaleDateString en fonction de la langue active
+  // Map i18n language to browser locale string
   const currentLocale =
     i18n.language === 'es' ? 'es-ES' : i18n.language === 'en' ? 'en-US' : 'fr-FR';
 
@@ -63,13 +62,13 @@ export default function EventDetails({
     rawPriceType.includes('free') ||
     rawPriceType.includes('gratis')
   ) {
-    translatedPriceType = t('filters.free', 'Gratuit');
+    translatedPriceType = t('eventDetails.price.free');
   } else if (
     rawPriceType.includes('payant') ||
     rawPriceType.includes('fee') ||
     rawPriceType.includes('pago')
   ) {
-    translatedPriceType = t('filters.feeBased', 'Payant');
+    translatedPriceType = t('eventDetails.price.feeBased');
   }
 
   const cleanedPriceDetail = cleanText(priceDetail);
@@ -78,14 +77,13 @@ export default function EventDetails({
     rawPriceType.includes('fee') ||
     rawPriceType.includes('pago');
 
-  // Textes traduits pour les dates
-  const unknownDateText = t('events.unknownDate', 'Date inconnue');
+  const unknownDateText = t('eventDetails.unknownDate');
 
   return (
     <div className="min-w-0 leading-tight">
       <h2 className="mb-2! font-extrabold! text-black/90!">{title}</h2>
       <p className="mb-1! text-sm font-semibold text-slate-600!">
-        {category || t('events.defaultCategory', 'Événement')}
+        {category || t('eventDetails.defaultCategory')}
       </p>
       <p className="mb-1! text-xs">
         {formatDate(dateStart, currentLocale, unknownDateText)}
@@ -113,7 +111,7 @@ export default function EventDetails({
             }}
             className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold transition-all duration-200 hover:[background:var(--color-orange-hover)!important] hover:[border-color:var(--color-orange-border)] active:scale-95"
           >
-            <span>Event's details</span>
+            <span>{t('eventDetails.accessLink')}</span>
             <svg
               className="h-3.5 w-3.5"
               fill="none"

@@ -49,7 +49,7 @@ export default function SideBar({
   }, [eventId]);
 
   return (
-    <div className="glass-panel fixed top-2 right-3 w-[20vw] h-[96.5vh] rounded-xl p-5 shadow-lg z-1000 flex flex-col">
+    <div className="glass-panel fixed top-20 right-3 w-[20vw] h-[93vh] rounded-xl p-5 shadow-lg z-1000 flex flex-col">
       {/* Close Button Header */}
       <div className="shrink-0">
         <button

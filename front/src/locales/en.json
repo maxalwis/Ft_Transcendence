@@ -15,6 +15,27 @@
     "unknownDate": "Unknown date",
     "linkLabel": "Link:"
   },
+  "eventDetails": {
+    "defaultCategory": "Event",
+    "unknownDate": "Unknown date",
+    "accessLink": "Event's details",
+    "price": {
+      "free": "Free",
+      "feeBased": "Paid"
+    }
+  },
+  "eventPreview": {
+    "defaultAlt": "Event",
+    "seeDetails": "View details",
+    "undefinedDate": "Undefined date",
+    "start": "Start",
+    "end": "End",
+    "price": {
+      "free": "Free",
+      "feeBased": "Paid",
+      "unspecified": "Price not specified"
+    }
+  },
   "filters": {
     "title": "Events Filters",
     "cityLabel": "City / Location",
@@ -38,6 +59,31 @@
     "noFriends": "No friends yet",
     "remove": "Remove"
   },
+  "friendsSidebar": {
+    "notLoggedIn": "Please log in to access your friends list.",
+    "search": "Search Friends",
+    "pendingRequests": "Pending Requests ({{count}})",
+    "pendingRequests_one": "Pending Request ({{count}})",
+    "add": "Add Friend",
+    "remove": "Remove Friend"
+  },
+  "friendsButton": {
+    "ariaOpen": "Open menu",
+    "ariaClose": "Close menu",
+    "search": "Search",
+    "pendingRequest": "Pending Request",
+    "addFriend": "Add a friend",
+    "removeFriend": "Remove a friend"
+  },
+  "friendsSearchBar": {
+    "clearInput": "Clear search input",
+    "placeholders": {
+      "add": "Add a friend...",
+      "remove": "Remove a friend...",
+      "request": "Search a friend...",
+      "default": "Search a friend..."
+    }
+  },
   "chat": {
     "title": "Chat",
     "connectPrompt": "Connect to view chat.",
@@ -47,13 +93,31 @@
     "placeholder": "Type your message...",
     "send": "Send"
   },
-  "auth": {
-    "signInTitle": "Sign in to your account",
-    "emailLabel": "Email",
-    "passwordLabel": "Password",
+  "authModal": {
+    "loginTitle": "Sign in",
+    "registerTitle": "Create Account",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
     "loginButton": "Log in",
-    "noAccount": "No account ?",
-    "createAccount": "Create an account"
+    "registerButton": "Register",
+    "noAccount": "No account?",
+    "createOne": "Create one",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "close": "Close",
+    "loginWithGoogle": "Log in with Google",
+    "loginWith42": "Log in with 42",
+    "errors": {
+      "invalidCredentials": "Invalid credentials",
+      "passwordMismatch": "Non matching passwords",
+      "registrationError": "Error creating account"
+    }
+  },
+  "authBtn": {
+    "login": "Login",
+    "logout": "Logout"
   },
   "notifications": {
   "defaultError": "An error occurred",

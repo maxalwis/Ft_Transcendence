@@ -1,5 +1,5 @@
-// src/features/auth/components/AuthModal.tsx
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/AuthContext';
 import { login } from '../../../api/api';
 
@@ -9,6 +9,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
+  const { t } = useTranslation();
   const [view, setView] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,7 +29,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       setAuth(data.user, data.accessToken);
       onClose();
     } catch {
-      setError('Invalid credentials');
+      setError(t('authModal.errors.invalidCredentials'));
     }
   };
 
@@ -36,7 +37,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     e.preventDefault();
     setError(null);
     if (password !== confirmPassword) {
-      setError('Non matching passwords');
+      setError(t('authModal.errors.passwordMismatch'));
       return;
     }
     try {
@@ -48,7 +49,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       if (!res.ok) throw new Error();
       setView('login');
     } catch {
-      setError('Erreur lors de la création du compte');
+      setError(t('authModal.errors.registrationError'));
     }
   };
 
@@ -56,7 +57,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs">
       <div className="relative border-2 p-8 rounded-lg border-orange-500 bg-white max-w-md w-full shadow-2xl">
         <button
+          type="button"
           onClick={onClose}
+          aria-label={t('authModal.close')}
           className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl font-bold cursor-pointer"
         >
           ✕
@@ -64,34 +67,41 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         {view === 'login' ? (
           <div>
-            <h1 className="font-extrabold text-2xl mb-4 text-center">Sign in</h1>
+            <h1 className="font-extrabold text-2xl mb-4 text-center">
+              {t('authModal.loginTitle')}
+            </h1>
             {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
             <form className="flex flex-col gap-3" onSubmit={handleLoginSubmit}>
               <input
                 className="glass-panel p-2 rounded-lg border-2"
                 type="email"
-                placeholder="Email"
+                placeholder={t('authModal.email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               <input
                 className="glass-panel p-2 rounded-lg border-2"
                 type="password"
-                placeholder="Password"
+                placeholder={t('authModal.password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <button className="mt-2 p-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold cursor-pointer">
-                Log in
+              <button
+                type="submit"
+                className="mt-2 p-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold cursor-pointer"
+              >
+                {t('authModal.loginButton')}
               </button>
             </form>
 
             <div className="flex justify-center gap-2 mt-4">
               <button
+                type="button"
                 onClick={() =>
                   (window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`)
                 }
                 className="glass-panel p-2 rounded-md"
+                aria-label={t('authModal.loginWithGoogle')}
               >
                 <img
                   src="https://img.icons8.com/?size=25&id=17949&format=png&color=000000"
@@ -99,68 +109,77 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 />
               </button>
               <button
+                type="button"
                 onClick={() => (window.location.href = `${import.meta.env.VITE_API_URL}/auth/42`)}
                 className="glass-panel p-2 rounded-md"
+                aria-label={t('authModal.loginWith42')}
               >
                 <img src="https://cdn.simpleicons.org/42?viewbox=auto&size=20" alt="42" />
               </button>
             </div>
 
             <p className="text-center text-sm mt-4">
-              No account?{' '}
+              {t('authModal.noAccount')}{' '}
               <button
+                type="button"
                 className="text-amber-600 hover:underline cursor-pointer"
                 onClick={() => setView('register')}
               >
-                Create one
+                {t('authModal.createOne')}
               </button>
             </p>
           </div>
         ) : (
           <div>
-            <h1 className="font-extrabold text-2xl mb-4 text-center">Create Account</h1>
+            <h1 className="font-extrabold text-2xl mb-4 text-center">
+              {t('authModal.registerTitle')}
+            </h1>
             {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
             <form className="flex flex-col gap-3" onSubmit={handleRegisterSubmit}>
               <input
                 className="glass-panel p-2 rounded-lg border-2"
                 type="email"
-                placeholder="Email"
+                placeholder={t('authModal.email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
               <input
                 className="glass-panel p-2 rounded-lg border-2"
                 type="text"
-                placeholder="Username"
+                placeholder={t('authModal.username')}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
               <input
                 className="glass-panel p-2 rounded-lg border-2"
                 type="password"
-                placeholder="Password"
+                placeholder={t('authModal.password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <input
                 className="glass-panel p-2 rounded-lg border-2"
                 type="password"
-                placeholder="Confirm Password"
+                placeholder={t('authModal.confirmPassword')}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
-              <button className="mt-2 p-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold cursor-pointer">
-                Register
+              <button
+                type="submit"
+                className="mt-2 p-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold cursor-pointer"
+              >
+                {t('authModal.registerButton')}
               </button>
             </form>
 
             <p className="text-center text-sm mt-4">
-              Already have an account?{' '}
+              {t('authModal.alreadyHaveAccount')}{' '}
               <button
+                type="button"
                 className="text-amber-600 hover:underline cursor-pointer"
                 onClick={() => setView('login')}
               >
-                Sign in
+                {t('authModal.signInLink')}
               </button>
             </p>
           </div>

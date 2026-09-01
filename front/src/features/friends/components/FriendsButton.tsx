@@ -1,5 +1,6 @@
 import '../../map/Map.module.css';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { FriendAction } from './Friends';
 
 type FriendsButtonProps = {
@@ -7,13 +8,14 @@ type FriendsButtonProps = {
 };
 
 export default function FriendsButton({ setAction }: FriendsButtonProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <button
         type="button"
-        aria-label={isOpen ? 'Close menu' : 'Open menu'}
+        aria-label={isOpen ? t('friendsButton.ariaClose') : t('friendsButton.ariaOpen')}
         className="glass-panel flex p-0! shrink-0 items-center justify-center rounded-2xl text-gray-600 hover:text-white cursor-pointer duration-150 active:scale-50"
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -42,28 +44,28 @@ export default function FriendsButton({ setAction }: FriendsButtonProps) {
             className="border-2 rounded-xl hover:text-white cursor-pointer duration-150"
             onClick={() => setAction('default')}
           >
-            Search
+            {t('friendsButton.search')}
           </button>
           <button
             type="button"
             className="border-orange-600 px-3 border-2 rounded-xl hover:bg-orange-600 hover:text-white cursor-pointer duration-150"
             onClick={() => setAction('request')}
           >
-            Pending Request
+            {t('friendsButton.pendingRequest')}
           </button>
           <button
             type="button"
             className="border-green-600 border-2 rounded-xl hover:bg-green-600 hover:text-white cursor-pointer duration-150"
             onClick={() => setAction('add')}
           >
-            Add a friend
+            {t('friendsButton.addFriend')}
           </button>
           <button
             type="button"
             className="border-red-600 border-2 rounded-xl hover:bg-red-600 hover:text-white cursor-pointer duration-150"
             onClick={() => setAction('remove')}
           >
-            Remove a friend
+            {t('friendsButton.removeFriend')}
           </button>
         </div>
       )}
