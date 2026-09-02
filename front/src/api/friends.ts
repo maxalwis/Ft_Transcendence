@@ -5,6 +5,8 @@ export interface User {
   id: number;
   username: string;
   avatar?: string;
+  preferredCategory?: string | null;
+  preferredLanguage?: string | null;
   status: 'ONLINE' | 'OFFLINE' | 'IN_GAME';
 }
 

@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../../context/auth/AuthContext';
+import PasswordModal from './PasswordModal';
 import './Modal.css';
 
 interface EditProfileProps {
@@ -13,16 +14,19 @@ export default function EditProfile({ onClose }: EditProfileProps) {
   const [preferredLanguage, setPreferredLanguage] = useState('');
   const [preferredCategory, setPreferredCategory] = useState('');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(user?.avatarUrl ?? null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(user?.avatar ?? null);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isOAuthUser = Boolean(user?.provider && user.provider !== 'local');
+
+  const requestClose = () => setIsClosing(true);
+
+  const handleAnimationEnd = () => {
+    if (isClosing) onClose();
+  };
 
   const languageOptions = ['Français', 'Anglais', 'Espagnol'];
   const categoryOptions = ['Culture', 'Sports', 'Musique', 'Famille'];
@@ -39,18 +43,13 @@ export default function EditProfile({ onClose }: EditProfileProps) {
     setError(null);
 
     try {
-      const formData = new FormData();
-      formData.append('username', username);
-      if (preferredLanguage) formData.append('preferredLanguage', preferredLanguage);
-      if (preferredCategory) formData.append('preferredCategory', preferredCategory);
-      if (avatarFile) formData.append('avatar', avatarFile);
-
       const res = await fetch(
-        `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/user/profile`,
+        `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/users/${user?.id}`,
         {
-          method: 'PATCH',
+          method: 'PUT',
           credentials: 'include',
-          body: formData,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username }),
         }
       );
 
@@ -58,7 +57,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
 
       const updated = await res.json();
       updateUser(updated);
-      onClose();
+      requestClose();
     } catch (err) {
       setError('Impossible de sauvegarder les modifications');
     } finally {
@@ -66,38 +65,22 @@ export default function EditProfile({ onClose }: EditProfileProps) {
     }
   };
 
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasswordError(null);
-
-    if (newPassword.length < 8) {
-      setPasswordError('Le mot de passe doit contenir au moins 8 caractères.');
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError('Les mots de passe ne correspondent pas.');
-      return;
-    }
-
-    setIsChangingPassword(true);
-
-    try {
-      // TODO: brancher l'appel API réel quand la route backend sera disponible.
-      setIsPasswordModalOpen(false);
-      setNewPassword('');
-      setConfirmPassword('');
-    } finally {
-      setIsChangingPassword(false);
-    }
-  };
-
   const modal = (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content glass-panel" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
+    <div className="modal-overlay profileModalOverlay" onClick={requestClose}>
+      <div
+        data-state={isClosing ? 'closed' : 'open'}
+        onAnimationEnd={handleAnimationEnd}
+        className="profileModal profileModalContent glass-panel"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="profileModalHeader">
           <h2>Modifier le profil</h2>
-          <button type="button" className="modal-close" onClick={onClose} aria-label="Fermer">
+          <button
+            type="button"
+            className="profileModalClose"
+            onClick={requestClose}
+            aria-label="Fermer"
+          >
             ×
           </button>
         </div>
@@ -179,7 +162,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
           {error && <p className="modal-error">{error}</p>}
 
           <div className="modal-actions">
-            <button type="button" className="btn-secondary" onClick={onClose}>
+            <button type="button" className="btn-secondary" onClick={requestClose}>
               Annuler
             </button>
             <button type="submit" className="btn-primary" disabled={isSaving}>
@@ -191,65 +174,10 @@ export default function EditProfile({ onClose }: EditProfileProps) {
     </div>
   );
 
-  const passwordModal = isPasswordModalOpen ? (
-    <div className="modal-overlay password-modal-overlay" onClick={() => setIsPasswordModalOpen(false)}>
-      <div className="modal-content glass-panel" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>Changer le mot de passe</h2>
-          <button
-            type="button"
-            className="modal-close"
-            onClick={() => setIsPasswordModalOpen(false)}
-            aria-label="Fermer"
-          >
-            ×
-          </button>
-        </div>
-
-        <form onSubmit={handlePasswordSubmit} className="password-form">
-          <label>
-            Nouveau mot de passe
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Nouveau mot de passe"
-            />
-          </label>
-
-          <label>
-            Confirmer le nouveau mot de passe
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirmer le mot de passe"
-            />
-          </label>
-
-          {passwordError && <p className="modal-error">{passwordError}</p>}
-
-          <div className="modal-actions">
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => setIsPasswordModalOpen(false)}
-            >
-              Annuler
-            </button>
-            <button type="submit" className="btn-primary" disabled={isChangingPassword}>
-              {isChangingPassword ? 'Chargement...' : 'Changer le mot de passe'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  ) : null;
-
   return createPortal(
     <>
       {modal}
-      {passwordModal}
+      {isPasswordModalOpen && <PasswordModal onClose={() => setIsPasswordModalOpen(false)} />}
     </>,
     document.body
   );

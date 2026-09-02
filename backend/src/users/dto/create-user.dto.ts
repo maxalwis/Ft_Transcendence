@@ -21,5 +21,6 @@ export interface CreateOAuthUserDto {
   email: string;
   provider: string;
   providerId: string;
+  avatar: string;
   // pas besoin de password
 }

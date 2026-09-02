@@ -13,7 +13,41 @@
   z-index: 1000;
 }
 
-.modal-content {
+.profileModal {
+  transform-origin: center;
+}
+
+.profileModal[data-state='open'] {
+  animation: profileExpandIn 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.profileModal[data-state='closed'] {
+  animation: profileCollapseOut 200ms ease-in forwards;
+}
+
+@keyframes profileExpandIn {
+  from {
+    opacity: 0;
+    transform: scale(0.75) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes profileCollapseOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.75) translateY(12px);
+  }
+}
+
+.profileModalContent {
   width: 90%;
   max-width: 380px;
   max-height: 85vh;
@@ -21,20 +55,20 @@
   padding: 1.75rem;
 }
 
-.modal-header {
+.profileModalHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
 }
 
-.modal-header h2 {
+.profileModalHeader h2 {
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0;
 }
 
-.modal-close {
+.profileModalClose {
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.6);
@@ -44,7 +78,7 @@
   padding: 0.25rem;
 }
 
-.modal-close:hover {
+.profileModalClose:hover {
   color: white;
 }
 
@@ -92,13 +126,13 @@
   /* color: white; */
 }
 
-.modal-content form {
+.profileModalContent form {
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
 }
 
-.modal-content label {
+.profileModalContent label {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -106,9 +140,9 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-.modal-content input[type='text'],
-.modal-content input[type='password'],
-.modal-content select {
+.profileModalContent input[type='text'],
+.profileModalContent input[type='password'],
+.profileModalContent select {
   padding: 0.65rem 0.9rem;
   border-radius: 0.65rem;
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -117,13 +151,13 @@
   font-size: 0.95rem;
 }
 
-.modal-content input[type='text']:focus,
-.modal-content input[type='password']:focus,
-.modal-content select:focus {
+.profileModalContent input[type='text']:focus,
+.profileModalContent input[type='password']:focus,
+.profileModalContent select:focus {
   outline: none;
 }
 
-.password-modal-overlay {
+.passwordModalOverlay {
   z-index: 1100;
 }
 
@@ -133,7 +167,7 @@
   gap: 1rem;
 }
 
-.modal-content select {
+.profileModalContent select {
   appearance: none;
   cursor: pointer;
 }

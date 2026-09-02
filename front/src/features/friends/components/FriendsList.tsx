@@ -5,6 +5,7 @@ import type { User } from '../../../api/friends';
 import { searchUsers } from '../../../api/users';
 import type { UserSearchResult } from '../../../api/users';
 import { useAuth } from '../../../context/auth/AuthContext';
+import ViewProfile from '../../profile/ViewProfile';
 
 type FriendsListProps = {
   friends: User[];
@@ -23,6 +24,7 @@ export default function FriendsList({
 }: FriendsListProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [results, setResults] = useState<UserSearchResult[]>([]);
+  const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
   const { accessToken } = useAuth();
 
   useEffect(() => {
@@ -99,7 +101,15 @@ export default function FriendsList({
             <div className="flex items-center gap-3">
               <div className="relative shrink-0">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600 text-xs font-semibold text-white">
-                  {friend?.name?.charAt(0) || '?'}
+                  {friend.avatar ? (
+                    <img
+                      src={friend.avatar}
+                      alt=""
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    friend.username?.charAt(0).toUpperCase() || '?'
+                  )}
                 </div>
                 <div
                   className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full ${
@@ -122,8 +132,20 @@ export default function FriendsList({
                 X
               </button>
             )}
+            {action !== 'remove' && (
+              <button
+                type="button"
+                onClick={() => setSelectedFriend(friend)}
+                className="shrink-0 cursor-pointer rounded-md px-2 py-1 text-xs hover:bg-white/20"
+              >
+                View profile
+              </button>
+            )}
           </div>
         ))}
+      {selectedFriend && (
+        <ViewProfile friend={selectedFriend} onClose={() => setSelectedFriend(null)} />
+      )}
     </div>
   );
 }

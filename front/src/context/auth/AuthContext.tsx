@@ -5,7 +5,7 @@ interface User {
   email: string;
   username: string;
   provider?: string | null;
-  avatarUrl?: string | null;
+  avatar?: string | null;
 }
 
 interface AuthContextType {

@@ -1,0 +1,69 @@
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
+import type { User } from '../../api/friends';
+import './Modal.css';
+
+interface ViewProfileProps {
+  friend: User;
+  onClose: () => void;
+}
+
+export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
+  const [isClosing, setIsClosing] = useState(false);
+
+  const requestClose = () => setIsClosing(true);
+
+  const handleAnimationEnd = () => {
+    if (isClosing) onClose();
+  };
+
+  return createPortal(
+    <div className="modal-overlay profileModalOverlay" onClick={requestClose}>
+      <div
+        data-state={isClosing ? 'closed' : 'open'}
+        onAnimationEnd={handleAnimationEnd}
+        className="profileModal profileModalContent glass-panel"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="profileModalHeader">
+          <h2>View profile</h2>
+          <button
+            type="button"
+            className="profileModalClose"
+            onClick={requestClose}
+            aria-label="Fermer"
+          >
+            x
+          </button>
+        </div>
+
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-2xl font-semibold text-white">
+            {friend.avatar ? (
+              <img src={friend.avatar} alt="Avatar" className="h-full w-full object-cover" />
+            ) : (
+              friend.username.charAt(0).toUpperCase()
+            )}
+          </div>
+          <h3 className="m-0! text-lg! text-white!">{friend.username}</h3>
+
+          <div className="w-full space-y-3 text-sm">
+            <div className="flex justify-between gap-4">
+              <span className="text-white/60">Catégorie préférée</span>
+              <span className="text-right text-white">
+                {friend.preferredCategory || 'Non renseignée'}
+              </span>
+            </div>
+            <div className="flex justify-between gap-4">
+              <span className="text-white/60">Langue préférée</span>
+              <span className="text-right text-white">
+                {friend.preferredLanguage || 'Non renseignée'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}

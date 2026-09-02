@@ -34,6 +34,7 @@ export class AuthService {
     username: string;
     provider: string;
     providerId: string;
+    avatar: string;
   }) {
     let user = await this.usersService.findFromEmailOrNull(profile.email);
 
@@ -84,6 +85,7 @@ export class AuthService {
           email: user.email,
           username: user.username,
           provider: user.provider,
+          avatar: user.avatar,
           isOAuth: user.password === null,
         },
       };
