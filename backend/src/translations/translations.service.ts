@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LibreTranslateService } from './libretranslate.service';
 
 const SUPPORTED_LANGS = ['en', 'es'];
-type TranslatableField = 'title' | 'description';
+type TranslatableField = 'title' | 'description' | 'priceDetail';
 
 @Injectable()
 export class TranslationsService {
@@ -18,6 +18,10 @@ export class TranslationsService {
 
   async getTranslatedTitle(eventId: string, lang: string): Promise<string> {
     return this.getTranslatedField(eventId, 'title', lang);
+  }
+
+  async getTranslatedPriceDetail(eventId: string, lang: string): Promise<string> {
+    return this.getTranslatedField(eventId, 'priceDetail', lang);
   }
 
   private async getTranslatedField(

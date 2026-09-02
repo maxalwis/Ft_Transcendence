@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import './EventsDetails.css';
 import LikeButton from '../../events/components/LikeButton';
+import { useLanguage } from '../../../context/language/LanguageContext';
+import { getPriceLabel } from '../../events/utils/priceLabels';
 
 export interface Friend {
   id: string;
@@ -69,6 +71,8 @@ export function EventsDetails({
   onMouseLeave,
   onClick,
 }: EventsDetailsProps) {
+  const { lang } = useLanguage();
+
   // Check if there is enough space above the marker to show the popup
   const isFlippedDownward = useMemo(() => {
     return position.y - CARD_HEIGHT < 75; // 75px padding safety threshold from top of viewport
@@ -77,13 +81,7 @@ export function EventsDetails({
   // Adjust top offset and transform origin based on orientation
   const topPos = isFlippedDownward ? position.y : position.y - 60;
 
-  const normalizedPrice = priceType?.trim().toLowerCase();
-  const formattedPrice =
-    normalizedPrice?.includes('fee-based') || normalizedPrice?.includes('payant')
-      ? 'Payant'
-      : normalizedPrice?.includes('free') || normalizedPrice?.includes('gratuit')
-        ? 'Gratuit'
-        : priceType?.trim();
+  const formattedPrice = getPriceLabel(priceType, lang);
 
   return (
     <div

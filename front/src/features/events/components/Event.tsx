@@ -13,6 +13,7 @@ export default function Event({ event }: EventProps) {
   const { data: translated, loading } = useTranslatedEvent(event.id, lang);
   const isTranslating = lang !== 'fr' && loading && !translated;
   const displayedTitle = isTranslating ? undefined : (translated?.title ?? event.title);
+  const displayedPriceDetail = isTranslating ? undefined : (translated?.priceDetail ?? event.priceDetail);
 
   return (
     <div className="flex h-full flex-col gap-1 overflow-y-auto">
@@ -24,7 +25,7 @@ export default function Event({ event }: EventProps) {
         dateStart={event.dateStart}
         dateEnd={event.dateEnd}
         priceType={event.priceType}
-        priceDetail={event.priceDetail}
+        priceDetail={displayedPriceDetail}
         accessLink={event.accessLink}
       />
       <div className="flex items-center justify-center">

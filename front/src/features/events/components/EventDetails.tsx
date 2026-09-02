@@ -1,3 +1,6 @@
+import { useLanguage } from '../../../context/language/LanguageContext';
+import { getPriceLabel } from '../utils/priceLabels';
+
 interface EventDetailsProps {
   title?: string;
   isTranslating?: boolean;
@@ -44,9 +47,10 @@ export default function EventDetails({
   priceDetail,
   accessLink,
 }: EventDetailsProps) {
-  const formattedPriceType = formatPriceType(priceType);
+  const { lang } = useLanguage();
+  const formattedPriceType = getPriceLabel(priceType, lang);
   const cleanedPriceDetail = cleanText(priceDetail);
-  const isPaid = formattedPriceType.toLowerCase().includes('payant');
+  const isPaid = priceType?.trim().toLowerCase().includes('payant');
 
   return (
     <div className="min-w-0 leading-tight">

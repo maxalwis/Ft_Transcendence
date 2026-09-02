@@ -53,22 +53,15 @@ export class EventsService {
       throw new NotFoundException(`Event ${id} not found`);
     }
 
-    // A DECOMMENTER SI BESOIN DE LA TRADUCTION DE LA DESCRIPTION AUSSI
-    /* const [title, description] = await Promise.all([
+    const [title, priceDetail] = await Promise.all([
       this.translations.getTranslatedTitle(id, lang),
-      this.translations.getTranslatedDescription(id, lang),
+      this.translations.getTranslatedPriceDetail(id, lang),
     ]);
 
     return {
       ...event,
       title,
-      description,
-    }; */
-
-    const title = await this.translations.getTranslatedTitle(id, lang);
-    return {
-      ...event,
-      title,
+      priceDetail,
     };
   }
 
