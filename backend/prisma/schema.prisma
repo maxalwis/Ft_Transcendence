@@ -61,7 +61,6 @@ enum FriendshipStatus {
 enum UserStatus {
   OFFLINE
   ONLINE
-  IN_GAME
 }
 
 model User {
