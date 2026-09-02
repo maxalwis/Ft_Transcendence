@@ -35,6 +35,10 @@ export class MapQueryDto {
   bbox?: BoundingBox;
 
   @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
   @IsISO8601()
   from?: string;
 

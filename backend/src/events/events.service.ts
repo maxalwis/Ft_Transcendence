@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '../generated/prisma/client';
 import { BoundingBox } from './dto/bounding-box.interface';
@@ -6,6 +6,7 @@ import { NearbyQueryDto } from './dto/map-query.dto';
 
 @Injectable()
 export class EventsService {
+  private readonly logger = new Logger(EventsService.name);
   constructor(private prisma: PrismaService) {}
 
   private getPriceCondition(price?: string) {
@@ -35,38 +36,123 @@ export class EventsService {
   }
 
   private getCategoryCondition(category?: string) {
-    if (!category) return Prisma.empty;
+    if (!category || category.trim() === '') return Prisma.empty;
 
-    if (category.toLowerCase() === 'culture') {
+    const cat = category.toLowerCase().trim();
+
+    // Button 1: Musique (Matches Concert, Festival, Spectacle musical)
+    if (cat === 'musique' || cat === 'music') {
       return Prisma.sql`AND EXISTS (
-        SELECT 1 FROM unnest(category) c 
-        WHERE c ILIKE ANY (ARRAY['%theatr%', '%danse%', '%spectacle%', '%balade%', '%conference%', '%exposition%', '%festival%', '%culture%'])
-      )`;
+      SELECT 1 FROM unnest(category) c 
+      WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
+        '%concert%', '%musique%', '%festival%', '%spectacle musical%'
+      ])
+    )`;
     }
 
-    return Prisma.sql`AND EXISTS (SELECT 1 FROM unnest(category) c WHERE LOWER(TRIM(c)) = LOWER(TRIM(${category})))`;
+    // Button 2: Culture
+    if (cat === 'culture') {
+      return Prisma.sql`AND EXISTS (
+      SELECT 1 FROM unnest(category) c 
+      WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
+        '%théâtre%', '%theatre%', '%expo%', '%danse%', '%art%', '%histoire%', '%littérature%', '%cinéma%', '%cinema%'
+      ])
+    )`;
+    }
+
+    // Button 3: Ateliers & Conférences
+    if (cat === 'ateliers' || cat === 'atelier' || cat === 'conference') {
+      return Prisma.sql`AND EXISTS (
+      SELECT 1 FROM unnest(category) c 
+      WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
+        '%atelier%', '%conférence%', '%conference%', '%rencontre%'
+      ])
+    )`;
+    }
+
+    // Button 4: Loisirs & Sports
+    if (cat === 'loisirs' || cat === 'sport') {
+      return Prisma.sql`AND EXISTS (
+      SELECT 1 FROM unnest(category) c 
+      WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
+        '%loisirs%', '%sport%', '%balade%', '%nature%', '%santé%', '%sante%', '%enfants%'
+      ])
+    )`;
+    }
+
+    // Button 5: Autres
+    if (cat === 'autres' || cat === 'empty' || cat === 'other') {
+      return Prisma.sql`AND (
+      cardinality(category) = 0 
+      OR category IS NULL 
+      OR NOT EXISTS (
+        SELECT 1 FROM unnest(category) c 
+        WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
+          '%concert%', '%musique%', '%festival%', '%spectacle musical%',
+          '%théâtre%', '%theatre%', '%expo%', '%danse%', '%art%', '%histoire%', '%littérature%', '%cinéma%', '%cinema%',
+          '%atelier%', '%conférence%', '%conference%', '%rencontre%',
+          '%loisirs%', '%sport%', '%balade%', '%nature%', '%santé%', '%sante%', '%enfants%'
+        ])
+      )
+    )`;
+    }
+
+    // Fallback match
+    return Prisma.sql`AND EXISTS (
+    SELECT 1 FROM unnest(category) c 
+    WHERE LOWER(TRIM(c)) = ${cat}
+  )`;
   }
 
-  async findAllForMap(from?: string, to?: string, category?: string, price?: string) {
+  private getCityCondition(city?: string) {
+  if (!city || city.trim() === '') return Prisma.empty;
+
+  return Prisma.sql`AND "city" ILIKE ${`%${city.trim()}%`}`;
+}
+
+  async findAllForMap(
+    from?: string,
+    to?: string,
+    category?: string,
+    price?: string,
+    city?: string
+  ) {
     const fromDate = from ? new Date(from) : new Date();
-    const defaultToDate = to ? new Date(to) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const defaultToDate = to ? new Date(to) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+
     const priceCondition = this.getPriceCondition(price);
     const categoryCondition = this.getCategoryCondition(category);
+    const cityCondition = this.getCityCondition(city);
 
-    return this.prisma.$queryRaw`
-        SELECT id, title, category, latitude, longitude, "dateStart", "dateEnd", "coverUrl", "priceType", "priceDetail", "accessLink"
-        FROM "Event"
-        WHERE latitude IS NOT NULL AND longitude IS NOT NULL
-            AND "dateEnd" >= ${fromDate}
-            AND "dateStart" <= ${defaultToDate}
-            ${categoryCondition}
-            ${priceCondition}
-        ORDER BY "dateStart" ASC
-        LIMIT 5000
-    `;
+    this.logger.log(`Executing SQL map query -> Category: "${category}", City: "${city}"`);
+
+    const results: any[] = await this.prisma.$queryRaw`
+      SELECT id, title, category, latitude, longitude, "dateStart", "dateEnd", "coverUrl", "priceType", "priceDetail", "accessLink"
+      FROM "Event"
+      WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+          AND "dateEnd" >= ${fromDate}
+          AND "dateStart" <= ${defaultToDate}
+          ${categoryCondition}
+          ${priceCondition}
+          ${cityCondition}
+      ORDER BY "dateStart" ASC
+      LIMIT 5000
+  `;
+
+    this.logger.log(
+      `SQL Query finished -> Category "${category}" returned ${results.length} records.`
+    );
+
+    return results;
   }
 
-  async findForMap(bbox: BoundingBox, from?: string, to?: string, category?: string, price?: string) {
+  async findForMap(
+    bbox: BoundingBox,
+    from?: string,
+    to?: string,
+    category?: string,
+    price?: string
+  ) {
     const { minLon, minLat, maxLon, maxLat } = bbox;
     const fromDate = from ? new Date(from) : new Date();
     const toDate = to ? new Date(to) : undefined;
@@ -102,7 +188,13 @@ export class EventsService {
     return event;
   }
 
-  async findNearby(query: NearbyQueryDto, from?: string, to?: string, category?: string, price?: string) {
+  async findNearby(
+    query: NearbyQueryDto,
+    from?: string,
+    to?: string,
+    category?: string,
+    price?: string
+  ) {
     const { lon, lat } = query.center;
     const { radius } = query;
     const fromDate = from ? new Date(from) : new Date();

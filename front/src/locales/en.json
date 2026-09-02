@@ -5,10 +5,11 @@
   },
   "nav": {
     "all": "All",
-    "culture": "Culture",
-    "sports": "Sports",
     "music": "Music",
-    "family": "Family"
+    "culture": "Culture",
+    "workshops": "Workshops",
+    "leisure": "Sports & Leisure",
+    "others": "Others"
   },
   "events": {
     "defaultCategory": "Event",
@@ -120,7 +121,7 @@
     "logout": "Logout"
   },
   "notifications": {
-  "defaultError": "An error occurred",
-  "defaultSuccess": "Operation successful"
+    "defaultError": "An error occurred",
+    "defaultSuccess": "Operation successful"
   }
 }

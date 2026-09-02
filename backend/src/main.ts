@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger, RequestMethod } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import { AppLogger } from './logger/app-logger.service';
@@ -8,7 +9,7 @@ import { PublicApiModule } from './public-api/public-api.module';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParser());
   app.setGlobalPrefix('api', {
     exclude: [{ path: 'health', method: RequestMethod.GET }],
@@ -51,6 +52,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.enableShutdownHooks();
+  app.set('etag', false);
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);

@@ -4,11 +4,12 @@
     "submit": "Enviar"
   },
   "nav": {
-    "all": "Todos",
-    "culture": "Cultura",
-    "sports": "Deportes",
+    "all": "Todo",
     "music": "Música",
-    "family": "Familia"
+    "culture": "Cultura",
+    "workshops": "Talleres",
+    "leisure": "Deportes y Ocio",
+    "others": "Otros"
   },
   "events": {
     "defaultCategory": "Evento",

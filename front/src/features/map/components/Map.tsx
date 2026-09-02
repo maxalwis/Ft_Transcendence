@@ -10,17 +10,18 @@ import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 import SideBar from '../../../layouts/Sidebar';
 import NavBar from '../../../layouts/NavBar';
 import BottomBar from '../../../layouts/BottomBar';
-import Friends from '../../friends/components/Friends';
 import Filters from './Filters';
+
+// Marker & Map Visual Components
+import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
 import EventPreview from '../../events/components/EventPreview';
 import { ClusterLayer } from './ClusterLayer';
-import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
 
 // State Management, Hooks & Helpers
 import { useNotification } from '../../../context/notifications/NotificationContext';
+import { useAuth } from '../../../context/auth/AuthContext';
 import { useMapEvents } from '../hooks/useMapEvents';
 import { MapEventsHandler } from './MapHelper';
-import { useAuth } from '../../../context/auth/AuthContext';
 
 // Constants & Configuration
 import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
@@ -38,13 +39,13 @@ export default function Map({ onOpenAuth }: MapProps) {
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
-  // État local pour stocker les filtres actifs avec typage complet
+  // État local des filtres actif avec typage strict
   const [filters, setFilters] = useState<{
     city: string;
     startDate: string;
     endDate: string;
     priceType: string;
-    category?: string;
+    category: string;
   }>({
     city: 'Paris',
     startDate: '',
@@ -102,6 +103,38 @@ export default function Map({ onOpenAuth }: MapProps) {
     [setActiveGroupId]
   );
 
+  // Handler mémorisé pour la sélection de catégorie via NavBar
+  const handleSelectCategory = useCallback((selectedCategory: string) => {
+    setFilters((prev) => {
+      // 1. If clicking "All" or an empty value, always reset category to ''
+      if (!selectedCategory || selectedCategory.trim() === '') {
+        return { ...prev, category: '' };
+      }
+
+      // 2. Check if the clicked category is already active (case-insensitive)
+      const isAlreadyActive =
+        prev.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase();
+
+      // 3. Toggle off if already active, otherwise select the new category
+      const nextCategory = isAlreadyActive ? '' : selectedCategory;
+
+      console.log('[Map] Category selection updated to:', nextCategory);
+
+      return {
+        ...prev,
+        category: nextCategory,
+      };
+    });
+  }, []);
+
+  // Handler mémorisé pour les filtres modaux
+  const handleApplyFilters = useCallback((newFilters: Partial<typeof filters>) => {
+    setFilters((prev) => ({
+      ...prev,
+      ...newFilters,
+    }));
+  }, []);
+
   return (
     <>
       <MapContainer
@@ -152,12 +185,9 @@ export default function Map({ onOpenAuth }: MapProps) {
         />
       )}
 
-      <Filters onApplyFilters={(newFilters) => setFilters(newFilters)} />
+      <Filters onApplyFilters={handleApplyFilters} />
 
-      <NavBar
-        activeCategory={filters.category}
-        onSelectCategory={(category) => setFilters((prev) => ({ ...prev, category }))}
-      />
+      <NavBar activeCategory={filters.category} onSelectCategory={handleSelectCategory} />
 
       <BottomBar onOpenAuth={onOpenAuth} />
 

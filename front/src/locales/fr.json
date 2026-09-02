@@ -4,11 +4,12 @@
     "submit": "Valider"
   },
   "nav": {
-    "all": "Tous",
-    "culture": "Culture",
-    "sports": "Sports",
+    "all": "Tout",
     "music": "Musique",
-    "family": "Famille"
+    "culture": "Culture",
+    "workshops": "Ateliers",
+    "leisure": "Loisirs & Sport",
+    "others": "Autres"
   },
   "events": {
     "defaultCategory": "Événement",

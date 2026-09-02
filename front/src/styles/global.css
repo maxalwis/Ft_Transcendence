@@ -209,6 +209,15 @@ pre {
   background: var(--color-orange-hover) !important;
 }
 
+.isSelected {
+  background: var(--color-orange-secondary) !important;
+  color: var(--color-text-light) !important;
+}
+
+.isSelected:hover {
+  background: var(--color-orange-primary) !important;
+}
+
 /* ==========================================================================
    Animations
    ========================================================================== */

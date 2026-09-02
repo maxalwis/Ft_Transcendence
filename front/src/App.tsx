@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import Map from './features/map/components/Map';
-import NavBar from './layouts/NavBar';
 import { AdminPanelLinks } from './features/externalLinks/AdminPanelLinks';
 import { NotificationProvider } from './context/notifications/NotificationContext';
 import BottomBar from './layouts/BottomBar';
@@ -16,8 +15,6 @@ import './styles/global.css';
 
 export default function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-    const [activeCategory, setActiveCategory] = useState<string>('');
-
 
   const handleOpenAuth = () => {
     setIsAuthOpen(true);
@@ -33,14 +30,6 @@ export default function App() {
               <Route path="/" element={<Map onOpenAuth={handleOpenAuth} />} />
               <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
             </Routes>
-          </div>
-
-          {/* Floating Navigation Bar for Categories & Languages */}
-          <div className="absolute top-4 left-4 right-4 z-20 pointer-events-none">
-            <NavBar 
-              activeCategory={activeCategory} 
-              onSelectCategory={setActiveCategory} 
-            />
           </div>
 
           {/* Floating Three-Dots Admin Menu Component */}

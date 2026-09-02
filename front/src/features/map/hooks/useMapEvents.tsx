@@ -18,29 +18,49 @@ export function useMapEvents(
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
   const [activeEventIndex, setActiveEventIndex] = useState<number>(0);
 
+  // 1. Deconstruct primitive values explicitly to give useEffect stable dependency keys
+  const city = filters?.city ?? 'Paris';
+  const startDate = filters?.startDate ?? '';
+  const endDate = filters?.endDate ?? '';
+  const priceType = filters?.priceType ?? '';
+  const category = filters?.category ?? '';
+  const minPrice = filters?.minPrice ?? '';
+  const maxPrice = filters?.maxPrice ?? '';
+
   useEffect(() => {
     const fetchAllEvents = async () => {
+
       try {
         setIsLoading(true);
-        
-        const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
-        
+
         const params = new URLSearchParams();
-        if (filters?.city) params.append('city', filters.city);
-        if (filters?.startDate) params.append('from', filters.startDate);
-        if (filters?.endDate) params.append('to', filters.endDate);
-        if (filters?.priceType) params.append('price', filters.priceType);
-        if (filters?.category) params.append('category', filters.category);
+        if (city) params.append('city', city);
+        if (startDate) params.append('from', startDate);
+        if (endDate) params.append('to', endDate);
+        if (priceType) params.append('price', priceType);
         
-        if (filters?.minPrice !== undefined && filters?.minPrice !== '') {
-          params.append('minPrice', String(filters.minPrice));
-        }
-        if (filters?.maxPrice !== undefined && filters?.maxPrice !== '') {
-          params.append('maxPrice', String(filters.maxPrice));
+        if (category && category.trim() !== '') {
+          params.append('category', category.trim());
         }
 
+        if (minPrice !== '') params.append('minPrice', String(minPrice));
+        if (maxPrice !== '') params.append('maxPrice', String(maxPrice));
+
+        const envUrl = (import.meta as any).env?.VITE_API_URL;
         const queryString = params.toString();
-        const url = `api/events/map${queryString ? `?${queryString}` : ''}`;
+        const queryPath = queryString ? `?${queryString}` : '';
+
+        let url = '';
+        if (envUrl) {
+          const cleanBase = envUrl.replace(/\/+$/, '');
+          url = cleanBase.endsWith('/api')
+            ? `${cleanBase}/events/map${queryPath}`
+            : `${cleanBase}/api/events/map${queryPath}`;
+        } else {
+          url = `/api/events/map${queryPath}`;
+        }
+
+        params.append('_t', Date.now().toString());
 
         const response = await fetch(url);
 
@@ -53,16 +73,9 @@ export function useMapEvents(
           throw new Error(message);
         }
 
-        const rawData: Array<
-          EventItem & {
-            date_start?: string;
-            date_end?: string;
-            price_type?: string;
-            access_link?: string;
-          }
-        > = await response.json();
+        const rawData = await response.json();
 
-        const data: EventItem[] = rawData.map((event) => ({
+        const data: EventItem[] = rawData.map((event: any) => ({
           ...event,
           latitude: Number(event.latitude),
           longitude: Number(event.longitude),
@@ -71,7 +84,7 @@ export function useMapEvents(
           priceType: event.priceType ?? event.price_type,
           accessLink: event.accessLink ?? event.access_link,
         }));
-        
+
         setEvents(data);
       } catch (err: unknown) {
         console.error('Failed to fetch map events:', err);
@@ -84,7 +97,8 @@ export function useMapEvents(
     };
 
     fetchAllEvents();
-  }, [showError, filters]);
+    // 2. Pass individual primitive string dependencies to ensure reactivity
+  }, [showError, city, startDate, endDate, priceType, category, minPrice, maxPrice]);
 
   const eventGroups = useMemo<EventGroup[]>(() => {
     const groupsMap = new Map<string, EventItem[]>();

@@ -18,7 +18,6 @@ export function MapClickHandler({ closeSidebar }: { closeSidebar: () => void }) 
 }
 
 export function GlassZoomControl() {
-  const { t } = useTranslation(); // Exemple d'utilisation du hook si tu souhaites ajouter des textes traduits ici
   const map = useMap();
   
   useEffect(() => {

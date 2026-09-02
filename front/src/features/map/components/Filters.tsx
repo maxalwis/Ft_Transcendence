@@ -1,13 +1,9 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { EventFilters } from '../../../types/event';
+import { FiltersProps } from '../../../types/map';
 import styles from '../Map.module.css';
 import CustomSelect from './CustomSelect';
-
-export type FiltersProps = {
-  onApplyFilters?: (filters: EventFilters) => void;
-};
 
 export default function Filters({ onApplyFilters }: FiltersProps) {
   const { t } = useTranslation();
@@ -19,11 +15,13 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
   const [endDate, setEndDate] = useState('');
   const [priceType, setPriceType] = useState('');
 
+  // Define options inside with useMemo or outside to preserve references
   const PRICE_OPTIONS = [
     { value: '', label: t('filters.allPrices', 'All') },
     { value: 'free', label: t('filters.free', 'Free') },
     { value: 'fee-based', label: t('filters.feeBased', 'Fee-based') },
   ];
+
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
@@ -37,30 +35,22 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
   };
 
   const handleApply = () => {
-    if (onApplyFilters) {
-      onApplyFilters({
-        city,
-        startDate,
-        endDate,
-        priceType,
-      } as any);
-    }
+    onApplyFilters?.({
+      city,
+      startDate,
+      endDate,
+      priceType,
+    } as any);
     setIsOpen(false);
   };
 
   const handleReset = () => {
+    const defaultFilters = { city: 'Paris', startDate: '', endDate: '', priceType: '' };
     setCity('Paris');
     setStartDate('');
     setEndDate('');
     setPriceType('');
-    if (onApplyFilters) {
-      onApplyFilters({
-        city: 'Paris',
-        startDate: '',
-        endDate: '',
-        priceType: '',
-      } as any);
-    }
+    onApplyFilters?.(defaultFilters as any);
     setIsOpen(false);
   };
 
@@ -104,9 +94,10 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               </svg>
             </button>
 
-            <h3 
-              className="text-lg font-bold text-center pb-2 pr-6" 
-              style={{ color: 'var(--color-blue-dark)', borderColor: 'var(--glass-border)' }}>
+            <h3
+              className="text-lg font-bold text-center pb-2 pr-6"
+              style={{ color: 'var(--color-blue-dark)', borderColor: 'var(--glass-border)' }}
+            >
               {t('filters.title', 'Events Filters')}
             </h3>
 
@@ -138,18 +129,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
                 min="2026-08-01"
                 max="2028-12-31"
                 value={startDate}
-                onChange={(e) => {
-                  const newDate = e.target.value;
-                  setStartDate(newDate);
-                  if (onApplyFilters) {
-                    onApplyFilters({
-                      city,
-                      startDate: newDate,
-                      endDate,
-                      priceType,
-                    } as any);
-                  }
-                }}
+                onChange={(e) => setStartDate(e.target.value)}
                 className="w-full px-2 py-1 border border-white/20 rounded bg-white text-xs"
               />
             </div>

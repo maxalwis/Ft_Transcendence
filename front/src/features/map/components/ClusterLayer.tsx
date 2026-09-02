@@ -1,7 +1,7 @@
 import { Marker } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
-import type { EventGroup } from './Map';
+import type { EventGroup } from '../../../types/event';
 import { createGroupMarkerIcon, createClusterIcon } from './CustomIcons';
 
 interface ClusterLayerProps {
