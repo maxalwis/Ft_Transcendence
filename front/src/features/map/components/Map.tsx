@@ -168,6 +168,7 @@ export default function Map({ onOpenAuth }: MapProps) {
         <EventPreview
           position={hoverPos}
           title={currentEvent.title}
+          priceType={currentEvent.priceType}
           dateStart={currentEvent.dateStart}
           dateEnd={currentEvent.dateEnd}
           category={currentEvent.category?.[0] || 'Event'}

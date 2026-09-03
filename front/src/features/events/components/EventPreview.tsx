@@ -130,11 +130,11 @@ export default function EventPreview({
 
   const normalizedPrice = priceType?.trim().toLowerCase();
   const formattedPrice =
-    normalizedPrice?.includes('fee-based') || normalizedPrice?.includes('payant') || normalizedPrice?.includes('pago')
-      ? t('eventPreview.price.feeBased')
-      : normalizedPrice?.includes('free') || normalizedPrice?.includes('gratuit') || normalizedPrice?.includes('gratis')
-        ? t('eventPreview.price.free')
-        : priceType?.trim() || t('eventPreview.price.unspecified');
+    normalizedPrice === 'payant'
+    ? t('eventPreview.price.feeBased')
+    : normalizedPrice?.includes('gratuit') // matche "gratuit" ET "gratuit sous condition"
+      ? t('eventPreview.price.free')
+      : priceType?.trim() || t('eventPreview.price.unspecified');
 
   const undefinedDateText = t('eventPreview.undefinedDate');
 

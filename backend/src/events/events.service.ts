@@ -15,22 +15,12 @@ export class EventsService {
     const trimmed = price.trim().toLowerCase();
 
     if (trimmed === 'free') {
-      return Prisma.sql`AND (
-        LOWER("priceType") IN ('gratuit', 'free', 'gratuite') 
-        OR LOWER("priceDetail") IN ('gratuit', 'free', '0', '0.0€', '0 €', '0.00 €')
-        OR ("priceDetail" ILIKE '%gratuit%' AND "priceDetail" NOT ILIKE '%sauf%' AND "priceDetail" NOT ILIKE '%€%')
-        OR "priceDetail" ILIKE '%free%'
-      )`;
-    }
+    return Prisma.sql`AND LOWER("priceType") IN ('gratuit', 'gratuit sous condition')`;
+  }
 
-    if (trimmed === 'fee-based' || trimmed === 'payant') {
-      return Prisma.sql`AND NOT (
-        LOWER("priceType") IN ('gratuit', 'free', 'gratuite') 
-        OR LOWER("priceDetail") IN ('gratuit', 'free', '0', '0.0€', '0 €', '0.00 €')
-        OR ("priceDetail" ILIKE '%gratuit%' AND "priceDetail" NOT ILIKE '%sauf%' AND "priceDetail" NOT ILIKE '%€%')
-        OR "priceDetail" ILIKE '%free%'
-      )`;
-    }
+  if (trimmed === 'fee-based') {
+    return Prisma.sql`AND LOWER("priceType") = 'payant'`;
+  }
 
     return Prisma.empty;
   }
@@ -43,7 +33,7 @@ export class EventsService {
     // Button 1: Musique (Matches Concert, Festival, Spectacle musical)
     if (cat === 'musique' || cat === 'music') {
       return Prisma.sql`AND EXISTS (
-      SELECT 1 FROM unnest(category) c 
+      SELECT 1 FROM unnest(category) c
       WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
         '%concert%', '%musique%', '%festival%', '%spectacle musical%'
       ])
@@ -53,7 +43,7 @@ export class EventsService {
     // Button 2: Culture
     if (cat === 'culture') {
       return Prisma.sql`AND EXISTS (
-      SELECT 1 FROM unnest(category) c 
+      SELECT 1 FROM unnest(category) c
       WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
         '%théâtre%', '%theatre%', '%expo%', '%danse%', '%art%', '%histoire%', '%littérature%', '%cinéma%', '%cinema%'
       ])
@@ -63,7 +53,7 @@ export class EventsService {
     // Button 3: Ateliers & Conférences
     if (cat === 'ateliers' || cat === 'atelier' || cat === 'conference') {
       return Prisma.sql`AND EXISTS (
-      SELECT 1 FROM unnest(category) c 
+      SELECT 1 FROM unnest(category) c
       WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
         '%atelier%', '%conférence%', '%conference%', '%rencontre%'
       ])
@@ -73,7 +63,7 @@ export class EventsService {
     // Button 4: Loisirs & Sports
     if (cat === 'loisirs' || cat === 'sport') {
       return Prisma.sql`AND EXISTS (
-      SELECT 1 FROM unnest(category) c 
+      SELECT 1 FROM unnest(category) c
       WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
         '%loisirs%', '%sport%', '%balade%', '%nature%', '%santé%', '%sante%', '%enfants%'
       ])
@@ -83,10 +73,10 @@ export class EventsService {
     // Button 5: Autres
     if (cat === 'autres' || cat === 'empty' || cat === 'other') {
       return Prisma.sql`AND (
-      cardinality(category) = 0 
-      OR category IS NULL 
+      cardinality(category) = 0
+      OR category IS NULL
       OR NOT EXISTS (
-        SELECT 1 FROM unnest(category) c 
+        SELECT 1 FROM unnest(category) c
         WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
           '%concert%', '%musique%', '%festival%', '%spectacle musical%',
           '%théâtre%', '%theatre%', '%expo%', '%danse%', '%art%', '%histoire%', '%littérature%', '%cinéma%', '%cinema%',
@@ -99,7 +89,7 @@ export class EventsService {
 
     // Fallback match
     return Prisma.sql`AND EXISTS (
-    SELECT 1 FROM unnest(category) c 
+    SELECT 1 FROM unnest(category) c
     WHERE LOWER(TRIM(c)) = ${cat}
   )`;
   }

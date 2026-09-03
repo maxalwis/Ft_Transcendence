@@ -130,6 +130,22 @@ export class IngestionService implements OnModuleInit {
     return isNaN(date.getTime()) ? null : date;
   }
 
+  // normalise URL : www.abc.com -> https://www.abc.com
+  private normalizeUrl(url: string | null | undefined): string | null {
+    if (!url) return null;
+    const trimmed = url.trim();
+    if (!trimmed) return null;
+
+    const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+
+    try {
+      return new URL(candidate).href;
+    } catch {
+      this.logger.warn(`Invalid URL ignored during ingestion: ${trimmed}`);
+      return null;
+    }
+  }
+
   private mapToEvent(item: any): IngestedEventData {
     return {
       source: 'mairie_paris',
@@ -148,7 +164,7 @@ export class IngestionService implements OnModuleInit {
       priceType: item.price_type ?? null,
       priceDetail: item.price_detail ?? null,
       category: this.parseDelimitedString(item.qfap_tags),
-      accessLink: item.access_link ?? null,
+      accessLink: this.normalizeUrl(item.access_link),
       audience: item.audience ?? null,
       rank: item.rank ? parseFloat(item.rank) : null,
       weight: item.weight ? parseInt(item.weight, 10) : null,
