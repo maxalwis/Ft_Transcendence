@@ -31,11 +31,6 @@ export default function App() {
             </Routes>
           </div>
 
-          {/* Floating Three-Dots Admin Menu Component */}
-          <div className="absolute top-4 right-4 z-20">
-            <AdminPanelLinks />
-          </div>
-
           <BottomBar onOpenAuth={handleOpenAuth} />
 
           <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
