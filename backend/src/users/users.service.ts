@@ -85,7 +85,10 @@ export class UsersService {
     return username;
   }
 
-  async update(id: number, data: { username?: string; email?: string }): Promise<User> {
+  async update(
+    id: number,
+    data: { username?: string; email?: string; avatar?: string }
+  ): Promise<User> {
     await this.findOne(id); // Lève une NotFoundException si l'ID n'existe pas
     return this.catchDuplicateError(() => this.prisma.user.update({ where: { id }, data }));
   }

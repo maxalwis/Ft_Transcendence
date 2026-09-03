@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import L from 'leaflet';
+import { useMap } from 'react-leaflet';
 
 interface DashboardLink {
   name: string;
@@ -159,8 +160,10 @@ const DropdownMenu: React.FC = () => {
 };
 
 export const AdminPanelLinks: React.FC = () => {
+  const map = useMap();
+
   useEffect(() => {
-    const topLeftContainer = document.querySelector('.leaflet-top.leaflet-left');
+    const topLeftContainer = map.getContainer().querySelector('.leaflet-top.leaflet-left');
     if (!topLeftContainer) return;
 
     const controlDiv = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-links');
@@ -179,7 +182,7 @@ export const AdminPanelLinks: React.FC = () => {
       });
       controlDiv.remove();
     };
-  }, []);
+  }, [map]);
 
   return null;
 };

@@ -40,6 +40,12 @@ export class AuthService {
 
     if (!user) {
       user = await this.usersService.createOAuth(profile);
+    } else if (
+      user.provider === profile.provider &&
+      profile.avatar &&
+      user.avatar !== profile.avatar
+    ) {
+      user = await this.usersService.update(user.id, { avatar: profile.avatar });
     }
 
     return user;

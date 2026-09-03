@@ -16,6 +16,7 @@ import Filters from './Filters';
 import { EventsDetails } from './EventsDetails';
 import { ClusterLayer } from './ClusterLayer';
 import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
+import { AdminPanelLinks } from '../../externalLinks/AdminPanelLinks';
 
 // State Management, Hooks & Helpers
 import { useNotification } from '../../../context/notifications/NotificationContext';
@@ -112,6 +113,7 @@ export default function Map() {
         <MapClickHandler closeSidebar={() => setActiveSidebarEventId(null)} />
         <MyTileLayer />
         <GlassZoomControl />
+        <AdminPanelLinks />
 
         <MapEventsHandler activeGroup={activeGroup} setHoverPos={setHoverPos} />
 
@@ -165,7 +167,7 @@ export default function Map() {
         <SideBar
           eventId={activeSidebarEventId}
           currentUserId={user?.id}
-        //   currentUserId={1}
+          //   currentUserId={1}
           event={selectedSidebarEvent}
           onClose={() => {
             setActiveSidebarEventId(null);
