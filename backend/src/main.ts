@@ -48,7 +48,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig, {
     include: [PublicApiModule],
-    });
+  });
   SwaggerModule.setup('docs', app, document);
 
   app.enableShutdownHooks();

@@ -111,9 +111,7 @@ export default function FriendsSidebar({
       <div className="flex-1 overflow-y-auto pt-10">
         {!isLoggedIn ? (
           <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-            <p className="text-sm font-medium">
-              {t('friendsSidebar.notLoggedIn')}
-            </p>
+            <p className="text-sm font-medium">{t('friendsSidebar.notLoggedIn')}</p>
           </div>
         ) : action === 'menu' ? (
           <div className="flex flex-col gap-2 py-2">

@@ -29,7 +29,6 @@ export function useMapEvents(
 
   useEffect(() => {
     const fetchAllEvents = async () => {
-
       try {
         setIsLoading(true);
 
@@ -38,7 +37,7 @@ export function useMapEvents(
         if (startDate) params.append('from', startDate);
         if (endDate) params.append('to', endDate);
         if (priceType) params.append('price', priceType);
-        
+
         if (category && category.trim() !== '') {
           params.append('category', category.trim());
         }

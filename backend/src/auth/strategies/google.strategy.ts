@@ -18,23 +18,28 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback) {
-  try {
-    const email = profile.emails?.[0]?.value;
-    if (!email) {
-      return done(new UnauthorizedException('No email returned by Google'), false);
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: Profile,
+    done: VerifyCallback
+  ) {
+    try {
+      const email = profile.emails?.[0]?.value;
+      if (!email) {
+        return done(new UnauthorizedException('No email returned by Google'), false);
+      }
+
+      const user = await this.authService.validateOAuthUser({
+        email,
+        username: profile.displayName,
+        provider: 'google',
+        providerId: profile.id,
+      });
+
+      done(null, user);
+    } catch (err) {
+      done(err, false);
     }
-
-    const user = await this.authService.validateOAuthUser({
-      email,
-      username: profile.displayName,
-      provider: 'google',
-      providerId: profile.id,
-    });
-
-    done(null, user);
-  } catch (err) {
-    done(err, false);
   }
-}
 }

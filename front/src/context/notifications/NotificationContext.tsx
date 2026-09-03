@@ -13,9 +13,12 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const showError = useCallback((msg?: string) => {
-    setErrorMessage(msg || t('notifications.defaultError', 'Une erreur est survenue'));
-  }, [t]);
+  const showError = useCallback(
+    (msg?: string) => {
+      setErrorMessage(msg || t('notifications.defaultError', 'Une erreur est survenue'));
+    },
+    [t]
+  );
 
   const clearNotification = () => setErrorMessage(null);
 

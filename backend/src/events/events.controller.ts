@@ -21,7 +21,7 @@ export class EventsController {
         query.from,
         query.to,
         query.category,
-        priceStr,
+        priceStr
       );
     }
 
@@ -30,7 +30,7 @@ export class EventsController {
       query.to,
       query.category,
       priceStr,
-      query.city,
+      query.city
     );
   }
 

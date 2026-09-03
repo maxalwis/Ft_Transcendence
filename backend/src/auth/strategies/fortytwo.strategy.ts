@@ -21,21 +21,21 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   }
 
   async validate(accessToken: string) {
-  let data: any;
-  try {
-    ({ data } = await axios.get('https://api.intra.42.fr/v2/me', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      timeout: 5000,
-    }));
-  } catch (err) {
-    throw new UnauthorizedException('Failed to retrieve 42 profile');
-  }
+    let data: any;
+    try {
+      ({ data } = await axios.get('https://api.intra.42.fr/v2/me', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        timeout: 5000,
+      }));
+    } catch (err) {
+      throw new UnauthorizedException('Failed to retrieve 42 profile');
+    }
 
-  return this.authService.validateOAuthUser({
-    email: data.email,
-    username: data.login,
-    provider: '42',
-    providerId: String(data.id),
-  });
-}
+    return this.authService.validateOAuthUser({
+      email: data.email,
+      username: data.login,
+      provider: '42',
+      providerId: String(data.id),
+    });
+  }
 }

@@ -10,7 +10,7 @@ import translationES from './locales/es.json';
 const resources = {
   fr: { translation: translationFR },
   en: { translation: translationEN },
-  es: { translation: translationES }
+  es: { translation: translationES },
 };
 
 i18n
@@ -20,8 +20,8 @@ i18n
     resources,
     fallbackLng: 'fr',
     interpolation: {
-      escapeValue: false
-    }
+      escapeValue: false,
+    },
   });
 
 export default i18n;

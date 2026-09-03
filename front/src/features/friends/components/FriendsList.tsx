@@ -103,9 +103,7 @@ export default function FriendsList({
                 </div>
                 <div
                   className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full ${
-                    friend?.status === 'ONLINE'
-                      ? 'bg-green-500'
-                      : 'bg-gray-400'
+                    friend?.status === 'ONLINE' ? 'bg-green-500' : 'bg-gray-400'
                   }`}
                 />
               </div>

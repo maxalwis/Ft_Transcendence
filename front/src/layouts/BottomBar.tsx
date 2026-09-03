@@ -17,7 +17,7 @@ export default function BottomBar({ onOpenAuth }: BottomBarProps) {
       <div className="flex items-center absolute bottom-0 left-1/2 -translate-x-1/2 gap-2 pointer-events-auto">
         <LoginButton onOpenAuth={onOpenAuth} />
 
-        <button 
+        <button
           type="button"
           className="glass-panel flex items-center justify-center p-2"
           aria-label="Notifications"

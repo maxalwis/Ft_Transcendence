@@ -15,12 +15,12 @@ export class EventsService {
     const trimmed = price.trim().toLowerCase();
 
     if (trimmed === 'free') {
-    return Prisma.sql`AND LOWER("priceType") IN ('gratuit', 'gratuit sous condition')`;
-  }
+      return Prisma.sql`AND LOWER("priceType") IN ('gratuit', 'gratuit sous condition')`;
+    }
 
-  if (trimmed === 'fee-based') {
-    return Prisma.sql`AND LOWER("priceType") = 'payant'`;
-  }
+    if (trimmed === 'fee-based') {
+      return Prisma.sql`AND LOWER("priceType") = 'payant'`;
+    }
 
     return Prisma.empty;
   }
@@ -95,10 +95,10 @@ export class EventsService {
   }
 
   private getCityCondition(city?: string) {
-  if (!city || city.trim() === '') return Prisma.empty;
+    if (!city || city.trim() === '') return Prisma.empty;
 
-  return Prisma.sql`AND "city" ILIKE ${`%${city.trim()}%`}`;
-}
+    return Prisma.sql`AND "city" ILIKE ${`%${city.trim()}%`}`;
+  }
 
   async findAllForMap(
     from?: string,

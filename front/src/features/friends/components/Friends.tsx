@@ -27,7 +27,7 @@ export default function Friends({ onOpenAuth }: FriendsProps) {
   const [friends, setFriends] = useState<User[]>([]);
   const [requests, setRequests] = useState<PendingRequest[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  
+
   const { t } = useTranslation();
   const { user, accessToken } = useAuth();
 
@@ -42,7 +42,9 @@ export default function Friends({ onOpenAuth }: FriendsProps) {
       setRequests(pendingList);
       setErrorMsg(null);
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : t('friends.errorLoading', 'Erreur de chargement.'));
+      setErrorMsg(
+        err instanceof Error ? err.message : t('friends.errorLoading', 'Erreur de chargement.')
+      );
     }
   };
 

@@ -32,7 +32,8 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
         if (isMounted) setMessages(data);
       })
       .catch((err) => {
-        if (isMounted) showError(err.message || t('chat.errorLoadMessages', 'Failed to load messages'));
+        if (isMounted)
+          showError(err.message || t('chat.errorLoadMessages', 'Failed to load messages'));
       })
       .finally(() => {
         if (isMounted) setLoading(false);
@@ -54,7 +55,12 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     }
   };
 
-  if (loading) return <div className="text-gray-400 flex items-center justify-center text-sm p-4">{t('chat.loadingMessages', 'Loading messages...')}</div>;
+  if (loading)
+    return (
+      <div className="text-gray-400 flex items-center justify-center text-sm p-4">
+        {t('chat.loadingMessages', 'Loading messages...')}
+      </div>
+    );
 
   return (
     <div className="flex flex-col h-full gap-3 relative">

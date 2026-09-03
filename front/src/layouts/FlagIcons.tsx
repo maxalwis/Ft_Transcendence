@@ -1,11 +1,6 @@
 export function FlagFR({ className = 'w-5 h-5' }: { className?: string }) {
   return (
-    <svg
-      className={className}
-      viewBox="0 -4 28 28"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg className={className} viewBox="0 -4 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_1310_8031)">
         <path d="M27.999 0H-0.000976562V20H27.999V0Z" fill="url(#paint0_linear_1310_8031)" />
         <path d="M27.999 0H13.3324V20H27.999V0Z" fill="url(#paint1_linear_1310_8031)" />
@@ -67,12 +62,7 @@ export function FlagFR({ className = 'w-5 h-5' }: { className?: string }) {
 
 export function FlagGB({ className = 'w-5 h-5' }: { className?: string }) {
   return (
-    <svg
-      className={className}
-      viewBox="0 -4 28 28"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg className={className} viewBox="0 -4 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_503_2952)">
         <rect width="28" height="20" rx="2" fill="white" />
         <mask
@@ -137,12 +127,7 @@ export function FlagGB({ className = 'w-5 h-5' }: { className?: string }) {
 
 export function FlagES({ className = 'w-5 h-5' }: { className?: string }) {
   return (
-    <svg
-      className={className}
-      viewBox="0 -4 28 28"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg className={className} viewBox="0 -4 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_503_3600)">
         <rect width="28" height="20" rx="2" fill="white" />
         <mask

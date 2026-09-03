@@ -1,11 +1,23 @@
 @keyframes markerPopupAnimationUp {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes markerPopupAnimationDown {
-  0% { opacity: 0; transform: translateY(-10px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .popupUp {
@@ -181,5 +193,5 @@
 }
 
 .events-details-details-overlay {
-    background: rgba(255, 255, 255, 1) !important;
+  background: rgba(255, 255, 255, 1) !important;
 }

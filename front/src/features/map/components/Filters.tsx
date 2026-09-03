@@ -102,7 +102,9 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
             </h3>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold">{t('filters.cityLabel', 'Ville / Localisation')}</label>
+              <label className="text-xs font-semibold">
+                {t('filters.cityLabel', 'Ville / Localisation')}
+              </label>
               <input
                 type="text"
                 value={city}
@@ -113,7 +115,9 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold">{t('filters.priceCategory', 'Price category')}</label>
+              <label className="text-xs font-semibold">
+                {t('filters.priceCategory', 'Price category')}
+              </label>
               <CustomSelect
                 options={PRICE_OPTIONS}
                 value={priceType}

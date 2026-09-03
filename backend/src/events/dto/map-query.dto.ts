@@ -1,6 +1,14 @@
 import { Transform, Type } from 'class-transformer';
 import { BadRequestException } from '@nestjs/common';
-import { IsOptional, IsISO8601, IsNumber, IsPositive, Max, IsDefined, IsString } from 'class-validator';
+import {
+  IsOptional,
+  IsISO8601,
+  IsNumber,
+  IsPositive,
+  Max,
+  IsDefined,
+  IsString,
+} from 'class-validator';
 import type { BoundingBox } from './bounding-box.interface';
 import type { CenterPoint } from './center-point.interface';
 

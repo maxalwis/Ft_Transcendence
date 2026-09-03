@@ -131,10 +131,10 @@ export default function EventPreview({
   const normalizedPrice = priceType?.trim().toLowerCase();
   const formattedPrice =
     normalizedPrice === 'payant'
-    ? t('eventPreview.price.feeBased')
-    : normalizedPrice?.includes('gratuit') // matche "gratuit" ET "gratuit sous condition"
-      ? t('eventPreview.price.free')
-      : priceType?.trim() || t('eventPreview.price.unspecified');
+      ? t('eventPreview.price.feeBased')
+      : normalizedPrice?.includes('gratuit') // matche "gratuit" ET "gratuit sous condition"
+        ? t('eventPreview.price.free')
+        : priceType?.trim() || t('eventPreview.price.unspecified');
 
   const undefinedDateText = t('eventPreview.undefinedDate');
 
@@ -227,9 +227,13 @@ export default function EventPreview({
         <h3 className={`${styles['events-details-category']} text-slate-600!`}>{category}</h3>
         <div className={styles['events-details-meta']}>
           <span>{formattedPrice}</span>
-          <span>{t('eventPreview.start')}: {formatDate(dateStart, currentLocale, undefinedDateText)}</span>
+          <span>
+            {t('eventPreview.start')}: {formatDate(dateStart, currentLocale, undefinedDateText)}
+          </span>
           <div className={styles['events-details-end-row']}>
-            <span>{t('eventPreview.end')}: {formatDate(dateEnd, currentLocale, undefinedDateText)}</span>
+            <span>
+              {t('eventPreview.end')}: {formatDate(dateEnd, currentLocale, undefinedDateText)}
+            </span>
             {Boolean(eventId) && (
               <LikeButton eventId={eventId!} interestedUsersCount={interestedUsersCount} iconOnly />
             )}

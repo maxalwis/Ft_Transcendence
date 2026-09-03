@@ -63,7 +63,10 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), tailwindcss()],
     server: {
       host: true,
-      hmr: { protocol: 'wss', clientPort: Number(process.env.HTTPS_PORT || env.HTTPS_PORT) || 8443 },
+      hmr: {
+        protocol: 'wss',
+        clientPort: Number(process.env.HTTPS_PORT || env.HTTPS_PORT) || 8443,
+      },
       proxy: {
         '/api': {
           target: backendUrl,

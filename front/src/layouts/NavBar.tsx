@@ -62,7 +62,8 @@ export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps
           onClick={() => i18n.changeLanguage('fr')}
           title="Français"
           className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('fr') ? 'isSelected' : '' }`}
+            currentLang?.startsWith('fr') ? 'isSelected' : ''
+          }`}
         >
           <FlagFR className="w-5 h-5 rounded-sm object-cover shrink-0" />
         </button>
@@ -72,7 +73,8 @@ export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps
           onClick={() => i18n.changeLanguage('en')}
           title="English"
           className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('en') ? 'isSelected' : '' }`}
+            currentLang?.startsWith('en') ? 'isSelected' : ''
+          }`}
         >
           <FlagGB className="w-5 h-5 rounded-sm object-cover shrink-0" />
         </button>
@@ -82,7 +84,8 @@ export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps
           onClick={() => i18n.changeLanguage('es')}
           title="Español"
           className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('es') ? 'isSelected' : '' }`}
+            currentLang?.startsWith('es') ? 'isSelected' : ''
+          }`}
         >
           <FlagES className="w-5 h-5 rounded-sm object-cover shrink-0" />
         </button>
