@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { Strategy, VerifyCallback, Profile } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '../auth.service';
 
@@ -13,19 +13,33 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: config.getOrThrow<string>('GOOGLE_CLIENT_ID'),
       clientSecret: config.getOrThrow<string>('GOOGLE_CLIENT_SECRET'),
-      callbackURL: config.getOrThrow<string>('GOOGLE_CALLBACK_URL'), // ex: https://localhost:8443/api/auth/google/callback
+      callbackURL: config.getOrThrow<string>('GOOGLE_CALLBACK_URL'),
       scope: ['email', 'profile'],
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback) {
-    const { emails, displayName, id } = profile;
-    const user = await this.authService.validateOAuthUser({
-      email: emails[0].value,
-      username: displayName,
-      provider: 'google',
-      providerId: id,
-    });
-    done(null, user);
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: Profile,
+    done: VerifyCallback
+  ) {
+    try {
+      const email = profile.emails?.[0]?.value;
+      if (!email) {
+        return done(new UnauthorizedException('No email returned by Google'), false);
+      }
+
+      const user = await this.authService.validateOAuthUser({
+        email,
+        username: profile.displayName,
+        provider: 'google',
+        providerId: profile.id,
+      });
+
+      done(null, user);
+    } catch (err) {
+      done(err, false);
+    }
   }
 }

@@ -17,7 +17,7 @@ async function request(path: string, options: RequestInit = {}, retry = true): P
     },
   });
 
-  if (res.status === 401 && retry) {
+  if (res.status === 401 && retry && !path.includes('/auth/refresh')) {
     const refreshed = await refreshAccessToken();
     if (refreshed) {
       return request(path, options, false);
@@ -28,17 +28,22 @@ async function request(path: string, options: RequestInit = {}, retry = true): P
 }
 
 async function refreshAccessToken(): Promise<boolean> {
-  const res = await fetch(`${API_URL}/auth/refresh`, {
-    method: 'POST',
-    credentials: 'include',
-  });
-  if (!res.ok) {
+  try {
+    const res = await fetch(`${API_URL}/auth/refresh`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      setAccessToken(null);
+      return false;
+    }
+    const data = await res.json();
+    setAccessToken(data.accessToken);
+    return true;
+  } catch {
     setAccessToken(null);
     return false;
   }
-  const data = await res.json();
-  setAccessToken(data.accessToken);
-  return true;
 }
 
 // Version publique, utilisée après un login OAuth : renvoie aussi le user,
@@ -61,7 +66,7 @@ export async function login(username: string, password: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: username, password }),
   });
-  if (!res.ok) throw new Error('Identifiants invalides');
+  if (!res.ok) throw new Error('Invalid credentials');
   const data = await res.json();
   setAccessToken(data.accessToken);
   return data;

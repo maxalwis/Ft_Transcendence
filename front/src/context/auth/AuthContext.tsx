@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { setAccessToken as setApiAccessToken } from '../../api/api';
 
 interface User {
   id: number;
@@ -23,32 +24,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const setAuth = (user: User, token: string) => {
     setUser(user);
     setAccessToken(token);
+    setApiAccessToken(token);
   };
 
   const logout = () => {
     setUser(null);
     setAccessToken(null);
+    setApiAccessToken(null);
   };
 
   useEffect(() => {
     const tryRefresh = async () => {
       try {
-        const res = await fetch(
-          `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/auth/refresh`,
-          {
-            method: 'POST',
-            credentials: 'include', // envoie le cookie httpOnly
-          }
-        );
-        if (!res.ok) throw new Error('no session');
+        const port = import.meta.env.VITE_HTTPS_PORT || '8443';
+        const res = await fetch(`https://localhost:${port}/api/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+
+        if (!res.ok) return;
+
         const data = await res.json();
-        setAuth(data.user, data.accessToken);
+        if (data.user && data.accessToken) {
+          setAuth(data.user, data.accessToken);
+        } else {
+          logout();
+        }
       } catch {
-        // pas de session valide, on reste déconnecté silencieusement
+        // Network or server offline errors fallback to logged-out state
+        logout();
       } finally {
         setIsLoading(false);
       }
     };
+
     tryRefresh();
   }, []);
 

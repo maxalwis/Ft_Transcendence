@@ -1,0 +1,127 @@
+{
+  "welcome": "Bienvenido a nuestro sitio",
+  "buttons": {
+    "submit": "Enviar"
+  },
+  "nav": {
+    "all": "Todo",
+    "music": "Música",
+    "culture": "Cultura",
+    "workshops": "Talleres",
+    "leisure": "Deportes y Ocio",
+    "others": "Otros"
+  },
+  "events": {
+    "defaultCategory": "Evento",
+    "unknownDate": "Fecha desconocida",
+    "linkLabel": "Enlace:"
+  },
+  "eventDetails": {
+    "defaultCategory": "Evento",
+    "unknownDate": "Fecha desconocida",
+    "accessLink": "Detalles del evento",
+    "price": {
+      "free": "Gratis",
+      "feeBased": "De pago"
+    }
+  },
+  "eventPreview": {
+    "defaultAlt": "Evento",
+    "seeDetails": "Ver detalles",
+    "undefinedDate": "Fecha no definida",
+    "start": "Inicio",
+    "end": "Fin",
+    "price": {
+      "free": "Gratis",
+      "feeBased": "De pago",
+      "unspecified": "Precio no especificado"
+    }
+  },
+  "filters": {
+    "title": "Filtros de eventos",
+    "cityLabel": "Ciudad / Ubicación",
+    "cityPlaceholder": "Ej: París",
+    "priceCategory": "Categoría de precio",
+    "selectCategory": "Seleccionar categoría",
+    "fromDate": "Desde :",
+    "apply": "Filtrar",
+    "reset": "Restablecer",
+    "allPrices": "Todos",
+    "free": "Gratis",
+    "feeBased": "De pago"
+  },
+  "friends": {
+    "buttonTitle": "Amigos",
+    "errorLoading": "Error de carga.",
+    "sidebarTitle": "Mis amigos",
+    "searchPlaceholder": "Buscar...",
+    "addTab": "Añadir",
+    "requestsTab": "Solicitudes",
+    "noFriends": "No hay amigos aún",
+    "remove": "Eliminar"
+  },
+  "friendsSidebar": {
+    "notLoggedIn": "Por favor, inicia sesión para ver tu lista de amigos.",
+    "search": "Buscar amigos",
+    "pendingRequests": "Solicitudes pendientes ({{count}})",
+    "pendingRequests_one": "Solicitud pendiente ({{count}})",
+    "add": "Añadir amigo",
+    "remove": "Eliminar amigo"
+  },
+  "friendsButton": {
+    "ariaOpen": "Abrir menú",
+    "ariaClose": "Cerrar menú",
+    "search": "Buscar",
+    "pendingRequest": "Solicitudes pendientes",
+    "addFriend": "Añadir un amigo",
+    "removeFriend": "Eliminar un amigo"
+  },
+  "friendsSearchBar": {
+    "clearInput": "Borrar texto",
+    "placeholders": {
+      "add": "Añadir un amigo...",
+      "remove": "Eliminar un amigo...",
+      "request": "Buscar un amigo...",
+      "default": "Buscar un amigo..."
+    }
+  },
+  "chat": {
+    "title": "Chat",
+    "connectPrompt": "Conéctate para ver el chat.",
+    "loadingMessages": "Cargando mensajes...",
+    "errorLoadMessages": "Error al cargar los mensajes",
+    "errorSend": "Error al intentar enviar el mensaje",
+    "placeholder": "Escribe tu mensaje...",
+    "send": "Enviar"
+  },
+  "authModal": {
+    "loginTitle": "Iniciar sesión",
+    "registerTitle": "Crear cuenta",
+    "email": "Correo electrónico",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "loginButton": "Iniciar sesión",
+    "registerButton": "Registrarse",
+    "noAccount": "¿No tienes cuenta?",
+    "createOne": "Crear una",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "signInLink": "Iniciar sesión",
+    "close": "Cerrar",
+    "loginWithGoogle": "Iniciar sesión con Google",
+    "loginWith42": "Iniciar sesión con 42",
+    "errors": {
+      "invalidCredentials": "Credenciales inválidas",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "registrationError": "Error al crear la cuenta"
+    }
+  },
+  "authBtn": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión"
+  },
+  "notifications": {
+    "defaultError": "Se ha producido un error",
+    "defaultSuccess": "Operación exitosa"
+  }
+}

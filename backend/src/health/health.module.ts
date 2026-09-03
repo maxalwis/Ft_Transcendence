@@ -13,6 +13,6 @@ import { PrismaHealthIndicator } from '../prisma/prisma.health';
 })
 export class HealthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddleware).forRoutes(HealthController);
   }
 }

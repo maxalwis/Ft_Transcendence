@@ -14,11 +14,7 @@ export class PublicApiThrottlerGuard extends ThrottlerGuard {
     return Promise.resolve(tracker ?? req.ip ?? 'anonymous');
   }
 
-  protected generateKey(
-    _context: ExecutionContext,
-    suffix: string,
-    name: string,
-  ): string {
+  protected generateKey(_context: ExecutionContext, suffix: string, name: string): string {
     // no handler in the key => same bucket for every public endpoint
     return `public-api:${name}:${suffix}`;
   }
