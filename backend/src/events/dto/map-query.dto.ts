@@ -1,6 +1,14 @@
 import { Transform, Type } from 'class-transformer';
 import { BadRequestException } from '@nestjs/common';
-import { IsOptional, IsISO8601, IsNumber, IsPositive, Max, IsDefined } from 'class-validator';
+import {
+  IsOptional,
+  IsISO8601,
+  IsNumber,
+  IsPositive,
+  Max,
+  IsDefined,
+  IsString,
+} from 'class-validator';
 import type { BoundingBox } from './bounding-box.interface';
 import type { CenterPoint } from './center-point.interface';
 
@@ -35,12 +43,26 @@ export class MapQueryDto {
   bbox?: BoundingBox;
 
   @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
   @IsISO8601()
   from?: string;
 
   @IsOptional()
   @IsISO8601()
   to?: string;
+
+  // --- FILTRES ---
+
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @IsOptional()
+  @IsString()
+  price?: string;
 }
 
 // Parse et valide "lon,lat" reçu en query param 'center'
@@ -72,4 +94,14 @@ export class NearbyQueryDto {
   @IsOptional()
   @IsISO8601()
   to?: string;
+
+  // --- FILTRES POUR NEARBY ---
+
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @IsOptional()
+  @IsString()
+  price?: string;
 }

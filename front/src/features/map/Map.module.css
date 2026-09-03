@@ -1,4 +1,12 @@
-/* Map.module.css */
+/* Target the specific Leaflet attribution container */
+:global(.leaflet-control-attribution) {
+  display: none !important;
+}
+
+/* Or target the bottom-right control container specifically */
+:global(.leaflet-bottom.leaflet-right .leaflet-control-attribution) {
+  display: none !important;
+}
 
 /* Glass container styling for both Zoom and Custom Links */
 :global(.leaflet-control-zoom.leaflet-bar),
@@ -62,21 +70,21 @@
 @keyframes centerPopIn {
   from {
     opacity: 0;
-    transform: translateY(-50%) scale(0.7);
+    transform: scale(0.7);
   }
   to {
     opacity: 1;
-    transform: translateY(-50%) scale(1);
+    transform: scale(1);
   }
 }
 
 @keyframes centerPopOut {
   from {
     opacity: 1;
-    transform: translateY(-50%) scale(1);
+    transform: scale(1);
   }
   to {
     opacity: 0;
-    transform: translateY(-50%) scale(0.7);
+    transform: scale(0.7);
   }
 }

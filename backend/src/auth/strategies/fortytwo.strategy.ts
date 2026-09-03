@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-oauth2';
 import { ConfigService } from '@nestjs/config';
@@ -21,18 +21,22 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   }
 
   async validate(accessToken: string) {
-    const { data } = await axios.get('https://api.intra.42.fr/v2/me', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    let data: any;
+    try {
+      ({ data } = await axios.get('https://api.intra.42.fr/v2/me', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        timeout: 5000,
+      }));
+    } catch (err) {
+      throw new UnauthorizedException('Failed to retrieve 42 profile');
+    }
 
-    const user = await this.authService.validateOAuthUser({
+    return this.authService.validateOAuthUser({
       email: data.email,
       username: data.login,
       provider: '42',
       providerId: String(data.id),
       avatar: data.image?.link ?? '',
     });
-
-    return user;
   }
 }

@@ -1,8 +1,14 @@
-import { useAuth } from '../../../context/auth/AuthContext.tsx';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../../context/auth/AuthContext';
 import { useState, useRef, useEffect } from 'react';
 import EditProfile from '../../profile/EditProfile.tsx';
 
-export default function LoginButton() {
+interface LoginButtonProps {
+  onOpenAuth: () => void;
+}
+
+export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,10 +26,6 @@ export default function LoginButton() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogin = () => {
-    window.location.href = `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/login/`;
-  };
-
   const handleLogout = async () => {
     try {
       await fetch(`https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/auth/logout`, {
@@ -31,7 +33,7 @@ export default function LoginButton() {
         credentials: 'include',
       });
     } catch {
-      // on ignore une éventuelle erreur réseau, on déconnecte quand même côté client
+      // ignore network errors on logout
     } finally {
       logout();
       setIsMenuOpen(false);
@@ -86,9 +88,10 @@ export default function LoginButton() {
   return (
     <button
       className="h-10 w-25 glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
-      onClick={handleLogin}
+      type="button"
+      onClick={onOpenAuth}
     >
-      Connexion
+      {t('authBtn.login')}
     </button>
   );
 }

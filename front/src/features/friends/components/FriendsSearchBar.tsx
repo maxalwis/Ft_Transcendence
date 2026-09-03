@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { ActionState } from './Friends';
 
 type InputProps = ActionState & {
@@ -6,15 +7,17 @@ type InputProps = ActionState & {
 };
 
 export default function FriendsSearchBar({ action, input, setInput }: InputProps) {
+  const { t } = useTranslation();
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setInput(e.target.value);
   }
 
-  const placeholders = {
-    add: 'Add a friend...',
-    remove: 'Remove a friend...',
-    request: 'Search a friend...',
-    default: 'Search a friend...',
+  const placeholders: Record<string, string> = {
+    add: t('friendsSearchBar.placeholders.add'),
+    remove: t('friendsSearchBar.placeholders.remove'),
+    request: t('friendsSearchBar.placeholders.request'),
+    default: t('friendsSearchBar.placeholders.default'),
   };
 
   return (
@@ -22,16 +25,15 @@ export default function FriendsSearchBar({ action, input, setInput }: InputProps
       <input
         maxLength={30}
         type="text"
-
         onChange={handleChange}
         value={input}
-        placeholder={placeholders[action]}
+        placeholder={placeholders[action] || placeholders.default}
         className="w-full bg-transparent text-sm text-black outline-none placeholder:text-black"
       />
       {input ? (
         <button
           type="button"
-          aria-label="Close"
+          aria-label={t('friendsSearchBar.clearInput')}
           onClick={() => setInput('')}
           className="glass-element icon-btn rounded-xl w-6 h-6 duration-150 cursor-pointer hover:text-white! active:scale-70"
         >

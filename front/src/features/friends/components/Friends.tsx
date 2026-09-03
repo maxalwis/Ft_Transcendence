@@ -3,7 +3,7 @@ import { getFriends, getPendingRequests } from '../../../api/friends';
 import type { User, PendingRequest } from '../../../api/friends';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/auth/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styles from '../Friends.module.css';
 
 export type FriendAction = 'menu' | 'default' | 'add' | 'remove' | 'request';
@@ -17,15 +17,19 @@ export type OpenState = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function Friends() {
+interface FriendsProps {
+  onOpenAuth?: () => void;
+}
+
+export default function Friends({ onOpenAuth }: FriendsProps) {
   const [action, setAction] = useState<FriendAction>('menu');
   const [isOpen, setIsOpen] = useState(false);
   const [friends, setFriends] = useState<User[]>([]);
   const [requests, setRequests] = useState<PendingRequest[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const { t } = useTranslation();
   const { user, accessToken } = useAuth();
-  const navigate = useNavigate();
 
   const loadData = async () => {
     if (!accessToken) return;
@@ -38,29 +42,30 @@ export default function Friends() {
       setRequests(pendingList);
       setErrorMsg(null);
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Erreur de chargement.');
+      setErrorMsg(
+        err instanceof Error ? err.message : t('friends.errorLoading', 'Erreur de chargement.')
+      );
     }
   };
 
   useEffect(() => {
-    if (isOpen) loadData();
-  }, [isOpen, accessToken]);
+    // Only load data if the user is authenticated
+    if (isOpen && user) loadData();
+  }, [isOpen, accessToken, user]);
+
+  const handleClick = () => {
+    setAction('menu');
+    setIsOpen(true);
+  };
 
   return (
-    <div className={styles.friendsContainer}>
-      {/* whitespace-nowrap keeps button text on a single line */}
+    <div className="relative">
       <button
-        className="glass-panel p-2 cursor-pointer duration-500 active:scale-70 whitespace-nowrap"
-        onClick={() => {
-          if (!user) {
-            navigate('/login');
-            return;
-          }
-          setAction('menu');
-          setIsOpen(true);
-        }}
+        type="button"
+        className="glass-panel flex items-center justify-center whitespace-nowrap"
+        onClick={handleClick}
       >
-        Friends
+        {t('friends.buttonTitle', 'Friends')}
       </button>
 
       <FriendsSidebar
@@ -72,6 +77,8 @@ export default function Friends() {
         requests={requests}
         errorMsg={errorMsg}
         onDataChanged={loadData}
+        isLoggedIn={!!user}
+        onOpenAuth={onOpenAuth}
       />
     </div>
   );

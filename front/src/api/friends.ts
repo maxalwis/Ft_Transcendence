@@ -7,7 +7,7 @@ export interface User {
   avatar?: string;
   preferredCategory?: string | null;
   preferredLanguage?: string | null;
-  status: 'ONLINE' | 'OFFLINE' | 'IN_GAME';
+  status: 'ONLINE' | 'OFFLINE';
 }
 
 export interface PendingRequest {

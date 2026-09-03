@@ -5,7 +5,7 @@ export interface UserSearchResult {
   id: number;
   username: string;
   avatar?: string;
-  status: 'ONLINE' | 'OFFLINE' | 'IN_GAME';
+  status: 'ONLINE' | 'OFFLINE';
 }
 
 export async function searchUsers(
