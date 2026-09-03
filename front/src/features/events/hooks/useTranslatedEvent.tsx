@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 interface TranslatedEvent {
   title: string;
   description: string;
-  priceDetail: string,
+  priceDetail: string;
+  category: string;
 }
 
 export function useTranslatedEvent(eventId: string, lang: string) {

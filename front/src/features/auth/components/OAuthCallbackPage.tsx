@@ -12,9 +12,9 @@ export default function OAuthCallbackPage() {
       try {
         const { accessToken, user } = await refresh();
         setAuth(user, accessToken);
-        navigate('/');
+        navigate('/', { replace: true });
       } catch {
-        navigate('/login');
+        navigate('/', { replace: true });
       }
     })();
   }, []);

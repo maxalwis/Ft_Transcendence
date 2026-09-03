@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LibreTranslateService } from './libretranslate.service';
 
 const SUPPORTED_LANGS = ['en', 'es'];
-type TranslatableField = 'title' | 'description' | 'priceDetail';
+type TranslatableField = 'title' | 'description' | 'priceDetail' | 'category';
 
 @Injectable()
 export class TranslationsService {
@@ -24,6 +24,37 @@ export class TranslationsService {
     return this.getTranslatedField(eventId, 'priceDetail', lang);
   }
 
+  // fonction à part pour la catégorie vu que string[] et non string
+  // on traduit et renvoie le premier élément de string[]
+  async getTranslatedCategory(eventId: string, lang: string): Promise<string> {
+    const event = await this.prisma.event.findUnique({
+      where: { id: eventId },
+      select: { category: true },
+    });
+    if (!event) {
+      throw new NotFoundException(`Couldn't find event ${eventId}`);
+    }
+
+    const sourceText = event.category?.[0];
+    if (!sourceText) return '';
+
+    if (lang === 'fr') return sourceText;
+    if (!SUPPORTED_LANGS.includes(lang)) {
+      throw new BadRequestException(`Unsupported language: ${lang}`);
+    }
+
+    const cached = await this.prisma.translationCache.findUnique({
+      where: { eventId_lang_field: { eventId, lang, field: 'category' } },
+    });
+    if (cached) return cached.translatedText;
+
+    const translatedText = await this.libreTranslate.translate(sourceText, lang);
+    await this.prisma.translationCache.create({
+      data: { eventId, lang, field: 'category', translatedText },
+    });
+    return translatedText;
+  }
+
   private async getTranslatedField(
     eventId: string,
     field: TranslatableField,
@@ -34,7 +65,7 @@ export class TranslationsService {
       select: { [field]: true } as Record<TranslatableField, true>,
     });
     if (!event) {
-      throw new NotFoundException(`Event ${eventId} introuvable`);
+      throw new NotFoundException(`Couldn't find event ${eventId}`);
     }
 
     const record = event as unknown as Record<TranslatableField, string | null>;
@@ -50,7 +81,7 @@ export class TranslationsService {
 
     if (!SUPPORTED_LANGS.includes(lang)) {
       throw new BadRequestException(
-        `Langue non supportée: ${lang} (attendu: fr, ${SUPPORTED_LANGS.join(', ')})`
+        `Unsupported language: ${lang} (expected: fr, ${SUPPORTED_LANGS.join(', ')})`
       );
     }
 

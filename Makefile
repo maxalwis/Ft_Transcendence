@@ -14,14 +14,16 @@ ifeq (,$(wildcard .env))
 endif
 
 up: check-env
-	podman compose up -d --build
+	podman compose build
+	podman compose up -d
 	podman compose logs -f
 
 down:
 	podman compose down
 
 elk: check-env
-	podman compose --profile elk up -d --build
+	podman compose --profile elk build 
+	podman compose --profile elk up -d
 	podman compose logs -f
 
 clean:

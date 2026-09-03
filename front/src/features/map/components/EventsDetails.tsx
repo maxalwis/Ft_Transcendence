@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 import './EventsDetails.css';
 import LikeButton from '../../events/components/LikeButton';
-import { useLanguage } from '../../../context/language/LanguageContext';
-import { getPriceLabel } from '../../events/utils/priceLabels';
 
 export interface Friend {
   id: string;

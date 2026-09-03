@@ -1,6 +1,6 @@
 import { useMap } from 'react-leaflet';
 import { useEffect } from 'react';
-import type { EventGroup } from './Map';
+import type { EventGroup } from '../../../types/event';
 
 interface MapEventsProps {
   activeGroup: EventGroup | null;

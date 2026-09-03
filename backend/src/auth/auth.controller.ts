@@ -33,10 +33,10 @@ export class AuthController {
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/api/auth/refresh',
+      path: '/',
     });
 
     return {
@@ -57,10 +57,10 @@ export class AuthController {
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours en ms
-      path: '/api/auth/refresh',
+      path: '/',
     });
 
     return {
@@ -74,17 +74,24 @@ export class AuthController {
   async refresh(@Req() req: Request) {
     const refreshToken = req.cookies['refresh_token'];
     if (!refreshToken) {
-      throw new UnauthorizedException();
+      return { authenticated: false };
     }
-    return this.authService.refreshAccessToken(refreshToken);
+
+    try {
+      const data = await this.authService.refreshAccessToken(refreshToken);
+      return { authenticated: true, ...data };
+    } catch {
+      // Returning a clean false for an expired or invalid refresh token.
+      return { authenticated: false };
+    }
   }
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('refresh_token', { path: '/api/auth/refresh' });
+    res.clearCookie('refresh_token', { path: '/' });
     // invalider le refresh token en DB si stocké (voir login() dans auth.service)
-    return { message: 'Déconnecté' };
+    return { message: 'Logged out successfully' };
   }
 
   // --- OAuth Google ---
@@ -105,10 +112,10 @@ export class AuthController {
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/api/auth/refresh',
+      path: '/',
     });
 
     res.redirect('https://localhost:8443/oauth/callback');
@@ -132,10 +139,10 @@ export class AuthController {
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/api/auth/refresh',
+      path: '/',
     });
 
     res.redirect('https://localhost:8443/oauth/callback');

@@ -14,7 +14,7 @@ CREATE EXTENSION IF NOT EXISTS "postgis_topology";
 CREATE TYPE "FriendshipStatus" AS ENUM ('PENDING', 'ACCEPTED', 'BLOCKED');
 
 -- CreateEnum
-CREATE TYPE "UserStatus" AS ENUM ('OFFLINE', 'ONLINE', 'IN_GAME');
+CREATE TYPE "UserStatus" AS ENUM ('OFFLINE', 'ONLINE');
 
 -- CreateTable
 CREATE TABLE "Event" (

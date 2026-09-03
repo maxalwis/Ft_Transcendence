@@ -69,7 +69,7 @@ export class AuthService {
 
       const user = await this.usersService.findOne(payload.sub);
       if (!user) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('User not found');
       }
 
       const newAccessToken = await this.jwtService.signAsync(
