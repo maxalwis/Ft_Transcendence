@@ -3,6 +3,7 @@ import Chat from '../features/chat/components/Chat';
 import Event from '../features/events/components/Event';
 import type { EventItem } from '../types/event';
 import { useTranslation } from 'react-i18next';
+import { FlagFR, FlagGB, FlagES } from './FlagIcons';
 
 interface SideBarProps {
   onClose: () => void;
@@ -22,7 +23,8 @@ export default function SideBar({
   event,
 }: SideBarProps) {
   const [eventDetails, setEventDetails] = useState<EventItem | null>(event || null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
 
   useEffect(() => {
     if (event !== undefined) {
@@ -49,15 +51,45 @@ export default function SideBar({
   }, [eventId]);
 
   return (
-    <div className="glass-panel fixed top-20 right-3 w-[20vw] h-[93vh] rounded-xl p-5 shadow-lg z-1000 flex flex-col">
-      {/* Close Button Header */}
-      <div className="shrink-0">
+    <div className="glass-panel fixed top-2 right-3 bottom-2 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col">
+      <div className="pointer-events-auto absolute top-3 right-full mr-2 flex flex-col gap-2">
         <button
           type="button"
-          aria-label="Close"
-          onClick={onClose}
-          className="icon-btn glass-panel absolute top-3 right-3 z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl transition-all duration-150 hover:border-red-500/50 hover:bg-red-500/25! hover:text-red-400! active:scale-70"
+          onClick={() => i18n.changeLanguage('fr')}
+          title="Français"
+          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+            currentLang?.startsWith('fr') ? 'isSelected' : ''
+          }`}
         >
+          <FlagFR className="w-5 h-5 rounded-sm object-cover shrink-0" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => i18n.changeLanguage('en')}
+          title="English"
+          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+            currentLang?.startsWith('en') ? 'isSelected' : ''
+          }`}
+        >
+          <FlagGB className="w-5 h-5 rounded-sm object-cover shrink-0" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => i18n.changeLanguage('es')}
+          title="Español"
+          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+            currentLang?.startsWith('es') ? 'isSelected' : ''
+          }`}
+        >
+          <FlagES className="w-5 h-5 rounded-sm object-cover shrink-0" />
+        </button>
+      </div>
+
+      {/* Close Button Header */}
+      <div className="shrink-0">
+        <button type="button" aria-label="Close" onClick={onClose} className="modal-close">
           <svg
             className="h-4 w-4"
             viewBox="0 0 24 24"

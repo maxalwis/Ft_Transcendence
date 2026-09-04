@@ -70,6 +70,25 @@ export async function acceptFriendRequest(senderId: number, accessToken: string)
   return res.json();
 }
 
+export async function rejectFriendRequest(senderId: number, accessToken: string) {
+  const res = await fetch(`${API_URL}/reject/${senderId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    credentials: 'include',
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null);
+    const message = Array.isArray(errorData?.message)
+      ? errorData.message.join(', ')
+      : errorData?.message;
+    throw new Error(message || `Impossible de refuser la demande (${res.status})`);
+  }
+  return res.json();
+}
+
 export async function removeFriend(friendId: number, accessToken: string) {
   const res = await fetch(`${API_URL}/${friendId}`, {
     method: 'DELETE',

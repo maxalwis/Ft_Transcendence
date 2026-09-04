@@ -190,7 +190,11 @@ export default function Map({ onOpenAuth }: MapProps) {
 
       <Filters onApplyFilters={handleApplyFilters} />
 
-      <NavBar activeCategory={filters.category} onSelectCategory={handleSelectCategory} />
+      <NavBar
+        activeCategory={filters.category}
+        onSelectCategory={handleSelectCategory}
+        showLanguageSelector={!activeSidebarEventId}
+      />
 
       <BottomBar onOpenAuth={onOpenAuth} />
 

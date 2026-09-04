@@ -66,6 +66,24 @@ export class FriendsService {
     });
   }
 
+  async rejectFriendRequest(senderId: number, receiverId: number) {
+    const pendingRequest = await this.prisma.friendship.findFirst({
+      where: {
+        senderId,
+        receiverId,
+        status: 'PENDING',
+      },
+    });
+
+    if (!pendingRequest) {
+      throw new NotFoundException('Aucune demande d’ami en attente trouvée.');
+    }
+
+    return this.prisma.friendship.delete({
+      where: { id: pendingRequest.id },
+    });
+  }
+
   async getPendingRequests(userId: number) {
     return this.prisma.friendship.findMany({
       where: {

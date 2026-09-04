@@ -10,7 +10,7 @@ COPY prisma ./prisma
 
 # Install dependencies and OpenSSL/wget via Alpine package manager (apk)
 RUN apk add --no-cache openssl wget \
-    && npm install
+    && npm install --no-audit
 
 # Copy the rest of the application code
 COPY . .

@@ -25,7 +25,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     try {
       ({ data } = await axios.get('https://api.intra.42.fr/v2/me', {
         headers: { Authorization: `Bearer ${accessToken}` },
-        timeout: 5000,
+        timeout: 15000,
       }));
     } catch (err) {
       throw new UnauthorizedException('Failed to retrieve 42 profile');

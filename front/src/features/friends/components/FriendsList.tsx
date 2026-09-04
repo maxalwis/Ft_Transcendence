@@ -6,6 +6,7 @@ import { searchUsers } from '../../../api/users';
 import type { UserSearchResult } from '../../../api/users';
 import { useAuth } from '../../../context/auth/AuthContext';
 import ViewProfile from '../../profile/ViewProfile';
+import styles from '../Friends.module.css';
 
 type FriendsListProps = {
   friends: User[];
@@ -38,7 +39,8 @@ export default function FriendsList({
         setResults(found);
         setErrorMsg(null);
       } catch (err) {
-        setErrorMsg(err instanceof Error ? err.message : 'Searching error.');
+        setResults([]);
+        setErrorMsg(null);
       }
     }, 300);
 
@@ -69,7 +71,7 @@ export default function FriendsList({
   return (
     <div className="flex flex-col gap-2">
       {action === 'add' && (
-        <div className="flex flex-col gap-1 px-2 py-1">
+        <div className="flex flex-col gap-1">
           {errorMsg && <p className="text-xs text-red-500 px-2">{errorMsg}</p>}
           {results.map((user) => (
             <div
@@ -80,15 +82,25 @@ export default function FriendsList({
               <button
                 type="button"
                 onClick={() => handleAddFriend(user.id)}
-                className="flex h-6 w-6 text-lg shrink-0 items-center border border-green-500 justify-center rounded-full duration-150
-                  cursor-pointer hover:bg-green-500 hover:text-white"
+                className="modal-close-inline modal-close-inline-green icon-btn shrink-0 cursor-pointer active:scale-70"
               >
-                +
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                >
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
               </button>
             </div>
           ))}
           {input.trim() && results.length === 0 && (
-            <p className="text-xs text-slate-400 italic px-2">Aucun utilisateur trouvé.</p>
+            <p className="flex justify-center items-center text-xs text-slate-400 italic px-2">
+              Aucun utilisateur trouvé.
+            </p>
           )}
         </div>
       )}
@@ -96,7 +108,7 @@ export default function FriendsList({
         (friends || []).map((friend) => (
           <div
             key={friend.id}
-            className="flex items-center justify-between gap-3 rounded-lg bg-white/10 px-2 py-1 text-sm text-black"
+            className="flex items-center justify-between gap-3 rounded-lg bg-white/10 px-3 py-2 text-sm text-black"
           >
             <div className="flex items-center gap-3">
               <div className="relative shrink-0">
@@ -123,16 +135,26 @@ export default function FriendsList({
               <button
                 type="button"
                 onClick={() => handleRemoveFriend(friend.id)}
-                className="flex h-5 w-5 items-center justify-center text-red-500 rounded-full border hover:border-white/10 hover:bg-red-600 hover:text-white duration-150 cursor-pointer"
+                className="modal-close-inline modal-close-inline-red icon-btn shrink-0 cursor-pointer active:scale-70"
               >
-                X
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
               </button>
             )}
             {action !== 'remove' && (
               <button
                 type="button"
                 onClick={() => setSelectedFriend(friend)}
-                className="shrink-0 cursor-pointer rounded-md px-2 py-1 text-xs hover:bg-white/20"
+                className={`${styles.menuButton} ${styles.menuButtonBlue}`}
               >
                 View profile
               </button>

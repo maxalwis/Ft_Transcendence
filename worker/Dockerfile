@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # installe les dependances dans node_modules du conteneur
-RUN npm install
+RUN npm install --no-audit
 
 COPY . .
 

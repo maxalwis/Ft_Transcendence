@@ -4,9 +4,14 @@ import { FlagFR, FlagGB, FlagES } from './FlagIcons';
 export type NavBarProps = {
   onSelectCategory?: (category: string) => void;
   activeCategory?: string;
+  showLanguageSelector?: boolean;
 };
 
-export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps) {
+export default function NavBar({
+  onSelectCategory,
+  activeCategory,
+  showLanguageSelector = true,
+}: NavBarProps) {
   const { t, i18n } = useTranslation();
 
   // Updated to match the top database category groups
@@ -55,41 +60,44 @@ export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps
         })}
       </nav>
 
-      {/* Flag Language Selector */}
-      <div className="relative z-10 flex items-center gap-2 pointer-events-auto shrink-0">
-        <button
-          type="button"
-          onClick={() => i18n.changeLanguage('fr')}
-          title="Français"
-          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('fr') ? 'isSelected' : ''
-          }`}
-        >
-          <FlagFR className="w-5 h-5 rounded-sm object-cover shrink-0" />
-        </button>
+      {showLanguageSelector ? (
+        <div className="relative z-10 flex items-center gap-2 pointer-events-auto shrink-0">
+          <button
+            type="button"
+            onClick={() => i18n.changeLanguage('fr')}
+            title="Français"
+            className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+              currentLang?.startsWith('fr') ? 'isSelected' : ''
+            }`}
+          >
+            <FlagFR className="w-5 h-5 rounded-sm object-cover shrink-0" />
+          </button>
 
-        <button
-          type="button"
-          onClick={() => i18n.changeLanguage('en')}
-          title="English"
-          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('en') ? 'isSelected' : ''
-          }`}
-        >
-          <FlagGB className="w-5 h-5 rounded-sm object-cover shrink-0" />
-        </button>
+          <button
+            type="button"
+            onClick={() => i18n.changeLanguage('en')}
+            title="English"
+            className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+              currentLang?.startsWith('en') ? 'isSelected' : ''
+            }`}
+          >
+            <FlagGB className="w-5 h-5 rounded-sm object-cover shrink-0" />
+          </button>
 
-        <button
-          type="button"
-          onClick={() => i18n.changeLanguage('es')}
-          title="Español"
-          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('es') ? 'isSelected' : ''
-          }`}
-        >
-          <FlagES className="w-5 h-5 rounded-sm object-cover shrink-0" />
-        </button>
-      </div>
+          <button
+            type="button"
+            onClick={() => i18n.changeLanguage('es')}
+            title="Español"
+            className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+              currentLang?.startsWith('es') ? 'isSelected' : ''
+            }`}
+          >
+            <FlagES className="w-5 h-5 rounded-sm object-cover shrink-0" />
+          </button>
+        </div>
+      ) : (
+        <div className="hidden w-[120px] md:block" />
+      )}
     </div>
   );
 }

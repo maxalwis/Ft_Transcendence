@@ -22,18 +22,23 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
       <div
         data-state={isClosing ? 'closed' : 'open'}
         onAnimationEnd={handleAnimationEnd}
-        className="profileModal profileModalContent glass-panel"
+        className="profileModal profileModalContent glass-panel relative"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="profileModalHeader">
           <h2>View profile</h2>
-          <button
-            type="button"
-            className="profileModalClose"
-            onClick={requestClose}
-            aria-label="Fermer"
-          >
-            x
+          <button type="button" className="modal-close" onClick={requestClose} aria-label="Fermer">
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
           </button>
         </div>
 

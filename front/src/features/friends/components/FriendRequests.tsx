@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { PendingRequest } from '../../../api/friends';
-import { acceptFriendRequest } from '../../../api/friends';
+import { acceptFriendRequest, rejectFriendRequest } from '../../../api/friends';
 import { useAuth } from '../../../context/auth/AuthContext';
+import styles from '../Friends.module.css';
 
 type FriendsRequestsProps = {
   requests: PendingRequest[];
@@ -21,9 +22,18 @@ export default function FriendsRequests({ requests, onDataChanged }: FriendsRequ
     }
   };
 
+  const handleReject = async (senderId: number) => {
+    try {
+      await rejectFriendRequest(senderId, accessToken!);
+      onDataChanged();
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Erreur lors du refus');
+    }
+  };
+
   if (!requests || requests.length === 0) {
     return (
-      <div className="p-3 text-xs text-slate-400 italic text-center">
+      <div className="mb-3 text-xs text-slate-400 italic text-center">
         Aucune demande d'ami en attente.
       </div>
     );
@@ -40,16 +50,25 @@ export default function FriendsRequests({ requests, onDataChanged }: FriendsRequ
         return (
           <div
             key={req.id}
-            className="flex items-center justify-between gap-2 rounded-lg bg-white/10 px-3 py-2 text-sm text-black"
+            className="flex items-center justify-between gap-1 rounded-lg bg-white/10 px-3 py-2 text-sm text-black"
           >
             <span className="font-medium">{displayName}</span>
-            <button
-              type="button"
-              onClick={() => handleAccept(targetId)}
-              className="px-2 py-1 text-xs bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer"
-            >
-              Accept
-            </button>
+            <div className="flex">
+              <button
+                type="button"
+                onClick={() => handleAccept(targetId)}
+				className={`${styles.menuButton} ${styles.menuButtonGreen}`}
+			  >
+                Accept
+              </button>
+              <button
+                type="button"
+                onClick={() => handleReject(targetId)}
+				className={`${styles.menuButton} ${styles.menuButtonRed}`}
+			  >
+                Reject
+              </button>
+            </div>
           </div>
         );
       })}

@@ -7,7 +7,7 @@ interface BottomBarProps {
 
 export default function BottomBar({ onOpenAuth }: BottomBarProps) {
   return (
-    <div className="fixed bottom-2 w-full flex flex-row items-center justify-between px-6 z-[500] pointer-events-none">
+    <div className="fixed bottom-2 w-full flex flex-row items-center justify-between px-3 z-500 pointer-events-none">
       {/* Left side position */}
       <div className="pointer-events-auto">
         <Friends />

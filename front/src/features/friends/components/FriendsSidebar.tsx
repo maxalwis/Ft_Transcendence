@@ -70,11 +70,11 @@ export default function FriendsSidebar({
         <button
           type="button"
           aria-label="Back"
-          className="glass-element absolute top-2 left-2 z-10 w-8 h-8 p-1.5! rounded-xl duration-150 cursor-pointer hover:text-white! active:scale-70 flex items-center justify-center"
+          className="modal-close left-3 right-auto"
           onClick={handleBack}
         >
           <svg
-            className="w-full h-full"
+            className="w-4 h-4"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -88,14 +88,9 @@ export default function FriendsSidebar({
       )}
 
       {/* Close Button (Top-Right) */}
-      <button
-        type="button"
-        aria-label="Close"
-        className="glass-element absolute top-2 right-2 z-10 w-8 h-8 p-1.5! rounded-xl duration-150 cursor-pointer hover:text-white! active:scale-70 flex items-center justify-center"
-        onClick={handleClose}
-      >
+      <button type="button" aria-label="Close" className="modal-close" onClick={handleClose}>
         <svg
-          className="w-full h-full"
+          className="h-4 w-4"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -108,7 +103,7 @@ export default function FriendsSidebar({
       </button>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto pt-10">
+      <div className={`flex-1 overflow-y-auto ${action === 'menu' ? 'pt-2' : 'pt-12'}`}>
         {!isLoggedIn ? (
           <div className="flex flex-col items-center justify-center h-full p-4 text-center">
             <p className="text-sm font-medium">{t('friendsSidebar.notLoggedIn')}</p>
@@ -117,28 +112,28 @@ export default function FriendsSidebar({
           <div className="flex flex-col gap-2 py-2">
             <button
               type="button"
-              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-blue-600 hover:text-white cursor-pointer duration-150 font-medium"
+              className={`${styles.menuButton} ${styles.menuButtonBlue}`}
               onClick={() => setAction('default')}
             >
               {t('friendsSidebar.search')}
             </button>
             <button
               type="button"
-              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-orange-600 hover:text-white cursor-pointer duration-150 font-medium"
+              className={`${styles.menuButton} ${styles.menuButtonOrange}`}
               onClick={() => setAction('request')}
             >
               {t('friendsSidebar.pendingRequests', { count: requests.length })}
             </button>
             <button
               type="button"
-              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-green-600 hover:text-white cursor-pointer duration-150 font-medium"
+              className={`${styles.menuButton} ${styles.menuButtonGreen}`}
               onClick={() => setAction('add')}
             >
               {t('friendsSidebar.add')}
             </button>
             <button
               type="button"
-              className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-red-600 hover:text-white cursor-pointer duration-150 font-medium"
+              className={`${styles.menuButton} ${styles.menuButtonRed}`}
               onClick={() => setAction('remove')}
             >
               {t('friendsSidebar.remove')}

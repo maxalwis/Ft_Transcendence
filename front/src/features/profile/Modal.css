@@ -68,20 +68,6 @@
   margin: 0;
 }
 
-.profileModalClose {
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1.5rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0.25rem;
-}
-
-.profileModalClose:hover {
-  color: white;
-}
-
 .avatar-picker {
   display: flex;
   flex-direction: column;

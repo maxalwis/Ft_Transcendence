@@ -60,7 +60,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
         type="button"
         aria-label="Open Filters"
         onClick={() => setIsOpen(true)}
-        className="glass-panel icon-btn fixed left-4 top-1/2 -translate-y-1/2 z-[9999] w-10 h-10 rounded-full shadow-lg cursor-pointer active:scale-95 flex items-center justify-center"
+        className="glass-panel icon-btn fixed left-4 top-1/2 -translate-y-1/2 z-500 w-10 h-10 rounded-full shadow-lg cursor-pointer active:scale-95 flex items-center justify-center"
         style={{ color: 'var(--color-blue-dark)' }}
       >
         <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
@@ -73,22 +73,23 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
           <div
             onAnimationEnd={handleAnimationEnd}
             data-state={isOpen ? 'open' : 'closed'}
-            className={`${styles.filterModal || styles.sidebarModal || 'filterModal'} glass-panel h-auto w-64 fixed left-3 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 z-[9999] rounded-xl shadow-2xl`}
+            className={`${styles.filterModal || styles.sidebarModal || 'filterModal'} glass-panel h-auto w-64 fixed left-3 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 z-50 rounded-xl shadow-2xl`}
             style={{ color: 'var(--color-blue-dark)' }}
           >
             <button
               type="button"
               aria-label="Close"
-              className="glass-element icon-btn absolute top-2 right-2 z-10 w-8 h-8 p-1.5 rounded-xl duration-150 cursor-pointer active:scale-70 flex items-center justify-center"
-              style={{ color: 'var(--color-blue-dark)' }}
+              className="modal-close"
               onClick={() => setIsOpen(false)}
             >
               <svg
-                className="w-full h-full"
+                className="h-4 w-4"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="1.5"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <path d="M18 6L6 18M6 6l12 12" />
               </svg>
@@ -134,7 +135,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
                 max="2028-12-31"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-2 py-1 border border-white/20 rounded bg-white text-xs"
+                className="w-full px-2 py-2 border border-white/20 rounded bg-white text-xs"
               />
             </div>
 
@@ -150,7 +151,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               <button
                 type="button"
                 onClick={handleReset}
-                className="w-1/2 py-1.5 rounded text-xs font-semibold cursor-pointer bg-gray-200"
+                className="flex items-center justify-center w-1/2 py-1.5 rounded text-xs font-semibold cursor-pointer bg-gray-200"
               >
                 {t('filters.reset', 'Reset')}
               </button>
