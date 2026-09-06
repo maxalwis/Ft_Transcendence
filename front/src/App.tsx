@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import Map from './features/map/components/Map';
-import { AdminPanelLinks } from './features/externalLinks/AdminPanelLinks';
 import { NotificationProvider } from './context/notifications/NotificationContext';
 import BottomBar from './layouts/BottomBar';
 
@@ -30,11 +29,6 @@ export default function App() {
               <Route path="/" element={<Map onOpenAuth={handleOpenAuth} />} />
               <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
             </Routes>
-          </div>
-
-          {/* Floating Three-Dots Admin Menu Component */}
-          <div className="absolute top-4 right-4 z-20">
-            <AdminPanelLinks />
           </div>
 
           <BottomBar onOpenAuth={handleOpenAuth} />

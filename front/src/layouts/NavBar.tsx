@@ -11,12 +11,12 @@ export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps
 
   // Updated to match the top database category groups
   const categories = [
-    { label: t('nav.all', 'Tout'), value: '' },
-    { label: t('nav.music', 'Musique'), value: 'musique' },
-    { label: t('nav.culture', 'Culture'), value: 'culture' },
-    { label: t('nav.workshops', 'Ateliers'), value: 'ateliers' },
-    { label: t('nav.leisure', 'Loisirs & Sport'), value: 'loisirs' },
-    { label: t('nav.others', 'Autres'), value: 'autres' },
+    { label: t('categories.all', 'Tout'), value: '' },
+    { label: t('categories.music', 'Musique'), value: 'musique' },
+    { label: t('categories.culture', 'Culture'), value: 'culture' },
+    { label: t('categories.workshops', 'Ateliers'), value: 'ateliers' },
+    { label: t('categories.leisure', 'Loisirs & Sport'), value: 'loisirs' },
+    { label: t('categories.others', 'Autres'), value: 'autres' },
   ];
 
   const currentLang = i18n.language;
