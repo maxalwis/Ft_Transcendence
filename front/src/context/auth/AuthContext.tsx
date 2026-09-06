@@ -7,6 +7,8 @@ interface User {
   username: string;
   provider?: string | null;
   avatar?: string | null;
+  preferredLanguage?: 'FR' | 'EN' | 'ES' | null;
+  preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS' | null;
 }
 
 interface AuthContextType {

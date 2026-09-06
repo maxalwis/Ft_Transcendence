@@ -3,7 +3,7 @@
   "buttons": {
     "submit": "Valider"
   },
-  "nav": {
+  "categories": {
     "all": "Tout",
     "music": "Musique",
     "culture": "Culture",

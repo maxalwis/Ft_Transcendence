@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { User } from '../../api/friends';
+import { useTranslation } from 'react-i18next';
+import { resolveAvatarUrl } from './utils/avatar';
 import './Modal.css';
 
 interface ViewProfileProps {
@@ -9,6 +11,7 @@ interface ViewProfileProps {
 }
 
 export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
+  const { t } = useTranslation();
   const [isClosing, setIsClosing] = useState(false);
 
   const requestClose = () => setIsClosing(true);
@@ -40,7 +43,7 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
         <div className="flex flex-col items-center gap-4">
           <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-2xl font-semibold text-white">
             {friend.avatar ? (
-              <img src={friend.avatar} alt="Avatar" className="h-full w-full object-cover" />
+              <img src={resolveAvatarUrl(friend.avatar) ?? undefined} alt="Avatar" className="h-full w-full object-cover" />
             ) : (
               friend.username.charAt(0).toUpperCase()
             )}
@@ -51,13 +54,15 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
             <div className="flex justify-between gap-4">
               <span className="text-white/60">Catégorie préférée</span>
               <span className="text-right text-white">
-                {friend.preferredCategory || 'Non renseignée'}
+                {friend.preferredCategory ? t(`categories.${friend.preferredCategory.toLowerCase()}`) : 'Non renseignée'}
               </span>
             </div>
             <div className="flex justify-between gap-4">
               <span className="text-white/60">Langue préférée</span>
               <span className="text-right text-white">
-                {friend.preferredLanguage || 'Non renseignée'}
+                {friend.preferredLanguage
+                  ? { FR: 'Français', EN: 'English', ES: 'Español' }[friend.preferredLanguage]
+                  : 'Non renseignée'}
               </span>
             </div>
           </div>

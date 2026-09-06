@@ -25,8 +25,7 @@ export class AuthService {
       return null;
     }
 
-    const { password, ...result } = user;
-    return result; // result contient tout user sauf password
+    return this.usersService.toPublicUser(user);
   }
 
   async validateOAuthUser(profile: {
@@ -86,14 +85,7 @@ export class AuthService {
 
       return {
         accessToken: newAccessToken,
-        user: {
-          id: user.id,
-          email: user.email,
-          username: user.username,
-          provider: user.provider,
-          avatar: user.avatar,
-          isOAuth: user.password === null,
-        },
+        user: this.usersService.toPublicUser(user),
       };
     } catch {
       throw new UnauthorizedException('Refresh token invalid or expired');

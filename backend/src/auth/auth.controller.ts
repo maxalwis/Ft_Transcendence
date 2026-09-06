@@ -15,6 +15,7 @@ import { GoogleAuthGuard } from './guards/google-oauth.guard';
 import { FortyTwoAuthGuard } from './guards/fortytwo-oauth.guard';
 import { AuthService } from './auth.service';
 import type { Response, Request } from 'express';
+import { User } from '../generated/prisma/client';
 import { UsersService } from '../users/users.service';
 import { CreateLocalUserDto } from '../users/dto/create-user.dto';
 
@@ -41,13 +42,7 @@ export class AuthController {
 
     return {
       accessToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        provider: user.provider,
-        avatar: user.avatar,
-      },
+      user: this.usersService.toPublicUser(user),
     };
   }
 
@@ -71,13 +66,7 @@ export class AuthController {
 
     return {
       accessToken,
-      user: {
-        id: req.user.id,
-        email: req.user.email,
-        username: req.user.username,
-        provider: req.user.provider,
-        avatar: req.user.avatar,
-      },
+      user: req.user,
     };
   }
 

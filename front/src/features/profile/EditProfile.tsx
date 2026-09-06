@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/auth/AuthContext';
+import { resolveAvatarUrl } from './utils/avatar';
 import PasswordModal from './PasswordModal';
 import './Modal.css';
 
@@ -8,13 +10,30 @@ interface EditProfileProps {
   onClose: () => void;
 }
 
+const languageOptions = [
+  { value: 'FR', label: 'Français' },
+  { value: 'EN', label: 'English' },
+  { value: 'ES', label: 'Español' },
+] as const;
+type PreferredLanguage = (typeof languageOptions)[number]['value'];
+
+const categoryOptions = ['MUSIC', 'CULTURE', 'WORKSHOPS', 'LEISURE', 'OTHERS'] as const;
+type PreferredCategory = (typeof categoryOptions)[number];
+
 export default function EditProfile({ onClose }: EditProfileProps) {
-  const { user, updateUser } = useAuth();
+  const { t } = useTranslation();
+  const { user, updateUser, accessToken } = useAuth();
   const [username, setUsername] = useState(user?.username ?? '');
-  const [preferredLanguage, setPreferredLanguage] = useState('');
-  const [preferredCategory, setPreferredCategory] = useState('');
+  const [preferredLanguage, setPreferredLanguage] = useState<PreferredLanguage | ''>(
+    user?.preferredLanguage ?? ''
+  );
+  const [preferredCategory, setPreferredCategory] = useState<PreferredCategory | ''>(
+    user?.preferredCategory ?? ''
+  );
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(user?.avatar ?? null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(
+    resolveAvatarUrl(user?.avatar)
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -28,9 +47,6 @@ export default function EditProfile({ onClose }: EditProfileProps) {
     if (isClosing) onClose();
   };
 
-  const languageOptions = ['Français', 'Anglais', 'Espagnol'];
-  const categoryOptions = ['Culture', 'Sports', 'Musique', 'Famille'];
-
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     setAvatarFile(file);
@@ -43,13 +59,21 @@ export default function EditProfile({ onClose }: EditProfileProps) {
     setError(null);
 
     try {
+      const formData = new FormData();
+      formData.append('username', username);
+      if (preferredLanguage) formData.append('preferredLanguage', preferredLanguage);
+      if (preferredCategory) formData.append('preferredCategory', preferredCategory);
+      if (avatarFile) formData.append('avatar', avatarFile);
+
       const res = await fetch(
         `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/users/${user?.id}`,
         {
           method: 'PUT',
           credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username }),
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          },
+          body: formData,
         }
       );
 
@@ -123,12 +147,12 @@ export default function EditProfile({ onClose }: EditProfileProps) {
             Langue préférée
             <select
               value={preferredLanguage}
-              onChange={(e) => setPreferredLanguage(e.target.value)}
+              onChange={(e) => setPreferredLanguage(e.target.value as PreferredLanguage)}
             >
               <option value="">Choisir</option>
-              {languageOptions.map((language) => (
-                <option key={language} value={language}>
-                  {language}
+              {languageOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
                 </option>
               ))}
             </select>
@@ -138,12 +162,12 @@ export default function EditProfile({ onClose }: EditProfileProps) {
             Catégorie préférée
             <select
               value={preferredCategory}
-              onChange={(e) => setPreferredCategory(e.target.value)}
+              onChange={(e) => setPreferredCategory(e.target.value as PreferredCategory)}
             >
               <option value="">Choisir</option>
-              {categoryOptions.map((category) => (
-                <option key={category} value={category}>
-                  {category}
+              {categoryOptions.map((code) => (
+                <option key={code} value={code}>
+                  {t(`categories.${code.toLowerCase()}`)}
                 </option>
               ))}
             </select>

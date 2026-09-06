@@ -3,7 +3,7 @@
   "buttons": {
     "submit": "Enviar"
   },
-  "nav": {
+  "categories": {
     "all": "Todo",
     "music": "Música",
     "culture": "Cultura",
