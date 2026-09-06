@@ -72,10 +72,10 @@ export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
                 setIsMenuOpen(false);
               }}
             >
-              Modifier le profil
+              {t('authBtn.editProfile')}
             </button>
             <button className="px-4 py-2 text-left hover:bg-white/10" onClick={handleLogout}>
-              Logout
+              {t('authBtn.logout')}
             </button>
           </div>
         )}

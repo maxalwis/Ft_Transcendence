@@ -85,6 +85,9 @@
       "default": "Search a friend..."
     }
   },
+  "friendsList": {
+    "viewProfile": "View profile"
+  },
   "chat": {
     "title": "Chat",
     "connectPrompt": "Connect to view chat.",
@@ -118,7 +121,27 @@
   },
   "authBtn": {
     "login": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "editProfile": "Edit Profile"
+  },
+    "profileSettings": {
+    "title": "Edit Profile",
+    "username": "Username",
+    "choose": "Choose",
+    "changePassword": "Change Password",
+    "saving": "Saving...",
+    "saveError": "Unable to save changes",
+    "preferredLanguage": "Preferred Language",
+    "preferredCategory": "Preferred Category",
+    "changePicture": "Change Picture",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "publicProfile": {
+    "title": "View Profile",
+    "preferredLanguage": "Preferred Language",
+    "preferredCategory": "Preferred Category",
+    "notProvided": "Not provided"
   },
   "notifications": {
     "defaultError": "An error occurred",

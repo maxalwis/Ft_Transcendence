@@ -6,6 +6,7 @@ import { searchUsers } from '../../../api/users';
 import type { UserSearchResult } from '../../../api/users';
 import { useAuth } from '../../../context/auth/AuthContext';
 import ViewProfile from '../../profile/ViewProfile';
+import { useTranslation } from 'react-i18next';
 
 type FriendsListProps = {
   friends: User[];
@@ -26,6 +27,7 @@ export default function FriendsList({
   const [results, setResults] = useState<UserSearchResult[]>([]);
   const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
   const { accessToken } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (action !== 'add' || !input.trim()) {
@@ -134,7 +136,7 @@ export default function FriendsList({
                 onClick={() => setSelectedFriend(friend)}
                 className="shrink-0 cursor-pointer rounded-md px-2 py-1 text-xs hover:bg-white/20"
               >
-                View profile
+                {t('friendsList.viewProfile')}
               </button>
             )}
           </div>

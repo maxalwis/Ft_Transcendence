@@ -98,7 +98,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="profileModalHeader">
-          <h2>Modifier le profil</h2>
+          <h2>{t('profileSettings.title')}</h2>
           <button
             type="button"
             className="profileModalClose"
@@ -134,22 +134,22 @@ export default function EditProfile({ onClose }: EditProfileProps) {
               className="avatar-change-link"
               onClick={() => fileInputRef.current?.click()}
             >
-              Changer photo
+              {t('profileSettings.changePicture')}
             </button>
           </div>
 
           <label>
-            Pseudo
+            {t('profileSettings.username')}
             <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
           </label>
 
           <label>
-            Langue préférée
+            {t('profileSettings.preferredLanguage')}
             <select
               value={preferredLanguage}
               onChange={(e) => setPreferredLanguage(e.target.value as PreferredLanguage)}
             >
-              <option value="">Choisir</option>
+              <option value="">{t('profileSettings.choose')}</option>
               {languageOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
@@ -159,12 +159,12 @@ export default function EditProfile({ onClose }: EditProfileProps) {
           </label>
 
           <label>
-            Catégorie préférée
+            {t('profileSettings.preferredCategory')}
             <select
               value={preferredCategory}
               onChange={(e) => setPreferredCategory(e.target.value as PreferredCategory)}
             >
-              <option value="">Choisir</option>
+              <option value="">{t('profileSettings.choose')}</option>
               {categoryOptions.map((code) => (
                 <option key={code} value={code}>
                   {t(`categories.${code.toLowerCase()}`)}
@@ -179,7 +179,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
               className="btn-secondary"
               onClick={() => setIsPasswordModalOpen(true)}
             >
-              Modifier le mot de passe
+              {t('profileSettings.changePassword')}
             </button>
           )}
 
@@ -187,10 +187,10 @@ export default function EditProfile({ onClose }: EditProfileProps) {
 
           <div className="modal-actions">
             <button type="button" className="btn-secondary" onClick={requestClose}>
-              Annuler
+              {t('profileSettings.cancel')}
             </button>
             <button type="submit" className="btn-primary" disabled={isSaving}>
-              {isSaving ? 'Sauvegarde...' : 'Enregistrer'}
+              {isSaving ? t('profileSettings.saving') : t('profileSettings.save')}
             </button>
           </div>
         </form>

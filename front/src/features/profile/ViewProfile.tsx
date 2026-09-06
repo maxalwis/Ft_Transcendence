@@ -29,7 +29,7 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
         onClick={(event) => event.stopPropagation()}
       >
         <div className="profileModalHeader">
-          <h2>View profile</h2>
+          <h2>{t('publicProfile.title')}</h2>
           <button
             type="button"
             className="profileModalClose"
@@ -52,17 +52,17 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
 
           <div className="w-full space-y-3 text-sm">
             <div className="flex justify-between gap-4">
-              <span className="text-white/60">Catégorie préférée</span>
+              <span className="text-white/60">{t('publicProfile.preferredCategory')}</span>
               <span className="text-right text-white">
-                {friend.preferredCategory ? t(`categories.${friend.preferredCategory.toLowerCase()}`) : 'Non renseignée'}
+                {friend.preferredCategory ? t(`categories.${friend.preferredCategory.toLowerCase()}`) : t('publicProfile.notProvided')}
               </span>
             </div>
             <div className="flex justify-between gap-4">
-              <span className="text-white/60">Langue préférée</span>
+              <span className="text-white/60">{t('publicProfile.preferredLanguage')}</span>
               <span className="text-right text-white">
                 {friend.preferredLanguage
                   ? { FR: 'Français', EN: 'English', ES: 'Español' }[friend.preferredLanguage]
-                  : 'Non renseignée'}
+                  : t('publicProfile.notProvided')}
               </span>
             </div>
           </div>
