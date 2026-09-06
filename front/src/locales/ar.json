@@ -1,0 +1,154 @@
+{
+  "welcome": "مرحباً بكم في موقعنا",
+  "buttons": {
+    "submit": "إرسال"
+  },
+  "categories": {
+    "all": "الكل",
+    "music": "موسيقى",
+    "culture": "ثقافة",
+    "workshops": "ورش عمل",
+    "leisure": "رياضة وترفيه",
+    "others": "أخرى"
+  },
+  "events": {
+    "defaultCategory": "فعالية",
+    "unknownDate": "تاريخ غير معروف",
+    "linkLabel": "الرابط:"
+  },
+  "eventDetails": {
+    "defaultCategory": "فعالية",
+    "unknownDate": "تاريخ غير معروف",
+    "accessLink": "تفاصيل الفعالية",
+    "price": {
+      "free": "مجاني",
+      "feeBased": "مدفوع"
+    }
+  },
+  "eventPreview": {
+    "defaultAlt": "فعالية",
+    "seeDetails": "عرض التفاصيل",
+    "undefinedDate": "تاريخ غير المحدد",
+    "start": "البداية",
+    "end": "النهاية",
+    "price": {
+      "free": "مجاني",
+      "feeBased": "مدفوع",
+      "unspecified": "السعر غير محدد"
+    }
+  },
+  "filters": {
+    "title": "تصفية الفعاليات",
+    "cityLabel": "المدينة / الموقع",
+    "cityPlaceholder": "مثال: باريس",
+    "priceCategory": "فئة السعر",
+    "selectCategory": "اختر الفئة",
+    "fromDate": "من :",
+    "apply": "تطبيق",
+    "reset": "إعادة ضبط",
+    "allPrices": "الكل",
+    "free": "مجاني",
+    "feeBased": "مدفوع"
+  },
+  "friends": {
+    "buttonTitle": "الأصدقاء",
+    "errorLoading": "خطأ في التحميل.",
+    "sidebarTitle": "أصدقائي",
+    "searchPlaceholder": "بحث...",
+    "addTab": "إضافة",
+    "requestsTab": "الطلبات",
+    "noFriends": "لا يوجد أصدقاء بعد",
+    "remove": "إزالة"
+  },
+  "friendsSidebar": {
+    "notLoggedIn": "يرجى تسجيل الدخول للوصول إلى قائمة أصدقائك.",
+    "search": "البحث عن أصدقاء",
+    "pendingRequests": "طلبات معلقة ({{count}})",
+    "pendingRequests_one": "طلب معلق ({{count}})",
+    "add": "إضافة صديق",
+    "remove": "إزالة صديق"
+  },
+  "friendsButton": {
+    "ariaOpen": "فتح القائمة",
+    "ariaClose": "إغلاق القائمة",
+    "search": "بحث",
+    "pendingRequest": "طلب معلق",
+    "addFriend": "إضافة صديق",
+    "removeFriend": "إزالة صديق"
+  },
+  "friendsSearchBar": {
+    "clearInput": "مسح نص البحث",
+    "placeholders": {
+      "add": "إضافة صديق...",
+      "remove": "إزالة صديق...",
+      "request": "البحث عن صديق...",
+      "default": "البحث عن صديق..."
+    }
+  },
+  "friendsList": {
+    "viewProfile": "عرض الملف الشخصي"
+  },
+  "chat": {
+    "title": "المحادثة",
+    "connectPrompt": "قم بتسجيل الدخول لعرض المحادثة.",
+    "loadingMessages": "جاري تحميل الرسائل...",
+    "errorLoadMessages": "فشل في تحميل الرسائل",
+    "errorSend": "خطأ أثناء محاولة إرسال الرسالة",
+    "placeholder": "اكتب رسالتك...",
+    "send": "إرسال"
+  },
+  "authModal": {
+    "loginTitle": "تسجيل الدخول",
+    "registerTitle": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "loginButton": "دخول",
+    "registerButton": "تسجيل",
+    "noAccount": "ليس لديك حساب؟",
+    "createOne": "أنشئ حساباً",
+    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "signInLink": "تسجيل الدخول",
+    "close": "إغلاق",
+    "loginWithGoogle": "تسجيل الدخول عبر Google",
+    "loginWith42": "تسجيل الدخول عبر 42",
+    "errors": {
+      "invalidCredentials": "بيانات الاعتماد غير صحيحة",
+      "passwordMismatch": "كلمات المرور غير متطابقة",
+      "registrationError": "خطأ في إنشاء الحساب"
+    }
+  },
+  "authBtn": {
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "editProfile": "تعديل الملف الشخصي"
+  },
+  "profileSettings": {
+    "title": "تعديل الملف الشخصي",
+    "username": "اسم المستخدم",
+    "choose": "اختيار",
+    "changePassword": "تغيير كلمة المرور",
+    "saving": "جاري الحفظ...",
+    "saveError": "تعذر حفظ التغييرات",
+    "preferredLanguage": "اللغة المفضلة",
+    "preferredCategory": "الفئة المفضلة",
+    "changePicture": "تغيير الصورة",
+    "cancel": "إلغاء",
+    "save": "حفظ"
+  },
+  "publicProfile": {
+    "title": "عرض الملف الشخصي",
+    "preferredLanguage": "اللغة المفضلة",
+    "preferredCategory": "الفئة المفضلة",
+    "notProvided": "غير محدد"
+  },
+  "notifications": {
+    "defaultError": "حدث خطأ ما",
+    "defaultSuccess": "تمت العملية بنجاح"
+  },
+  "likeButton": {
+    "interested_one": "مهتم {{count}}",
+    "interested_other": "مهتمون {{count}}"
+  }
+}

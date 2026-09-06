@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { PrismaService } from '../prisma/prisma.service';
 import { LibreTranslateService } from './libretranslate.service';
 
-const SUPPORTED_LANGS = ['en', 'es'];
+const SUPPORTED_LANGS = ['en', 'es', 'ar'];
 type TranslatableField = 'title' | 'description' | 'priceDetail' | 'category';
 
 @Injectable()

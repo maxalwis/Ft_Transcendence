@@ -61,7 +61,7 @@ export class UsersController {
     body: {
       username?: string;
       email?: string;
-      preferredLanguage?: 'FR' | 'EN' | 'ES';
+      preferredLanguage?: 'FR' | 'EN' | 'ES' | 'AR';
       preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS';
     },
     @UploadedFile() file?: Express.Multer.File

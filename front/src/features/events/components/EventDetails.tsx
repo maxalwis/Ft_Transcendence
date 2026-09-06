@@ -54,7 +54,13 @@ export default function EventDetails({
 
   // Map i18n language to browser locale string
   const currentLocale =
-    i18n.language === 'es' ? 'es-ES' : i18n.language === 'en' ? 'en-US' : 'fr-FR';
+    i18n.language === 'es'
+      ? 'es-ES'
+      : i18n.language === 'en'
+        ? 'en-US'
+        : i18n.language === 'ar'
+          ? 'ar-SA'
+          : 'fr-FR';
 
   const rawPriceType = cleanText(priceType).toLowerCase();
 

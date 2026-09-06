@@ -1,13 +1,7 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import React, { useState, ReactNode, useCallback } from 'react';
 import { WarningNotification } from './WarningNotification';
 import { useTranslation } from 'react-i18next';
-
-interface NotificationContextType {
-  showError: (message?: string) => void;
-  clearNotification: () => void;
-}
-
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+import { NotificationContext } from './useNotification';
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation();
@@ -36,12 +30,4 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         })
       )
   );
-};
-
-export const useNotification = () => {
-  const context = useContext(NotificationContext);
-  if (!context) {
-    throw new Error('useNotification must be used within a NotificationProvider');
-  }
-  return context;
 };

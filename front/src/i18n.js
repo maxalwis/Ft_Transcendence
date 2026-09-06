@@ -6,11 +6,24 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import translationFR from './locales/fr.json';
 import translationEN from './locales/en.json';
 import translationES from './locales/es.json';
+import translationAR from './locales/ar.json';
 
 const resources = {
   fr: { translation: translationFR },
   en: { translation: translationEN },
   es: { translation: translationES },
+  ar: { translation: translationAR },
+};
+
+// Function to toggle dir and lang attributes on <html>
+const updateDocumentAttributes = (lng) => {
+  const html = document.documentElement;
+  if (lng === 'ar') {
+    html.setAttribute('dir', 'rtl');
+  } else {
+    html.setAttribute('dir', 'ltr');
+  }
+  html.setAttribute('lang', lng);
 };
 
 i18n
@@ -23,5 +36,13 @@ i18n
       escapeValue: false,
     },
   });
+
+// Set attributes immediately when the page loads
+updateDocumentAttributes(i18n.language);
+
+// Update attributes whenever the user switches language
+i18n.on('languageChanged', (lng) => {
+  updateDocumentAttributes(lng);
+});
 
 export default i18n;
