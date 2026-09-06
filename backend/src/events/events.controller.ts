@@ -1,4 +1,4 @@
-import { Controller, Query, Get, Param, Logger } from '@nestjs/common';
+import { Controller, Query, Get, Param, Header, Logger } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { MapQueryDto, NearbyQueryDto } from './dto/map-query.dto';
 
@@ -8,21 +8,40 @@ export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Get('map')
+  @Header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+  @Header('Pragma', 'no-cache')
+  @Header('Expires', '0')
+  @Header('Surrogate-Control', 'no-store')
   findForMap(@Query() query: MapQueryDto) {
+    const priceStr = query.price !== undefined ? String(query.price) : undefined;
+
     if (query.bbox) {
-      return this.eventsService.findForMap(query.bbox, query.from, query.to);
+      return this.eventsService.findForMap(
+        query.bbox,
+        query.from,
+        query.to,
+        query.category,
+        priceStr
+      );
     }
 
-    return this.eventsService.findAllForMap(query.from, query.to);
+    return this.eventsService.findAllForMap(
+      query.from,
+      query.to,
+      query.category,
+      priceStr,
+      query.city
+    );
   }
 
   @Get('nearby')
   findNearby(@Query() query: NearbyQueryDto) {
-    return this.eventsService.findNearby(query, query.from, query.to);
+    const priceStr = query.price !== undefined ? String(query.price) : undefined;
+    return this.eventsService.findNearby(query, query.from, query.to, query.category, priceStr);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.eventsService.findOne(id);
+  findOne(@Param('id') id: string, @Query('lang') lang?: string) {
+    return this.eventsService.findOne(id, lang ?? 'fr');
   }
 }

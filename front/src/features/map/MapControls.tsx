@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import { useTranslation } from 'react-i18next';
 
 export function MyTileLayer() {
   return (
@@ -18,6 +19,7 @@ export function MapClickHandler({ closeSidebar }: { closeSidebar: () => void }) 
 
 export function GlassZoomControl() {
   const map = useMap();
+
   useEffect(() => {
     const zoomControl = L.control.zoom({ position: 'topleft' });
     zoomControl.addTo(map);
@@ -25,5 +27,6 @@ export function GlassZoomControl() {
       zoomControl.remove();
     };
   }, [map]);
+
   return null;
 }

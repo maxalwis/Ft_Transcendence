@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import { PublicApiModule } from './public-api/public-api.module';
 import { FriendsModule } from './friends/friends.module';
 import { EventsInterestsModule } from './events-interest/events-interest.module';
+import { TranslationsModule } from './translations/translations.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { EventsInterestsModule } from './events-interest/events-interest.module'
     AuthModule,
     FriendsModule,
     EventsInterestsModule,
+    TranslationsModule,
     PublicApiModule,
   ],
   controllers: [AppController],
@@ -35,6 +37,6 @@ import { EventsInterestsModule } from './events-interest/events-interest.module'
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes({ path: '*path', method: RequestMethod.ALL });
+    consumer.apply(LoggerMiddleware).forRoutes({ path: '{*path}', method: RequestMethod.ALL });
   }
 }

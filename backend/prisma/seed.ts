@@ -116,7 +116,7 @@ async function main() {
           provider: isOAuth ? faker.helpers.arrayElement(['google', 'github']) : null,
           providerId: isOAuth ? faker.string.uuid() : null,
           avatar: faker.image.avatarGitHub(),
-          status: weightedBoolean(0.15) ? 'ONLINE' : weightedBoolean(0.05) ? 'IN_GAME' : 'OFFLINE',
+          status: weightedBoolean(0.3) ? 'ONLINE' : 'OFFLINE',
           createdAt,
           updatedAt: isPowerUser
             ? faker.date.recent({ days: 3 })

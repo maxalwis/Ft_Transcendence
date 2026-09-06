@@ -1,13 +1,13 @@
-import './AdminPanelLinks.css';
+import styles from './AdminPanelLinks.css';
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import L from 'leaflet';
+import { useMap } from 'react-leaflet';
 
 interface DashboardLink {
   name: string;
   url: string;
-  description: string;
   icon: React.ReactNode;
 }
 
@@ -15,7 +15,6 @@ const dashboards: DashboardLink[] = [
   {
     name: 'Prisma Studio',
     url: 'http://localhost:5555',
-    description: 'Database GUI & management tool',
     icon: (
       <svg
         className="w-5 h-5"
@@ -37,7 +36,6 @@ const dashboards: DashboardLink[] = [
   {
     name: 'Elasticsearch',
     url: 'http://localhost:5601',
-    description: 'Logs, analytics & dashboard workspace',
     icon: (
       <svg
         className="w-5 h-5"
@@ -62,7 +60,7 @@ const DropdownMenu: React.FC = () => {
       const rect = buttonRef.current.getBoundingClientRect();
       setCoords({
         top: rect.top,
-        left: rect.right + 8, // Positions dropdown 8px to the right of the button
+        left: rect.right + 8,
       });
     }
   };
@@ -133,7 +131,7 @@ const DropdownMenu: React.FC = () => {
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    window.open(tool.url, '_blank');
+                    window.open(tool.url, '_blank', 'noopener,noreferrer');
                     setIsOpen(false);
                   }}
                   className="flex items-center gap-3 p-2 rounded-xl bg-white/40 hover:bg-white/80 border border-blue-400/30 hover:border-blue-400/60 transition-all text-left group"
@@ -143,7 +141,6 @@ const DropdownMenu: React.FC = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-bold text-stone-900 truncate">{tool.name}</div>
-                    <div className="text-[10px] text-stone-600 truncate">{tool.description}</div>
                   </div>
                   <span className="text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
                     ↗
@@ -159,27 +156,61 @@ const DropdownMenu: React.FC = () => {
 };
 
 export const AdminPanelLinks: React.FC = () => {
+  const map = useMap();
+
   useEffect(() => {
-    const topLeftContainer = document.querySelector('.leaflet-top.leaflet-left');
+    const topLeftContainer = map.getContainer().querySelector('.leaflet-top.leaflet-left');
     if (!topLeftContainer) return;
+    let animationFrameId: number;
+    let controlDiv: HTMLDivElement | null = null;
+    let root: ReturnType<typeof createRoot> | null = null;
+    let attempts = 0;
+    const maxAttempts = 100; // ~2 seconds of retries
 
-    const controlDiv = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-links');
+    const attachControl = () => {
+      const topLeftContainer = document.querySelector('.leaflet-top.leaflet-left');
 
-    L.DomEvent.disableClickPropagation(controlDiv);
-    L.DomEvent.disableScrollPropagation(controlDiv);
+      if (topLeftContainer) {
+        controlDiv = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-links');
 
-    const root = createRoot(controlDiv);
-    root.render(<DropdownMenu />);
+        // Force the element onto its own layer on top of Leaflet controls
+        controlDiv.style.position = 'relative';
+        controlDiv.style.zIndex = '1000';
 
-    topLeftContainer.appendChild(controlDiv);
+        L.DomEvent.disableClickPropagation(controlDiv);
+        L.DomEvent.disableScrollPropagation(controlDiv);
+
+        root = createRoot(controlDiv);
+        root.render(<DropdownMenu />);
+
+        // Prepend instead of append to place it at the top of the container stack
+        if (topLeftContainer.firstChild) {
+          topLeftContainer.insertBefore(controlDiv, topLeftContainer.firstChild);
+        } else {
+          topLeftContainer.appendChild(controlDiv);
+        }
+      } else if (attempts < maxAttempts) {
+        attempts++;
+        animationFrameId = requestAnimationFrame(attachControl);
+      }
+    };
+
+    attachControl();
 
     return () => {
-      queueMicrotask(() => {
-        root.unmount();
-      });
-      controlDiv.remove();
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      if (root) {
+        queueMicrotask(() => {
+          root?.unmount();
+        });
+      }
+      if (controlDiv) {
+        controlDiv.remove();
+      }
     };
-  }, []);
+  }, [map]);
 
   return null;
 };

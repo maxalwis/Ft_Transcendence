@@ -10,9 +10,14 @@ import {
   Query,
   Req,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('users')
 export class UsersController {
@@ -39,11 +44,32 @@ export class UsersController {
 
   @Put(':id')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: diskStorage({
+        destination: './uploads/avatars',
+        filename: (req, file, callback) => {
+          const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+          callback(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+    })
+  )
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: { username?: string; email?: string }
+    @Body()
+    body: {
+      username?: string;
+      email?: string;
+      preferredLanguage?: 'FR' | 'EN' | 'ES';
+      preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS';
+    },
+    @UploadedFile() file?: Express.Multer.File
   ) {
-    return this.usersService.update(id, body);
+    return this.usersService.update(id, {
+      ...body,
+      avatar: file ? `/uploads/avatars/${file.filename}` : undefined,
+    });
   }
 
   @Delete(':id')

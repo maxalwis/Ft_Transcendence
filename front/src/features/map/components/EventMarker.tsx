@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Marker } from 'react-leaflet';
 import L from 'leaflet';
 import { createMarkerIcon } from './CustomIcons.tsx';
-import type { EventItem } from '../../types/event';
+import type { EventItem } from '../../../types/event';
 
 interface EventMarkerProps {
   event: EventItem;

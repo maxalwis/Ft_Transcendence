@@ -53,21 +53,30 @@ const customLogger = {
   },
 };
 
-// https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
+  const backendUrl = process.env.VITE_BACKEND_URL || env.VITE_BACKEND_URL || 'http://backend:3000';
+
   return {
-    customLogger, // <--- Added here so Vite uses your custom logger
+    customLogger,
     plugins: [react(), tailwindcss()],
     server: {
       host: true,
-      hmr: { protocol: 'wss', clientPort: Number(env.HTTPS_PORT) || 8443 },
+      hmr: {
+        protocol: 'wss',
+        clientPort: Number(process.env.HTTPS_PORT || env.HTTPS_PORT) || 8443,
+      },
       proxy: {
         '/api': {
-          target: 'http://localhost:3000',
+          target: backendUrl,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
+          // 2. Log proxy connection errors to terminal
+          configure: (proxy) => {
+            proxy.on('error', (err, _req, _res) => {
+              console.error(`${RED}[Vite Proxy Error] ${err.message}${RESET}`);
+            });
+          },
         },
       },
     },
