@@ -24,6 +24,9 @@ import { useAuth } from '../../../context/auth/AuthContext';
 import { useMapEvents } from '../hooks/useMapEvents';
 import { MapEventsHandler } from './MapHelper';
 
+import { useTranslation } from 'react-i18next';
+import { useTranslatedEvent } from '../../events/hooks/useTranslatedEvent';
+
 // Constants & Configuration
 import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
 
@@ -37,6 +40,8 @@ interface MapProps {
 export default function Map({ onOpenAuth }: MapProps) {
   const { showError } = useNotification();
   const { user } = useAuth();
+  const { i18n } = useTranslation();
+  const lang = i18n.language;
   const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
@@ -69,6 +74,19 @@ export default function Map({ onOpenAuth }: MapProps) {
     handlePrevEvent,
     handleNextEvent,
   } = useMapEvents(showError, filters);
+
+  const { data: translatedHoverEvent, loading: hoverLoading } = useTranslatedEvent(
+    currentEvent?.id ?? '',
+    lang
+  );
+  const isHoverTranslating = lang !== 'fr' && hoverLoading && !translatedHoverEvent;
+  const displayedHoverTitle = isHoverTranslating
+    ? undefined
+    : (translatedHoverEvent?.title ?? currentEvent?.title ?? '');
+
+  const displayedHoverCategory = isHoverTranslating
+    ? undefined
+    : ((translatedHoverEvent?.category as unknown as string[])?.[0] ?? currentEvent?.category?.[0]);
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -169,13 +187,14 @@ export default function Map({ onOpenAuth }: MapProps) {
       {currentEvent && activeGroup && hoverPos && (
         <EventPreview
           position={hoverPos}
-          title={currentEvent.title}
+          eventId={currentEvent.id}
+          title={displayedHoverTitle}
+          isTranslating={isHoverTranslating}
           priceType={currentEvent.priceType}
           dateStart={currentEvent.dateStart}
           dateEnd={currentEvent.dateEnd}
-          category={currentEvent.category?.[0] || 'Event'}
+          category={displayedHoverCategory || 'Event'}
           isOpen={true}
-          eventId={currentEvent.id}
           interestedUsersCount={currentEvent.interestedUsersCount || 0}
           imageUrl={currentEvent.coverUrl}
           totalInGroup={activeGroup.events.length}

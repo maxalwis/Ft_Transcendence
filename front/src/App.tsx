@@ -8,7 +8,6 @@ import BottomBar from './layouts/BottomBar';
 import OAuthCallbackPage from './features/auth/components/OAuthCallbackPage';
 import AuthModal from './features/auth/components/AuthModal';
 import { AuthProvider } from './context/auth/AuthContext';
-
 import './styles/variables.css';
 import './styles/global.css';
 
@@ -30,11 +29,11 @@ export default function App() {
               <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
             </Routes>
           </div>
-
-          <BottomBar onOpenAuth={handleOpenAuth} />
-
-          <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
         </div>
+
+        <BottomBar onOpenAuth={handleOpenAuth} />
+
+        <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       </NotificationProvider>
     </AuthProvider>
   );

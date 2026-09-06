@@ -146,5 +146,9 @@
   "notifications": {
     "defaultError": "Se ha producido un error",
     "defaultSuccess": "Operación exitosa"
+  },
+  "likeButton": {
+    "interested_one": "{{count}} interesado",
+    "interested_other": "{{count}} interesados"
   }
 }

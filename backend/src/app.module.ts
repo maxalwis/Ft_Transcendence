@@ -13,6 +13,7 @@ import { LoggerMiddleware } from './logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { PublicApiModule } from './public-api/public-api.module';
 import { FriendsModule } from './friends/friends.module';
+import { TranslationsModule } from './translations/translations.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { FriendsModule } from './friends/friends.module';
     MessagesModule,
     AuthModule,
     FriendsModule,
+    TranslationsModule,
     PublicApiModule,
   ],
   controllers: [AppController],

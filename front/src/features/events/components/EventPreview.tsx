@@ -12,6 +12,7 @@ export interface EventDetailsProps {
   position?: { x?: number; y?: number };
   eventId?: string;
   title?: string;
+  isTranslating?: boolean;
   category?: string;
   dateStart?: string;
   dateEnd?: string;
@@ -57,6 +58,7 @@ export default function EventPreview({
   eventId,
   priceType,
   title,
+  isTranslating = false,
   category,
   dateStart,
   dateEnd,
@@ -223,7 +225,14 @@ export default function EventPreview({
 
       {/* Content */}
       <div className={styles['events-details-content']}>
-        <h2 className={styles['events-details-title']}>{title}</h2>
+        {isTranslating ? (
+          <div
+            className="mb-2 h-6 w-3/4 animate-pulse rounded"
+            style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+          />
+        ) : (
+          <h2 className={styles['events-details-title']}>{title}</h2>
+        )}
         <h3 className={`${styles['events-details-category']} text-slate-600!`}>{category}</h3>
         <div className={styles['events-details-meta']}>
           <span>{formattedPrice}</span>

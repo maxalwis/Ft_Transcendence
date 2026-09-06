@@ -36,6 +36,7 @@ model Event {
   rank          Float?
   weight        Int?
   messages      Message[]
+  translations  TranslationCache[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -110,4 +111,17 @@ model Friendship {
   receiver   User @relation("ReceivedFriendships", fields: [receiverId], references: [id], onDelete: Cascade)
 
   @@unique([senderId, receiverId])
+}
+
+model TranslationCache {
+  id             Int      @id @default(autoincrement())
+  eventId        String
+  event          Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  lang           String   @db.VarChar(5)   // 'en', 'es', ...
+  field          String   @db.VarChar(50)  // 'description', 'title', ...
+  translatedText String
+  createdAt      DateTime @default(now())
+
+  @@unique([eventId, lang, field])
+  @@index([eventId])
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 import styles from '../Event.module.css';
+import { useTranslation } from 'react-i18next';
 
 interface LikeButtonProps {
   eventId: string;
@@ -15,6 +16,7 @@ export default function LikeButton({
 }: LikeButtonProps) {
   const storageKey = `event-liked-${eventId}`;
   const [isLiked, setIsLiked] = useState(() => localStorage.getItem(storageKey) === 'true');
+  const { t } = useTranslation();
 
   useEffect(() => {
     setIsLiked(localStorage.getItem(storageKey) === 'true');
@@ -81,7 +83,7 @@ export default function LikeButton({
       </button>
       {!iconOnly && (
         <span className="text-xs">
-          {interestedUsersCount} intéressé{interestedUsersCount === 1 ? '' : 's'}
+          {t('likeButton.interested', { count: interestedUsersCount })}
         </span>
       )}
     </div>

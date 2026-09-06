@@ -41,7 +41,7 @@ export class EventsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.eventsService.findOne(id);
+  findOne(@Param('id') id: string, @Query('lang') lang?: string) {
+    return this.eventsService.findOne(id, lang ?? 'fr');
   }
 }
