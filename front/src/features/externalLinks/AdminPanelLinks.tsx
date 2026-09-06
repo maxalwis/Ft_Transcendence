@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import L from 'leaflet';
+import { useMap } from 'react-leaflet';
 
 interface DashboardLink {
   name: string;
@@ -155,7 +156,11 @@ const DropdownMenu: React.FC = () => {
 };
 
 export const AdminPanelLinks: React.FC = () => {
+  const map = useMap();
+
   useEffect(() => {
+    const topLeftContainer = map.getContainer().querySelector('.leaflet-top.leaflet-left');
+    if (!topLeftContainer) return;
     let animationFrameId: number;
     let controlDiv: HTMLDivElement | null = null;
     let root: ReturnType<typeof createRoot> | null = null;
@@ -205,7 +210,7 @@ export const AdminPanelLinks: React.FC = () => {
         controlDiv.remove();
       }
     };
-  }, []);
+  }, [map]);
 
   return null;
 };

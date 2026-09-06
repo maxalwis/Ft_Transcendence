@@ -64,6 +64,20 @@ enum UserStatus {
   ONLINE
 }
 
+enum PreferredCategory {
+  MUSIC
+  CULTURE
+  WORKSHOPS
+  LEISURE
+  OTHERS
+}
+
+enum PreferredLanguage {
+  FR
+  EN
+  ES
+}
+
 model User {
   id          Int        @id @default(autoincrement())
   username    String     @unique
@@ -73,6 +87,8 @@ model User {
   providerId  String?    // OAuth
   avatar      String?
   status      UserStatus @default(OFFLINE)
+  preferredLanguage PreferredLanguage @default(FR)
+  preferredCategory PreferredCategory?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 

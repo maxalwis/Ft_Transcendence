@@ -16,6 +16,12 @@ CREATE TYPE "FriendshipStatus" AS ENUM ('PENDING', 'ACCEPTED', 'BLOCKED');
 -- CreateEnum
 CREATE TYPE "UserStatus" AS ENUM ('OFFLINE', 'ONLINE');
 
+-- CreateEnum
+CREATE TYPE "PreferredCategory" AS ENUM ('MUSIC', 'CULTURE', 'WORKSHOPS', 'LEISURE', 'OTHERS');
+
+-- CreateEnum
+CREATE TYPE "PreferredLanguage" AS ENUM ('FR', 'EN', 'ES');
+
 -- CreateTable
 CREATE TABLE "Event" (
     "id" TEXT NOT NULL,
@@ -67,6 +73,8 @@ CREATE TABLE "User" (
     "providerId" TEXT,
     "avatar" TEXT,
     "status" "UserStatus" NOT NULL DEFAULT 'OFFLINE',
+    "preferredLanguage" "PreferredLanguage" NOT NULL DEFAULT 'FR',
+    "preferredCategory" "PreferredCategory",
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

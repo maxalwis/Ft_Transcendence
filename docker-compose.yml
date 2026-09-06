@@ -83,6 +83,7 @@ services:
     volumes:
       - ./backend:/app:z
       - backend_node_modules:/app/node_modules
+      - avatars_data:/app/uploads/avatars
     depends_on:
       postgres:
         condition: service_healthy
@@ -295,6 +296,7 @@ volumes:
   elasticsearch_data:
   nginx_certs:
   libretranslate_models:
+  avatars_data:
 
 networks:
   transcendence_network:
