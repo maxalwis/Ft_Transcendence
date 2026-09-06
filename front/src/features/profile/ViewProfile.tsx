@@ -43,7 +43,11 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
         <div className="flex flex-col items-center gap-4">
           <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-2xl font-semibold text-white">
             {friend.avatar ? (
-              <img src={resolveAvatarUrl(friend.avatar) ?? undefined} alt="Avatar" className="h-full w-full object-cover" />
+              <img
+                src={resolveAvatarUrl(friend.avatar) ?? undefined}
+                alt="Avatar"
+                className="h-full w-full object-cover"
+              />
             ) : (
               friend.username.charAt(0).toUpperCase()
             )}
@@ -54,7 +58,9 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
             <div className="flex justify-between gap-4">
               <span className="text-white/60">{t('publicProfile.preferredCategory')}</span>
               <span className="text-right text-white">
-                {friend.preferredCategory ? t(`categories.${friend.preferredCategory.toLowerCase()}`) : t('publicProfile.notProvided')}
+                {friend.preferredCategory
+                  ? t(`categories.${friend.preferredCategory.toLowerCase()}`)
+                  : t('publicProfile.notProvided')}
               </span>
             </div>
             <div className="flex justify-between gap-4">

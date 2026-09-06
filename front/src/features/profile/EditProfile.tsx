@@ -31,9 +31,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
     user?.preferredCategory ?? ''
   );
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(
-    resolveAvatarUrl(user?.avatar)
-  );
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(resolveAvatarUrl(user?.avatar));
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -71,7 +69,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
           method: 'PUT',
           credentials: 'include',
           headers: {
-            'Authorization': `Bearer ${accessToken}`
+            Authorization: `Bearer ${accessToken}`,
           },
           body: formData,
         }

@@ -138,10 +138,10 @@
     "save": "Enregistrer"
   },
   "publicProfile": {
-  "title": "Voir profil",
-  "preferredLanguage": "Langue préférée",
-  "preferredCategory": "Catégorie préférée",
-  "notProvided": "Non renseignée"
+    "title": "Voir profil",
+    "preferredLanguage": "Langue préférée",
+    "preferredCategory": "Catégorie préférée",
+    "notProvided": "Non renseignée"
   },
   "notifications": {
     "defaultError": "Une erreur est survenue",

@@ -124,7 +124,7 @@
     "logout": "Cerrar sesión",
     "editProfile": "Editar perfil"
   },
-    "profileSettings": {
+  "profileSettings": {
     "title": "Editar perfil",
     "username": "Nombre de usuario",
     "choose": "Elegir",

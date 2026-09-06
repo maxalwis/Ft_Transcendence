@@ -124,7 +124,7 @@
     "logout": "Logout",
     "editProfile": "Edit Profile"
   },
-    "profileSettings": {
+  "profileSettings": {
     "title": "Edit Profile",
     "username": "Username",
     "choose": "Choose",
