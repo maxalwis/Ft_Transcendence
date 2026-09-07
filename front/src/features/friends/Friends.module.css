@@ -2,7 +2,8 @@
   position: fixed;
   bottom: 0.25rem;
   left: 0.25rem;
-  z-index: 1000;
+  z-index: 9999;
+  pointer-events: auto;
 }
 
 /* Modal expansion & collapse animation */

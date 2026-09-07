@@ -1,8 +1,8 @@
 export interface EventItem {
   id: string;
   title: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | string;
+  longitude: number | string;
   category?: string[];
   dateStart?: string;
   dateEnd?: string;
@@ -12,10 +12,11 @@ export interface EventItem {
   accessLink?: string;
   isNew?: boolean;
   interestedUsersCount?: number;
+  price?: number;
 }
 
 export interface EventGroup {
-  id: string; // Spatial key `${lat.toFixed(4)},${lng.toFixed(4)}`
+  id: string;
   latitude: number;
   longitude: number;
   events: EventItem[];
@@ -26,4 +27,7 @@ export type EventFilters = {
   startDate: string;
   endDate: string;
   priceType: string;
+  category?: string;
+  minPrice?: number | string;
+  maxPrice?: number | string;
 };

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { PendingRequest } from '../../../api/friends';
 import { acceptFriendRequest } from '../../../api/friends';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useAuth } from '../../../context/auth/useAuth';
 
 type FriendsRequestsProps = {
   requests: PendingRequest[];
@@ -32,10 +32,14 @@ export default function FriendsRequests({ requests, onDataChanged }: FriendsRequ
   return (
     <div className="flex flex-col gap-2 p-2">
       {errorMsg && <p className="text-xs text-red-500">{errorMsg}</p>}
-      {requests.map((req: any) => {
-        // Extraction sécurisée du nom du demandeur (sender)
-        const displayName = req.sender?.username || `Utilisateur #${req.senderId || req.id}`;
-        const targetId = req.senderId || req.sender?.id || req.id;
+      {requests.map((req) => {
+        // Safe extraction of sender details
+        const senderObj =
+          'sender' in req
+            ? (req as { sender?: { username?: string; id?: number } }).sender
+            : undefined;
+        const displayName = senderObj?.username || `Utilisateur #${req.senderId || req.id}`;
+        const targetId = req.senderId || senderObj?.id || req.id;
 
         return (
           <div

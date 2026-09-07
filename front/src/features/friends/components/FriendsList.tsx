@@ -4,7 +4,9 @@ import { sendFriendRequest, removeFriend } from '../../../api/friends';
 import type { User } from '../../../api/friends';
 import { searchUsers } from '../../../api/users';
 import type { UserSearchResult } from '../../../api/users';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useAuth } from '../../../context/auth/useAuth';
+import ViewProfile from '../../profile/ViewProfile';
+import { useTranslation } from 'react-i18next';
 
 type FriendsListProps = {
   friends: User[];
@@ -23,13 +25,24 @@ export default function FriendsList({
 }: FriendsListProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [results, setResults] = useState<UserSearchResult[]>([]);
+  const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
   const { accessToken } = useAuth();
+  const { t } = useTranslation();
+
+  // Reset results synchronously during render when input or action isn't valid for search
+  const shouldSearch = action === 'add' && Boolean(input.trim());
+  const [prevShouldSearch, setPrevShouldSearch] = useState(shouldSearch);
+
+  if (shouldSearch !== prevShouldSearch) {
+    setPrevShouldSearch(shouldSearch);
+    if (!shouldSearch) {
+      setResults([]);
+    }
+  }
 
   useEffect(() => {
-    if (action !== 'add' || !input.trim()) {
-      setResults([]);
-      return;
-    }
+    if (!shouldSearch) return;
+
     const timeout = setTimeout(async () => {
       try {
         const found = await searchUsers(input, accessToken!);
@@ -41,7 +54,7 @@ export default function FriendsList({
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [input, action, accessToken]);
+  }, [input, shouldSearch, accessToken]);
 
   const handleAddFriend = async (receiverId: number) => {
     setErrorMsg(null);
@@ -99,15 +112,19 @@ export default function FriendsList({
             <div className="flex items-center gap-3">
               <div className="relative shrink-0">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600 text-xs font-semibold text-white">
-                  {friend?.name?.charAt(0) || '?'}
+                  {friend.avatar ? (
+                    <img
+                      src={friend.avatar}
+                      alt=""
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    friend.username?.charAt(0).toUpperCase() || '?'
+                  )}
                 </div>
                 <div
                   className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full ${
-                    friend?.status === 'ONLINE'
-                      ? 'bg-green-500'
-                      : friend?.status === 'IN_GAME'
-                        ? 'bg-blue-500'
-                        : 'bg-gray-400'
+                    friend?.status === 'ONLINE' ? 'bg-green-500' : 'bg-gray-400'
                   }`}
                 />
               </div>
@@ -122,8 +139,20 @@ export default function FriendsList({
                 X
               </button>
             )}
+            {action !== 'remove' && (
+              <button
+                type="button"
+                onClick={() => setSelectedFriend(friend)}
+                className="shrink-0 cursor-pointer rounded-md px-2 py-1 text-xs hover:bg-white/20"
+              >
+                {t('friendsList.viewProfile')}
+              </button>
+            )}
           </div>
         ))}
+      {selectedFriend && (
+        <ViewProfile friend={selectedFriend} onClose={() => setSelectedFriend(null)} />
+      )}
     </div>
   );
 }

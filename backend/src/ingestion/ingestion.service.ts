@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
+import sanitizeHtml from 'sanitize-html';
 
 export interface IngestedEventData {
   source: string;
@@ -43,7 +44,8 @@ export class IngestionService implements OnModuleInit {
       await this.handleDailyIngestionAndCleanup();
       this.logger.log('Mairie de Paris automatic data ingestion completed successfully!');
     } catch (error) {
-      this.logger.error('Failed to trigger automatic ingestion:', error.message);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error('Failed to trigger automatic ingestion:', errorMessage);
     }
   }
 
@@ -129,6 +131,31 @@ export class IngestionService implements OnModuleInit {
     return isNaN(date.getTime()) ? null : date;
   }
 
+  // normalise URL : www.abc.com -> https://www.abc.com
+  private normalizeUrl(url: string | null | undefined): string | null {
+    if (!url) return null;
+    const trimmed = url.trim();
+    if (!trimmed) return null;
+
+    const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+
+    try {
+      return new URL(candidate).href;
+    } catch {
+      this.logger.warn(`Invalid URL ignored during ingestion: ${trimmed}`);
+      return null;
+    }
+  }
+
+  private stripHtml(value: string | null | undefined): string | null {
+    if (!value) return null;
+    const cleaned = sanitizeHtml(value.trim(), {
+      allowedTags: [],
+      allowedAttributes: {},
+    }).trim();
+    return cleaned || null;
+  }
+
   private mapToEvent(item: any): IngestedEventData {
     return {
       source: 'mairie_paris',
@@ -145,9 +172,9 @@ export class IngestionService implements OnModuleInit {
       latitude: item.lat_lon?.lat ?? null,
       longitude: item.lat_lon?.lon ?? null,
       priceType: item.price_type ?? null,
-      priceDetail: item.price_detail ?? null,
+      priceDetail: this.stripHtml(item.price_detail),
       category: this.parseDelimitedString(item.qfap_tags),
-      accessLink: item.access_link ?? null,
+      accessLink: this.normalizeUrl(item.access_link),
       audience: item.audience ?? null,
       rank: item.rank ? parseFloat(item.rank) : null,
       weight: item.weight ? parseInt(item.weight, 10) : null,

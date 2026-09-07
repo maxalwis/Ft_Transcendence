@@ -85,12 +85,11 @@ textarea:focus,
 select:focus {
   border-color: var(--color-orange-primary);
   background: var(--color-orange-hover);
-  box-shadow: 0 0 0 2px var(--color-orange-border);
 }
 
 textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 40px;
 }
 
 /* Interactive Elements */
@@ -107,7 +106,17 @@ input[type='reset'] {
   font-size: var(--font-size-base);
   padding: 0.5rem 1rem;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+  user-select: none;
+  text-wrap: nowrap;
+}
+
+/* Base text pointer fix: prevents child text from hijacking mouse target */
+button * {
+  pointer-events: none;
 }
 
 button:hover,
@@ -116,11 +125,12 @@ input[type='button']:hover,
 input[type='reset']:hover {
   background: var(--color-orange-hover) !important;
   border-color: var(--color-orange-border);
+  transform: zoom(0.98);
 }
 
 button:active,
 input[type='submit']:active {
-  transform: scale(0.98);
+  transform: zoom(0.92);
 }
 
 button.icon-btn,
@@ -182,10 +192,17 @@ pre {
   border: 1px solid var(--color-orange-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-shadow);
-  overflow: hidden;
   pointer-events: auto;
-  isolation: isolate;
-  transform: translateZ(0);
+}
+
+.glass-modal {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 2px solid var(--color-orange-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  pointer-events: auto;
 }
 
 .glass-blue {
@@ -202,6 +219,15 @@ pre {
 
 .menu-dots-icon:hover {
   background: var(--color-orange-hover) !important;
+}
+
+.isSelected {
+  background: var(--color-orange-secondary) !important;
+  color: var(--color-text-light) !important;
+}
+
+.isSelected:hover {
+  background: var(--color-orange-primary) !important;
 }
 
 /* ==========================================================================
@@ -258,4 +284,60 @@ pre {
 .counter-pop-animation {
   display: inline-block;
   animation: counterPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* ==========================================================================
+   RTL Global Overrides & Defaults
+   ========================================================================== */
+
+/* 1. Base Text Alignment & Direction */
+[dir='rtl'] {
+  text-align: right;
+}
+
+[dir='rtl'] input,
+[dir='rtl'] textarea,
+[dir='rtl'] select {
+  text-align: right;
+}
+
+/* 2. Fix Glass Popup Animation for RTL (flips slide direction) */
+@keyframes glassPopupSlideInRtl {
+  0% {
+    opacity: 0;
+    transform: translateX(10px) scale(0.85);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+[dir='rtl'] .glass-animate-in {
+  animation-name: glassPopupSlideInRtl;
+}
+
+/* 3. Fix SVG Icons & Specific Margin Overrides */
+[dir='rtl'] .menu-dots-icon svg {
+  /* Flips left margin to right margin for RTL */
+  margin: 6px 6px 0 0;
+}
+
+/* 4. Flip Directional Icons (Back arrows, Next buttons, etc.) */
+[dir='rtl'] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+@layer base {
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  button:not(.unstyled):hover {
+    background: var(--color-orange-hover);
+    border-color: var(--color-orange-border);
+    transform: scale(0.98);
+  }
 }

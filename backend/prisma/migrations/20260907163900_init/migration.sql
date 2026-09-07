@@ -14,7 +14,13 @@ CREATE EXTENSION IF NOT EXISTS "postgis_topology";
 CREATE TYPE "FriendshipStatus" AS ENUM ('PENDING', 'ACCEPTED', 'BLOCKED');
 
 -- CreateEnum
-CREATE TYPE "UserStatus" AS ENUM ('OFFLINE', 'ONLINE', 'IN_GAME');
+CREATE TYPE "UserStatus" AS ENUM ('OFFLINE', 'ONLINE');
+
+-- CreateEnum
+CREATE TYPE "PreferredCategory" AS ENUM ('MUSIC', 'CULTURE', 'WORKSHOPS', 'LEISURE', 'OTHERS');
+
+-- CreateEnum
+CREATE TYPE "PreferredLanguage" AS ENUM ('FR', 'EN', 'ES', 'AR');
 
 -- CreateTable
 CREATE TABLE "Event" (
@@ -67,6 +73,8 @@ CREATE TABLE "User" (
     "providerId" TEXT,
     "avatar" TEXT,
     "status" "UserStatus" NOT NULL DEFAULT 'OFFLINE',
+    "preferredLanguage" "PreferredLanguage" NOT NULL DEFAULT 'FR',
+    "preferredCategory" "PreferredCategory",
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -95,6 +103,18 @@ CREATE TABLE "EventInterest" (
     CONSTRAINT "EventInterest_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "TranslationCache" (
+    "id" SERIAL NOT NULL,
+    "eventId" TEXT NOT NULL,
+    "lang" VARCHAR(5) NOT NULL,
+    "field" VARCHAR(50) NOT NULL,
+    "translatedText" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "TranslationCache_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Event_source_externalId_key" ON "Event"("source", "externalId");
 
@@ -119,6 +139,12 @@ CREATE INDEX "EventInterest_userId_idx" ON "EventInterest"("userId");
 -- CreateIndex
 CREATE UNIQUE INDEX "EventInterest_userId_eventId_key" ON "EventInterest"("userId", "eventId");
 
+-- CreateIndex
+CREATE INDEX "TranslationCache_eventId_idx" ON "TranslationCache"("eventId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TranslationCache_eventId_lang_field_key" ON "TranslationCache"("eventId", "lang", "field");
+
 -- AddForeignKey
 ALTER TABLE "Message" ADD CONSTRAINT "Message_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -136,3 +162,6 @@ ALTER TABLE "EventInterest" ADD CONSTRAINT "EventInterest_userId_fkey" FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE "EventInterest" ADD CONSTRAINT "EventInterest_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TranslationCache" ADD CONSTRAINT "TranslationCache_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event"("id") ON DELETE CASCADE ON UPDATE CASCADE;

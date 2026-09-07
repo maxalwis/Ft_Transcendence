@@ -4,6 +4,8 @@ declare global {
       id: number;
       email: string;
       username: string;
+      provider: string | null;
+      avatar: string | null;
     }
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styles from './NotificationContext.module.css';
 
 interface NotificationProps {
@@ -9,25 +9,29 @@ interface NotificationProps {
 
 export const WarningNotification = ({ message, onClose, duration = 5000 }: NotificationProps) => {
   const [isExiting, setIsExiting] = useState(false);
+  const [prevMessage, setPrevMessage] = useState(message);
 
-  // Trigger the exit animation before removing from DOM
-  const handleDismiss = () => {
+  // Synchronously reset `isExiting` during render when a new message arrives
+  if (message !== prevMessage) {
+    setPrevMessage(message);
+    setIsExiting(false);
+  }
+
+  // Wrap dismiss handler in useCallback to satisfy hook dependencies
+  const handleDismiss = useCallback(() => {
     setIsExiting(true);
     setTimeout(() => {
       onClose();
-      setIsExiting(false); // Reset for next time
-    }, 300); // Duration matches slideOutToLeft animation
-  };
+      setIsExiting(false);
+    }, 300);
+  }, [onClose]);
 
   useEffect(() => {
     if (!message) return;
 
-    // Reset exit state on new message
-    setIsExiting(false);
-
     const timer = setTimeout(handleDismiss, duration);
     return () => clearTimeout(timer);
-  }, [message, duration]);
+  }, [message, duration, handleDismiss]);
 
   if (!message) return null;
 

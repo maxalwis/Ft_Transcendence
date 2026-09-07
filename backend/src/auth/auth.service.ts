@@ -25,8 +25,7 @@ export class AuthService {
       return null;
     }
 
-    const { password, ...result } = user;
-    return result; // result contient tout user sauf password
+    return this.usersService.toPublicUser(user);
   }
 
   async validateOAuthUser(profile: {
@@ -34,11 +33,18 @@ export class AuthService {
     username: string;
     provider: string;
     providerId: string;
+    avatar: string;
   }) {
     let user = await this.usersService.findFromEmailOrNull(profile.email);
 
     if (!user) {
       user = await this.usersService.createOAuth(profile);
+    } else if (
+      user.provider === profile.provider &&
+      profile.avatar &&
+      user.avatar !== profile.avatar
+    ) {
+      user = await this.usersService.update(user.id, { avatar: profile.avatar });
     }
 
     return user;
@@ -69,7 +75,7 @@ export class AuthService {
 
       const user = await this.usersService.findOne(payload.sub);
       if (!user) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('User not found');
       }
 
       const newAccessToken = await this.jwtService.signAsync(
@@ -79,7 +85,7 @@ export class AuthService {
 
       return {
         accessToken: newAccessToken,
-        user: { id: user.id, email: user.email, username: user.username },
+        user: this.usersService.toPublicUser(user),
       };
     } catch {
       throw new UnauthorizedException('Refresh token invalid or expired');

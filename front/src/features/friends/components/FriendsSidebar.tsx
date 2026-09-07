@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import FriendsList from './FriendsList';
 import FriendsRequests from './FriendRequests';
 import FriendsSearchBar from './FriendsSearchBar';
@@ -13,6 +14,7 @@ type FriendsSidebarProps = OpenState & {
   requests: PendingRequest[];
   errorMsg: string | null;
   onDataChanged: () => void;
+  isLoggedIn: boolean;
 };
 
 export default function FriendsSidebar({
@@ -23,17 +25,27 @@ export default function FriendsSidebar({
   friends,
   requests,
   onDataChanged,
+  isLoggedIn,
 }: FriendsSidebarProps) {
+  const { t } = useTranslation();
   const [input, setInput] = useState('');
   const [shouldRender, setShouldRender] = useState(isOpen);
 
-  useEffect(() => {
-    if (isOpen) setShouldRender(true);
-  }, [isOpen]);
+  // Track previous props to update state synchronously during render
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  const [prevAction, setPrevAction] = useState(action);
 
-  useEffect(() => {
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
+    if (isOpen) {
+      setShouldRender(true);
+    }
+  }
+
+  if (action !== prevAction) {
+    setPrevAction(action);
     setInput('');
-  }, [action]);
+  }
 
   const handleAnimationEnd = () => {
     if (!isOpen) setShouldRender(false);
@@ -62,7 +74,7 @@ export default function FriendsSidebar({
       className={`glass-panel absolute bottom-0 left-0 flex flex-col rounded-xl overflow-hidden ${styles.sidebarModal}`}
     >
       {/* Back Arrow Button (Top-Left) */}
-      {action !== 'menu' && (
+      {isLoggedIn && action !== 'menu' && (
         <button
           type="button"
           aria-label="Back"
@@ -105,35 +117,39 @@ export default function FriendsSidebar({
 
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto pt-10">
-        {action === 'menu' ? (
+        {!isLoggedIn ? (
+          <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+            <p className="text-sm font-medium">{t('friendsSidebar.notLoggedIn')}</p>
+          </div>
+        ) : action === 'menu' ? (
           <div className="flex flex-col gap-2 py-2">
             <button
               type="button"
               className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-blue-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('default')}
             >
-              Search Friends
+              {t('friendsSidebar.search')}
             </button>
             <button
               type="button"
               className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-orange-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('request')}
             >
-              Pending Requests ({requests.length})
+              {t('friendsSidebar.pendingRequests', { count: requests.length })}
             </button>
             <button
               type="button"
               className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-green-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('add')}
             >
-              Add a friend
+              {t('friendsSidebar.add')}
             </button>
             <button
               type="button"
               className="border-2 mx-2 py-1.5 text-sm rounded-xl hover:bg-red-600 hover:text-white cursor-pointer duration-150 font-medium"
               onClick={() => setAction('remove')}
             >
-              Remove a friend
+              {t('friendsSidebar.remove')}
             </button>
           </div>
         ) : action === 'request' ? (
@@ -150,7 +166,7 @@ export default function FriendsSidebar({
       </div>
 
       {/* Search Bar */}
-      {action !== 'menu' && (
+      {isLoggedIn && action !== 'menu' && (
         <div className="glass-panel">
           <FriendsSearchBar action={action} input={input} setInput={setInput} />
         </div>

@@ -3,8 +3,9 @@ import styles from './chat.module.css';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
 import { fetchEventMessages, sendEventMessage } from '../chatService';
-import { useNotification } from '../../../context/notifications/NotificationContext';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useAuth } from '../../../context/auth/useAuth';
+import { useNotification } from '../../../context/notifications/useNotification';
+import { useTranslation } from 'react-i18next';
 import { useChatSocket } from '../hooks/useChatSocket';
 
 export type Message = {
@@ -21,6 +22,7 @@ interface ChatProps {
 }
 
 export default function Chat({ eventId, currentUserId }: ChatProps) {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const { showError } = useNotification();
@@ -34,9 +36,14 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
       .then((data) => {
         if (isMounted) setMessages(data);
       })
-      .catch((err) => {
-        // CORRECTION 1: Utilisation de showError au lieu de setErrorMessage
-        if (isMounted) showError(err.message || 'Failed to load messages');
+      .catch((err: unknown) => {
+        if (isMounted) {
+          const message =
+            err instanceof Error
+              ? err.message
+              : t('chat.errorLoadMessages', 'Failed to load messages');
+          showError(message);
+        }
       })
       .finally(() => {
         if (isMounted) setLoading(false);
@@ -45,7 +52,7 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     return () => {
       isMounted = false;
     };
-  }, [eventId, accessToken, showError]);
+  }, [eventId, accessToken, showError, t]);
 
   // Ajoute le message reçu en temps réel, en évitant les doublons
   // (utile si le message optimiste de handleSendMessage arrive avant l'echo du socket)
@@ -66,16 +73,19 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
       setMessages((prev) =>
         prev.some((m) => m.id === newMessage.id) ? prev : [...prev, newMessage]
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error sending message:', err);
-      showError(`Error while trying to send the message: ${err.message}`);
+      const errorMessage = err instanceof Error ? err.message : '';
+      showError(
+        `${t('chat.errorSend', 'Error while trying to send the message')}: ${errorMessage}`
+      );
     }
   };
 
   if (loading)
     return (
       <div className="text-gray-400 flex items-center justify-center text-sm p-4">
-        Loading messages...
+        {t('chat.loadingMessages', 'Loading messages...')}
       </div>
     );
 

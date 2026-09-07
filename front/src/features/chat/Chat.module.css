@@ -1,5 +1,101 @@
-.glass-blue {
-  background-color: rgb(245, 246, 255);
-  color: rgb(31, 31, 31);
-  border: 2px solid rgba(0, 20, 120, 0.5);
+.container {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.textarea {
+  width: 100%;
+  resize: none !important;
+  border-radius: var(--radius-lg);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-text-dark);
+  outline: none;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+
+  /* Height transitions */
+  min-height: 38px;
+  height: 38px;
+  overflow-y: hidden;
+  transition:
+    height 0.15s ease-out,
+    border-color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+}
+
+.textarea:focus {
+  border-color: var(--color-orange-primary);
+  background: transparent !important;
+}
+
+.textarea::placeholder {
+  color: var(--color-blue-dark);
+  opacity: 0.6;
+}
+
+.buttonWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  opacity: 1;
+  transform: scale(1);
+  overflow: hidden;
+  flex-shrink: 0;
+  transition:
+    width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.25s ease-in-out,
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.buttonWrapper.hidden {
+  width: 0px;
+  opacity: 0;
+  transform: scale(0.6);
+  pointer-events: none;
+}
+
+.sendButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  cursor: pointer;
+  background: var(--color-orange-primary) !important;
+  border: 1px solid var(--color-orange-border) !important;
+  color: var(--color-text-light);
+  padding: 0 !important;
+  user-select: none;
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+}
+
+.sendButton:hover {
+  background: var(--color-orange-secondary) !important;
+  border-color: var(--color-orange-primary) !important;
+  transform: scale(0.96);
+}
+
+.sendButton:active {
+  transform: scale(0.9);
+}
+
+.sendIcon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  overflow: visible;
+  fill: currentColor;
 }

@@ -1,21 +1,81 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import type { EventItem, EventGroup } from '../../types/event';
+import type { EventItem, EventGroup } from '../../../types/event';
 
-export function useMapEvents(showError: (msg: string) => void) {
+interface RawEventItem extends Partial<EventItem> {
+  latitude: number | string;
+  longitude: number | string;
+  date_start?: string;
+  date_end?: string;
+  price_type?: string;
+  access_link?: string;
+}
+
+export function useMapEvents(
+  showError: (msg: string) => void,
+  filters?: {
+    city?: string;
+    startDate?: string;
+    endDate?: string;
+    priceType?: string;
+    category?: string;
+    minPrice?: number | string;
+    maxPrice?: number | string;
+  }
+) {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
   const [activeEventIndex, setActiveEventIndex] = useState<number>(0);
 
+  // 1. Deconstruct primitive values explicitly to give useEffect stable dependency keys
+  const city = filters?.city ?? 'Paris';
+  const startDate = filters?.startDate ?? '';
+  const endDate = filters?.endDate ?? '';
+  const priceType = filters?.priceType ?? '';
+  const category = filters?.category ?? '';
+  const minPrice = filters?.minPrice ?? '';
+  const maxPrice = filters?.maxPrice ?? '';
+
   useEffect(() => {
     const fetchAllEvents = async () => {
       try {
         setIsLoading(true);
-        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-        const response = await fetch(`${baseUrl}/events/map`);
+
+        const params = new URLSearchParams();
+        if (city) params.append('city', city);
+        if (startDate) params.append('from', startDate);
+        if (endDate) params.append('to', endDate);
+        if (priceType) params.append('price', priceType);
+
+        if (category && category.trim() !== '') {
+          params.append('category', category.trim());
+        }
+
+        if (minPrice !== '') params.append('minPrice', String(minPrice));
+        if (maxPrice !== '') params.append('maxPrice', String(maxPrice));
+
+        const envUrl = import.meta.env?.VITE_API_URL;
+        const queryString = params.toString();
+        const queryPath = queryString ? `?${queryString}` : '';
+
+        let url = '';
+        if (envUrl) {
+          const cleanBase = envUrl.replace(/\/+$/, '');
+          url = cleanBase.endsWith('/api')
+            ? `${cleanBase}/events/map${queryPath}`
+            : `${cleanBase}/api/events/map${queryPath}`;
+        } else {
+          url = `/api/events/map${queryPath}`;
+        }
+
+        params.append('_t', Date.now().toString());
+
+        const response = await fetch(url);
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
+          const errorData = (await response.json().catch(() => ({}))) as {
+            message?: string | string[];
+          };
           const message = Array.isArray(errorData.message)
             ? errorData.message.join(', ')
             : errorData.message || `Error ${response.status}: Failed to load map events`;
@@ -23,21 +83,18 @@ export function useMapEvents(showError: (msg: string) => void) {
           throw new Error(message);
         }
 
-        const rawData: Array<
-          EventItem & {
-            date_start?: string;
-            date_end?: string;
-            price_type?: string;
-            access_link?: string;
-          }
-        > = await response.json();
+        const rawData: RawEventItem[] = await response.json();
+
         const data: EventItem[] = rawData.map((event) => ({
-          ...event,
-          dateStart: event.dateStart ?? event.date_start,
+          ...(event as EventItem),
+          latitude: Number(event.latitude),
+          longitude: Number(event.longitude),
+          dateStart: event.dateStart ?? event.date_start ?? '',
           dateEnd: event.dateEnd ?? event.date_end,
           priceType: event.priceType ?? event.price_type,
           accessLink: event.accessLink ?? event.access_link,
         }));
+
         setEvents(data);
       } catch (err: unknown) {
         console.error('Failed to fetch map events:', err);
@@ -50,7 +107,8 @@ export function useMapEvents(showError: (msg: string) => void) {
     };
 
     fetchAllEvents();
-  }, [showError]);
+    // 2. Pass individual primitive string dependencies to ensure reactivity
+  }, [showError, city, startDate, endDate, priceType, category, minPrice, maxPrice]);
 
   const eventGroups = useMemo<EventGroup[]>(() => {
     const groupsMap = new Map<string, EventItem[]>();
@@ -77,8 +135,8 @@ export function useMapEvents(showError: (msg: string) => void) {
 
     return Array.from(groupsMap.entries()).map(([key, groupEvents]) => ({
       id: key,
-      latitude: groupEvents[0].latitude,
-      longitude: groupEvents[0].longitude,
+      latitude: Number(groupEvents[0].latitude),
+      longitude: Number(groupEvents[0].longitude),
       events: groupEvents,
     }));
   }, [events]);

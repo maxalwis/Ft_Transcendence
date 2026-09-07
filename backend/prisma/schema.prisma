@@ -37,6 +37,7 @@ model Event {
   weight        Int?
   messages      Message[]
   interests     EventInterest[]
+  translations  TranslationCache[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -62,7 +63,21 @@ enum FriendshipStatus {
 enum UserStatus {
   OFFLINE
   ONLINE
-  IN_GAME
+}
+
+enum PreferredCategory {
+  MUSIC
+  CULTURE
+  WORKSHOPS
+  LEISURE
+  OTHERS
+}
+
+enum PreferredLanguage {
+  FR
+  EN
+  ES
+  AR
 }
 
 model User {
@@ -74,6 +89,8 @@ model User {
   providerId  String?    // OAuth
   avatar      String?
   status      UserStatus @default(OFFLINE)
+  preferredLanguage PreferredLanguage @default(FR)
+  preferredCategory PreferredCategory?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
@@ -110,4 +127,17 @@ model EventInterest {
   @@unique([userId, eventId])
   @@index([eventId])
   @@index([userId])
+}
+
+model TranslationCache {
+  id             Int      @id @default(autoincrement())
+  eventId        String
+  event          Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  lang           String   @db.VarChar(5)   // 'en', 'es', ...
+  field          String   @db.VarChar(50)  // 'description', 'title', ...
+  translatedText String
+  createdAt      DateTime @default(now())
+
+  @@unique([eventId, lang, field])
+  @@index([eventId])
 }

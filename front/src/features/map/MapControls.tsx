@@ -18,6 +18,7 @@ export function MapClickHandler({ closeSidebar }: { closeSidebar: () => void }) 
 
 export function GlassZoomControl() {
   const map = useMap();
+
   useEffect(() => {
     const zoomControl = L.control.zoom({ position: 'topleft' });
     zoomControl.addTo(map);
@@ -25,5 +26,6 @@ export function GlassZoomControl() {
       zoomControl.remove();
     };
   }, [map]);
+
   return null;
 }

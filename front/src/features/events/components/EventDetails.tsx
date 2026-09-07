@@ -1,5 +1,8 @@
+import { useTranslation } from 'react-i18next';
+
 interface EventDetailsProps {
-  title: string;
+  title?: string;
+  isTranslating?: boolean;
   category?: string;
   dateStart?: string;
   dateEnd?: string;
@@ -8,9 +11,13 @@ interface EventDetailsProps {
   accessLink?: string;
 }
 
-function formatDate(value?: string) {
-  if (!value) return 'Date inconnue';
-  return new Date(value).toLocaleDateString('fr-FR', {
+function formatDate(value?: string, locale = 'fr-FR', unknownText = 'Date inconnue') {
+  if (!value) return unknownText;
+
+  const date = new Date(value);
+  if (isNaN(date.getTime())) return unknownText;
+
+  return date.toLocaleDateString(locale, {
     day: 'numeric',
     month: 'short',
     hour: '2-digit',
@@ -35,6 +42,7 @@ function formatPriceType(value?: string) {
 
 export default function EventDetails({
   title,
+  isTranslating = false,
   category,
   dateStart,
   dateEnd,
@@ -42,36 +50,95 @@ export default function EventDetails({
   priceDetail,
   accessLink,
 }: EventDetailsProps) {
-  const formattedPriceType = formatPriceType(priceType);
+  const { t, i18n } = useTranslation();
+
+  // Map i18n language to browser locale string
+  const currentLocale =
+    i18n.language === 'es'
+      ? 'es-ES'
+      : i18n.language === 'en'
+        ? 'en-US'
+        : i18n.language === 'ar'
+          ? 'ar-SA'
+          : 'fr-FR';
+
+  const rawPriceType = cleanText(priceType).toLowerCase();
+
+  let translatedPriceType = formatPriceType(priceType);
+  if (
+    rawPriceType.includes('gratuit') ||
+    rawPriceType.includes('free') ||
+    rawPriceType.includes('gratis')
+  ) {
+    translatedPriceType = t('eventDetails.price.free');
+  } else if (
+    rawPriceType.includes('payant') ||
+    rawPriceType.includes('fee') ||
+    rawPriceType.includes('pago')
+  ) {
+    translatedPriceType = t('eventDetails.price.feeBased');
+  }
+
   const cleanedPriceDetail = cleanText(priceDetail);
-  const isPaid = formattedPriceType.toLowerCase().includes('payant');
+  const isPaid =
+    rawPriceType.includes('payant') ||
+    rawPriceType.includes('fee') ||
+    rawPriceType.includes('pago');
+
+  const unknownDateText = t('eventDetails.unknownDate');
 
   return (
     <div className="min-w-0 leading-tight">
-      <h2 className="mb-2! font-extrabold! text-black/90!">{title}</h2>
-      <p className="mb-1! text-sm font-semibold text-slate-600!">{category || 'Événement'}</p>
-      <p className="mb-1! text-xs">
-        {formatDate(dateStart)}
-        {dateEnd ? ` - ${formatDate(dateEnd)}` : ''}
+      {isTranslating ? (
+        <div className="mb-2 h-6 w-3/4 animate-pulse rounded bg-slate-200" />
+      ) : (
+        <h2 className="mb-2! font-extrabold! text-black/90!">{title}</h2>
+      )}
+      <p className="mb-1! text-sm font-semibold text-slate-600!">
+        {category || t('eventDetails.defaultCategory')}
       </p>
-      {formattedPriceType && (
+      <p className="mb-1! text-xs">
+        {formatDate(dateStart, currentLocale, unknownDateText)}
+        {dateEnd ? ` - ${formatDate(dateEnd, currentLocale, unknownDateText)}` : ''}
+      </p>
+      {translatedPriceType && (
         <p className="mb-1! text-xs text-slate-200">
-          {formattedPriceType}
+          {translatedPriceType}
           {isPaid && cleanedPriceDetail ? ` - ${cleanedPriceDetail}` : ''}
         </p>
       )}
       {accessLink && (
-        <>
-          <div className="mb-1 text-xs font-semibold text-slate-600">Lien :</div>
+        <div className="mt-3">
           <a
             href={accessLink}
             target="_blank"
             rel="noreferrer"
-            className="mb-1! block! text-xs! text-blue-900! underline!"
+            style={{
+              background: 'var(--color-orange-secondary)',
+              backdropFilter: 'var(--glass-blur)',
+              WebkitBackdropFilter: 'var(--glass-blur)',
+              border: '1px solid var(--glass-border)',
+              borderRadius: 'var(--radius-sm)',
+              color: 'var(--color-text-light)',
+            }}
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold transition-all duration-200 hover:[background:var(--color-orange-hover)!important] hover:[border-color:var(--color-orange-border)] active:scale-95"
           >
-            {accessLink}
+            <span>{t('eventDetails.accessLink')}</span>
+            <svg
+              className="h-3.5 w-3.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+              />
+            </svg>
           </a>
-        </>
+        </div>
       )}
     </div>
   );

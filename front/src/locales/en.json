@@ -1,0 +1,154 @@
+{
+  "welcome": "Welcome to our site",
+  "buttons": {
+    "submit": "Submit"
+  },
+  "categories": {
+    "all": "All",
+    "music": "Music",
+    "culture": "Culture",
+    "workshops": "Workshops",
+    "leisure": "Sports & Leisure",
+    "others": "Others"
+  },
+  "events": {
+    "defaultCategory": "Event",
+    "unknownDate": "Unknown date",
+    "linkLabel": "Link:"
+  },
+  "eventDetails": {
+    "defaultCategory": "Event",
+    "unknownDate": "Unknown date",
+    "accessLink": "Event's details",
+    "price": {
+      "free": "Free",
+      "feeBased": "Paid"
+    }
+  },
+  "eventPreview": {
+    "defaultAlt": "Event",
+    "seeDetails": "View details",
+    "undefinedDate": "Undefined date",
+    "start": "Start",
+    "end": "End",
+    "price": {
+      "free": "Free",
+      "feeBased": "Paid",
+      "unspecified": "Price not specified"
+    }
+  },
+  "filters": {
+    "title": "Events Filters",
+    "cityLabel": "City / Location",
+    "cityPlaceholder": "Ex: Paris",
+    "priceCategory": "Price category",
+    "selectCategory": "Select category",
+    "fromDate": "From :",
+    "apply": "Apply",
+    "reset": "Reset",
+    "allPrices": "All",
+    "free": "Free",
+    "feeBased": "Fee-based"
+  },
+  "friends": {
+    "buttonTitle": "Friends",
+    "errorLoading": "Error loading.",
+    "sidebarTitle": "My Friends",
+    "searchPlaceholder": "Search...",
+    "addTab": "Add",
+    "requestsTab": "Requests",
+    "noFriends": "No friends yet",
+    "remove": "Remove"
+  },
+  "friendsSidebar": {
+    "notLoggedIn": "Please log in to access your friends list.",
+    "search": "Search Friends",
+    "pendingRequests": "Pending Requests ({{count}})",
+    "pendingRequests_one": "Pending Request ({{count}})",
+    "add": "Add Friend",
+    "remove": "Remove Friend"
+  },
+  "friendsButton": {
+    "ariaOpen": "Open menu",
+    "ariaClose": "Close menu",
+    "search": "Search",
+    "pendingRequest": "Pending Request",
+    "addFriend": "Add a friend",
+    "removeFriend": "Remove a friend"
+  },
+  "friendsSearchBar": {
+    "clearInput": "Clear search input",
+    "placeholders": {
+      "add": "Add a friend...",
+      "remove": "Remove a friend...",
+      "request": "Search a friend...",
+      "default": "Search a friend..."
+    }
+  },
+  "friendsList": {
+    "viewProfile": "View profile"
+  },
+  "chat": {
+    "title": "Chat",
+    "connectPrompt": "Connect to view chat.",
+    "loadingMessages": "Loading messages...",
+    "errorLoadMessages": "Failed to load messages",
+    "errorSend": "Error while trying to send the message",
+    "placeholder": "Type your message...",
+    "send": "Send"
+  },
+  "authModal": {
+    "loginTitle": "Sign in",
+    "registerTitle": "Create Account",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "loginButton": "Log in",
+    "registerButton": "Register",
+    "noAccount": "No account?",
+    "createOne": "Create one",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "close": "Close",
+    "loginWithGoogle": "Log in with Google",
+    "loginWith42": "Log in with 42",
+    "errors": {
+      "invalidCredentials": "Invalid credentials",
+      "passwordMismatch": "Non matching passwords",
+      "registrationError": "Error creating account"
+    }
+  },
+  "authBtn": {
+    "login": "Login",
+    "logout": "Logout",
+    "editProfile": "Edit Profile"
+  },
+  "profileSettings": {
+    "title": "Edit Profile",
+    "username": "Username",
+    "choose": "Choose",
+    "changePassword": "Change Password",
+    "saving": "Saving...",
+    "saveError": "Unable to save changes",
+    "preferredLanguage": "Preferred Language",
+    "preferredCategory": "Preferred Category",
+    "changePicture": "Change Picture",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "publicProfile": {
+    "title": "View Profile",
+    "preferredLanguage": "Preferred Language",
+    "preferredCategory": "Preferred Category",
+    "notProvided": "Not provided"
+  },
+  "notifications": {
+    "defaultError": "An error occurred",
+    "defaultSuccess": "Operation successful"
+  },
+  "likeButton": {
+    "interested_one": "{{count}} interested",
+    "interested_other": "{{count}} interested"
+  }
+}
