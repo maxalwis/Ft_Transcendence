@@ -76,12 +76,11 @@ export default function EventPreview({
   const containerRef = useRef<HTMLDivElement>(null);
   const [cardHeight, setCardHeight] = useState<number | null>(null);
 
-  if (typeof position.y !== 'number' || typeof position.x !== 'number') {
-    return null;
-  }
+  const hasValidPosition = typeof position.y === 'number' && typeof position.x === 'number';
 
   // Observe container height dynamically
   useLayoutEffect(() => {
+    if (!hasValidPosition) return;
     const node = containerRef.current;
     if (!node) return;
 
@@ -96,13 +95,19 @@ export default function EventPreview({
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, []);
+  }, [hasValidPosition]);
 
   const currentLocale =
-    i18n.language === 'es' ? 'es-ES' : i18n.language === 'en' ? 'en-US' : 'fr-FR';
+    i18n.language === 'es'
+      ? 'es-ES'
+      : i18n.language === 'en'
+        ? 'en-US'
+        : i18n.language === 'ar'
+          ? 'ar-SA'
+          : 'fr-FR';
 
-  const posY = position.y;
-  const posX = position.x - CARD_WIDTH / 2;
+  const posY = position.y ?? 0;
+  const posX = (position.x ?? 0) - CARD_WIDTH / 2;
 
   const currentHeight = cardHeight ?? 300;
   const topPositionAbove = posY - MARKER_HEIGHT - currentHeight - GAP;
@@ -110,6 +115,11 @@ export default function EventPreview({
   const isFlippedDownward = useMemo(() => {
     return topPositionAbove < 0;
   }, [topPositionAbove]);
+
+  // Early return placed AFTER all React Hooks
+  if (!hasValidPosition) {
+    return null;
+  }
 
   const topPos = isFlippedDownward ? posY + GAP : topPositionAbove;
 
@@ -134,7 +144,7 @@ export default function EventPreview({
   const formattedPrice =
     normalizedPrice === 'payant'
       ? t('eventPreview.price.feeBased')
-      : normalizedPrice?.includes('gratuit') // matche "gratuit" ET "gratuit sous condition"
+      : normalizedPrice?.includes('gratuit')
         ? t('eventPreview.price.free')
         : priceType?.trim() || t('eventPreview.price.unspecified');
 
@@ -171,7 +181,10 @@ export default function EventPreview({
         )}
 
         {/* Category & Extend Overlay */}
-        <div className="absolute top-2 left-2 right-2 flex justify-end items-center z-10 pointer-events-none">
+        <div
+          dir="ltr"
+          className="absolute top-2 left-2 right-2 flex justify-end items-center z-10 pointer-events-none"
+        >
           <button
             type="button"
             onClick={handleExtendClick}

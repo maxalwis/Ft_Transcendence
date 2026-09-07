@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useAuth } from '../../../context/auth/useAuth';
 import { refresh } from '../../../api/api';
 
 export default function OAuthCallbackPage() {
@@ -17,7 +17,7 @@ export default function OAuthCallbackPage() {
         navigate('/', { replace: true });
       }
     })();
-  }, []);
+  }, [navigate, setAuth]);
 
   return <div className="min-h-screen flex items-center justify-center">Connexion en cours...</div>;
 }

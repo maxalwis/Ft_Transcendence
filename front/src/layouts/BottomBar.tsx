@@ -11,21 +11,23 @@ export default function BottomBar({ onOpenAuth }: BottomBarProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="fixed bottom-2 w-full flex flex-row items-center justify-between px-6 z-[500] pointer-events-none">
+    <div
+      dir="ltr"
+      className="fixed bottom-2 w-full flex flex-row items-center justify-between px-6 z-[500] pointer-events-none"
+    >
       {/* Left side position */}
       <div className="pointer-events-auto">
         <Friends />
       </div>
 
       {/* Centered actions */}
-      <div className="flex items-center absolute bottom-0 left-1/2 -translate-x-1/2 gap-2 pointer-events-auto">
+      <div
+        dir="ltr"
+        className="flex items-center absolute bottom-0 left-1/2 -translate-x-1/2 gap-2 pointer-events-auto"
+      >
         <LoginButton onOpenAuth={onOpenAuth} />
 
-        <button
-          type="button"
-          className="glass-panel flex items-center justify-center p-2"
-          aria-label="Notifications"
-        >
+        <button type="button" className="glass-panel" aria-label="Notifications">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"

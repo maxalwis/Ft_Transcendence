@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
+import sanitizeHtml from 'sanitize-html';
 
 export interface IngestedEventData {
   source: string;
@@ -146,6 +147,15 @@ export class IngestionService implements OnModuleInit {
     }
   }
 
+  private stripHtml(value: string | null | undefined): string | null {
+    if (!value) return null;
+    const cleaned = sanitizeHtml(value.trim(), {
+      allowedTags: [],
+      allowedAttributes: {},
+    }).trim();
+    return cleaned || null;
+  }
+
   private mapToEvent(item: any): IngestedEventData {
     return {
       source: 'mairie_paris',
@@ -162,7 +172,7 @@ export class IngestionService implements OnModuleInit {
       latitude: item.lat_lon?.lat ?? null,
       longitude: item.lat_lon?.lon ?? null,
       priceType: item.price_type ?? null,
-      priceDetail: item.price_detail ?? null,
+      priceDetail: this.stripHtml(item.price_detail),
       category: this.parseDelimitedString(item.qfap_tags),
       accessLink: this.normalizeUrl(item.access_link),
       audience: item.audience ?? null,

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useAuth } from '../../../context/auth/useAuth';
 import { useState, useRef, useEffect } from 'react';
 import EditProfile from '../../profile/EditProfile.tsx';
 
@@ -86,11 +86,7 @@ export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
   }
 
   return (
-    <button
-      className="h-10 w-25 glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
-      type="button"
-      onClick={onOpenAuth}
-    >
+    <button className="glass-panel" type="button" onClick={onOpenAuth}>
       {t('authBtn.login')}
     </button>
   );

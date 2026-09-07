@@ -76,6 +76,7 @@ enum PreferredLanguage {
   FR
   EN
   ES
+  AR
 }
 
 model User {

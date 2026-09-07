@@ -3,7 +3,6 @@ import { Route, Routes } from 'react-router-dom';
 
 import Map from './features/map/components/Map';
 import { NotificationProvider } from './context/notifications/NotificationContext';
-import BottomBar from './layouts/BottomBar';
 
 import OAuthCallbackPage from './features/auth/components/OAuthCallbackPage';
 import AuthModal from './features/auth/components/AuthModal';
@@ -34,8 +33,6 @@ export default function App() {
             </Routes>
           </div>
         </div>
-
-        <BottomBar onOpenAuth={handleOpenAuth} />
 
         <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       </NotificationProvider>

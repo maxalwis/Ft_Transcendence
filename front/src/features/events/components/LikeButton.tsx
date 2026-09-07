@@ -16,11 +16,16 @@ export default function LikeButton({
 }: LikeButtonProps) {
   const storageKey = `event-liked-${eventId}`;
   const [isLiked, setIsLiked] = useState(() => localStorage.getItem(storageKey) === 'true');
+  const [prevStorageKey, setPrevStorageKey] = useState(storageKey);
   const { t } = useTranslation();
 
-  useEffect(() => {
+  // Reset state during render if eventId/storageKey changes
+  if (storageKey !== prevStorageKey) {
+    setPrevStorageKey(storageKey);
     setIsLiked(localStorage.getItem(storageKey) === 'true');
+  }
 
+  useEffect(() => {
     const handleLikeChanged = (event: Event) => {
       const likeEvent = event as CustomEvent<{ eventId: string; isLiked: boolean }>;
       if (likeEvent.detail.eventId === eventId) {

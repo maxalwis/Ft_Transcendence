@@ -1,4 +1,3 @@
-import styles from './AdminPanelLinks.css';
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
@@ -134,7 +133,7 @@ const DropdownMenu: React.FC = () => {
                     window.open(tool.url, '_blank', 'noopener,noreferrer');
                     setIsOpen(false);
                   }}
-                  className="flex items-center gap-3 p-2 rounded-xl bg-white/40 hover:bg-white/80 border border-blue-400/30 hover:border-blue-400/60 transition-all text-left group"
+                  className="flex items-center gap-3 p-2 rounded-xl bg-white/40 hover:bg-white/80 border border-blue-400/30 hover:border-blue-400/60 transition-all text-start group"
                 >
                   <div className="p-2 rounded-lg bg-blue-500/10 text-blue-900 group-hover:scale-110 transition-transform">
                     {tool.icon}

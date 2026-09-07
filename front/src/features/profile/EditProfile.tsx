@@ -1,10 +1,10 @@
 import { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/auth/AuthContext';
+import { useAuth } from '../../context/auth/useAuth';
 import { resolveAvatarUrl } from './utils/avatar';
 import PasswordModal from './PasswordModal';
-import './Modal.css';
+import styles from './ProfileModal.module.css';
 
 interface EditProfileProps {
   onClose: () => void;
@@ -14,6 +14,7 @@ const languageOptions = [
   { value: 'FR', label: 'Français' },
   { value: 'EN', label: 'English' },
   { value: 'ES', label: 'Español' },
+  { value: 'AR', label: 'العربية' },
 ] as const;
 type PreferredLanguage = (typeof languageOptions)[number]['value'];
 
@@ -51,7 +52,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
     if (file) setAvatarPreview(URL.createObjectURL(file));
   };
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
     setError(null);
@@ -80,7 +81,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
       const updated = await res.json();
       updateUser(updated);
       requestClose();
-    } catch (err) {
+    } catch {
       setError('Impossible de sauvegarder les modifications');
     } finally {
       setIsSaving(false);
@@ -88,18 +89,18 @@ export default function EditProfile({ onClose }: EditProfileProps) {
   };
 
   const modal = (
-    <div className="modal-overlay profileModalOverlay" onClick={requestClose}>
+    <div className={styles.modalOverlay} onClick={requestClose}>
       <div
         data-state={isClosing ? 'closed' : 'open'}
         onAnimationEnd={handleAnimationEnd}
-        className="profileModal profileModalContent glass-panel"
+        className={styles.modalContent}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="profileModalHeader">
+        <div className={styles.modalHeader}>
           <h2>{t('profileSettings.title')}</h2>
           <button
             type="button"
-            className="profileModalClose"
+            className={styles.modalClose}
             onClick={requestClose}
             aria-label="Fermer"
           >
@@ -107,11 +108,11 @@ export default function EditProfile({ onClose }: EditProfileProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="avatar-picker">
+        <form onSubmit={handleSubmit} className={styles.modalForm}>
+          <div className={styles.avatarPicker}>
             <button
               type="button"
-              className="avatar-preview"
+              className={styles.avatarPreview}
               onClick={() => fileInputRef.current?.click()}
             >
               {avatarPreview ? (
@@ -129,7 +130,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
             />
             <button
               type="button"
-              className="avatar-change-link"
+              className={styles.avatarChangeLink}
               onClick={() => fileInputRef.current?.click()}
             >
               {t('profileSettings.changePicture')}
@@ -174,20 +175,20 @@ export default function EditProfile({ onClose }: EditProfileProps) {
           {!isOAuthUser && (
             <button
               type="button"
-              className="btn-secondary"
+              className={styles.btnSecondary}
               onClick={() => setIsPasswordModalOpen(true)}
             >
               {t('profileSettings.changePassword')}
             </button>
           )}
 
-          {error && <p className="modal-error">{error}</p>}
+          {error && <p className={styles.modalError}>{error}</p>}
 
-          <div className="modal-actions">
-            <button type="button" className="btn-secondary" onClick={requestClose}>
+          <div className={styles.modalActions}>
+            <button type="button" className={styles.btnSecondary} onClick={requestClose}>
               {t('profileSettings.cancel')}
             </button>
-            <button type="submit" className="btn-primary" disabled={isSaving}>
+            <button type="submit" className={styles.btnPrimary} disabled={isSaving}>
               {isSaving ? t('profileSettings.saving') : t('profileSettings.save')}
             </button>
           </div>

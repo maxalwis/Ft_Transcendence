@@ -19,8 +19,8 @@ import { ClusterLayer } from './ClusterLayer';
 import { AdminPanelLinks } from '../../externalLinks/AdminPanelLinks';
 
 // State Management, Hooks & Helpers
-import { useNotification } from '../../../context/notifications/NotificationContext';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useNotification } from '../../../context/notifications/useNotification';
+import { useAuth } from '../../../context/auth/useAuth';
 import { useMapEvents } from '../hooks/useMapEvents';
 import { MapEventsHandler } from './MapHelper';
 
