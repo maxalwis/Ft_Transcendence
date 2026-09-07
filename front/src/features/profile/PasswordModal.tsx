@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import styles from './ProfileModal.module.css';
 
 interface PasswordModalProps {
   onClose: () => void;
@@ -38,18 +39,18 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
   };
 
   return (
-    <div className="modal-overlay profileModalOverlay passwordModalOverlay" onClick={requestClose}>
+    <div className={styles.passwordOverlay} onClick={requestClose}>
       <div
         data-state={isClosing ? 'closed' : 'open'}
         onAnimationEnd={handleAnimationEnd}
-        className="profileModal profileModalContent glass-panel"
+        className={styles.modalContent}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="profileModalHeader">
+        <div className={styles.modalHeader}>
           <h2>Changer le mot de passe</h2>
           <button
             type="button"
-            className="profileModalClose"
+            className={styles.modalClose}
             onClick={requestClose}
             aria-label="Fermer"
           >
@@ -57,7 +58,7 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="password-form">
+        <form onSubmit={handleSubmit} className={styles.modalForm}>
           <label>
             Nouveau mot de passe
             <input
@@ -78,13 +79,13 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
             />
           </label>
 
-          {passwordError && <p className="modal-error">{passwordError}</p>}
+          {passwordError && <p className={styles.modalError}>{passwordError}</p>}
 
-          <div className="modal-actions">
-            <button type="button" className="btn-secondary" onClick={requestClose}>
+          <div className={styles.modalActions}>
+            <button type="button" className={styles.btnSecondary} onClick={requestClose}>
               Annuler
             </button>
-            <button type="submit" className="btn-primary" disabled={isChangingPassword}>
+            <button type="submit" className={styles.btnPrimary} disabled={isChangingPassword}>
               {isChangingPassword ? 'Chargement...' : 'Changer le mot de passe'}
             </button>
           </div>

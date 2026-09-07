@@ -1,10 +1,9 @@
 import FriendsSidebar from './FriendsSidebar';
 import { getFriends, getPendingRequests } from '../../../api/friends';
 import type { User, PendingRequest } from '../../../api/friends';
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../../../context/auth/useAuth';
 import { useTranslation } from 'react-i18next';
-import styles from '../Friends.module.css';
 
 export type FriendAction = 'menu' | 'default' | 'add' | 'remove' | 'request';
 
@@ -31,7 +30,7 @@ export default function Friends({ onOpenAuth }: FriendsProps) {
   const { t } = useTranslation();
   const { user, accessToken } = useAuth();
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!accessToken) return;
     try {
       const [friendsList, pendingList] = await Promise.all([
@@ -46,12 +45,39 @@ export default function Friends({ onOpenAuth }: FriendsProps) {
         err instanceof Error ? err.message : t('friends.errorLoading', 'Erreur de chargement.')
       );
     }
-  };
+  }, [accessToken, t]);
 
   useEffect(() => {
-    // Only load data if the user is authenticated
-    if (isOpen && user) loadData();
-  }, [isOpen, accessToken, user]);
+    let active = true;
+
+    if (isOpen && user && accessToken) {
+      (async () => {
+        try {
+          const [friendsList, pendingList] = await Promise.all([
+            getFriends(accessToken),
+            getPendingRequests(accessToken),
+          ]);
+          if (active) {
+            setFriends(friendsList);
+            setRequests(pendingList);
+            setErrorMsg(null);
+          }
+        } catch (err) {
+          if (active) {
+            setErrorMsg(
+              err instanceof Error
+                ? err.message
+                : t('friends.errorLoading', 'Erreur de chargement.')
+            );
+          }
+        }
+      })();
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [isOpen, accessToken, user, t]);
 
   const handleClick = () => {
     setAction('menu');

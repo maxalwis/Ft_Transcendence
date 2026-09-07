@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import type { User } from '../../api/friends';
 import { useTranslation } from 'react-i18next';
 import { resolveAvatarUrl } from './utils/avatar';
-import './Modal.css';
+import styles from './ProfileModal.module.css';
 
 interface ViewProfileProps {
   friend: User;
@@ -21,22 +21,22 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
   };
 
   return createPortal(
-    <div className="modal-overlay profileModalOverlay" onClick={requestClose}>
+    <div className={styles.modalOverlay} onClick={requestClose}>
       <div
         data-state={isClosing ? 'closed' : 'open'}
         onAnimationEnd={handleAnimationEnd}
-        className="profileModal profileModalContent glass-panel"
+        className={styles.modalContent}
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="profileModalHeader">
+        <div className={styles.modalHeader}>
           <h2>{t('publicProfile.title')}</h2>
           <button
             type="button"
-            className="profileModalClose"
+            className={styles.modalClose}
             onClick={requestClose}
             aria-label="Fermer"
           >
-            x
+            ×
           </button>
         </div>
 
@@ -52,22 +52,24 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
               friend.username.charAt(0).toUpperCase()
             )}
           </div>
-          <h3 className="m-0! text-lg! text-white!">{friend.username}</h3>
+          <h3 className="m-0! text-lg! text-slate-900!">{friend.username}</h3>
 
           <div className="w-full space-y-3 text-sm">
             <div className="flex justify-between gap-4">
-              <span className="text-white/60">{t('publicProfile.preferredCategory')}</span>
-              <span className="text-right text-white">
+              <span className={styles.fieldLabel}>{t('publicProfile.preferredCategory')}</span>
+              <span className={`text-right ${styles.fieldValue}`}>
                 {friend.preferredCategory
                   ? t(`categories.${friend.preferredCategory.toLowerCase()}`)
                   : t('publicProfile.notProvided')}
               </span>
             </div>
             <div className="flex justify-between gap-4">
-              <span className="text-white/60">{t('publicProfile.preferredLanguage')}</span>
-              <span className="text-right text-white">
+              <span className={styles.fieldLabel}>{t('publicProfile.preferredLanguage')}</span>
+              <span className={`text-right ${styles.fieldValue}`}>
                 {friend.preferredLanguage
-                  ? { FR: 'Français', EN: 'English', ES: 'Español' }[friend.preferredLanguage]
+                  ? { FR: 'Français', EN: 'English', ES: 'Español', AR: 'العربية' }[
+                      friend.preferredLanguage
+                    ]
                   : t('publicProfile.notProvided')}
               </span>
             </div>

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { FlagFR, FlagGB, FlagES } from './FlagIcons';
+import { FlagFR, FlagGB, FlagES, FlagSA } from './FlagIcons';
 
 export type NavBarProps = {
   onSelectCategory?: (category: string) => void;
@@ -22,7 +22,10 @@ export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps
   const currentLang = i18n.language;
 
   return (
-    <div className="absolute top-0 left-0 right-0 z-[1000] flex items-center justify-between px-6 pointer-events-none">
+    <div
+      dir="ltr"
+      className="absolute top-0 left-0 right-0 z-[1000] flex items-center justify-between px-6 pointer-events-none"
+    >
       {/* Spacer to keep nav perfectly centered */}
       <div className="w-[120px] hidden md:block" />
 
@@ -88,6 +91,17 @@ export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps
           }`}
         >
           <FlagES className="w-5 h-5 rounded-sm object-cover shrink-0" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => i18n.changeLanguage('ar')}
+          title="العربية"
+          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+            currentLang?.startsWith('ar') ? 'isSelected' : ''
+          }`}
+        >
+          <FlagSA className="w-5 h-5 rounded-sm object-cover shrink-0" />
         </button>
       </div>
     </div>

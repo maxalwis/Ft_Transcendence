@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { FiltersProps } from '../../../types/map';
@@ -22,11 +22,10 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
     { value: 'fee-based', label: t('filters.feeBased', 'Fee-based') },
   ];
 
-  useEffect(() => {
-    if (isOpen) {
-      setIsAnimating(true);
-    }
-  }, [isOpen]);
+  const handleOpen = () => {
+    setIsOpen(true);
+    setIsAnimating(true);
+  };
 
   const handleAnimationEnd = () => {
     if (!isOpen) {
@@ -40,7 +39,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
       startDate,
       endDate,
       priceType,
-    } as any);
+    });
     setIsOpen(false);
   };
 
@@ -50,7 +49,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
     setStartDate('');
     setEndDate('');
     setPriceType('');
-    onApplyFilters?.(defaultFilters as any);
+    onApplyFilters?.(defaultFilters);
     setIsOpen(false);
   };
 
@@ -59,7 +58,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
       <button
         type="button"
         aria-label="Open Filters"
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpen}
         className="glass-panel icon-btn fixed left-4 top-1/2 -translate-y-1/2 z-[9999] w-10 h-10 rounded-full shadow-lg cursor-pointer active:scale-95 flex items-center justify-center"
         style={{ color: 'var(--color-blue-dark)' }}
       >
@@ -95,7 +94,8 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
             </button>
 
             <h3
-              className="text-lg font-bold text-center pb-2 pr-6"
+              dir="ltr"
+              className="text-lg font-bold text-center pb-2 pe-6"
               style={{ color: 'var(--color-blue-dark)', borderColor: 'var(--glass-border)' }}
             >
               {t('filters.title', 'Events Filters')}
@@ -138,7 +138,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               />
             </div>
 
-            <div className="flex gap-2 mt-2">
+            <div dir="ltr" className="flex gap-2 mt-2">
               <button
                 type="button"
                 onClick={handleApply}

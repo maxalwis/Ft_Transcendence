@@ -97,7 +97,7 @@ export class UsersService {
       username?: string;
       email?: string;
       avatar?: string;
-      preferredLanguage?: 'FR' | 'EN' | 'ES';
+      preferredLanguage?: 'FR' | 'EN' | 'ES' | 'AR';
       preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS';
     }
   ): Promise<User> {
