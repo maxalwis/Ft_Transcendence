@@ -5,6 +5,15 @@
   min-width: 280px; /* Ensures sidebar keeps its proper width */
 }
 
+.searchBar {
+  padding-block: 1px;
+}
+
+.searchClearButton {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 .menuButton {
   margin-inline: 0.5rem;
   border: 1px solid;

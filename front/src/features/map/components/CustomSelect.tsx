@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import styles from '../Map.module.css';
 
 export interface SelectOption {
   value: string;
@@ -41,17 +42,11 @@ export default function CustomSelect({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          backgroundColor: '#ffffff',
-          borderColor: 'var(--glass-border)',
-          color: 'var(--color-blue-dark)',
-        }}
-        className="w-full flex items-center justify-between px-2.5 py-1.5 border rounded-md text-xs font-semibold focus:outline-none transition-colors cursor-pointer shadow-sm"
+        className={`w-full flex items-center justify-between ${styles.filterControl} ${styles.filterSelect}`}
       >
         <span>{selectedOption ? selectedOption.label : placeholder}</span>
         <svg
           className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-          style={{ color: 'var(--color-blue-dark)' }}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -64,12 +59,7 @@ export default function CustomSelect({
       {/* White Dropdown Menu */}
       {isOpen && (
         <ul
-          style={{
-            backgroundColor: '#ffffff',
-            borderColor: 'var(--glass-border)',
-            boxShadow: 'var(--glass-shadow)',
-          }}
-          className="absolute top-full left-0 right-0 mt-1 z-50 border rounded-lg overflow-hidden py-1 max-h-48 overflow-y-auto"
+          className={`absolute top-full left-0 right-0 mt-1 z-50 border rounded-lg overflow-hidden py-1 max-h-48 overflow-y-auto ${styles.filterDropdown}`}
         >
           {options.map((option) => {
             const isSelected = value === option.value;
@@ -84,15 +74,7 @@ export default function CustomSelect({
                 }}
                 onMouseEnter={() => setHoveredValue(option.value)}
                 onMouseLeave={() => setHoveredValue(null)}
-                style={{
-                  color:
-                    isSelected || isHovered
-                      ? 'var(--color-orange-primary)'
-                      : 'var(--color-blue-dark)',
-                  backgroundColor:
-                    isSelected || isHovered ? 'var(--color-orange-hover)' : '#ffffff',
-                }}
-                className="px-3 py-1.5 text-xs font-medium cursor-pointer transition-colors"
+                className={`px-3 py-1.5 text-xs cursor-pointer transition-colors ${styles.filterOption} ${isSelected || isHovered ? styles.filterOptionActive : ''}`}
               >
                 {option.label}
               </li>

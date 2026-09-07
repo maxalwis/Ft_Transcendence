@@ -59,12 +59,127 @@
   z-index: 9999;
 }
 
+.filterTrigger,
+.filterPanel,
+.filterControl,
+.filterAction,
+.filterDropdown {
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.filterTrigger,
+.filterPanel,
+.filterControl,
+.filterAction,
+.filterOption,
+.filterTitle,
+.filterLabel {
+  color: var(--color-blue-dark);
+  font-family: var(--font-main);
+}
+
+.filterTrigger,
+.filterPanel,
+.filterControl,
+.filterAction,
+.filterDropdown,
+.filterOption {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.filterPanel {
+  color: var(--color-blue-dark);
+}
+
+.filterTitle {
+  font-weight: 700;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.filterLabel {
+  font-weight: 600;
+}
+
+.filterControl {
+  min-height: 2rem;
+  border-radius: var(--radius-sm);
+  padding: 0.375rem 0.5rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  outline: none;
+}
+
+.filterControl:focus {
+  border-color: var(--color-orange-primary);
+  box-shadow: 0 0 0 2px var(--color-orange-border);
+}
+
+.filterSelect {
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.filterAction {
+  min-height: 2rem;
+  border-radius: var(--radius-sm);
+  padding: 0.375rem 0.5rem;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.filterActionPrimary,
+.filterActionSecondary {
+  background: var(--glass-bg);
+}
+
+.filterAction:hover,
+.filterTrigger:hover,
+.filterSelect:hover {
+  border-color: var(--color-orange-border);
+  background: var(--color-orange-hover);
+}
+
+.filterDropdown {
+  color: var(--color-blue-dark);
+}
+
+.filterOption {
+  color: var(--color-blue-dark);
+  font-weight: 500;
+}
+
+.filterOptionActive {
+  color: var(--color-orange-primary);
+  background: var(--color-orange-hover);
+}
+
 .filterModal[data-state='open'] {
   animation: centerPopIn 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .filterModal[data-state='closed'] {
   animation: centerPopOut 200ms ease-in forwards;
+}
+
+.sidebarModal {
+  transform-origin: bottom right;
+}
+
+.sidebarModal[data-state='open'] {
+  animation: sidebarExpandIn 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.sidebarModal[data-state='closed'] {
+  animation: sidebarCollapseOut 200ms ease-in forwards;
 }
 
 @keyframes centerPopIn {
@@ -86,5 +201,27 @@
   to {
     opacity: 0;
     transform: scale(0.7);
+  }
+}
+
+@keyframes sidebarExpandIn {
+  from {
+    opacity: 0;
+    transform: scale(0.75) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes sidebarCollapseOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.75) translateY(12px);
   }
 }

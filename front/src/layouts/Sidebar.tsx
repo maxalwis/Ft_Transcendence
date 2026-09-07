@@ -4,6 +4,7 @@ import Event from '../features/events/components/Event';
 import type { EventItem } from '../types/event';
 import { useTranslation } from 'react-i18next';
 import { FlagFR, FlagGB, FlagES } from './FlagIcons';
+import styles from '../features/map/Map.module.css';
 
 interface SideBarProps {
   onClose: () => void;
@@ -23,8 +24,13 @@ export default function SideBar({
   event,
 }: SideBarProps) {
   const [eventDetails, setEventDetails] = useState<EventItem | null>(event || null);
+  const [isOpen, setIsOpen] = useState(true);
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
+
+  const handleAnimationEnd = () => {
+    if (!isOpen) onClose();
+  };
 
   useEffect(() => {
     if (event !== undefined) {
@@ -51,7 +57,11 @@ export default function SideBar({
   }, [eventId]);
 
   return (
-    <div className="glass-panel fixed top-2 right-3 bottom-2 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col">
+    <div
+      data-state={isOpen ? 'open' : 'closed'}
+      onAnimationEnd={handleAnimationEnd}
+      className={`glass-panel ${styles.sidebarModal} fixed top-2 right-3 bottom-2 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col`}
+    >
       <div className="pointer-events-auto absolute top-3 right-full mr-2 flex flex-col gap-2">
         <button
           type="button"
@@ -89,7 +99,12 @@ export default function SideBar({
 
       {/* Close Button Header */}
       <div className="shrink-0">
-        <button type="button" aria-label="Close" onClick={onClose} className="modal-close">
+        <button
+          type="button"
+          aria-label="Close"
+          onClick={() => setIsOpen(false)}
+          className="modal-close"
+        >
           <svg
             className="h-4 w-4"
             viewBox="0 0 24 24"
@@ -104,8 +119,8 @@ export default function SideBar({
         </button>
       </div>
 
-      {/* Event Details Section (takes natural size) */}
-      <div className="shrink-0 border-b border-teal-200/20 pb-2 flex flex-col gap-2">
+      {/* Event Details Section (limited to 40% of the sidebar) */}
+      <div className="shrink-0 max-h-[50%] overflow-y-auto border-b border-teal-200/20 pb-2 flex flex-col gap-2">
         {eventDetails ? (
           <Event event={eventDetails} />
         ) : (

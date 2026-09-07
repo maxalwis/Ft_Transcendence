@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { ActionState } from './Friends';
+import styles from '../Friends.module.css';
 
 type InputProps = ActionState & {
   input: string;
@@ -21,7 +22,9 @@ export default function FriendsSearchBar({ action, input, setInput }: InputProps
   };
 
   return (
-    <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-2">
+    <div
+      className={`flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-3 ${styles.searchBar}`}
+    >
       <input
         maxLength={30}
         type="text"
@@ -35,7 +38,7 @@ export default function FriendsSearchBar({ action, input, setInput }: InputProps
           type="button"
           aria-label={t('friendsSearchBar.clearInput')}
           onClick={() => setInput('')}
-          className="modal-close modal-close-inline-red icon-btn relative! top-auto! right-2! rounded-full! shrink-0 cursor-pointer active:scale-70"
+          className={`modal-close modal-close-inline-red icon-btn relative! top-auto! right-auto! rounded-full! shrink-0 cursor-pointer active:scale-70 ${styles.searchClearButton}`}
         >
           <svg
             className="w-4 h-4"

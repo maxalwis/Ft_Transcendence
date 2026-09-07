@@ -93,6 +93,10 @@ textarea {
   min-height: 80px;
 }
 
+.chat-message-input {
+  min-height: 55px;
+}
+
 /* Interactive Elements */
 button,
 input[type='submit'],
@@ -125,6 +129,7 @@ input[type='submit']:hover,
 input[type='button']:hover,
 input[type='reset']:hover {
   background: var(--color-orange-hover) !important;
+  color: var(--color-orange-500);
   border-color: var(--color-orange-border);
   transform: zoom(0.98);
 }

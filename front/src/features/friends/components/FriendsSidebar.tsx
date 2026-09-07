@@ -103,7 +103,9 @@ export default function FriendsSidebar({
       </button>
 
       {/* Main Content Area */}
-      <div className={`flex-1 overflow-y-auto ${action === 'menu' ? 'pt-2' : 'pt-12'}`}>
+      <div
+        className={`flex-1 overflow-y-auto ${!isLoggedIn ? 'pt-8' : action !== 'menu' ? 'pt-12' : 'pt-2'}`}
+      >
         {!isLoggedIn ? (
           <div className="flex flex-col items-center justify-center h-full p-4 text-center">
             <p className="text-sm font-medium">{t('friendsSidebar.notLoggedIn')}</p>

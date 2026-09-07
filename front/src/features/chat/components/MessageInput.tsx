@@ -24,7 +24,7 @@ export default function MessageInput({ onSend }: { onSend: (text: string) => voi
       <textarea
         ref={textareaRef}
         rows={1}
-        className="glass-panel w-full resize-none rounded-3xl py-2 pl-4 pr-12 text-sm outline-none border border-gray-700/50 focus:border-gray-500 transition-all shadow-sm leading-relaxed overflow-y-auto text-white"
+        className="chat-message-input glass-panel w-full resize-none rounded-3xl py-2 pl-4 pr-12 text-sm outline-none border border-gray-700/50 focus:border-gray-500 transition-all shadow-sm leading-relaxed overflow-y-auto text-white"
         placeholder="Type a message..."
         maxLength={150}
         value={input}
