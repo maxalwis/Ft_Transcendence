@@ -201,7 +201,7 @@ async function main() {
     };
 
     for (const event of events) {
-      const isFree = event.priceType === 'free';
+      const isFree = event.priceType === 'gratuit';
 
       for (const user of users) {
         let p = baseProbability(event.popularityTier, isFree);
