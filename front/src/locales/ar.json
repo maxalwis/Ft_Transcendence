@@ -148,7 +148,11 @@
     "defaultSuccess": "تمت العملية بنجاح"
   },
   "likeButton": {
-    "interested_one": "مهتم {{count}}",
-    "interested_other": "مهتمون {{count}}"
+    "interested_zero": "{{count}} مهتم",
+    "interested_one": "{{count}} مهتم",
+    "interested_two": "{{count}} مهتمان",
+    "interested_few": "{{count}} مهتمين",
+    "interested_many": "{{count}} مهتمًا",
+    "interested_other": "{{count}} مهتم"
   }
 }
