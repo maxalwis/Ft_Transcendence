@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { useTranslation } from 'react-i18next';
 
 export function MyTileLayer() {
   return (

@@ -4,7 +4,7 @@ import { sendFriendRequest, removeFriend } from '../../../api/friends';
 import type { User } from '../../../api/friends';
 import { searchUsers } from '../../../api/users';
 import type { UserSearchResult } from '../../../api/users';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useAuth } from '../../../context/auth/useAuth';
 import ViewProfile from '../../profile/ViewProfile';
 import { useTranslation } from 'react-i18next';
 
@@ -29,11 +29,20 @@ export default function FriendsList({
   const { accessToken } = useAuth();
   const { t } = useTranslation();
 
-  useEffect(() => {
-    if (action !== 'add' || !input.trim()) {
+  // Reset results synchronously during render when input or action isn't valid for search
+  const shouldSearch = action === 'add' && Boolean(input.trim());
+  const [prevShouldSearch, setPrevShouldSearch] = useState(shouldSearch);
+
+  if (shouldSearch !== prevShouldSearch) {
+    setPrevShouldSearch(shouldSearch);
+    if (!shouldSearch) {
       setResults([]);
-      return;
     }
+  }
+
+  useEffect(() => {
+    if (!shouldSearch) return;
+
     const timeout = setTimeout(async () => {
       try {
         const found = await searchUsers(input, accessToken!);
@@ -45,7 +54,7 @@ export default function FriendsList({
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [input, action, accessToken]);
+  }, [input, shouldSearch, accessToken]);
 
   const handleAddFriend = async (receiverId: number) => {
     setErrorMsg(null);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FriendsList from './FriendsList';
 import FriendsRequests from './FriendRequests';
@@ -31,13 +31,21 @@ export default function FriendsSidebar({
   const [input, setInput] = useState('');
   const [shouldRender, setShouldRender] = useState(isOpen);
 
-  useEffect(() => {
-    if (isOpen) setShouldRender(true);
-  }, [isOpen]);
+  // Track previous props to update state synchronously during render
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  const [prevAction, setPrevAction] = useState(action);
 
-  useEffect(() => {
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
+    if (isOpen) {
+      setShouldRender(true);
+    }
+  }
+
+  if (action !== prevAction) {
+    setPrevAction(action);
     setInput('');
-  }, [action]);
+  }
 
   const handleAnimationEnd = () => {
     if (!isOpen) setShouldRender(false);

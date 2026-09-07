@@ -1,26 +1,6 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { setAccessToken as setApiAccessToken } from '../../api/api';
-
-interface User {
-  id: number;
-  email: string;
-  username: string;
-  provider?: string | null;
-  avatar?: string | null;
-  preferredLanguage?: 'FR' | 'EN' | 'ES' | null;
-  preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS' | null;
-}
-
-interface AuthContextType {
-  user: User | null;
-  accessToken: string | null;
-  isLoading: boolean;
-  setAuth: (user: User, token: string) => void;
-  updateUser: (user: Partial<User>) => void;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext, type User } from './AuthContextInstance';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -64,7 +44,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           logout();
         }
       } catch {
-        // Network or server offline errors fallback to logged-out state
         logout();
       } finally {
         setIsLoading(false);
@@ -79,10 +58,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
-  return context;
 }

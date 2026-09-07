@@ -20,7 +20,7 @@ CREATE TYPE "UserStatus" AS ENUM ('OFFLINE', 'ONLINE');
 CREATE TYPE "PreferredCategory" AS ENUM ('MUSIC', 'CULTURE', 'WORKSHOPS', 'LEISURE', 'OTHERS');
 
 -- CreateEnum
-CREATE TYPE "PreferredLanguage" AS ENUM ('FR', 'EN', 'ES');
+CREATE TYPE "PreferredLanguage" AS ENUM ('FR', 'EN', 'ES', 'AR');
 
 -- CreateTable
 CREATE TABLE "Event" (
