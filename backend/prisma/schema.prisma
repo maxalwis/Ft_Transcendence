@@ -91,7 +91,6 @@ model User {
   preferredCategory PreferredCategory?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-
   messages            Message[]
   sentFriendships     Friendship[] @relation("SentFriendships")
   receivedFriendships Friendship[] @relation("ReceivedFriendships")

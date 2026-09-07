@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import LoginButton from '../features/auth/components/Auth';
 import Friends from '../features/friends/components/Friends';
 
@@ -6,6 +8,8 @@ interface BottomBarProps {
 }
 
 export default function BottomBar({ onOpenAuth }: BottomBarProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="fixed bottom-2 w-full flex flex-row items-center justify-between px-6 z-[500] pointer-events-none">
       {/* Left side position */}
@@ -37,6 +41,12 @@ export default function BottomBar({ onOpenAuth }: BottomBarProps) {
             <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
           </svg>
         </button>
+      </div>
+
+      {/* Right side legal links */}
+      <div className="pointer-events-auto flex items-center gap-4 text-xs opacity-75">
+        <Link to="/privacy" className="hover:underline">{t('legal.privacy')}</Link>
+        <Link to="/terms" className="hover:underline">{t('legal.terms')}</Link>
       </div>
     </div>
   );

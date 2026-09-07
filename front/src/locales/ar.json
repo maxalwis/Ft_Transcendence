@@ -1,0 +1,176 @@
+{
+  "welcome": "مرحباً بكم في موقعنا",
+  "buttons": {
+    "submit": "إرسال"
+  },
+  "categories": {
+    "all": "الكل",
+    "music": "موسيقى",
+    "culture": "ثقافة",
+    "workshops": "ورش عمل",
+    "leisure": "رياضة وترفيه",
+    "others": "أخرى"
+  },
+  "events": {
+    "defaultCategory": "فعالية",
+    "unknownDate": "تاريخ غير معروف",
+    "linkLabel": "الرابط:"
+  },
+  "eventDetails": {
+    "defaultCategory": "فعالية",
+    "unknownDate": "تاريخ غير معروف",
+    "accessLink": "تفاصيل الفعالية",
+    "price": {
+      "free": "مجاني",
+      "feeBased": "مدفوع"
+    }
+  },
+  "eventPreview": {
+    "defaultAlt": "فعالية",
+    "seeDetails": "عرض التفاصيل",
+    "undefinedDate": "تاريخ غير محدد",
+    "start": "البداية",
+    "end": "النهاية",
+    "price": {
+      "free": "مجاني",
+      "feeBased": "مدفوع",
+      "unspecified": "السعر غير محدد"
+    }
+  },
+  "filters": {
+    "title": "مرشحات الفعاليات",
+    "cityLabel": "المدينة / الموقع",
+    "cityPlaceholder": "مثال: باريس",
+    "priceCategory": "فئة السعر",
+    "selectCategory": "اختر الفئة",
+    "fromDate": "من تاريخ:",
+    "apply": "تطبيق",
+    "reset": "إعادة تعيين",
+    "allPrices": "الكل",
+    "free": "مجاني",
+    "feeBased": "مدفوع"
+  },
+  "friends": {
+    "buttonTitle": "الأصدقاء",
+    "errorLoading": "خطأ في التحميل.",
+    "sidebarTitle": "أصدقائي",
+    "searchPlaceholder": "بحث...",
+    "addTab": "إضافة",
+    "requestsTab": "الطلبات",
+    "noFriends": "لا يوجد أصدقاء حتى الآن",
+    "remove": "إزالة"
+  },
+  "friendsSidebar": {
+    "notLoggedIn": "الرجاء تسجيل الدخول للوصول إلى قائمة أصدقائك.",
+    "search": "البحث عن أصدقاء",
+    "pendingRequests": "الطلبات المعلقة ({{count}})",
+    "pendingRequests_one": "طلب معلق ({{count}})",
+    "add": "إضافة صديق",
+    "remove": "إزالة صديق"
+  },
+  "friendsButton": {
+    "ariaOpen": "فتح القائمة",
+    "ariaClose": "إغلاق القائمة",
+    "search": "بحث",
+    "pendingRequest": "الطلبات المعلقة",
+    "addFriend": "إضافة صديق",
+    "removeFriend": "إزالة صديق"
+  },
+  "friendsSearchBar": {
+    "clearInput": "مسح البحث",
+    "placeholders": {
+      "add": "إضافة صديق...",
+      "remove": "إزالة صديق...",
+      "request": "البحث عن صديق...",
+      "default": "البحث عن صديق..."
+    }
+  },
+  "friendsList": {
+    "viewProfile": "عرض الملف الشخصي"
+  },
+  "chat": {
+    "title": "الدردشة",
+    "connectPrompt": "سجل الدخول لعرض الدردشة.",
+    "loadingMessages": "جاري تحميل الرسائل...",
+    "errorLoadMessages": "فشل تحميل الرسائل",
+    "errorSend": "خطأ أثناء محاولة إرسال الرسالة",
+    "placeholder": "اكتب رسالتك...",
+    "send": "إرسال"
+  },
+  "authModal": {
+    "loginTitle": "تسجيل الدخول",
+    "registerTitle": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "loginButton": "تسجيل الدخول",
+    "registerButton": "تسجيل",
+    "noAccount": "ليس لديك حساب؟",
+    "createOne": "أنشئ حساباً",
+    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "signInLink": "تسجيل الدخول",
+    "close": "إغلاق",
+    "loginWithGoogle": "تسجيل الدخول بواسطة جوجل",
+    "loginWith42": "تسجيل الدخول بواسطة 42",
+    "errors": {
+      "invalidCredentials": "بيانات الاعتماد غير صالحة",
+      "passwordMismatch": "كلمات المرور غير متطابقة",
+      "registrationError": "خطأ أثناء إنشاء الحساب"
+    }
+  },
+  "authBtn": {
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "editProfile": "تعديل الملف الشخصي"
+  },
+  "profileSettings": {
+    "title": "تعديل الملف الشخصي",
+    "username": "اسم المستخدم",
+    "choose": "اختر",
+    "changePassword": "تغيير كلمة المرور",
+    "saving": "جاري الحفظ...",
+    "saveError": "تعذر حفظ التغييرات",
+    "preferredLanguage": "اللغة المفضلة",
+    "preferredCategory": "الفئة المفضلة",
+    "changePicture": "تغيير الصورة",
+    "cancel": "إلغاء",
+    "save": "حفظ"
+  },
+  "publicProfile": {
+    "title": "عرض الملف الشخصي",
+    "preferredLanguage": "اللغة المفضلة",
+    "preferredCategory": "الفئة المفضلة",
+    "notProvided": "غير متوفر"
+  },
+  "notifications": {
+    "defaultError": "حدث خطأ ما",
+    "defaultSuccess": "تمت العملية بنجاح"
+  },
+  "likeButton": {
+    "interested_one": "{{count}} مهتم",
+    "interested_other": "{{count}} مهتمون"
+  },
+  "legal": {
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الخدمة"
+  },
+  "legalContent": {
+    "privacyTitle": "سياسة الخصوصية",
+    "privacySubtitle": "آخر تحديث: سبتمبر 2026",
+    "section1Title": "1. المعلومات التي نجمعها",
+    "privacyText": "نجمع المعلومات التي تقدمها مباشرة عند إنشاء حساب، مثل اسم المستخدم، عنوان البريد الإلكتروني، وصورة الملف الشخصي. كما نقوم بتخزين إحصائيات اللعب، رسائل الدردشة، وتفاعلات المستخدمين اللازمة لعمل Ft_Transcendence.",
+    "section2Title": "2. كيف نستخدم معلوماتك",
+    "privacyUseText": "تُستخدم بياناتك حصرياً لتوفير خدماتنا وصيانتها وتحسينها، إدارة مصادقة المستخدمين، تمكين الدردشة الفورية، وتسهيل تجارب اللعب الجماعي.",
+    "section3Title": "3. أمن البيانات",
+    "privacySecurityText": "ننفذ التدابير التقنية المناسبة لحماية بياناتك الشخصية ضد الوصول غير المصرح به أو التعديل أو الإفشاء أو التدمير.",
+    "termsTitle": "شروط الخدمة",
+    "termsSubtitle": "آخر تحديث: سبتمبر 2026",
+    "termsSection1Title": "1. قبول الشروط",
+    "termsText": "من خلال الوصول إلى Ft_Transcendence واستخدامه، فإنك توافق على الالتزام بشروط الخدمة هذه وجميع القوانين واللوائح المعمول بها.",
+    "termsSection2Title": "2. سلوك المستخدم",
+    "termsUserConduct": "أنت توافق على عدم استخدام المنصة لمضايقة أو إاساءة معاملة أو إرسال رسائل مزعجة عبر نظام الدردشة، أو محاولة المساس بأمان خوادم التطبيق وقاعدة البيانات.",
+    "termsSection3Title": "3. مسؤولية الحساب",
+    "termsAccountResponsibility": "أنت مسؤول عن الحفاظ على سرية بيانات اعتماد حسابك وعن جميع الأنشطة التي تحدث تحت حساب المستخدم الخاص بك."
+  }
+}

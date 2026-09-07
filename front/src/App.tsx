@@ -8,6 +8,8 @@ import BottomBar from './layouts/BottomBar';
 import OAuthCallbackPage from './features/auth/components/OAuthCallbackPage';
 import AuthModal from './features/auth/components/AuthModal';
 import { AuthProvider } from './context/auth/AuthContext';
+import PrivacyPolicy from './features/legal/PrivacyPolicy';
+import TermsOfService from './features/legal/TermsOfService';
 import './styles/variables.css';
 import './styles/global.css';
 
@@ -27,6 +29,8 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Map onOpenAuth={handleOpenAuth} />} />
               <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
             </Routes>
           </div>
         </div>

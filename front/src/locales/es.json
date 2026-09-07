@@ -150,5 +150,27 @@
   "likeButton": {
     "interested_one": "{{count}} interesado",
     "interested_other": "{{count}} interesados"
+  },
+  "legal": {
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio"
+  },
+  "legalContent": {
+    "privacyTitle": "Política de Privacidad",
+    "privacySubtitle": "Última actualización: Septiembre 2026",
+    "section1Title": "1. Información que recopilamos",
+    "privacyText": "Recopilamos la información que proporcionas directamente al crear una cuenta, como tu nombre de usuario, dirección de correo electrónico y avatar de perfil. También almacenamos estadísticas de juego, mensajes de chat e interacciones de usuario necesarias para el funcionamiento de Ft_Transcendence.",
+    "section2Title": "2. Cómo utilizamos tu información",
+    "privacyUseText": "Tus datos se utilizan exclusivamente para proporcionar, mantener y mejorar nuestros servicios, gestionar la autenticación de usuarios, habilitar el chat en tiempo real y facilitar experiencias de juego multijugador.",
+    "section3Title": "3. Seguridad de los datos",
+    "privacySecurityText": "Implementamos medidas técnicas apropiadas para proteger tus datos personales contra el acceso no autorizado, alteración, divulgación o destrucción.",
+    "termsTitle": "Términos de Servicio",
+    "termsSubtitle": "Última actualización: Septiembre 2026",
+    "termsSection1Title": "1. Aceptación de los términos",
+    "termsText": "Al acceder y utilizar Ft_Transcendence, aceptas estar sujeto a estos Términos de Servicio y a todas las leyes y regulaciones aplicables.",
+    "termsSection2Title": "2. Conducta del usuario",
+    "termsUserConduct": "Te comprometes a no utilizar la plataforma para acosar, abusar o enviar mensajes perturbadores a través del sistema de chat, ni a intentar comprometer la seguridad de los servidores y la base de datos de la aplicación.",
+    "termsSection3Title": "3. Responsabilidad de la cuenta",
+    "termsAccountResponsibility": "Eres responsable de mantener la confidencialidad de las credenciales de tu cuenta y de todas las actividades que ocurran bajo tu cuenta de usuario."
   }
 }
