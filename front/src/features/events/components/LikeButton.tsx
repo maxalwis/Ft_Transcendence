@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
 import { useAuth } from '../../../context/auth/useAuth';
+import { useNotification } from '../../../context/notifications/useNotification';
 import {
   markInterested,
   removeInterest,
@@ -16,45 +17,97 @@ interface LikeButtonProps {
   iconOnly?: boolean;
 }
 
+interface LikeSyncDetail {
+  eventId: string;
+  isLiked: boolean;
+  count: number;
+}
+
 export default function LikeButton({
   eventId,
   interestedUsersCount = 0,
   iconOnly = false,
 }: LikeButtonProps) {
   const { accessToken } = useAuth();
+  const { showError } = useNotification();
   const [isLiked, setIsLiked] = useState(false);
   const [count, setCount] = useState(interestedUsersCount);
   const [isLoading, setIsLoading] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const { t } = useTranslation();
 
+  const broadcastChange = (nextIsLiked: boolean, nextCount: number) => {
+    window.dispatchEvent(
+      new CustomEvent<LikeSyncDetail>('like-button-updated', {
+        detail: { eventId, isLiked: nextIsLiked, count: nextCount },
+      })
+    );
+  };
+
   useEffect(() => {
-    setIsReady(false);
+    const handleSync = (e: Event) => {
+      const customEvent = e as CustomEvent<LikeSyncDetail>;
+      if (customEvent.detail && customEvent.detail.eventId === eventId) {
+        setIsLiked(customEvent.detail.isLiked);
+        setCount(customEvent.detail.count);
+      }
+    };
+
+    window.addEventListener('like-button-updated', handleSync);
+    return () => {
+      window.removeEventListener('like-button-updated', handleSync);
+    };
+  }, [eventId]);
+
+  useEffect(() => {
+    let isCancelled = false;
 
     if (!accessToken) {
       getInterestCount(eventId)
-        .then(setCount)
+        .then((fetchedCount) => {
+          if (!isCancelled) setCount(fetchedCount);
+        })
         .catch(() => {})
-        .finally(() => setIsReady(true));
-      return;
+        .finally(() => {
+          if (!isCancelled) setIsReady(true);
+        });
+    } else {
+      getInterestStatus(eventId, accessToken)
+        .then(({ isInterested, count: fetchedCount }) => {
+          if (!isCancelled) {
+            setIsLiked(isInterested);
+            setCount(fetchedCount);
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          if (!isCancelled) setIsReady(true);
+        });
     }
-    getInterestStatus(eventId, accessToken)
-      .then(({ isInterested, count }) => {
-        setIsLiked(isInterested);
-        setCount(count);
-      })
-      .catch(() => {})
-      .finally(() => setIsReady(true));
+
+    return () => {
+      isCancelled = true;
+    };
   }, [eventId, accessToken]);
 
   const handleClick = async (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    if (!accessToken || isLoading || !isReady) return;
+
+    if (!accessToken) {
+      showError(t('likeButton.loginRequired'));
+      return;
+    }
+
+    if (isLoading || !isReady) return;
 
     const nextIsLiked = !isLiked;
+    const nextCount = Math.max(0, count + (nextIsLiked ? 1 : -1));
+
     setIsLoading(true);
-    setIsLiked(nextIsLiked); // optimistic update
-    setCount((c) => Math.max(0, c + (nextIsLiked ? 1 : -1)));
+
+    setIsLiked(nextIsLiked);
+    setCount(nextCount);
+    broadcastChange(nextIsLiked, nextCount);
 
     try {
       if (nextIsLiked) {
@@ -62,10 +115,13 @@ export default function LikeButton({
       } else {
         await removeInterest(eventId, accessToken);
       }
-    } catch (err) {
-      // rollback en cas d'échec
-      setIsLiked(!nextIsLiked);
-      setCount((c) => Math.max(0, c + (nextIsLiked ? -1 : 1)));
+    } catch {
+      const rollbackIsLiked = !nextIsLiked;
+      const rollbackCount = Math.max(0, nextCount + (nextIsLiked ? -1 : 1));
+
+      setIsLiked(rollbackIsLiked);
+      setCount(rollbackCount);
+      broadcastChange(rollbackIsLiked, rollbackCount);
     } finally {
       setIsLoading(false);
     }

@@ -148,6 +148,7 @@
     "defaultSuccess": "Operation successful"
   },
   "likeButton": {
+    "loginRequired": "You need to be logged in to add an event to your favorites",
     "interested_one": "{{count}} interested",
     "interested_other": "{{count}} interested"
   }

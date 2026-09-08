@@ -148,6 +148,7 @@
     "defaultSuccess": "Opération réussie"
   },
   "likeButton": {
+    "loginRequired": "Vous devez être connecté pour ajouter un événement à vos favoris",
     "interested_one": "{{count}} intéressé",
     "interested_other": "{{count}} intéressés"
   }
