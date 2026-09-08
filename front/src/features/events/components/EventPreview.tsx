@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState, useLayoutEffect } from 'react';
+import React, { useMemo, useRef, useState, useLayoutEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../Event.module.css';
 import LikeButton from './LikeButton';
@@ -24,21 +24,19 @@ export interface EventDetailsProps {
   interestedFriends?: Friend[];
   imageUrl?: string;
 
-  // Group Carousel Props
   totalInGroup?: number;
   currentIndex?: number;
   onPrev?: (e?: React.MouseEvent) => void;
   onNext?: (e?: React.MouseEvent, maxIndex?: number) => void;
 
-  // Interaction Handlers
   onClick?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 }
 
 const CARD_WIDTH = 300;
-const MARKER_HEIGHT = 60; // Height of map marker
-const GAP = 8; // Offset gap
+const MARKER_HEIGHT = 60;
+const GAP = 8;
 
 function formatDate(value?: string, locale = 'fr-FR', undefinedText = 'Undefined date') {
   if (!value) return undefinedText;
@@ -53,8 +51,11 @@ function formatDate(value?: string, locale = 'fr-FR', undefinedText = 'Undefined
   });
 }
 
+// Fixed constant default value to prevent reference changes across re-renders
+const DEFAULT_POSITION = { x: 0, y: 0 };
+
 export default function EventPreview({
-  position = { x: 0, y: 0 },
+  position = DEFAULT_POSITION,
   eventId,
   priceType,
   title,
@@ -73,67 +74,56 @@ export default function EventPreview({
   onMouseLeave,
 }: EventDetailsProps) {
   const { t, i18n } = useTranslation();
-  const containerRef = useRef<HTMLDivElement>(null);
   const [cardHeight, setCardHeight] = useState<number | null>(null);
 
   const hasValidPosition = typeof position.y === 'number' && typeof position.x === 'number';
 
-  // Observe container height dynamically
-  useLayoutEffect(() => {
-    if (!hasValidPosition) return;
-    const node = containerRef.current;
+  // FIX 1: Attach ResizeObserver via callback ref instead of useLayoutEffect.
+  // This prevents tearing down/re-creating observers every time position changes.
+  const containerRef = useCallback((node: HTMLDivElement | null) => {
     if (!node) return;
-
     const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const observedHeight = entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight;
-        if (observedHeight > 0) {
-          setCardHeight(observedHeight);
+      const entry = entries[0];
+      if (entry) {
+        const height = entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height;
+        if (height > 0) {
+          setCardHeight((prev) => (prev === height ? prev : height));
         }
       }
     });
-
     observer.observe(node);
-    return () => observer.disconnect();
-  }, [hasValidPosition]);
+  }, []);
 
-  const currentLocale =
-    i18n.language === 'es'
-      ? 'es-ES'
-      : i18n.language === 'en'
-        ? 'en-US'
-        : i18n.language === 'ar'
-          ? 'ar-SA'
-          : 'fr-FR';
+  const currentLocale = useMemo(() => {
+    switch (i18n.language) {
+      case 'es': return 'es-ES';
+      case 'en': return 'en-US';
+      case 'ar': return 'ar-SA';
+      default: return 'fr-FR';
+    }
+  }, [i18n.language]);
 
-  const posY = position.y ?? 0;
-  const posX = (position.x ?? 0) - CARD_WIDTH / 2;
+  // FIX 2: Memoize position math to avoid recalculating style layouts when values are identical
+  const { topPos, leftPos, isFlippedDownward } = useMemo(() => {
+    const posY = position.y ?? 0;
+    const posX = (position.x ?? 0) - CARD_WIDTH / 2;
+    const currentHeight = cardHeight ?? 300;
+    const topAbove = posY - MARKER_HEIGHT - currentHeight - GAP;
+    const flipped = topAbove < 0;
 
-  const currentHeight = cardHeight ?? 300;
-  const topPositionAbove = posY - MARKER_HEIGHT - currentHeight - GAP;
+    const computedTop = flipped ? posY + GAP : topAbove;
+    let computedLeft = posX;
 
-  const isFlippedDownward = useMemo(() => {
-    return topPositionAbove < 0;
-  }, [topPositionAbove]);
+    if (posX < 30) {
+      computedLeft = 30;
+    } else if (posX + CARD_WIDTH > window.innerWidth - 30) {
+      computedLeft = window.innerWidth - CARD_WIDTH - 30;
+    }
 
-  // Early return placed AFTER all React Hooks
-  if (!hasValidPosition) {
-    return null;
-  }
+    return { topPos: computedTop, leftPos: computedLeft, isFlippedDownward: flipped };
+  }, [position.x, position.y, cardHeight]);
 
-  const topPos = isFlippedDownward ? posY + GAP : topPositionAbove;
-
-  const isPlacedRightPadded = posX < 30;
-  const isPlacedLeftPadded = posX + CARD_WIDTH > window.innerWidth - 30;
-
-  const leftPos = isPlacedRightPadded
-    ? 30
-    : isPlacedLeftPadded
-      ? window.innerWidth - CARD_WIDTH - 30
-      : posX;
-
-  const transformOrigin = isFlippedDownward ? 'top center' : 'bottom center';
-  const animationClass = isFlippedDownward ? styles.popupDown : styles.popupUp;
+  if (!hasValidPosition) return null;
 
   const handleExtendClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -157,7 +147,7 @@ export default function EventPreview({
       onMouseLeave={onMouseLeave}
       onClick={onClick}
       className={`glass-panel ${styles['events-details-popup']} fixed w-[300px] z-[1000] flex flex-col justify-center cursor-default ${
-        cardHeight !== null ? animationClass : ''
+        cardHeight !== null ? (isFlippedDownward ? styles.popupDown : styles.popupUp) : ''
       } ${
         isFlippedDownward
           ? styles['events-details-popup--down']
@@ -166,11 +156,10 @@ export default function EventPreview({
       style={{
         top: `${topPos}px`,
         left: `${leftPos}px`,
-        transformOrigin,
+        transformOrigin: isFlippedDownward ? 'top center' : 'bottom center',
         visibility: cardHeight !== null ? 'visible' : 'hidden',
       }}
     >
-      {/* Image Container */}
       <div className={styles['events-details-image-container']}>
         {imageUrl && (
           <img
@@ -179,8 +168,6 @@ export default function EventPreview({
             className={styles['events-details-image']}
           />
         )}
-
-        {/* Category & Extend Overlay */}
         <div
           dir="ltr"
           className="absolute top-2 left-2 right-2 flex justify-end items-center z-10 pointer-events-none"
@@ -211,7 +198,6 @@ export default function EventPreview({
         </div>
       </div>
 
-      {/* Carousel Navigation - Directly under image */}
       {totalInGroup > 1 && (
         <div className="flex justify-between items-center px-3 py-1.5">
           <button
@@ -258,7 +244,6 @@ export default function EventPreview({
         </div>
       )}
 
-      {/* Content */}
       <div className={styles['events-details-content']}>
         {isTranslating ? (
           <div

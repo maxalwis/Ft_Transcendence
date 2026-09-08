@@ -10,52 +10,50 @@ interface TranslatedEvent {
 export function useTranslatedEvent(eventId: string, lang: string) {
   const [data, setData] = useState<TranslatedEvent | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // Track active fetch state key to derive loading & reset state during render
-  const [requestKey, setRequestKey] = useState(`${eventId}:${lang}`);
-  const currentKey = `${eventId}:${lang}`;
-
-  // Synchronously reset state during render whenever eventId or lang changes
-  if (currentKey !== requestKey) {
-    setRequestKey(currentKey);
-    setData(null);
-    setError(null);
-  }
-
-  const isFetching = Boolean(eventId) && (currentKey !== requestKey || (!data && !error));
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!eventId) return;
+    // If no event is hovered or language is default 'fr', skip translation API call
+    if (!eventId || lang === 'fr') {
+      setData(null);
+      setError(null);
+      setLoading(false);
+      return;
+    }
 
-    let cancelled = false;
-
+    const controller = new AbortController();
     const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-    fetch(`${baseUrl}/events/${eventId}?lang=${lang}`)
+    setLoading(true);
+
+    fetch(`${baseUrl}/events/${eventId}?lang=${lang}`, {
+      signal: controller.signal,
+    })
       .then((res) => {
-        if (!res.ok) throw new Error(`Erreur ${res.status}`);
+        if (!res.ok) throw new Error(`Error ${res.status}`);
         return res.json();
       })
       .then((json) => {
-        if (!cancelled) {
-          setData(json);
-          setError(null);
-        }
+        setData(json);
+        setError(null);
+        setLoading(false);
       })
       .catch((err) => {
-        if (!cancelled) {
+        if (err.name !== 'AbortError') {
           setError(err.message || 'Error loading event');
+          setLoading(false);
         }
       });
 
+    // Cancel HTTP request when hovering away or onto another marker
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, [eventId, lang]);
 
   return {
-    data: eventId ? data : null,
-    loading: eventId ? isFetching : false,
-    error: eventId ? error : null,
+    data: eventId && lang !== 'fr' ? data : null,
+    loading: eventId && lang !== 'fr' ? loading : false,
+    error,
   };
 }
