@@ -33,7 +33,6 @@ export function ClusterLayer({
       chunkDelay={50}
       maxClusterRadius={getClusterRadius}
       showCoverageOnHover={false}
-      // Cluster groups use createClusterIcon
       iconCreateFunction={(cluster) => createClusterIcon(cluster)}
     >
       {eventGroups.map((group) => {
@@ -47,10 +46,14 @@ export function ClusterLayer({
           <Marker
             key={group.id}
             position={[group.latitude, group.longitude]}
-            // Individual location pins use createGroupMarkerIcon (badge appears automatically if count > 1)
             icon={createGroupMarkerIcon(count, isHovered)}
             eventHandlers={{
-              click: () => onMarkerClick(primaryEvent.id),
+              click: (e) => {
+                if (e.originalEvent) {
+                  L.DomEvent.stopPropagation(e.originalEvent);
+                }
+                onMarkerClick(primaryEvent.id);
+              },
               mouseover: (e) => onMarkerHover(group.id, e),
               mouseout: () => onMarkerLeave(),
             }}

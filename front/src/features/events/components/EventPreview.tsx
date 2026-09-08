@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState, useLayoutEffect, useCallback } from 'react';
+import React, { useMemo, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../Event.module.css';
 import LikeButton from './LikeButton';
@@ -51,7 +51,6 @@ function formatDate(value?: string, locale = 'fr-FR', undefinedText = 'Undefined
   });
 }
 
-// Fixed constant default value to prevent reference changes across re-renders
 const DEFAULT_POSITION = { x: 0, y: 0 };
 
 export default function EventPreview({
@@ -75,13 +74,19 @@ export default function EventPreview({
 }: EventDetailsProps) {
   const { t, i18n } = useTranslation();
   const [cardHeight, setCardHeight] = useState<number | null>(null);
+  const observerRef = useRef<ResizeObserver | null>(null);
 
   const hasValidPosition = typeof position.y === 'number' && typeof position.x === 'number';
 
-  // FIX 1: Attach ResizeObserver via callback ref instead of useLayoutEffect.
-  // This prevents tearing down/re-creating observers every time position changes.
+  // Attach ResizeObserver via callback ref & disconnect old instances cleanly
   const containerRef = useCallback((node: HTMLDivElement | null) => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+      observerRef.current = null;
+    }
+
     if (!node) return;
+
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
       if (entry) {
@@ -91,7 +96,9 @@ export default function EventPreview({
         }
       }
     });
+
     observer.observe(node);
+    observerRef.current = observer;
   }, []);
 
   const currentLocale = useMemo(() => {
@@ -103,7 +110,6 @@ export default function EventPreview({
     }
   }, [i18n.language]);
 
-  // FIX 2: Memoize position math to avoid recalculating style layouts when values are identical
   const { topPos, leftPos, isFlippedDownward } = useMemo(() => {
     const posY = position.y ?? 0;
     const posX = (position.x ?? 0) - CARD_WIDTH / 2;
@@ -145,7 +151,10 @@ export default function EventPreview({
       ref={containerRef}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (onClick) onClick();
+      }}
       className={`glass-panel ${styles['events-details-popup']} fixed w-[300px] z-[1000] flex flex-col justify-center cursor-default ${
         cardHeight !== null ? (isFlippedDownward ? styles.popupDown : styles.popupUp) : ''
       } ${
@@ -202,7 +211,10 @@ export default function EventPreview({
         <div className="flex justify-between items-center px-3 py-1.5">
           <button
             type="button"
-            onClick={onPrev}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onPrev) onPrev(e);
+            }}
             disabled={currentIndex === 0}
             className={`${styles['events-details-carousel-button']} disabled:opacity-40`}
           >
@@ -224,7 +236,10 @@ export default function EventPreview({
           </span>
           <button
             type="button"
-            onClick={onNext}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onNext) onNext(e);
+            }}
             disabled={currentIndex === totalInGroup - 1}
             className={`${styles['events-details-carousel-button']} disabled:opacity-40`}
           >

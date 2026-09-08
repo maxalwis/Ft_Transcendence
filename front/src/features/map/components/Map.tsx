@@ -104,7 +104,7 @@ export default function Map({ onOpenAuth }: MapProps) {
     }, 150);
   }, [setActiveGroupId, setActiveEventIndex]);
 
-  const handleMarkerClick = useCallback(
+  const handleOpenSidebar = useCallback(
     (id: string) => {
       cancelCloseTimeout();
       setActiveSidebarEventId(id);
@@ -125,19 +125,14 @@ export default function Map({ onOpenAuth }: MapProps) {
   // Handler mémorisé pour la sélection de catégorie via NavBar
   const handleSelectCategory = useCallback((selectedCategory: string) => {
     setFilters((prev) => {
-      // 1. If clicking "All" or an empty value, always reset category to ''
       if (!selectedCategory || selectedCategory.trim() === '') {
         return { ...prev, category: '' };
       }
 
-      // 2. Check if the clicked category is already active (case-insensitive)
       const isAlreadyActive =
         prev.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase();
 
-      // 3. Toggle off if already active, otherwise select the new category
       const nextCategory = isAlreadyActive ? '' : selectedCategory;
-
-      console.log('[Map] Category selection updated to:', nextCategory);
 
       return {
         ...prev,
@@ -171,13 +166,17 @@ export default function Map({ onOpenAuth }: MapProps) {
         <GlassZoomControl />
         <AdminPanelLinks />
 
-        <MapEventsHandler activeGroup={activeGroup} setHoverPos={setHoverPos} />
+        <MapEventsHandler
+          activeGroup={activeGroup}
+          setActiveGroupId={setActiveGroupId}
+          setHoverPos={setHoverPos}
+        />
 
         {!isLoading && (
           <ClusterLayer
             eventGroups={eventGroups}
             activeGroupId={activeGroupId}
-            onMarkerClick={handleMarkerClick}
+            onMarkerClick={handleOpenSidebar}
             onMarkerHover={handleMarkerHover}
             onMarkerLeave={handleMouseLeave}
           />
@@ -201,7 +200,7 @@ export default function Map({ onOpenAuth }: MapProps) {
           currentIndex={activeEventIndex}
           onPrev={handlePrevEvent}
           onNext={() => handleNextEvent(undefined, activeGroup.events.length - 1)}
-          onClick={() => setActiveSidebarEventId(currentEvent.id)}
+          onClick={() => handleOpenSidebar(currentEvent.id)}
           onMouseEnter={cancelCloseTimeout}
           onMouseLeave={handleMouseLeave}
         />
