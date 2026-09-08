@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useAuth } from '../../../context/auth/useAuth';
 import { login } from '../../../api/api';
 
 interface AuthModalProps {
@@ -25,7 +25,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     e.preventDefault();
     setError(null);
     try {
-      const data = await login(email, password); // Automatically updates setAccessToken inside api.ts
+      const data = await login(email, password);
       setAuth(data.user, data.accessToken);
       onClose();
     } catch {
@@ -55,7 +55,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   return (
     <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/60 backdrop-blur-xs">
-      <div className="relative border-2 p-8 rounded-lg border-orange-500 bg-white max-w-md w-full shadow-2xl">
+      <div className="glass-modal relative p-8 max-w-md w-full glass-animate-in">
         <button
           type="button"
           onClick={onClose}
@@ -96,21 +96,18 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <button
-                type="submit"
-                className="mt-2 p-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold cursor-pointer"
-              >
+              <button type="submit" className="mt-2 p-2 rounded-lg font-semibold cursor-pointer">
                 {t('authModal.loginButton')}
               </button>
             </form>
 
-            <div className="flex justify-center gap-2 mt-4">
+            <div dir="ltr" className="flex justify-center gap-2 mt-4">
               <button
                 type="button"
                 onClick={() =>
                   (window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`)
                 }
-                className="glass-panel p-2 rounded-md"
+                className="glass-panel p-2 rounded-md cursor-pointer"
                 aria-label={t('authModal.loginWithGoogle')}
               >
                 <img
@@ -121,23 +118,23 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <button
                 type="button"
                 onClick={() => (window.location.href = `${import.meta.env.VITE_API_URL}/auth/42`)}
-                className="glass-panel p-2 rounded-md"
+                className="glass-panel p-2 rounded-md cursor-pointer"
                 aria-label={t('authModal.loginWith42')}
               >
                 <img src="https://cdn.simpleicons.org/42?viewbox=auto&size=20" alt="42" />
               </button>
             </div>
 
-            <p className="text-center text-sm mt-4">
-              {t('authModal.noAccount')}{' '}
+            <div className="flex items-center justify-center gap-3 text-sm mt-4">
+              <span>{t('authModal.noAccount')}</span>
               <button
                 type="button"
-                className="text-amber-600 hover:underline cursor-pointer"
+                className="unstyled text-amber-600 hover:underline cursor-pointer"
                 onClick={() => setView('register')}
               >
                 {t('authModal.createOne')}
               </button>
-            </p>
+            </div>
           </div>
         ) : (
           <div>
@@ -182,16 +179,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </button>
             </form>
 
-            <p className="text-center text-sm mt-4">
-              {t('authModal.alreadyHaveAccount')}{' '}
+            <div className="flex items-center justify-center gap-3 text-sm mt-4">
+              <span>{t('authModal.alreadyHaveAccount')}</span>
               <button
                 type="button"
-                className="text-amber-600 hover:underline cursor-pointer"
+                className="unstyled text-amber-600 hover:underline cursor-pointer"
                 onClick={() => setView('login')}
               >
                 {t('authModal.signInLink')}
               </button>
-            </p>
+            </div>
           </div>
         )}
       </div>

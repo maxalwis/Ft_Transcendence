@@ -1,20 +1,38 @@
 import { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useAuth } from '../../context/auth/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../context/auth/useAuth';
+import { resolveAvatarUrl } from './utils/avatar';
 import PasswordModal from './PasswordModal';
-import './Modal.css';
+import styles from './ProfileModal.module.css';
 
 interface EditProfileProps {
   onClose: () => void;
 }
 
+const languageOptions = [
+  { value: 'FR', label: 'Français' },
+  { value: 'EN', label: 'English' },
+  { value: 'ES', label: 'Español' },
+  { value: 'AR', label: 'العربية' },
+] as const;
+type PreferredLanguage = (typeof languageOptions)[number]['value'];
+
+const categoryOptions = ['MUSIC', 'CULTURE', 'WORKSHOPS', 'LEISURE', 'OTHERS'] as const;
+type PreferredCategory = (typeof categoryOptions)[number];
+
 export default function EditProfile({ onClose }: EditProfileProps) {
-  const { user, updateUser } = useAuth();
+  const { t } = useTranslation();
+  const { user, updateUser, accessToken } = useAuth();
   const [username, setUsername] = useState(user?.username ?? '');
-  const [preferredLanguage, setPreferredLanguage] = useState('');
-  const [preferredCategory, setPreferredCategory] = useState('');
+  const [preferredLanguage, setPreferredLanguage] = useState<PreferredLanguage | ''>(
+    user?.preferredLanguage ?? ''
+  );
+  const [preferredCategory, setPreferredCategory] = useState<PreferredCategory | ''>(
+    user?.preferredCategory ?? ''
+  );
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(user?.avatar ?? null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(resolveAvatarUrl(user?.avatar));
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -28,28 +46,33 @@ export default function EditProfile({ onClose }: EditProfileProps) {
     if (isClosing) onClose();
   };
 
-  const languageOptions = ['Français', 'Anglais', 'Espagnol'];
-  const categoryOptions = ['Culture', 'Sports', 'Musique', 'Famille'];
-
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     setAvatarFile(file);
     if (file) setAvatarPreview(URL.createObjectURL(file));
   };
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
     setError(null);
 
     try {
+      const formData = new FormData();
+      formData.append('username', username);
+      if (preferredLanguage) formData.append('preferredLanguage', preferredLanguage);
+      if (preferredCategory) formData.append('preferredCategory', preferredCategory);
+      if (avatarFile) formData.append('avatar', avatarFile);
+
       const res = await fetch(
         `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/users/${user?.id}`,
         {
           method: 'PUT',
           credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username }),
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: formData,
         }
       );
 
@@ -58,7 +81,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
       const updated = await res.json();
       updateUser(updated);
       requestClose();
-    } catch (err) {
+    } catch {
       setError('Impossible de sauvegarder les modifications');
     } finally {
       setIsSaving(false);
@@ -66,15 +89,17 @@ export default function EditProfile({ onClose }: EditProfileProps) {
   };
 
   const modal = (
-    <div className="modal-overlay profileModalOverlay" onClick={requestClose}>
+    <div className={styles.modalOverlay} onClick={requestClose}>
       <div
         data-state={isClosing ? 'closed' : 'open'}
         onAnimationEnd={handleAnimationEnd}
-        className="profileModal profileModalContent glass-panel relative"
+        className={styles.modalContent}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="profileModalHeader">
-          <h2>Modifier le profil</h2>
+        <div className={styles.modalHeader}>
+          <h2>{t('profileSettings.title')}</h2>
+
+
           <button type="button" className="modal-close" onClick={requestClose} aria-label="Fermer">
             <svg
               className="h-4 w-4"
@@ -90,11 +115,11 @@ export default function EditProfile({ onClose }: EditProfileProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="avatar-picker">
+        <form onSubmit={handleSubmit} className={styles.modalForm}>
+          <div className={styles.avatarPicker}>
             <button
               type="button"
-              className="avatar-preview"
+              className={styles.avatarPreview}
               onClick={() => fileInputRef.current?.click()}
             >
               {avatarPreview ? (
@@ -112,43 +137,43 @@ export default function EditProfile({ onClose }: EditProfileProps) {
             />
             <button
               type="button"
-              className="avatar-change-link"
+              className={styles.avatarChangeLink}
               onClick={() => fileInputRef.current?.click()}
             >
-              Changer photo
+              {t('profileSettings.changePicture')}
             </button>
           </div>
 
           <label>
-            Pseudo
+            {t('profileSettings.username')}
             <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
           </label>
 
           <label>
-            Langue préférée
+            {t('profileSettings.preferredLanguage')}
             <select
               value={preferredLanguage}
-              onChange={(e) => setPreferredLanguage(e.target.value)}
+              onChange={(e) => setPreferredLanguage(e.target.value as PreferredLanguage)}
             >
-              <option value="">Choisir</option>
-              {languageOptions.map((language) => (
-                <option key={language} value={language}>
-                  {language}
+              <option value="">{t('profileSettings.choose')}</option>
+              {languageOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
                 </option>
               ))}
             </select>
           </label>
 
           <label>
-            Catégorie préférée
+            {t('profileSettings.preferredCategory')}
             <select
               value={preferredCategory}
-              onChange={(e) => setPreferredCategory(e.target.value)}
+              onChange={(e) => setPreferredCategory(e.target.value as PreferredCategory)}
             >
-              <option value="">Choisir</option>
-              {categoryOptions.map((category) => (
-                <option key={category} value={category}>
-                  {category}
+              <option value="">{t('profileSettings.choose')}</option>
+              {categoryOptions.map((code) => (
+                <option key={code} value={code}>
+                  {t(`categories.${code.toLowerCase()}`)}
                 </option>
               ))}
             </select>
@@ -157,21 +182,21 @@ export default function EditProfile({ onClose }: EditProfileProps) {
           {!isOAuthUser && (
             <button
               type="button"
-              className="btn-secondary"
+              className={styles.btnSecondary}
               onClick={() => setIsPasswordModalOpen(true)}
             >
-              Modifier le mot de passe
+              {t('profileSettings.changePassword')}
             </button>
           )}
 
-          {error && <p className="modal-error">{error}</p>}
+          {error && <p className={styles.modalError}>{error}</p>}
 
-          <div className="modal-actions">
-            <button type="button" className="btn-secondary" onClick={requestClose}>
-              Annuler
+          <div className={styles.modalActions}>
+            <button type="button" className={styles.btnSecondary} onClick={requestClose}>
+              {t('profileSettings.cancel')}
             </button>
-            <button type="submit" className="btn-primary" disabled={isSaving}>
-              {isSaving ? 'Sauvegarde...' : 'Enregistrer'}
+            <button type="submit" className={styles.btnPrimary} disabled={isSaving}>
+              {isSaving ? t('profileSettings.saving') : t('profileSettings.save')}
             </button>
           </div>
         </form>

@@ -3,7 +3,7 @@
   "buttons": {
     "submit": "Valider"
   },
-  "nav": {
+  "categories": {
     "all": "Tout",
     "music": "Musique",
     "culture": "Culture",
@@ -85,6 +85,9 @@
       "default": "Rechercher un ami..."
     }
   },
+  "friendsList": {
+    "viewProfile": "Voir profil"
+  },
   "chat": {
     "title": "Chat",
     "connectPrompt": "Connectez-vous pour voir le chat.",
@@ -118,10 +121,34 @@
   },
   "authBtn": {
     "login": "Connexion",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "editProfile": "Modifier le profil"
+  },
+  "profileSettings": {
+    "title": "Modifier le profil",
+    "username": "Pseudo",
+    "choose": "Choisir",
+    "changePassword": "Modifier le mot de passe",
+    "saving": "Sauvegarde...",
+    "saveError": "Impossible de sauvegarder les modifications",
+    "preferredLanguage": "Langue préférée",
+    "preferredCategory": "Catégorie préférée",
+    "changePicture": "Changer photo",
+    "cancel": "Annuler",
+    "save": "Enregistrer"
+  },
+  "publicProfile": {
+    "title": "Voir profil",
+    "preferredLanguage": "Langue préférée",
+    "preferredCategory": "Catégorie préférée",
+    "notProvided": "Non renseignée"
   },
   "notifications": {
     "defaultError": "Une erreur est survenue",
     "defaultSuccess": "Opération réussie"
+  },
+  "likeButton": {
+    "interested_one": "{{count}} intéressé",
+    "interested_other": "{{count}} intéressés"
   }
 }

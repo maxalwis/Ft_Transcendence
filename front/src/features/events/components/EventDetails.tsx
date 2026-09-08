@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
 interface EventDetailsProps {
-  title: string;
+  title?: string;
+  isTranslating?: boolean;
   category?: string;
   dateStart?: string;
   dateEnd?: string;
@@ -41,6 +42,7 @@ function formatPriceType(value?: string) {
 
 export default function EventDetails({
   title,
+  isTranslating = false,
   category,
   dateStart,
   dateEnd,
@@ -52,7 +54,13 @@ export default function EventDetails({
 
   // Map i18n language to browser locale string
   const currentLocale =
-    i18n.language === 'es' ? 'es-ES' : i18n.language === 'en' ? 'en-US' : 'fr-FR';
+    i18n.language === 'es'
+      ? 'es-ES'
+      : i18n.language === 'en'
+        ? 'en-US'
+        : i18n.language === 'ar'
+          ? 'ar-SA'
+          : 'fr-FR';
 
   const rawPriceType = cleanText(priceType).toLowerCase();
 
@@ -81,7 +89,11 @@ export default function EventDetails({
 
   return (
     <div className="min-w-0 leading-tight">
-      <h2 className="mb-2! font-extrabold! text-black/90!">{title}</h2>
+      {isTranslating ? (
+        <div className="mb-2 h-6 w-3/4 animate-pulse rounded bg-slate-200" />
+      ) : (
+        <h2 className="mb-2! font-extrabold! text-black/90!">{title}</h2>
+      )}
       <p className="mb-1! text-sm font-semibold text-slate-600!">
         {category || t('eventDetails.defaultCategory')}
       </p>

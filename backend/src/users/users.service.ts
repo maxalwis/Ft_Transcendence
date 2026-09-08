@@ -85,9 +85,21 @@ export class UsersService {
     return username;
   }
 
+  // Renvoie uniquement les champs safe à exposer au frontend (jamais le password)
+  toPublicUser(user: User) {
+    const { password, ...publicUser } = user;
+    return publicUser;
+  }
+
   async update(
     id: number,
-    data: { username?: string; email?: string; avatar?: string }
+    data: {
+      username?: string;
+      email?: string;
+      avatar?: string;
+      preferredLanguage?: 'FR' | 'EN' | 'ES' | 'AR';
+      preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS';
+    }
   ): Promise<User> {
     await this.findOne(id); // Lève une NotFoundException si l'ID n'existe pas
     return this.catchDuplicateError(() => this.prisma.user.update({ where: { id }, data }));

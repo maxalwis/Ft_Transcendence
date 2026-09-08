@@ -3,11 +3,16 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '../generated/prisma/client';
 import { BoundingBox } from './dto/bounding-box.interface';
 import { NearbyQueryDto } from './dto/map-query.dto';
+import { TranslationsService } from '../translations/translations.service';
 
 @Injectable()
 export class EventsService {
   private readonly logger = new Logger(EventsService.name);
-  constructor(private prisma: PrismaService) {}
+
+  constructor(
+    private prisma: PrismaService,
+    private translations: TranslationsService
+  ) {}
 
   private getPriceCondition(price?: string) {
     if (!price) return Prisma.empty;
@@ -163,7 +168,7 @@ export class EventsService {
     `;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, lang: string = 'fr') {
     const events = await this.prisma.$queryRaw<any[]>`
       SELECT id, title, description, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail", "accessLink"
       FROM "Event"
@@ -175,7 +180,19 @@ export class EventsService {
     if (!event) {
       throw new NotFoundException(`Event ${id} not found`);
     }
-    return event;
+
+    const [title, priceDetail, category] = await Promise.all([
+      this.translations.getTranslatedTitle(id, lang),
+      this.translations.getTranslatedPriceDetail(id, lang),
+      this.translations.getTranslatedCategory(id, lang),
+    ]);
+
+    return {
+      ...event,
+      title,
+      priceDetail,
+      category: category ? [category] : event.category,
+    };
   }
 
   async findNearby(

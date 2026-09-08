@@ -1,6 +1,15 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { EventItem, EventGroup } from '../../../types/event';
 
+interface RawEventItem extends Partial<EventItem> {
+  latitude: number | string;
+  longitude: number | string;
+  date_start?: string;
+  date_end?: string;
+  price_type?: string;
+  access_link?: string;
+}
+
 export function useMapEvents(
   showError: (msg: string) => void,
   filters?: {
@@ -45,7 +54,7 @@ export function useMapEvents(
         if (minPrice !== '') params.append('minPrice', String(minPrice));
         if (maxPrice !== '') params.append('maxPrice', String(maxPrice));
 
-        const envUrl = (import.meta as any).env?.VITE_API_URL;
+        const envUrl = import.meta.env?.VITE_API_URL;
         const queryString = params.toString();
         const queryPath = queryString ? `?${queryString}` : '';
 
@@ -64,7 +73,9 @@ export function useMapEvents(
         const response = await fetch(url);
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
+          const errorData = (await response.json().catch(() => ({}))) as {
+            message?: string | string[];
+          };
           const message = Array.isArray(errorData.message)
             ? errorData.message.join(', ')
             : errorData.message || `Error ${response.status}: Failed to load map events`;
@@ -72,13 +83,13 @@ export function useMapEvents(
           throw new Error(message);
         }
 
-        const rawData = await response.json();
+        const rawData: RawEventItem[] = await response.json();
 
-        const data: EventItem[] = rawData.map((event: any) => ({
-          ...event,
+        const data: EventItem[] = rawData.map((event) => ({
+          ...(event as EventItem),
           latitude: Number(event.latitude),
           longitude: Number(event.longitude),
-          dateStart: event.dateStart ?? event.date_start,
+          dateStart: event.dateStart ?? event.date_start ?? '',
           dateEnd: event.dateEnd ?? event.date_end,
           priceType: event.priceType ?? event.price_type,
           accessLink: event.accessLink ?? event.access_link,

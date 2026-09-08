@@ -9,7 +9,7 @@ import styles from '../features/map/Map.module.css';
 interface SideBarProps {
   onClose: () => void;
   eventId?: string;
-  currentUserId?: number;
+  currentUserId?: string | number;
   events?: EventItem[];
   event?: EventItem | null;
 }
@@ -23,7 +23,13 @@ export default function SideBar({
   events = EMPTY_EVENT,
   event,
 }: SideBarProps) {
-  const [eventDetails, setEventDetails] = useState<EventItem | null>(event || null);
+  const [fetchedEvent, setFetchedEvent] = useState<EventItem | null>(null);
+
+  // Find in list synchronously or use passed event prop
+  const eventFromProps = event ?? events.find((ev) => ev.id === eventId) ?? null;
+
+  // Prefer event passed via props, fallback to manually fetched event
+  const eventDetails = eventFromProps || fetchedEvent;
   const [isOpen, setIsOpen] = useState(true);
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
@@ -33,28 +39,31 @@ export default function SideBar({
   };
 
   useEffect(() => {
-    if (event !== undefined) {
-      setEventDetails(event);
+    // Skip fetching if event is already provided or no eventId exists
+    if (eventFromProps || !eventId) {
       return;
     }
 
-    if (!eventId) {
-      setEventDetails(null);
-      return;
-    }
+    let isMounted = true;
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-    const foundInList = events.find((ev) => ev.id === eventId);
-    if (foundInList) {
-      setEventDetails(foundInList);
-      return;
-    }
-
-    const baseUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3000';
     fetch(`${baseUrl}/events/${eventId}`)
       .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setEventDetails(data))
-      .catch(() => setEventDetails(null));
-  }, [eventId]);
+      .then((data: EventItem | null) => {
+        if (isMounted) {
+          setFetchedEvent(data);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setFetchedEvent(null);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [eventId, eventFromProps]);
 
   return (
     <div
@@ -130,7 +139,7 @@ export default function SideBar({
         )}
       </div>
 
-      {/* Chat Section (takes all remaining height) */}
+      {/* Chat Section */}
       <div className="flex-1 min-h-0 flex flex-col pt-2">
         <div className="shrink-0 flex gap-2 mb-2 border-b border-teal-200/20 pb-1">
           <span className="text-sm font-bold pb-1 text-teal-400 border-b-2 border-teal-400">

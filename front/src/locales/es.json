@@ -3,7 +3,7 @@
   "buttons": {
     "submit": "Enviar"
   },
-  "nav": {
+  "categories": {
     "all": "Todo",
     "music": "Música",
     "culture": "Cultura",
@@ -85,6 +85,9 @@
       "default": "Buscar un amigo..."
     }
   },
+  "friendsList": {
+    "viewProfile": "Ver perfil"
+  },
   "chat": {
     "title": "Chat",
     "connectPrompt": "Conéctate para ver el chat.",
@@ -118,10 +121,34 @@
   },
   "authBtn": {
     "login": "Iniciar sesión",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "editProfile": "Editar perfil"
+  },
+  "profileSettings": {
+    "title": "Editar perfil",
+    "username": "Nombre de usuario",
+    "choose": "Elegir",
+    "changePassword": "Cambiar contraseña",
+    "saving": "Guardando...",
+    "saveError": "No se pudieron guardar los cambios",
+    "preferredLanguage": "Idioma preferido",
+    "preferredCategory": "Categoría preferida",
+    "changePicture": "Cambiar foto",
+    "cancel": "Cancelar",
+    "save": "Guardar"
+  },
+  "publicProfile": {
+    "title": "Ver perfil",
+    "preferredLanguage": "Idioma preferido",
+    "preferredCategory": "Categoría preferida",
+    "notProvided": "No especificado"
   },
   "notifications": {
     "defaultError": "Se ha producido un error",
     "defaultSuccess": "Operación exitosa"
+  },
+  "likeButton": {
+    "interested_one": "{{count}} interesado",
+    "interested_other": "{{count}} interesados"
   }
 }

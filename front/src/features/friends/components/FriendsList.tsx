@@ -4,7 +4,7 @@ import { sendFriendRequest, removeFriend } from '../../../api/friends';
 import type { User } from '../../../api/friends';
 import { searchUsers } from '../../../api/users';
 import type { UserSearchResult } from '../../../api/users';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useAuth } from '../../../context/auth/useAuth';
 import ViewProfile from '../../profile/ViewProfile';
 import styles from '../Friends.module.css';
 
@@ -27,12 +27,22 @@ export default function FriendsList({
   const [results, setResults] = useState<UserSearchResult[]>([]);
   const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
   const { accessToken } = useAuth();
+  const { t } = useTranslation();
+
+  // Reset results synchronously during render when input or action isn't valid for search
+  const shouldSearch = action === 'add' && Boolean(input.trim());
+  const [prevShouldSearch, setPrevShouldSearch] = useState(shouldSearch);
+
+  if (shouldSearch !== prevShouldSearch) {
+    setPrevShouldSearch(shouldSearch);
+    if (!shouldSearch) {
+      setResults([]);
+    }
+  }
 
   useEffect(() => {
-    if (action !== 'add' || !input.trim()) {
-      setResults([]);
-      return;
-    }
+    if (!shouldSearch) return;
+
     const timeout = setTimeout(async () => {
       try {
         const found = await searchUsers(input, accessToken!);
@@ -45,7 +55,7 @@ export default function FriendsList({
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [input, action, accessToken]);
+  }, [input, shouldSearch, accessToken]);
 
   const handleAddFriend = async (receiverId: number) => {
     setErrorMsg(null);
@@ -156,7 +166,7 @@ export default function FriendsList({
                 onClick={() => setSelectedFriend(friend)}
                 className={`${styles.menuButton} ${styles.menuButtonBlue}`}
               >
-                View profile
+                {t('friendsList.viewProfile')}
               </button>
             )}
           </div>

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { FlagFR, FlagGB, FlagES } from './FlagIcons';
+import { FlagFR, FlagGB, FlagES, FlagSA } from './FlagIcons';
 
 export type NavBarProps = {
   onSelectCategory?: (category: string) => void;
@@ -16,18 +16,21 @@ export default function NavBar({
 
   // Updated to match the top database category groups
   const categories = [
-    { label: t('nav.all', 'Tout'), value: '' },
-    { label: t('nav.music', 'Musique'), value: 'musique' },
-    { label: t('nav.culture', 'Culture'), value: 'culture' },
-    { label: t('nav.workshops', 'Ateliers'), value: 'ateliers' },
-    { label: t('nav.leisure', 'Loisirs & Sport'), value: 'loisirs' },
-    { label: t('nav.others', 'Autres'), value: 'autres' },
+    { label: t('categories.all', 'Tout'), value: '' },
+    { label: t('categories.music', 'Musique'), value: 'musique' },
+    { label: t('categories.culture', 'Culture'), value: 'culture' },
+    { label: t('categories.workshops', 'Ateliers'), value: 'ateliers' },
+    { label: t('categories.leisure', 'Loisirs & Sport'), value: 'loisirs' },
+    { label: t('categories.others', 'Autres'), value: 'autres' },
   ];
 
   const currentLang = i18n.language;
 
   return (
-    <div className="absolute top-0 left-0 right-0 z-[1000] flex items-center justify-between px-6 pointer-events-none">
+    <div
+      dir="ltr"
+      className="absolute top-0 left-0 right-0 z-[1000] flex items-center justify-between px-6 pointer-events-none"
+    >
       {/* Spacer to keep nav perfectly centered */}
       <div className="w-[120px] hidden md:block" />
 
@@ -84,6 +87,28 @@ export default function NavBar({
             <FlagGB className="w-5 h-5 rounded-sm object-cover shrink-0" />
           </button>
 
+        <button
+          type="button"
+          onClick={() => i18n.changeLanguage('es')}
+          title="Español"
+          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+            currentLang?.startsWith('es') ? 'isSelected' : ''
+          }`}
+        >
+          <FlagES className="w-5 h-5 rounded-sm object-cover shrink-0" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => i18n.changeLanguage('ar')}
+          title="العربية"
+          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+            currentLang?.startsWith('ar') ? 'isSelected' : ''
+          }`}
+        >
+          <FlagSA className="w-5 h-5 rounded-sm object-cover shrink-0" />
+        </button>
+      </div>
           <button
             type="button"
             onClick={() => i18n.changeLanguage('es')}

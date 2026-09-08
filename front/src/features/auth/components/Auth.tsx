@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useAuth } from '../../../context/auth/useAuth';
 import { useState, useRef, useEffect } from 'react';
 import EditProfile from '../../profile/EditProfile.tsx';
 
@@ -73,10 +73,10 @@ export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
                 setIsMenuOpen(false);
               }}
             >
-              Modifier le profil
+              {t('authBtn.editProfile')}
             </button>
             <button className="px-4 py-2 text-left hover:bg-white/10" onClick={handleLogout}>
-              Logout
+              {t('authBtn.logout')}
             </button>
           </div>
         )}
@@ -87,11 +87,7 @@ export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
   }
 
   return (
-    <button
-      className="h-10 w-25 glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
-      type="button"
-      onClick={onOpenAuth}
-    >
+    <button className="glass-panel" type="button" onClick={onOpenAuth}>
       {t('authBtn.login')}
     </button>
   );

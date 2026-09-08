@@ -3,7 +3,7 @@ import '../Chat.module.css';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
 import { fetchEventMessages, sendEventMessage } from '../chatService';
-import { useNotification } from '../../../context/notifications/NotificationContext';
+import { useNotification } from '../../../context/notifications/useNotification';
 import { useTranslation } from 'react-i18next';
 
 export type Message = {
@@ -31,9 +31,14 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
       .then((data) => {
         if (isMounted) setMessages(data);
       })
-      .catch((err) => {
-        if (isMounted)
-          showError(err.message || t('chat.errorLoadMessages', 'Failed to load messages'));
+      .catch((err: unknown) => {
+        if (isMounted) {
+          const message =
+            err instanceof Error
+              ? err.message
+              : t('chat.errorLoadMessages', 'Failed to load messages');
+          showError(message);
+        }
       })
       .finally(() => {
         if (isMounted) setLoading(false);
@@ -49,9 +54,12 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     try {
       const newMessage = await sendEventMessage(eventId, text, currentUserId);
       setMessages((prev) => [...prev, newMessage]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error sending message:', err);
-      showError(`${t('chat.errorSend', 'Error while trying to send the message')}: ${err.message}`);
+      const errorMessage = err instanceof Error ? err.message : '';
+      showError(
+        `${t('chat.errorSend', 'Error while trying to send the message')}: ${errorMessage}`
+      );
     }
   };
 

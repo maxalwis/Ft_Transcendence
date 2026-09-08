@@ -188,3 +188,49 @@ export function FlagES({ className = 'w-5 h-5' }: { className?: string }) {
     </svg>
   );
 }
+
+export function FlagSA({ className = 'w-5 h-5' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 -4 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clipPath="url(#clip0_flag_sa)">
+        <rect width="28" height="20" rx="2" fill="#006C35" />
+        <mask
+          id="mask0_flag_sa"
+          style={{ maskType: 'alpha' }}
+          maskUnits="userSpaceOnUse"
+          x="0"
+          y="0"
+          width="28"
+          height="20"
+        >
+          <rect width="28" height="20" rx="2" fill="white" />
+        </mask>
+        <g mask="url(#mask0_flag_sa)">
+          {/* Saudi Arabia Green Background */}
+          <rect width="28" height="20" fill="#006C35" />
+
+          {/* Arabic Calligraphy (Shahada representation) */}
+          <path d="M6.5 6.8h15v3.2h-15z" fill="#FFFFFF" opacity="0.95" />
+          <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M7 7.2h2v0.8H7V7.2zm3 0h4v0.8h-4V7.2zm5 0h2v0.8h-2V7.2zm3 0h3v0.8h-3V7.2zM8 8.8h2v0.8H8V8.8zm4 0h3v0.8h-3V8.8zm4 0h3v0.8h-3V8.8z"
+            fill="#006C35"
+          />
+
+          {/* Saudi Sword */}
+          <path
+            d="M7 12.2h12.5v0.8H7v-0.8zm12.5-0.4l2 0.8-2 0.8v-1.6zm-11 1.2h-1v-1.6h1v1.6z"
+            fill="#FFFFFF"
+          />
+          <path d="M8 13.4v0.8H7.2v-0.8H8z" fill="#FFFFFF" />
+        </g>
+      </g>
+      <defs>
+        <clipPath id="clip0_flag_sa">
+          <rect width="28" height="20" rx="2" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}
