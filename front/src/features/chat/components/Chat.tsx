@@ -60,7 +60,7 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
   }, []);
 
-  useChatSocket(eventId, handleNewMessage);
+  useChatSocket(handleNewMessage);
 
   // Handle sending through the backend
   const handleSendMessage = async (text: string) => {

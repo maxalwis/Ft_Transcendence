@@ -3,6 +3,7 @@ import type { MouseEvent } from 'react';
 import styles from '../Event.module.css';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/useAuth';
+import { useSocket } from '../../../context/socket/SocketContext';
 import {
   markInterested,
   removeInterest,
@@ -22,6 +23,7 @@ export default function LikeButton({
   iconOnly = false,
 }: LikeButtonProps) {
   const { accessToken } = useAuth();
+  const { socket, isConnected } = useSocket();
   const [isLiked, setIsLiked] = useState(false);
   const [count, setCount] = useState(interestedUsersCount);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,6 +48,21 @@ export default function LikeButton({
       .catch(() => {})
       .finally(() => setIsReady(true));
   }, [eventId, accessToken]);
+
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handler = (data: { eventId: string; count: number }) => {
+      if (data.eventId === eventId) {
+        setCount(data.count);
+      }
+    };
+
+    socket.on('interest:updated', handler);
+    return () => {
+      socket.off('interest:updated', handler);
+    };
+  }, [socket, isConnected, eventId]);
 
   const handleClick = async (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
