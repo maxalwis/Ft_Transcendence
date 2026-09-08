@@ -35,7 +35,7 @@ export default function Event({ event }: EventProps) {
         accessLink={event.accessLink}
       />
       <div className="flex items-center justify-center">
-        <LikeButton eventId={event.id} interestedUsersCount={event.interestedUsersCount}/>
+        <LikeButton eventId={event.id} interestedUsersCount={event.interestedUsersCount} />
       </div>
     </div>
   );

@@ -88,6 +88,16 @@
   "friendsList": {
     "viewProfile": "عرض الملف الشخصي"
   },
+  "friendsRequests": {
+    "noPendingRequests": "لا توجد طلبات صداقة معلقة.",
+    "accept": "قبول",
+    "reject": "رفض",
+    "fallbackUser": "مستخدم #{{id}}",
+    "errors": {
+      "acceptFailed": "حدث خطأ أثناء قبول الطلب.",
+      "rejectFailed": "حدث خطأ أثناء رفض الطلب."
+    }
+  },
   "chat": {
     "title": "المحادثة",
     "connectPrompt": "قم بتسجيل الدخول لعرض المحادثة.",
@@ -96,6 +106,18 @@
     "errorSend": "خطأ أثناء محاولة إرسال الرسالة",
     "placeholder": "اكتب رسالتك...",
     "send": "إرسال"
+  },
+  "passwordModal": {
+    "title": "تغيير كلمة المرور",
+    "close": "إغلاق",
+    "newPassword": "كلمة المرور الجديدة",
+    "newPasswordPlaceholder": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور الجديدة",
+    "confirmPasswordPlaceholder": "تأكيد كلمة المرور",
+    "cancel": "إلغاء",
+    "changePassword": "تغيير كلمة المرور",
+    "loading": "جاري التحميل...",
+    "mismatchError": "كلمات المرور غير متطابقة."
   },
   "authModal": {
     "loginTitle": "تسجيل الدخول",
@@ -123,6 +145,9 @@
     "login": "تسجيل الدخول",
     "logout": "تسجيل الخروج",
     "editProfile": "تعديل الملف الشخصي"
+  },
+  "oauth": {
+    "connecting": "جاري الاتصال..."
   },
   "profileSettings": {
     "title": "تعديل الملف الشخصي",

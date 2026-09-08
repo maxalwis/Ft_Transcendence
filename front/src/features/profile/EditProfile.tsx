@@ -99,7 +99,6 @@ export default function EditProfile({ onClose }: EditProfileProps) {
         <div className={styles.modalHeader}>
           <h2>{t('profileSettings.title')}</h2>
 
-
           <button type="button" className="modal-close" onClick={requestClose} aria-label="Fermer">
             <svg
               className="h-4 w-4"

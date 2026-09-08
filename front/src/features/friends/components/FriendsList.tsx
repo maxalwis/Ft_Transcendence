@@ -49,7 +49,7 @@ export default function FriendsList({
         const found = await searchUsers(input, accessToken!);
         setResults(found);
         setErrorMsg(null);
-      } catch (err) {
+      } catch {
         setResults([]);
         setErrorMsg(null);
       }
@@ -110,7 +110,7 @@ export default function FriendsList({
           ))}
           {input.trim() && results.length === 0 && (
             <p className="flex justify-center items-center text-xs text-slate-400 italic px-2">
-              Aucun utilisateur trouvé.
+              {t('friendsList.noUsersFound', 'Aucun utilisateur trouvé.')}
             </p>
           )}
         </div>

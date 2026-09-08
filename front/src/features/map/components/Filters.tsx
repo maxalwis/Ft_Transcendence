@@ -22,11 +22,6 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
     { value: 'fee-based', label: t('filters.feeBased', 'Fee-based') },
   ];
 
-  const handleOpen = () => {
-    setIsOpen(true);
-    setIsAnimating(true);
-  };
-
   const handleAnimationEnd = () => {
     if (!isOpen) {
       setIsAnimating(false);

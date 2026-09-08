@@ -103,10 +103,14 @@ export default function EventPreview({
 
   const currentLocale = useMemo(() => {
     switch (i18n.language) {
-      case 'es': return 'es-ES';
-      case 'en': return 'en-US';
-      case 'ar': return 'ar-SA';
-      default: return 'fr-FR';
+      case 'es':
+        return 'es-ES';
+      case 'en':
+        return 'en-US';
+      case 'ar':
+        return 'ar-SA';
+      default:
+        return 'fr-FR';
     }
   }, [i18n.language]);
 

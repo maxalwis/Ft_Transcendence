@@ -88,6 +88,16 @@
   "friendsList": {
     "viewProfile": "View profile"
   },
+  "friendsRequests": {
+    "noPendingRequests": "No pending friend requests.",
+    "accept": "Accept",
+    "reject": "Reject",
+    "fallbackUser": "User #{{id}}",
+    "errors": {
+      "acceptFailed": "Failed to accept friend request.",
+      "rejectFailed": "Failed to reject friend request."
+    }
+  },
   "chat": {
     "title": "Chat",
     "connectPrompt": "Connect to view chat.",
@@ -96,6 +106,18 @@
     "errorSend": "Error while trying to send the message",
     "placeholder": "Type your message...",
     "send": "Send"
+  },
+  "passwordModal": {
+    "title": "Change Password",
+    "close": "Close",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "New password",
+    "confirmPassword": "Confirm New Password",
+    "confirmPasswordPlaceholder": "Confirm password",
+    "cancel": "Cancel",
+    "changePassword": "Change Password",
+    "loading": "Loading...",
+    "mismatchError": "Passwords do not match."
   },
   "authModal": {
     "loginTitle": "Sign in",
@@ -123,6 +145,9 @@
     "login": "Login",
     "logout": "Logout",
     "editProfile": "Edit Profile"
+  },
+  "oauth": {
+    "connecting": "Connecting..."
   },
   "profileSettings": {
     "title": "Edit Profile",

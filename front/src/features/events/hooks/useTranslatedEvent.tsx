@@ -10,50 +10,53 @@ interface TranslatedEvent {
 export function useTranslatedEvent(eventId: string, lang: string) {
   const [data, setData] = useState<TranslatedEvent | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [fetchingId, setFetchingId] = useState<string | null>(null);
+
+  const isBypassed = !eventId || lang === 'fr';
 
   useEffect(() => {
-    // If no event is hovered or language is default 'fr', skip translation API call
-    if (!eventId || lang === 'fr') {
-      setData(null);
-      setError(null);
-      setLoading(false);
-      return;
-    }
+    if (isBypassed) return;
 
     const controller = new AbortController();
     const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-    setLoading(true);
-
-    fetch(`${baseUrl}/events/${eventId}?lang=${lang}`, {
-      signal: controller.signal,
-    })
-      .then((res) => {
+    const performFetch = async () => {
+      setFetchingId(eventId);
+      try {
+        const res = await fetch(`${baseUrl}/events/${eventId}?lang=${lang}`, {
+          signal: controller.signal,
+        });
         if (!res.ok) throw new Error(`Error ${res.status}`);
-        return res.json();
-      })
-      .then((json) => {
+        const json = await res.json();
         setData(json);
         setError(null);
-        setLoading(false);
-      })
-      .catch((err) => {
-        if (err.name !== 'AbortError') {
-          setError(err.message || 'Error loading event');
-          setLoading(false);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          if (err.name !== 'AbortError') {
+            setError(err.message);
+          }
+        } else {
+          setError('Error loading event');
         }
-      });
+      } finally {
+        if (!controller.signal.aborted) {
+          setFetchingId(null);
+        }
+      }
+    };
 
-    // Cancel HTTP request when hovering away or onto another marker
+    performFetch();
+
     return () => {
       controller.abort();
     };
-  }, [eventId, lang]);
+  }, [eventId, lang, isBypassed]);
+
+  const isLoading = !isBypassed && fetchingId === eventId;
 
   return {
-    data: eventId && lang !== 'fr' ? data : null,
-    loading: eventId && lang !== 'fr' ? loading : false,
-    error,
+    data: isBypassed ? null : data,
+    loading: isLoading,
+    error: isBypassed ? null : error,
   };
 }

@@ -184,7 +184,9 @@ export const createClusterIcon = (cluster: MarkerCluster, isHovered: boolean = f
   const clusterAnimClass = isBrandNewCluster ? 'cluster-pop-animation' : '';
   const counterAnimClass = isCountUpdated ? 'counter-pop-animation' : '';
 
-  const outerRing = ringRadius > 0 ? `
+  const outerRing =
+    ringRadius > 0
+      ? `
     <div style="
         position: absolute;
         top: -${ringRadius}px;
@@ -196,7 +198,8 @@ export const createClusterIcon = (cluster: MarkerCluster, isHovered: boolean = f
         opacity: 0.2;
         pointer-events: none;
     "></div>
-  ` : '';
+  `
+      : '';
 
   return L.divIcon({
     className: 'custom-map-marker',

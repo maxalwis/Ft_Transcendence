@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './ProfileModal.module.css';
 
 interface PasswordModalProps {
@@ -6,6 +7,7 @@ interface PasswordModalProps {
 }
 
 export default function PasswordModal({ onClose }: PasswordModalProps) {
+  const { t } = useTranslation();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState<string | null>(null);
@@ -18,12 +20,12 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
     if (isClosing) onClose();
   };
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setPasswordError(null);
 
     if (newPassword !== confirmPassword) {
-      setPasswordError('Les mots de passe ne correspondent pas.');
+      setPasswordError(t('passwordModal.mismatchError'));
       return;
     }
 
@@ -47,8 +49,13 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className={styles.modalHeader}>
-          <h2>Changer le mot de passe</h2>
-          <button type="button" className="modal-close" onClick={requestClose} aria-label="Fermer">
+          <h2>{t('passwordModal.title')}</h2>
+          <button
+            type="button"
+            className="modal-close"
+            onClick={requestClose}
+            aria-label={t('passwordModal.close')}
+          >
             <svg
               className="h-4 w-4"
               viewBox="0 0 24 24"
@@ -65,22 +72,22 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
 
         <form onSubmit={handleSubmit} className={styles.modalForm}>
           <label>
-            Nouveau mot de passe
+            {t('passwordModal.newPassword')}
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Nouveau mot de passe"
+              placeholder={t('passwordModal.newPasswordPlaceholder')}
             />
           </label>
 
           <label>
-            Confirmer le nouveau mot de passe
+            {t('passwordModal.confirmPassword')}
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirmer le mot de passe"
+              placeholder={t('passwordModal.confirmPasswordPlaceholder')}
             />
           </label>
 
@@ -88,10 +95,10 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
 
           <div className={styles.modalActions}>
             <button type="button" className={styles.btnSecondary} onClick={requestClose}>
-              Annuler
+              {t('passwordModal.cancel')}
             </button>
             <button type="submit" className={styles.btnPrimary} disabled={isChangingPassword}>
-              {isChangingPassword ? 'Chargement...' : 'Changer le mot de passe'}
+              {isChangingPassword ? t('passwordModal.loading') : t('passwordModal.changePassword')}
             </button>
           </div>
         </form>
