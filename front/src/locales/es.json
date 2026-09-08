@@ -153,7 +153,9 @@
   },
   "legal": {
     "privacy": "Política de Privacidad",
-    "terms": "Términos de Servicio"
+    "terms": "Términos de Servicio",
+    "privacyButton": "Privacidad",
+    "termsButton": "Términos"
   },
   "legalContent": {
     "privacyTitle": "Política de Privacidad",

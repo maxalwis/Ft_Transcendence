@@ -89,7 +89,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
   };
 
   const modal = (
-    <div className={styles.modalOverlay} onClick={requestClose}>
+    <div className="glass-modal-overlay" onClick={requestClose}>
       <div
         data-state={isClosing ? 'closed' : 'open'}
         onAnimationEnd={handleAnimationEnd}

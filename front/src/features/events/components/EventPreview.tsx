@@ -156,7 +156,7 @@ export default function EventPreview({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={onClick}
-      className={`glass-panel ${styles['events-details-popup']} fixed w-[300px] z-[1000] flex flex-col justify-center cursor-default ${
+      className={`glass-panel ${styles['events-details-popup']} fixed w-[300px] flex flex-col justify-center cursor-default ${
         cardHeight !== null ? animationClass : ''
       } ${
         isFlippedDownward
