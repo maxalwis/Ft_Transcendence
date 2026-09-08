@@ -87,28 +87,6 @@ export default function NavBar({
             <FlagGB className="w-5 h-5 rounded-sm object-cover shrink-0" />
           </button>
 
-        <button
-          type="button"
-          onClick={() => i18n.changeLanguage('es')}
-          title="Español"
-          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('es') ? 'isSelected' : ''
-          }`}
-        >
-          <FlagES className="w-5 h-5 rounded-sm object-cover shrink-0" />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => i18n.changeLanguage('ar')}
-          title="العربية"
-          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('ar') ? 'isSelected' : ''
-          }`}
-        >
-          <FlagSA className="w-5 h-5 rounded-sm object-cover shrink-0" />
-        </button>
-      </div>
           <button
             type="button"
             onClick={() => i18n.changeLanguage('es')}
@@ -118,6 +96,17 @@ export default function NavBar({
             }`}
           >
             <FlagES className="w-5 h-5 rounded-sm object-cover shrink-0" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => i18n.changeLanguage('ar')}
+            title="العربية"
+            className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+              currentLang?.startsWith('ar') ? 'isSelected' : ''
+            }`}
+          >
+            <FlagSA className="w-5 h-5 rounded-sm object-cover shrink-0" />
           </button>
         </div>
       ) : (
