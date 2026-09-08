@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { FriendAction } from './Friends';
 import { sendFriendRequest, removeFriend } from '../../../api/friends';
 import type { User } from '../../../api/friends';

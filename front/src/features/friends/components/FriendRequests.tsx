@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { PendingRequest } from '../../../api/friends';
 import { acceptFriendRequest, rejectFriendRequest } from '../../../api/friends';
-import { useAuth } from '../../../context/auth/AuthContext';
+import { useAuth } from '../../../context/auth/useAuth';
 import styles from '../Friends.module.css';
 
 type FriendsRequestsProps = {
@@ -61,15 +61,15 @@ export default function FriendsRequests({ requests, onDataChanged }: FriendsRequ
               <button
                 type="button"
                 onClick={() => handleAccept(targetId)}
-				className={`${styles.menuButton} ${styles.menuButtonGreen}`}
-			  >
+                className={`${styles.menuButton} ${styles.menuButtonGreen}`}
+              >
                 Accept
               </button>
               <button
                 type="button"
                 onClick={() => handleReject(targetId)}
-				className={`${styles.menuButton} ${styles.menuButtonRed}`}
-			  >
+                className={`${styles.menuButton} ${styles.menuButtonRed}`}
+              >
                 Reject
               </button>
             </div>

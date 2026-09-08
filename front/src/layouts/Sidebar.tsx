@@ -3,7 +3,7 @@ import Chat from '../features/chat/components/Chat';
 import Event from '../features/events/components/Event';
 import type { EventItem } from '../types/event';
 import { useTranslation } from 'react-i18next';
-import { FlagFR, FlagGB, FlagES } from './FlagIcons';
+import { FlagFR, FlagGB, FlagES, FlagSA } from './FlagIcons';
 import styles from '../features/map/Map.module.css';
 
 interface SideBarProps {
@@ -104,6 +104,17 @@ export default function SideBar({
         >
           <FlagES className="w-5 h-5 rounded-sm object-cover shrink-0" />
         </button>
+
+        <button
+          type="button"
+          onClick={() => i18n.changeLanguage('ar')}
+          title="العربية"
+          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+            currentLang?.startsWith('ar') ? 'isSelected' : ''
+          }`}
+        >
+          <FlagSA className="w-5 h-5 rounded-sm object-cover shrink-0" />
+        </button>
       </div>
 
       {/* Close Button Header */}
@@ -149,7 +160,7 @@ export default function SideBar({
 
         <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
           {eventId && currentUserId ? (
-            <Chat eventId={eventId} currentUserId={currentUserId} />
+            <Chat eventId={eventId} currentUserId={Number(currentUserId)} />
           ) : (
             <div className="text-gray-400 text-sm p-4 flex items-center justify-center h-full">
               {t('chat.connectPrompt', 'Connect to view chat.')}
