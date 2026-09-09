@@ -21,7 +21,7 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
   };
 
   return createPortal(
-    <div className={styles.modalOverlay} onClick={requestClose}>
+    <div className="glass-modal-overlay" onClick={requestClose}>
       <div
         data-state={isClosing ? 'closed' : 'open'}
         onAnimationEnd={handleAnimationEnd}

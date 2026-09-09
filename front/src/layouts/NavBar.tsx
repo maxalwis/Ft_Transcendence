@@ -29,7 +29,7 @@ export default function NavBar({
   return (
     <div
       dir="ltr"
-      className="absolute top-0 left-0 right-0 z-[1000] flex items-center justify-between px-6 pointer-events-none"
+      className="absolute top-0 left-0 right-0 z-[500] flex items-center justify-between px-6 pointer-events-none"
     >
       {/* Spacer to keep nav perfectly centered */}
       <div className="w-[120px] hidden md:block" />

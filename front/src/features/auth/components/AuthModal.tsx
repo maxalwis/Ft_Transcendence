@@ -54,7 +54,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/60 backdrop-blur-xs">
+    <div className="glass-modal-overlay">
       <div className="glass-modal relative p-8 max-w-md w-full glass-animate-in">
         <button
           type="button"
