@@ -65,7 +65,7 @@ export default function SideBar({
           type="button"
           aria-label="Close"
           onClick={onClose}
-          className="icon-btn glass-panel absolute top-3 right-3 z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl transition-all duration-150 hover:border-red-500/50 hover:bg-red-500/25! hover:text-red-400! active:scale-70"
+          className="icon-btn glass-panel absolute top-3 right-3 flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl transition-all duration-150 hover:border-red-500/50 hover:bg-red-500/25! hover:text-red-400! active:scale-70"
         >
           <svg
             className="h-4 w-4"

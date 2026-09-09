@@ -28,7 +28,7 @@
   "eventPreview": {
     "defaultAlt": "فعالية",
     "seeDetails": "عرض التفاصيل",
-    "undefinedDate": "تاريخ غير المحدد",
+    "undefinedDate": "تاريخ غير محدد",
     "start": "البداية",
     "end": "النهاية",
     "price": {
@@ -38,14 +38,14 @@
     }
   },
   "filters": {
-    "title": "تصفية الفعاليات",
+    "title": "مرشحات الفعاليات",
     "cityLabel": "المدينة / الموقع",
     "cityPlaceholder": "مثال: باريس",
     "priceCategory": "فئة السعر",
     "selectCategory": "اختر الفئة",
-    "fromDate": "من :",
+    "fromDate": "من تاريخ:",
     "apply": "تطبيق",
-    "reset": "إعادة ضبط",
+    "reset": "إعادة تعيين",
     "allPrices": "الكل",
     "free": "مجاني",
     "feeBased": "مدفوع"
@@ -57,13 +57,13 @@
     "searchPlaceholder": "بحث...",
     "addTab": "إضافة",
     "requestsTab": "الطلبات",
-    "noFriends": "لا يوجد أصدقاء بعد",
+    "noFriends": "لا يوجد أصدقاء حتى الآن",
     "remove": "إزالة"
   },
   "friendsSidebar": {
-    "notLoggedIn": "يرجى تسجيل الدخول للوصول إلى قائمة أصدقائك.",
+    "notLoggedIn": "الرجاء تسجيل الدخول للوصول إلى قائمة أصدقائك.",
     "search": "البحث عن أصدقاء",
-    "pendingRequests": "طلبات معلقة ({{count}})",
+    "pendingRequests": "الطلبات المعلقة ({{count}})",
     "pendingRequests_one": "طلب معلق ({{count}})",
     "add": "إضافة صديق",
     "remove": "إزالة صديق"
@@ -72,12 +72,12 @@
     "ariaOpen": "فتح القائمة",
     "ariaClose": "إغلاق القائمة",
     "search": "بحث",
-    "pendingRequest": "طلب معلق",
+    "pendingRequest": "الطلبات المعلقة",
     "addFriend": "إضافة صديق",
     "removeFriend": "إزالة صديق"
   },
   "friendsSearchBar": {
-    "clearInput": "مسح نص البحث",
+    "clearInput": "مسح البحث",
     "placeholders": {
       "add": "إضافة صديق...",
       "remove": "إزالة صديق...",
@@ -89,10 +89,10 @@
     "viewProfile": "عرض الملف الشخصي"
   },
   "chat": {
-    "title": "المحادثة",
-    "connectPrompt": "قم بتسجيل الدخول لعرض المحادثة.",
+    "title": "الدردشة",
+    "connectPrompt": "سجل الدخول لعرض الدردشة.",
     "loadingMessages": "جاري تحميل الرسائل...",
-    "errorLoadMessages": "فشل في تحميل الرسائل",
+    "errorLoadMessages": "فشل تحميل الرسائل",
     "errorSend": "خطأ أثناء محاولة إرسال الرسالة",
     "placeholder": "اكتب رسالتك...",
     "send": "إرسال"
@@ -104,19 +104,19 @@
     "username": "اسم المستخدم",
     "password": "كلمة المرور",
     "confirmPassword": "تأكيد كلمة المرور",
-    "loginButton": "دخول",
+    "loginButton": "تسجيل الدخول",
     "registerButton": "تسجيل",
     "noAccount": "ليس لديك حساب؟",
     "createOne": "أنشئ حساباً",
     "alreadyHaveAccount": "لديك حساب بالفعل؟",
     "signInLink": "تسجيل الدخول",
     "close": "إغلاق",
-    "loginWithGoogle": "تسجيل الدخول عبر Google",
-    "loginWith42": "تسجيل الدخول عبر 42",
+    "loginWithGoogle": "تسجيل الدخول بواسطة جوجل",
+    "loginWith42": "تسجيل الدخول بواسطة 42",
     "errors": {
-      "invalidCredentials": "بيانات الاعتماد غير صحيحة",
+      "invalidCredentials": "بيانات الاعتماد غير صالحة",
       "passwordMismatch": "كلمات المرور غير متطابقة",
-      "registrationError": "خطأ في إنشاء الحساب"
+      "registrationError": "خطأ أثناء إنشاء الحساب"
     }
   },
   "authBtn": {
@@ -127,7 +127,7 @@
   "profileSettings": {
     "title": "تعديل الملف الشخصي",
     "username": "اسم المستخدم",
-    "choose": "اختيار",
+    "choose": "اختر",
     "changePassword": "تغيير كلمة المرور",
     "saving": "جاري الحفظ...",
     "saveError": "تعذر حفظ التغييرات",
@@ -141,18 +141,38 @@
     "title": "عرض الملف الشخصي",
     "preferredLanguage": "اللغة المفضلة",
     "preferredCategory": "الفئة المفضلة",
-    "notProvided": "غير محدد"
+    "notProvided": "غير متوفر"
   },
   "notifications": {
     "defaultError": "حدث خطأ ما",
     "defaultSuccess": "تمت العملية بنجاح"
   },
   "likeButton": {
-    "interested_zero": "{{count}} مهتم",
     "interested_one": "{{count}} مهتم",
-    "interested_two": "{{count}} مهتمان",
-    "interested_few": "{{count}} مهتمين",
-    "interested_many": "{{count}} مهتمًا",
-    "interested_other": "{{count}} مهتم"
+    "interested_other": "{{count}} مهتمون"
+  },
+  "legal": {
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الخدمة",
+    "privacyButton": "الخصوصية",
+    "termsButton": "الشروط"
+  },
+  "legalContent": {
+    "privacyTitle": "سياسة الخصوصية",
+    "privacySubtitle": "آخر تحديث: سبتمبر 2026",
+    "section1Title": "1. المعلومات التي نجمعها",
+    "privacyText": "نجمع المعلومات التي تقدمها مباشرة عند إنشاء حساب، مثل اسم المستخدم وعنوان البريد الإلكتروني وصورة الملف الشخصي. كما نقوم بتخزين الفعاليات التي تحددها كمثيرة للاهتمام، والرسائل المتبادلة عبر الدردشة، بالإضافة إلى تفضيلاتك المتعلقة باللغة والفئة، وهي ضرورية لعمل تطبيق Ft_Transcendence.",
+    "section2Title": "2. كيف نستخدم معلوماتك",
+    "privacyUseText": "تُستخدم بياناتك حصريًا لتقديم خدماتنا وصيانتها وتحسينها، وإدارة مصادقة المستخدمين، وتفعيل الدردشة الفورية، وإدارة قائمة أصدقائك.",
+    "section3Title": "3. أمن البيانات",
+    "privacySecurityText": "نطبّق تدابير تقنية مناسبة لحماية بياناتك الشخصية من أي وصول أو تعديل أو إفصاح أو إتلاف غير مصرح به.",
+    "termsTitle": "شروط الاستخدام",
+    "termsSubtitle": "آخر تحديث: سبتمبر 2026",
+    "termsSection1Title": "1. قبول الشروط",
+    "termsText": "من خلال الوصول إلى Ft_Transcendence واستخدامه، فإنك توافق على الالتزام بشروط الاستخدام هذه وبجميع القوانين المعمول بها.",
+    "termsSection2Title": "2. سلوك المستخدم",
+    "termsUserConduct": "تتعهد بعدم استخدام المنصة للتحرش أو الإهانة أو إرسال رسائل مزعجة عبر نظام الدردشة، وكذلك بعدم محاولة الإخلال بأمن خوادم التطبيق وقاعدة بياناته.",
+    "termsSection3Title": "3. مسؤولية الحساب",
+    "termsAccountResponsibility": "أنت مسؤول عن الحفاظ على سرية بيانات اعتماد حسابك وعن جميع الأنشطة التي تحدث تحت حساب المستخدم الخاص بك."
   }
 }
