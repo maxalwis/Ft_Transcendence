@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
+import { useAuth } from '../../../context/auth/useAuth';
+import { useNotification } from '../../../context/notifications/useNotification';
+import {
+  markInterested,
+  removeInterest,
+  getInterestStatus,
+  getInterestCount,
+} from '../../../api/events-interests';
 import styles from '../Event.module.css';
 import { useTranslation } from 'react-i18next';
 
@@ -9,55 +17,114 @@ interface LikeButtonProps {
   iconOnly?: boolean;
 }
 
+interface LikeSyncDetail {
+  eventId: string;
+  isLiked: boolean;
+  count: number;
+}
+
 export default function LikeButton({
   eventId,
   interestedUsersCount = 0,
   iconOnly = false,
 }: LikeButtonProps) {
-  const storageKey = `event-liked-${eventId}`;
-  const [isLiked, setIsLiked] = useState(() => localStorage.getItem(storageKey) === 'true');
-  const [prevStorageKey, setPrevStorageKey] = useState(storageKey);
+  const { accessToken } = useAuth();
+  const { showError } = useNotification();
+  const [isLiked, setIsLiked] = useState(false);
+  const [count, setCount] = useState(interestedUsersCount);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const { t } = useTranslation();
 
-  // Reset state during render if eventId/storageKey changes
-  if (storageKey !== prevStorageKey) {
-    setPrevStorageKey(storageKey);
-    setIsLiked(localStorage.getItem(storageKey) === 'true');
-  }
-
-  useEffect(() => {
-    const handleLikeChanged = (event: Event) => {
-      const likeEvent = event as CustomEvent<{ eventId: string; isLiked: boolean }>;
-      if (likeEvent.detail.eventId === eventId) {
-        setIsLiked(likeEvent.detail.isLiked);
-      }
-    };
-
-    const handleStorageChanged = (event: StorageEvent) => {
-      if (event.key === storageKey) {
-        setIsLiked(event.newValue === 'true');
-      }
-    };
-
-    window.addEventListener('event-like-changed', handleLikeChanged);
-    window.addEventListener('storage', handleStorageChanged);
-
-    return () => {
-      window.removeEventListener('event-like-changed', handleLikeChanged);
-      window.removeEventListener('storage', handleStorageChanged);
-    };
-  }, [eventId, storageKey]);
-
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    const nextIsLiked = !isLiked;
-    setIsLiked(nextIsLiked);
-    localStorage.setItem(storageKey, String(nextIsLiked));
+  const broadcastChange = (nextIsLiked: boolean, nextCount: number) => {
     window.dispatchEvent(
-      new CustomEvent('event-like-changed', {
-        detail: { eventId, isLiked: nextIsLiked },
+      new CustomEvent<LikeSyncDetail>('like-button-updated', {
+        detail: { eventId, isLiked: nextIsLiked, count: nextCount },
       })
     );
+  };
+
+  useEffect(() => {
+    const handleSync = (e: Event) => {
+      const customEvent = e as CustomEvent<LikeSyncDetail>;
+      if (customEvent.detail && customEvent.detail.eventId === eventId) {
+        setIsLiked(customEvent.detail.isLiked);
+        setCount(customEvent.detail.count);
+      }
+    };
+
+    window.addEventListener('like-button-updated', handleSync);
+    return () => {
+      window.removeEventListener('like-button-updated', handleSync);
+    };
+  }, [eventId]);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    if (!accessToken) {
+      getInterestCount(eventId)
+        .then((fetchedCount) => {
+          if (!isCancelled) setCount(fetchedCount);
+        })
+        .catch(() => {})
+        .finally(() => {
+          if (!isCancelled) setIsReady(true);
+        });
+    } else {
+      getInterestStatus(eventId, accessToken)
+        .then(({ isInterested, count: fetchedCount }) => {
+          if (!isCancelled) {
+            setIsLiked(isInterested);
+            setCount(fetchedCount);
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          if (!isCancelled) setIsReady(true);
+        });
+    }
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [eventId, accessToken]);
+
+  const handleClick = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+
+    if (!accessToken) {
+      showError(t('likeButton.loginRequired'));
+      return;
+    }
+
+    if (isLoading || !isReady) return;
+
+    const nextIsLiked = !isLiked;
+    const nextCount = Math.max(0, count + (nextIsLiked ? 1 : -1));
+
+    setIsLoading(true);
+
+    setIsLiked(nextIsLiked);
+    setCount(nextCount);
+    broadcastChange(nextIsLiked, nextCount);
+
+    try {
+      if (nextIsLiked) {
+        await markInterested(eventId, accessToken);
+      } else {
+        await removeInterest(eventId, accessToken);
+      }
+    } catch {
+      const rollbackIsLiked = !nextIsLiked;
+      const rollbackCount = Math.max(0, nextCount + (nextIsLiked ? -1 : 1));
+
+      setIsLiked(rollbackIsLiked);
+      setCount(rollbackCount);
+      broadcastChange(rollbackIsLiked, rollbackCount);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -65,6 +132,7 @@ export default function LikeButton({
       <button
         type="button"
         onClick={handleClick}
+        disabled={isLoading || !isReady}
         className={`icon-btn ${styles['like-button']} active:zoom-80! transition-all! ${
           iconOnly ? styles['like-button--icon-only'] : ''
         }`}
@@ -86,11 +154,7 @@ export default function LikeButton({
           />
         </svg>
       </button>
-      {!iconOnly && (
-        <span className="text-xs">
-          {t('likeButton.interested', { count: interestedUsersCount })}
-        </span>
-      )}
+      {!iconOnly && <span className="text-xs">{t('likeButton.interested', { count })}</span>}
     </div>
   );
 }

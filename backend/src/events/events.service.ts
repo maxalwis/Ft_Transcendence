@@ -169,14 +169,25 @@ export class EventsService {
   }
 
   async findOne(id: string, lang: string = 'fr') {
-    const events = await this.prisma.$queryRaw<any[]>`
-      SELECT id, title, description, "dateStart", "dateEnd", "coverUrl", latitude, longitude, category, "priceType", "priceDetail", "accessLink"
-      FROM "Event"
-      WHERE id = ${id}
-      LIMIT 1
-    `;
+    const event = await this.prisma.event.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        dateStart: true,
+        dateEnd: true,
+        coverUrl: true,
+        latitude: true,
+        longitude: true,
+        category: true,
+        priceType: true,
+        priceDetail: true,
+        accessLink: true,
+        _count: { select: { interests: true } },
+      },
+    });
 
-    const event = events[0];
     if (!event) {
       throw new NotFoundException(`Event ${id} not found`);
     }

@@ -148,6 +148,8 @@
     "defaultSuccess": "تمت العملية بنجاح"
   },
   "likeButton": {
+    "loginRequired": "يجب تسجيل الدخول لإضافة حدث إلى المفضلة لديك",
+    "interested_zero": "0 مهتم",
     "interested_one": "{{count}} مهتم",
     "interested_other": "{{count}} مهتمون"
   },

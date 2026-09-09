@@ -13,6 +13,7 @@ import { LoggerMiddleware } from './logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { PublicApiModule } from './public-api/public-api.module';
 import { FriendsModule } from './friends/friends.module';
+import { EventsInterestsModule } from './events-interest/events-interest.module';
 import { TranslationsModule } from './translations/translations.module';
 
 @Module({
@@ -27,6 +28,7 @@ import { TranslationsModule } from './translations/translations.module';
     MessagesModule,
     AuthModule,
     FriendsModule,
+    EventsInterestsModule,
     TranslationsModule,
     PublicApiModule,
   ],
