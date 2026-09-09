@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies during image build
-RUN npm install --no-audit
+RUN npm install
 
 # Copy source code (will be overridden by bind mount in dev mode)
 COPY . .

@@ -3,16 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { FlagFR, FlagGB, FlagES, FlagSA } from './FlagIcons';
 
 interface LanguageSelectorProps {
-  sidebarOpen: boolean;
-  sidebarWidth?: number;
-  gap?: number;
+  embedded?: boolean;
 }
 
-export default function LanguageSelector({
-  sidebarOpen,
-  sidebarWidth = 360,
-  gap = 40,
-}: LanguageSelectorProps) {
+export default function LanguageSelector({ embedded = false }: LanguageSelectorProps) {
   const { i18n } = useTranslation();
   const currentLang = i18n.language;
 
@@ -23,14 +17,13 @@ export default function LanguageSelector({
     { code: 'ar', title: 'العربية', Flag: FlagSA },
   ] as const;
 
-  // Portail vers document.body : garantit un position:fixed relatif au
-  // viewport même si un ancêtre (wrapper de page animé, motion.div, etc.)
-  // a un transform/filter, ce qui casserait sinon le fixed classique.
-  return createPortal(
+  const content = (
     <div
-      className="fixed top-4 z-1100 flex flex-col items-center gap-2 pointer-events-auto transition-[right] duration-300 ease-in-out"
-    //   style={{ right: sidebarOpen ? sidebarWidth + 24 : 24 }}
-	style={{ right: sidebarOpen ? sidebarWidth + gap : gap }}
+      className={
+        embedded
+          ? 'absolute top-0 right-full mr-4 z-1100 flex flex-col items-center gap-2 pointer-events-auto'
+          : 'fixed top-4 right-10 z-1100 flex flex-col items-center gap-2 pointer-events-auto'
+      }
     >
       {languages.map(({ code, title, Flag }) => (
         <button
@@ -45,7 +38,14 @@ export default function LanguageSelector({
           <Flag className="w-5 h-5 rounded-sm object-cover shrink-0" />
         </button>
       ))}
-    </div>,
-    document.body,
+    </div>
   );
+
+  // If selector is in sidebar, no portal
+  if (embedded) {
+    return content;
+  }
+
+  // Else, we create on body
+  return createPortal(content, document.body);
 }

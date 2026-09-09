@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Chat from '../features/chat/components/Chat';
 import Event from '../features/events/components/Event';
 import type { EventItem } from '../types/event';
 import { useTranslation } from 'react-i18next';
 import styles from '../features/map/Map.module.css';
+import LanguageSelector from './LanguageSelector';
 
 interface SideBarProps {
   onClose: () => void;
@@ -23,6 +24,7 @@ export default function SideBar({
   event,
 }: SideBarProps) {
   const [fetchedEvent, setFetchedEvent] = useState<EventItem | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   // Find in list synchronously or use passed event prop
   const eventFromProps = event ?? events.find((ev) => ev.id === eventId) ?? null;
@@ -65,13 +67,12 @@ export default function SideBar({
 
   return (
     <div
+      ref={rootRef}
       data-state={isOpen ? 'open' : 'closed'}
       onAnimationEnd={handleAnimationEnd}
       className={`glass-panel ${styles.sidebarModal} fixed top-2 right-3 bottom-2 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col`}
     >
-      {/* Le sélecteur de langue vit désormais uniquement dans
-          <LanguageSelector />, monté au niveau du layout parent.
-          Ne pas le réimplémenter ici. */}
+      <LanguageSelector embedded />
 
       {/* Close Button Header */}
       <div className="shrink-0">

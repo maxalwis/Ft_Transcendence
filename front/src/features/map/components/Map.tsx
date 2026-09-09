@@ -8,10 +8,10 @@ import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
 // Layouts & Feature Components
 import LanguageSelector from '../../../layouts/LanguageSelector';
-import SideBar from '../../../layouts/Sidebar';
-import NavBar from '../../../layouts/NavBar';
 import BottomBar from '../../../layouts/BottomBar';
 import Filters from './Filters';
+import SideBar from '../../../layouts/Sidebar';
+import NavBar from '../../../layouts/NavBar';
 
 // Marker & Map Visual Components
 import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
@@ -209,28 +209,21 @@ export default function Map({ onOpenAuth }: MapProps) {
 
       <Filters onApplyFilters={handleApplyFilters} />
 
-		<NavBar
-		activeCategory={filters.category}
-		onSelectCategory={handleSelectCategory}
-		/>
+      <NavBar activeCategory={filters.category} onSelectCategory={handleSelectCategory} />
 
-		<LanguageSelector
-		sidebarOpen={!!activeSidebarEventId}
-		sidebarWidth={360} // adapte à la largeur réelle de ta SideBar
-		/>
+      {!activeSidebarEventId && <LanguageSelector />}
+      <BottomBar onOpenAuth={onOpenAuth} />
 
-		<BottomBar onOpenAuth={onOpenAuth} />
-
-		{activeSidebarEventId && (
-		<SideBar
-			eventId={activeSidebarEventId}
-			currentUserId={user?.id}
-			onClose={() => {
-			setActiveSidebarEventId(null);
-			setHoverPos(null);
-			}}
-		/>
-		)}
+      {activeSidebarEventId && (
+        <SideBar
+          eventId={activeSidebarEventId}
+          currentUserId={user?.id}
+          onClose={() => {
+            setActiveSidebarEventId(null);
+            setHoverPos(null);
+          }}
+        />
+      )}
       {/* )} */}
     </>
   );
