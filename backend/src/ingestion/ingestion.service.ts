@@ -29,6 +29,7 @@ export interface IngestedEventData {
 @Injectable()
 export class IngestionService implements OnModuleInit {
   private readonly logger = new Logger(IngestionService.name);
+  private readonly LAST_INGESTION_KEY = 'LAST_DAILY_INGESTION_DATE';
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -40,34 +41,60 @@ export class IngestionService implements OnModuleInit {
     }
 
     try {
-      this.logger.log('Triggering automatic Mairie de Paris ingestion...');
-      await this.handleDailyIngestionAndCleanup();
-      this.logger.log('Mairie de Paris automatic data ingestion completed successfully!');
+      const shouldRun = await this.shouldRunIngestionToday();
+
+      if (shouldRun) {
+        this.logger.log('New day or first build detected. Triggering ingestion...');
+        // Run in background to avoid blocking container readiness
+        this.handleDailyIngestionAndCleanup().catch((err) =>
+          this.logger.error('Background ingestion failed:', err)
+        );
+      } else {
+        this.logger.log('Ingestion already completed today. Skipping startup run.');
+      }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error('Failed to trigger automatic ingestion:', errorMessage);
+      this.logger.error('Error during startup ingestion check:', error);
     }
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleDailyIngestionAndCleanup() {
-    this.logger.log('Starting scheduled daily ingestion and cleanup job...');
+    this.logger.log('Starting daily ingestion and cleanup job...');
     try {
       const now = new Date();
+
+      // Clean up past events
       const deleted = await this.prisma.event.deleteMany({
-        where: {
-          dateEnd: {
-            lt: now,
-          },
-        },
+        where: { dateEnd: { lt: now } },
       });
       this.logger.log(`Cleanup complete: Removed ${deleted.count} past events.`);
 
+      // Perform ingestion
       await this.fetchFromMairieParis();
-      this.logger.log('Scheduled ingestion successfully completed.');
+
+      // Persist completion date (YYYY-MM-DD string)
+      const todayStr = new Date().toISOString().split('T')[0];
+      await this.prisma.systemState.upsert({
+        where: { key: this.LAST_INGESTION_KEY },
+        update: { value: todayStr },
+        create: { key: this.LAST_INGESTION_KEY, value: todayStr },
+      });
+
+      this.logger.log('Scheduled ingestion successfully completed and state saved.');
     } catch (error) {
-      this.logger.error('Error during scheduled job:', error);
+      this.logger.error('Error during job execution:', error);
     }
+  }
+
+  private async shouldRunIngestionToday(): Promise<boolean> {
+    const record = await this.prisma.systemState.findUnique({
+      where: { key: this.LAST_INGESTION_KEY },
+    });
+
+    if (!record) return true; // Never run before
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    return record.value !== todayStr; // True if record is from yesterday or earlier
   }
 
   async fetchFromMairieParis() {
