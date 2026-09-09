@@ -59,7 +59,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
         type="button"
         aria-label="Open Filters"
         onClick={handleOpen}
-        className="glass-panel icon-btn fixed left-4 top-1/2 -translate-y-1/2 z-[9999] w-10 h-10 rounded-full shadow-lg cursor-pointer active:scale-95 flex items-center justify-center"
+        className="glass-panel icon-btn fixed left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full shadow-lg cursor-pointer active:scale-95 flex items-center justify-center"
         style={{ color: 'var(--color-blue-dark)' }}
       >
         <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
@@ -72,7 +72,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
           <div
             onAnimationEnd={handleAnimationEnd}
             data-state={isOpen ? 'open' : 'closed'}
-            className={`${styles.filterModal || styles.sidebarModal || 'filterModal'} glass-panel h-auto w-64 fixed left-3 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 z-[9999] rounded-xl shadow-2xl`}
+            className={`${styles.filterModal || styles.sidebarModal || 'filterModal'} glass-panel h-auto w-64 fixed left-3 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 rounded-xl shadow-2xl`}
             style={{ color: 'var(--color-blue-dark)' }}
           >
             <button
