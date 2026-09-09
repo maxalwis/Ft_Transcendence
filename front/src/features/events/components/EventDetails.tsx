@@ -108,7 +108,7 @@ export default function EventDetails({
         </p>
       )}
       {accessLink && (
-        <div className="mt-3">
+        <div className="mt-3 flex justify-center">
           <a
             href={accessLink}
             target="_blank"
@@ -121,7 +121,7 @@ export default function EventDetails({
               borderRadius: 'var(--radius-sm)',
               color: 'var(--color-text-light)',
             }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold transition-all duration-200 hover:[background:var(--color-orange-hover)!important] hover:[border-color:var(--color-orange-border)] active:scale-95"
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold transition-all duration-200 active:scale-95"
           >
             <span>{t('eventDetails.accessLink')}</span>
             <svg

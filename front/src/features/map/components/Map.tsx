@@ -7,10 +7,11 @@ import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
 // Layouts & Feature Components
-import SideBar from '../../../layouts/Sidebar';
-import NavBar from '../../../layouts/NavBar';
+import LanguageSelector from '../../../layouts/LanguageSelector';
 import BottomBar from '../../../layouts/BottomBar';
 import Filters from './Filters';
+import SideBar from '../../../layouts/Sidebar';
+import NavBar from '../../../layouts/NavBar';
 
 // Marker & Map Visual Components
 import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
@@ -104,7 +105,7 @@ export default function Map({ onOpenAuth }: MapProps) {
     }, 150);
   }, [setActiveGroupId, setActiveEventIndex]);
 
-  const handleMarkerClick = useCallback(
+  const handleOpenSidebar = useCallback(
     (id: string) => {
       cancelCloseTimeout();
       setActiveSidebarEventId(id);
@@ -125,19 +126,14 @@ export default function Map({ onOpenAuth }: MapProps) {
   // Handler mémorisé pour la sélection de catégorie via NavBar
   const handleSelectCategory = useCallback((selectedCategory: string) => {
     setFilters((prev) => {
-      // 1. If clicking "All" or an empty value, always reset category to ''
       if (!selectedCategory || selectedCategory.trim() === '') {
         return { ...prev, category: '' };
       }
 
-      // 2. Check if the clicked category is already active (case-insensitive)
       const isAlreadyActive =
         prev.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase();
 
-      // 3. Toggle off if already active, otherwise select the new category
       const nextCategory = isAlreadyActive ? '' : selectedCategory;
-
-      console.log('[Map] Category selection updated to:', nextCategory);
 
       return {
         ...prev,
@@ -171,13 +167,17 @@ export default function Map({ onOpenAuth }: MapProps) {
         <GlassZoomControl />
         <AdminPanelLinks />
 
-        <MapEventsHandler activeGroup={activeGroup} setHoverPos={setHoverPos} />
+        <MapEventsHandler
+          activeGroup={activeGroup}
+          setActiveGroupId={setActiveGroupId}
+          setHoverPos={setHoverPos}
+        />
 
         {!isLoading && (
           <ClusterLayer
             eventGroups={eventGroups}
             activeGroupId={activeGroupId}
-            onMarkerClick={handleMarkerClick}
+            onMarkerClick={handleOpenSidebar}
             onMarkerHover={handleMarkerHover}
             onMarkerLeave={handleMouseLeave}
           />
@@ -201,7 +201,7 @@ export default function Map({ onOpenAuth }: MapProps) {
           currentIndex={activeEventIndex}
           onPrev={handlePrevEvent}
           onNext={() => handleNextEvent(undefined, activeGroup.events.length - 1)}
-          onClick={() => setActiveSidebarEventId(currentEvent.id)}
+          onClick={() => handleOpenSidebar(currentEvent.id)}
           onMouseEnter={cancelCloseTimeout}
           onMouseLeave={handleMouseLeave}
         />
@@ -211,6 +211,7 @@ export default function Map({ onOpenAuth }: MapProps) {
 
       <NavBar activeCategory={filters.category} onSelectCategory={handleSelectCategory} />
 
+      {!activeSidebarEventId && <LanguageSelector />}
       <BottomBar onOpenAuth={onOpenAuth} />
 
       {activeSidebarEventId && (
@@ -223,6 +224,7 @@ export default function Map({ onOpenAuth }: MapProps) {
           }}
         />
       )}
+      {/* )} */}
     </>
   );
 }

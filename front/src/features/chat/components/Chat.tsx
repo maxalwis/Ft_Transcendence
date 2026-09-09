@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 export type Message = {
   id: number;
+  userId: number;
   content: string;
   user: { username?: string; email: string };
   createdAt: string;

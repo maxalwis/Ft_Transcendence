@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Chat from '../features/chat/components/Chat';
 import Event from '../features/events/components/Event';
 import type { EventItem } from '../types/event';
 import { useTranslation } from 'react-i18next';
+import styles from '../features/map/Map.module.css';
+import LanguageSelector from './LanguageSelector';
 
 interface SideBarProps {
   onClose: () => void;
@@ -22,13 +24,19 @@ export default function SideBar({
   event,
 }: SideBarProps) {
   const [fetchedEvent, setFetchedEvent] = useState<EventItem | null>(null);
-  const { t } = useTranslation();
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   // Find in list synchronously or use passed event prop
   const eventFromProps = event ?? events.find((ev) => ev.id === eventId) ?? null;
 
   // Prefer event passed via props, fallback to manually fetched event
   const eventDetails = eventFromProps || fetchedEvent;
+  const [isOpen, setIsOpen] = useState(true);
+  const { t } = useTranslation();
+
+  const handleAnimationEnd = () => {
+    if (!isOpen) onClose();
+  };
 
   useEffect(() => {
     // Skip fetching if event is already provided or no eventId exists
@@ -58,14 +66,21 @@ export default function SideBar({
   }, [eventId, eventFromProps]);
 
   return (
-    <div className="glass-panel fixed top-20 right-3 w-[20vw] h-[93vh] rounded-xl p-5 shadow-lg z-1000 flex flex-col">
+    <div
+      ref={rootRef}
+      data-state={isOpen ? 'open' : 'closed'}
+      onAnimationEnd={handleAnimationEnd}
+      className={`glass-panel ${styles.sidebarModal} fixed top-2 right-3 bottom-2 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col`}
+    >
+      <LanguageSelector embedded />
+
       {/* Close Button Header */}
       <div className="shrink-0">
         <button
           type="button"
           aria-label="Close"
-          onClick={onClose}
-          className="icon-btn glass-panel absolute top-3 right-3 flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl transition-all duration-150 hover:border-red-500/50 hover:bg-red-500/25! hover:text-red-400! active:scale-70"
+          onClick={() => setIsOpen(false)}
+          className="modal-close"
         >
           <svg
             className="h-4 w-4"
@@ -81,8 +96,8 @@ export default function SideBar({
         </button>
       </div>
 
-      {/* Event Details Section */}
-      <div className="shrink-0 border-b border-teal-200/20 pb-2 flex flex-col gap-2">
+      {/* Event Details Section (limited to 40% of the sidebar) */}
+      <div className="shrink-0 max-h-[50%] overflow-y-auto border-b border-teal-200/20 pb-2 flex flex-col gap-2">
         {eventDetails ? (
           <Event event={eventDetails} />
         ) : (
@@ -102,7 +117,7 @@ export default function SideBar({
 
         <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
           {eventId && currentUserId ? (
-            <Chat eventId={eventId} currentUserId={currentUserId} />
+            <Chat eventId={eventId} currentUserId={Number(currentUserId)} />
           ) : (
             <div className="text-gray-400 text-sm p-4 flex items-center justify-center h-full">
               {t('chat.connectPrompt', 'Connect to view chat.')}

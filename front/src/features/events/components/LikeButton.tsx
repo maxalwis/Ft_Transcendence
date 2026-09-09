@@ -128,7 +128,7 @@ export default function LikeButton({
   };
 
   return (
-    <div className="inline-flex items-center gap-1.5">
+    <div className="inline-flex gap-1.5">
       <button
         type="button"
         onClick={handleClick}

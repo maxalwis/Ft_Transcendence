@@ -45,6 +45,12 @@ export class FriendsController {
     return this.friendsService.acceptFriendRequest(senderId, currentUserId);
   }
 
+  @Patch('reject/:senderId')
+  rejectRequest(@Req() req: any, @Param('senderId', ParseIntPipe) senderId: number) {
+    const currentUserId = this.getUserIdFromReq(req);
+    return this.friendsService.rejectFriendRequest(senderId, currentUserId);
+  }
+
   @Get()
   getFriends(@Req() req: any) {
     const currentUserId = this.getUserIdFromReq(req);
