@@ -92,7 +92,6 @@ export class AuthService {
     }
   }
 
-  // vérifie un accessToken, utilisé par le WsJwtGuard
   async verifyAccessToken(token: string): Promise<{ id: number; email: string }> {
     try {
       const payload = await this.jwtService.verifyAsync(token, {
