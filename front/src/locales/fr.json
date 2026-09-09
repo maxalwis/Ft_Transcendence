@@ -175,5 +175,29 @@
   "likeButton": {
     "interested_one": "{{count}} intéressé",
     "interested_other": "{{count}} intéressés"
+  },
+  "legal": {
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "privacyButton": "Confidentialité",
+    "termsButton": "Conditions"
+  },
+  "legalContent": {
+    "privacyTitle": "Politique de confidentialité",
+    "privacySubtitle": "Dernière mise à jour : Septembre 2026",
+    "section1Title": "1. Informations que nous collectons",
+    "privacyText": "Nous collectons les informations que vous fournissez directement lors de la création d'un compte, telles que votre nom d'utilisateur, votre adresse e-mail et votre avatar de profil. Nous stockons également les événements que vous marquez comme intéressants, les messages échangés via le chat, ainsi que vos préférences de langue et de catégorie, nécessaires au fonctionnement de Ft_Transcendence.",
+    "section2Title": "2. Comment nous utilisons vos informations",
+    "privacyUseText": "Vos données sont utilisées exclusivement pour fournir, maintenir et améliorer nos services, gérer l'authentification des utilisateurs, activer le chat en temps réel et gérer votre liste d'amis.",
+    "section3Title": "3. Sécurité des données",
+    "privacySecurityText": "Nous mettons en œuvre des mesures techniques appropriées pour protéger vos données personnelles contre tout accès, modification, divulgation ou destruction non autorisés.",
+    "termsTitle": "Conditions d'utilisation",
+    "termsSubtitle": "Dernière mise à jour : Septembre 2026",
+    "termsSection1Title": "1. Acceptation des conditions",
+    "termsText": "En accédant et en utilisant Ft_Transcendence, vous acceptez d'être lié par les présentes conditions d'utilisation et par toutes les lois applicables.",
+    "termsSection2Title": "2. Conduite de l'utilisateur",
+    "termsUserConduct": "Vous vous engagez à ne pas utiliser la plateforme pour harceler, insulter ou envoyer des messages perturbateurs via le système de chat, ni à tenter de compromettre la sécurité des serveurs et de la base de données de l'application.",
+    "termsSection3Title": "3. Responsabilité du compte",
+    "termsAccountResponsibility": "Vous êtes responsable du maintien de la confidentialité des identifiants de votre compte et de toutes les activités qui se produisent sous votre compte utilisateur."
   }
 }

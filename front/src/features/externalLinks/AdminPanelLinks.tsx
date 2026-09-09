@@ -119,7 +119,7 @@ const DropdownMenu: React.FC = () => {
               position: 'fixed',
               top: `${coords.top}px`,
               left: `${coords.left}px`,
-              zIndex: 99999,
+              zIndex: 9999,
             }}
             className="glass-panel glass-animate-in w-64 p-3 pointer-events-auto"
           >
