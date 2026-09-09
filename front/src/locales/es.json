@@ -148,7 +148,33 @@
     "defaultSuccess": "Operación exitosa"
   },
   "likeButton": {
+    "loginRequired": "Debes iniciar sesión para añadir un evento a tus favoritos",
+    "interested_zero": "0 interesado",
     "interested_one": "{{count}} interesado",
     "interested_other": "{{count}} interesados"
+  },
+  "legal": {
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "privacyButton": "Privacidad",
+    "termsButton": "Términos"
+  },
+  "legalContent": {
+    "privacyTitle": "Política de privacidad",
+    "privacySubtitle": "Última actualización: Septiembre 2026",
+    "section1Title": "1. Información que recopilamos",
+    "privacyText": "Recopilamos la información que usted proporciona directamente al crear una cuenta, como su nombre de usuario, dirección de correo electrónico y avatar de perfil. También almacenamos los eventos que marca como de su interés, los mensajes intercambiados a través del chat, así como sus preferencias de idioma y categoría, necesarios para el funcionamiento de Ft_Transcendence.",
+    "section2Title": "2. Cómo utilizamos su información",
+    "privacyUseText": "Sus datos se utilizan exclusivamente para proporcionar, mantener y mejorar nuestros servicios, gestionar la autenticación de usuarios, habilitar el chat en tiempo real y gestionar su lista de amigos.",
+    "section3Title": "3. Seguridad de los datos",
+    "privacySecurityText": "Implementamos medidas técnicas apropiadas para proteger sus datos personales contra cualquier acceso, modificación, divulgación o destrucción no autorizados.",
+    "termsTitle": "Condiciones de uso",
+    "termsSubtitle": "Última actualización: Septiembre 2026",
+    "termsSection1Title": "1. Aceptación de las condiciones",
+    "termsText": "Al acceder y utilizar Ft_Transcendence, usted acepta quedar vinculado por las presentes condiciones de uso y por todas las leyes aplicables.",
+    "termsSection2Title": "2. Conducta del usuario",
+    "termsUserConduct": "Usted se compromete a no utilizar la plataforma para acosar, insultar o enviar mensajes perturbadores a través del sistema de chat, ni a intentar comprometer la seguridad de los servidores y de la base de datos de la aplicación.",
+    "termsSection3Title": "3. Responsabilidad de la cuenta",
+    "termsAccountResponsibility": "Usted es responsable de mantener la confidencialidad de las credenciales de su cuenta y de todas las actividades que se produzcan bajo su cuenta de usuario."
   }
 }

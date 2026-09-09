@@ -7,6 +7,8 @@ export function useEventRoom(eventId: string) {
   useEffect(() => {
     if (!socket || !isConnected) return;
     socket.emit('event:join', eventId);
-    return () => { socket.emit('event:leave', eventId); };
+    return () => {
+      socket.emit('event:leave', eventId);
+    };
   }, [socket, isConnected, eventId]);
 }

@@ -193,6 +193,7 @@ pre {
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-shadow);
   pointer-events: auto;
+  z-index: 500;
 }
 
 .glass-modal {
@@ -203,6 +204,18 @@ pre {
   border-radius: var(--radius-lg);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   pointer-events: auto;
+}
+
+.glass-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 .glass-blue {

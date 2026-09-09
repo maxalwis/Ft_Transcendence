@@ -39,7 +39,7 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
   };
 
   return (
-    <div className={styles.passwordOverlay} onClick={requestClose}>
+    <div className="glass-modal-overlay" style={{ zIndex: 1100 }} onClick={requestClose}>
       <div
         data-state={isClosing ? 'closed' : 'open'}
         onAnimationEnd={handleAnimationEnd}

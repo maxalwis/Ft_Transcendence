@@ -169,7 +169,7 @@ export class EventsService {
   }
 
   async findOne(id: string, lang: string = 'fr') {
-     const event = await this.prisma.event.findUnique({
+    const event = await this.prisma.event.findUnique({
       where: { id },
       select: {
         id: true,

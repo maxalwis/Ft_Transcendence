@@ -10,11 +10,7 @@ export class MessagesController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(
-    @Param('eventId') eventId: string,
-    @Body() dto: CreateMessageDto,
-    @Req() req: Request,
-  ) {
+  create(@Param('eventId') eventId: string, @Body() dto: CreateMessageDto, @Req() req: Request) {
     return this.messagesService.create(req.user!.id, { ...dto, eventId });
   }
 
