@@ -7,6 +7,7 @@ import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
 // Layouts & Feature Components
+import LanguageSelector from '../../../layouts/LanguageSelector';
 import SideBar from '../../../layouts/Sidebar';
 import NavBar from '../../../layouts/NavBar';
 import BottomBar from '../../../layouts/BottomBar';
@@ -208,24 +209,29 @@ export default function Map({ onOpenAuth }: MapProps) {
 
       <Filters onApplyFilters={handleApplyFilters} />
 
-      <NavBar
-        activeCategory={filters.category}
-        onSelectCategory={handleSelectCategory}
-        showLanguageSelector={!activeSidebarEventId}
-      />
+		<NavBar
+		activeCategory={filters.category}
+		onSelectCategory={handleSelectCategory}
+		/>
 
-      <BottomBar onOpenAuth={onOpenAuth} />
+		<LanguageSelector
+		sidebarOpen={!!activeSidebarEventId}
+		sidebarWidth={360} // adapte à la largeur réelle de ta SideBar
+		/>
 
-      {activeSidebarEventId && (
-        <SideBar
-          eventId={activeSidebarEventId}
-          currentUserId={user?.id}
-          onClose={() => {
-            setActiveSidebarEventId(null);
-            setHoverPos(null);
-          }}
-        />
-      )}
+		<BottomBar onOpenAuth={onOpenAuth} />
+
+		{activeSidebarEventId && (
+		<SideBar
+			eventId={activeSidebarEventId}
+			currentUserId={user?.id}
+			onClose={() => {
+			setActiveSidebarEventId(null);
+			setHoverPos(null);
+			}}
+		/>
+		)}
+      {/* )} */}
     </>
   );
 }

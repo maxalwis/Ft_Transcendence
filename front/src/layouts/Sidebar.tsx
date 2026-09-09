@@ -3,7 +3,6 @@ import Chat from '../features/chat/components/Chat';
 import Event from '../features/events/components/Event';
 import type { EventItem } from '../types/event';
 import { useTranslation } from 'react-i18next';
-import { FlagFR, FlagGB, FlagES, FlagSA } from './FlagIcons';
 import styles from '../features/map/Map.module.css';
 
 interface SideBarProps {
@@ -31,8 +30,7 @@ export default function SideBar({
   // Prefer event passed via props, fallback to manually fetched event
   const eventDetails = eventFromProps || fetchedEvent;
   const [isOpen, setIsOpen] = useState(true);
-  const { t, i18n } = useTranslation();
-  const currentLang = i18n.language;
+  const { t } = useTranslation();
 
   const handleAnimationEnd = () => {
     if (!isOpen) onClose();
@@ -71,51 +69,9 @@ export default function SideBar({
       onAnimationEnd={handleAnimationEnd}
       className={`glass-panel ${styles.sidebarModal} fixed top-2 right-3 bottom-2 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col`}
     >
-      <div className="pointer-events-auto absolute top-3 right-full mr-2 flex flex-col gap-2">
-        <button
-          type="button"
-          onClick={() => i18n.changeLanguage('fr')}
-          title="Français"
-          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('fr') ? 'isSelected' : ''
-          }`}
-        >
-          <FlagFR className="w-5 h-5 rounded-sm object-cover shrink-0" />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => i18n.changeLanguage('en')}
-          title="English"
-          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('en') ? 'isSelected' : ''
-          }`}
-        >
-          <FlagGB className="w-5 h-5 rounded-sm object-cover shrink-0" />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => i18n.changeLanguage('es')}
-          title="Español"
-          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('es') ? 'isSelected' : ''
-          }`}
-        >
-          <FlagES className="w-5 h-5 rounded-sm object-cover shrink-0" />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => i18n.changeLanguage('ar')}
-          title="العربية"
-          className={`glass-panel cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            currentLang?.startsWith('ar') ? 'isSelected' : ''
-          }`}
-        >
-          <FlagSA className="w-5 h-5 rounded-sm object-cover shrink-0" />
-        </button>
-      </div>
+      {/* Le sélecteur de langue vit désormais uniquement dans
+          <LanguageSelector />, monté au niveau du layout parent.
+          Ne pas le réimplémenter ici. */}
 
       {/* Close Button Header */}
       <div className="shrink-0">

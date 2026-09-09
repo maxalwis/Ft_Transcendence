@@ -9,7 +9,7 @@ export default function BottomBar({ onOpenAuth }: BottomBarProps) {
   return (
     <div
       dir="ltr"
-      className="fixed bottom-2 w-full flex flex-row items-center justify-between px-6 z-[500] pointer-events-none"
+      className="fixed bottom-2 w-full flex flex-row items-center justify-between px-6 z-500 pointer-events-none"
     >
       {/* Left side position */}
       <div className="pointer-events-auto">
