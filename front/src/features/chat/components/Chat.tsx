@@ -10,6 +10,7 @@ import { useChatSocket } from '../hooks/useChatSocket';
 
 export type Message = {
   id: number;
+  userId: number;
   content: string;
   userId: number;
   user: { username?: string; email: string };

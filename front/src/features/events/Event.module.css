@@ -32,16 +32,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: fit-content;
+  width: 24px !important;
+  height: 24px !important;
+  box-sizing: border-box;
   gap: 4px;
   color: #cbd5e1;
   font-size: 5px;
   transition: color 0.2s ease;
   background: none;
+  border: 1px solid transparent !important;
+  border-radius: 9999px;
+  padding: 4px !important;
 }
 
 .like-button:hover {
-  color: #fb923c;
+  background: rgb(239 68 68 / 28%) !important;
+  border-color: rgb(239 68 68 / 65%) !important;
+  box-shadow: 0 0 12px rgb(239 68 68 / 25%);
+  color: #f87171;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 
 .like-button svg {
@@ -66,17 +76,17 @@
 }
 
 .like-button--icon-only {
-  width: 16px !important;
-  height: 16px !important;
-  padding: 0 !important;
-  border: 0 !important;
+  width: 24px !important;
+  height: 24px !important;
   background: transparent !important;
   box-shadow: none !important;
 }
 
 .like-button--icon-only:hover {
-  border: 0 !important;
-  background: transparent !important;
+  background: rgb(239 68 68 / 28%) !important;
+  box-shadow: 0 0 10px rgb(239 68 68 / 25%) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 
 .events-details-popup {
@@ -165,22 +175,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 85%);
-  box-shadow: 0 2px 6px rgb(0 0 0 / 15%);
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0 !important;
+  border: 1px solid var(--color-orange-border);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--color-blue-dark);
   pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.events-details-carousel-button:not(:disabled) {
-  cursor: pointer;
+.events-details-carousel-button:hover:not(:disabled) {
+  border-color: rgba(232, 122, 38, 0.724);
+  background: var(--color-orange-hover);
+  color: #f06901;
 }
 
 .events-details-carousel-button:disabled {
   cursor: default;
   opacity: 0.4;
+}
+
+.events-details-carousel-button:active:not(:disabled) {
+  transform: scale(0.7);
 }
 
 .events-details-carousel-counter {
