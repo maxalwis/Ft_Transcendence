@@ -56,6 +56,7 @@ export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
             <img
               src={user.avatar}
               alt="Avatar"
+              referrerPolicy="no-referrer"
               className="block h-full w-full rounded-full object-cover"
             />
           ) : (

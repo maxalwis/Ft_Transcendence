@@ -92,6 +92,10 @@ textarea {
   min-height: 40px;
 }
 
+.chat-message-input {
+  min-height: 55px;
+}
+
 /* Interactive Elements */
 button,
 input[type='submit'],
@@ -124,6 +128,7 @@ input[type='submit']:hover,
 input[type='button']:hover,
 input[type='reset']:hover {
   background: var(--color-orange-hover) !important;
+  color: var(--color-orange-500);
   border-color: var(--color-orange-border);
   transform: zoom(0.98);
 }
@@ -139,6 +144,79 @@ button.icon-btn,
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  display: inline-flex;
+  width: 1.75rem;
+  height: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  border: 1px solid var(--color-orange-border);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.modal-close:hover {
+  border-color: rgba(232, 122, 38, 0.724);
+  background: var(--color-orange-hover);
+  color: #f06901 !important;
+}
+
+.modal-close:active {
+  transform: scale(0.7);
+}
+
+.modal-close-inline {
+  position: static;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 !important;
+  border: 1px solid var(--color-orange-border);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--color-orange-primary);
+}
+
+.modal-close-inline:hover {
+  border-color: rgba(232, 122, 38, 0.724);
+  background: var(--color-orange-hover) !important;
+  color: #f06901 !important;
+}
+
+.modal-close-inline-green {
+  border-color: rgba(22, 163, 74, 0.35);
+  background: rgba(22, 163, 74, 0.12);
+  color: rgb(21, 128, 61);
+}
+
+.modal-close-inline-green:hover {
+  border-color: rgba(22, 163, 74, 0.7);
+  background: rgba(22, 163, 74, 0.2) !important;
+  color: rgb(21, 128, 61) !important;
+}
+
+.modal-close-inline-red {
+  border-color: rgba(214, 42, 42, 0.497);
+  background: rgba(220, 38, 38, 0.12);
+  color: rgb(185, 28, 28);
+}
+
+.modal-close-inline-red:hover {
+  border-color: rgba(220, 38, 38, 0.7);
+  background: rgba(220, 38, 38, 0.2) !important;
+  color: rgb(185, 28, 28) !important;
 }
 
 /* Structural & Surface Elements */
