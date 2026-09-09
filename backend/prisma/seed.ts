@@ -17,12 +17,49 @@ import { PrismaClient } from '../src/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import * as bcrypt from 'bcrypt';
+import * as http from 'http';
 
 const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 
 const prisma = new PrismaClient({ adapter });
+
+// ---- Logstash HTTP Logger Helper ------------------------------------------
+
+function sendSeedLog(data: {
+  message: string;
+  action: string;
+  userId?: number;
+  eventId?: string;
+  status?: string;
+}) {
+  const payload = JSON.stringify({
+    '@timestamp': new Date().toISOString(),
+    service: 'nestjs-backend-seed',
+    level: 'info',
+    message: data.message,
+    action: data.action,
+    userId: data.userId,
+    eventId: data.eventId,
+    system_health_status: data.status || 'OK',
+    response_time_ms: faker.number.int({ min: 12, max: 180 }),
+  });
+
+  const req = http.request({
+    hostname: process.env.LOGSTASH_HOST || 'logstash',
+    port: 5044,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(payload),
+    },
+  });
+
+  req.on('error', () => {}); // Silently ignore if Logstash is unreachable
+  req.write(payload);
+  req.end();
+}
 
 // ---- Flags pour activer/désactiver des étapes du seed ---------------------
 
@@ -127,6 +164,13 @@ async function main() {
       });
 
       users.push({ ...user, isPowerUser });
+
+      // Emit log event
+      sendSeedLog({
+        message: `User created: ${user.username}`,
+        action: 'user_registered',
+        userId: user.id,
+      });
     }
   } else {
     console.log('SEED_USERS disabled, fetching existing users...');
@@ -226,6 +270,14 @@ async function main() {
             },
           });
           interestSet.add(`${user.id}-${event.id}`);
+
+          // Emit log event
+          sendSeedLog({
+            message: `User ${user.id} marked interest in event ${event.id}`,
+            action: 'event_interest',
+            userId: user.id,
+            eventId: event.id,
+          });
         }
       }
     }
@@ -264,6 +316,14 @@ async function main() {
             content: faker.lorem.sentence(),
             createdAt: safeBetween(event.createdAt, new Date()),
           },
+        });
+
+        // Emit log event
+        sendSeedLog({
+          message: `Message posted in event ${event.id}`,
+          action: 'message_created',
+          userId: authorId,
+          eventId: event.id,
         });
       }
     }

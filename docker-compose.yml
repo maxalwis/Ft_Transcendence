@@ -257,14 +257,10 @@ services:
         condition: service_healthy
     volumes:
       - ./kibana/scripts/setup.sh:/usr/local/bin/setup.sh:z
+      - ./kibana/scripts/kibana-dashboard.ndjson:/usr/local/bin/kibana-dashboard.ndjson:z
     networks:
       - transcendence_network
-    command: >
-      sh -c "
-        apk add --no-cache curl &&
-        chmod +x /usr/local/bin/setup.sh &&
-        /usr/local/bin/setup.sh
-      "
+    entrypoint: ['/bin/sh', '/usr/local/bin/setup.sh']
     logging:
       driver: 'json-file'
     profiles:
