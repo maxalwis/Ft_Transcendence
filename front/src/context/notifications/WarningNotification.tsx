@@ -49,8 +49,7 @@ export const WarningNotification = ({ message, onClose, duration = 5000 }: Notif
       {
         onClick: handleDismiss,
         className:
-          'text-amber-900/60 hover:text-amber-950 hover:bg-[rgba(245,158,11,0.15)] rounded-lg p-1 transition-colors border-0 cursor-pointer flex items-center justify-center font-bold',
-        'aria-label': 'Close notification',
+          'modal-close',
       },
       '✕'
     )

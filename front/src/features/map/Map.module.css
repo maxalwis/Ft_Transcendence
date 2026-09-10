@@ -1,36 +1,36 @@
 /* Target the specific Leaflet attribution container */
 :global(.leaflet-control-attribution) {
-  display: none !important;
+  display: none ;
 }
 
 /* Or target the bottom-right control container specifically */
 :global(.leaflet-bottom.leaflet-right .leaflet-control-attribution) {
-  display: none !important;
+  display: none ;
 }
 
 /* Glass container styling for both Zoom and Custom Links */
 :global(.leaflet-control-zoom.leaflet-bar),
 :global(.leaflet-control.leaflet-links) {
-  background: rgba(255, 103, 18, 0) !important;
-  backdrop-filter: var(--glass-blur) !important;
-  -webkit-backdrop-filter: var(--glass-blur) !important;
-  border: 1px solid var(--color-orange-border) !important;
-  border-radius: var(--radius-lg) !important;
-  box-shadow: var(--glass-shadow) !important;
-  overflow: hidden !important;
-  pointer-events: auto !important;
+  background: rgba(255, 103, 18, 0) ;
+  backdrop-filter: var(--glass-blur) ;
+  -webkit-backdrop-filter: var(--glass-blur) ;
+  border: 1px solid var(--color-orange-border) ;
+  border-radius: var(--radius-lg) ;
+  box-shadow: var(--glass-shadow) ;
+  overflow: hidden ;
+  pointer-events: auto ;
 }
 
 /* Button & Link styling inside the controls */
 :global(.leaflet-control-zoom.leaflet-bar a),
 :global(.leaflet-control.leaflet-links a) {
-  background: transparent !important;
-  color: var(--color-blue-dark) !important;
-  border-bottom: 1px solid var(--color-orange-border) !important;
-  font-family: var(--font-main) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  background: transparent ;
+  color: var(--color-blue-dark) ;
+  border-bottom: 1px solid var(--color-orange-border) ;
+  font-family: var(--font-main) ;
+  display: flex ;
+  align-items: center ;
+  justify-content: center ;
 }
 
 /* Ensure SVGs adopt the same text color */
@@ -41,13 +41,13 @@
 /* Remove bottom border on last item */
 :global(.leaflet-control-zoom.leaflet-bar a:last-child),
 :global(.leaflet-control.leaflet-links a:last-child) {
-  border-bottom: none !important;
+  border-bottom: none ;
 }
 
 /* Hover effect */
 :global(.leaflet-control-zoom.leaflet-bar a:hover),
 :global(.leaflet-control.leaflet-links a:hover) {
-  background: var(--color-orange-hover) !important;
+  background: var(--color-orange-hover) ;
 }
 
 /* ==========================================================================
@@ -56,7 +56,7 @@
 
 .filterModal {
   transform-origin: center center;
-  z-index: 9999;
+  z-index: 50;
 }
 
 .filterTrigger,
@@ -223,5 +223,71 @@
   to {
     opacity: 0;
     transform: scale(0.75) translateY(12px);
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebarModal {
+    /* Repositionne la modale en bas sur toute la largeur */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    width: 100%;
+	height: 30vh;
+	z-index: 1000;
+    
+    /* Coins arrondis uniquement sur le haut */
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    
+    /* Origine de l'animation modifiée vers le bas */
+    transform-origin: bottom center;
+  }
+
+/* Nouvelle animation d'ouverture depuis le bas (Slide Up) */
+.sidebarModal[data-state='open'] {
+    animation: fullScreenSlideUp 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Animation de fermeture : Redescend vers le bas */
+  .sidebarModal[data-state='closed'] {
+    animation: fullScreenSlideDown 250ms ease-in forwards;
+  }
+}
+
+/* ==========================================================================
+   Animations "Full Screen Slide"
+   ========================================================================== */
+
+@keyframes fullScreenSlideUp {
+  0% {
+    opacity: 0;
+    height: 0vh;
+    transform: translateY(100%);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    height: 100vh; /* Prend 100% de la hauteur de l'écran */
+    transform: translateY(0);
+  }
+}
+
+@keyframes fullScreenSlideDown {
+  0% {
+    opacity: 1;
+    height: 100vh;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    height: 0vh;
+    transform: translateY(100%);
   }
 }

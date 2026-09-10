@@ -10,7 +10,6 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const [city, setCity] = useState('Paris');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [priceType, setPriceType] = useState('');
@@ -30,7 +29,6 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
 
   const handleApply = () => {
     onApplyFilters?.({
-      city,
       startDate,
       endDate,
       priceType,
@@ -40,7 +38,6 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
 
   const handleReset = () => {
     const defaultFilters = { city: 'Paris', startDate: '', endDate: '', priceType: '' };
-    setCity('Paris');
     setStartDate('');
     setEndDate('');
     setPriceType('');
@@ -90,19 +87,6 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
             <h3 className={`text-lg text-center pb-2 pr-6 ${styles.filterTitle}`}>
               {t('filters.title', 'Events Filters')}
             </h3>
-
-            <div className="flex flex-col gap-1">
-              <label className={`text-xs ${styles.filterLabel}`}>
-                {t('filters.cityLabel', 'Ville / Localisation')}
-              </label>
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder={t('filters.cityPlaceholder', 'Ex: Paris')}
-                className={styles.filterControl}
-              />
-            </div>
 
             <div className="flex flex-col gap-1">
               <label className={`text-xs ${styles.filterLabel}`}>

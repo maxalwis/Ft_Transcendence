@@ -23,7 +23,7 @@ export default function LegalModal({ isOpen, onClose, initialTab = 'privacy' }: 
           type="button"
           onClick={onClose}
           aria-label={t('authModal.close')}
-          className="unstyled absolute top-4 right-4 text-xl font-bold cursor-pointer opacity-70 hover:opacity-100"
+          className="modal-close"
         >
           ✕
         </button>

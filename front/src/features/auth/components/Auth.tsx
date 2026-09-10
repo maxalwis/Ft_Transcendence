@@ -65,7 +65,7 @@ export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
         </button>
 
         {isMenuOpen && (
-          <div className="absolute bottom-full left-1/2 mb-0.5 -translate-x-1/2 glass-panel flex flex-col min-w-40 z-1000">
+          <div className="absolute bottom-full left-1/2 mb-0.5 -translate-x-1/2 glass-panel flex flex-col min-w-40 z-50">
             <button
               className="px-4 py-2 text-left hover:bg-white/10"
               onClick={() => {
