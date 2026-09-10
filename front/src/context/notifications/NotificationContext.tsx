@@ -23,7 +23,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     errorMessage &&
       React.createElement(
         'div',
-        { className: 'fixed top-4 left-14 z-50 pointer-events-auto' },
+        { dir: 'ltr', className: 'fixed top-4 left-14 z-50 pointer-events-auto' },
         React.createElement(WarningNotification, {
           message: errorMessage,
           onClose: clearNotification,

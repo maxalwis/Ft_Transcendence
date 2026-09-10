@@ -1,11 +1,7 @@
 import { Controller, Post, Delete, Get, Param, UseGuards, Req } from '@nestjs/common';
-import { Request } from 'express';
+import type { Request } from 'express';
 import { EventsInterestsService } from './events-interest.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-
-interface AuthenticatedRequest extends Request {
-  user: Express.User;
-}
 
 @Controller('events/:eventId/interest')
 export class EventsInterestsController {
@@ -13,14 +9,14 @@ export class EventsInterestsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  markInterested(@Param('eventId') eventId: string, @Req() req: AuthenticatedRequest) {
-    return this.interestsService.markInterested(req.user.id, eventId);
+  markInterested(@Param('eventId') eventId: string, @Req() req: Request) {
+    return this.interestsService.markInterested(req.user!.id, eventId);
   }
 
   @Delete()
   @UseGuards(JwtAuthGuard)
-  removeInterest(@Param('eventId') eventId: string, @Req() req: AuthenticatedRequest) {
-    return this.interestsService.removeInterest(req.user.id, eventId);
+  removeInterest(@Param('eventId') eventId: string, @Req() req: Request) {
+    return this.interestsService.removeInterest(req.user!.id, eventId);
   }
 
   @Get('count')
@@ -30,13 +26,13 @@ export class EventsInterestsController {
 
   @Get('friends')
   @UseGuards(JwtAuthGuard)
-  getFriendsInterested(@Param('eventId') eventId: string, @Req() req: AuthenticatedRequest) {
-    return this.interestsService.getFriendsInterested(req.user.id, eventId);
+  getFriendsInterested(@Param('eventId') eventId: string, @Req() req: Request) {
+    return this.interestsService.getFriendsInterested(req.user!.id, eventId);
   }
 
   @Get('status')
   @UseGuards(JwtAuthGuard)
-  getStatus(@Param('eventId') eventId: string, @Req() req: AuthenticatedRequest) {
-    return this.interestsService.getStatus(req.user.id, eventId);
+  getStatus(@Param('eventId') eventId: string, @Req() req: Request) {
+    return this.interestsService.getStatus(req.user!.id, eventId);
   }
 }

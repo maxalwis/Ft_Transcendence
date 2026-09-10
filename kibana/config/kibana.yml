@@ -2,5 +2,16 @@ server.name: kibana
 server.host: 0.0.0.0
 elasticsearch.hosts: [ "http://elasticsearch:9200" ]
 
-# Lock down global logging root to errors only (silencing info/startup clutter)
+# Silence background logs
 logging.root.level: error
+
+# Disable Welcome Banners & Telemetry Popups
+telemetry.enabled: false
+telemetry.optIn: false
+telemetry.banner: false
+newsfeed.enabled: false
+
+# Disable Fleet / Integrations / Sample Data popups
+xpack.fleet.enabled: false
+
+xpack.encryptedSavedObjects.encryptionKey: "something_at_least_32_characters_long_for_dev_env"

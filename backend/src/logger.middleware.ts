@@ -71,6 +71,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const humanMessage = logLines.join('\n');
 
       const logPayload = {
+        '@timestamp': new Date().toISOString(), // Guaranteed UTC format (e.g. "2026-09-09T18:09:49.000Z")
         http: {
           method,
           originalUrl: decodedUrl,

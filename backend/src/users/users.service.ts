@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { User, Prisma } from '../generated/prisma/client';
+import { User, Prisma, UserStatus } from '../generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateLocalUserDto, CreateOAuthUserDto } from './dto/create-user.dto';
 import { SAFE_USER_SELECT, type SafeUser } from './safe-user-select';
@@ -130,5 +130,11 @@ export class UsersService {
       }
       throw error;
     }
+  }
+
+  // met à jour le statut de l'utilisateur
+  async setStatus(id: number, status: UserStatus): Promise<User> {
+    await this.findOne(id);
+    return this.prisma.user.update({ where: { id }, data: { status } });
   }
 }

@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react';
-import '../Chat.module.css';
+import { useEffect, useState, useCallback } from 'react';
+import styles from './chat.module.css';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
 import { fetchEventMessages, sendEventMessage } from '../chatService';
+import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 import { useTranslation } from 'react-i18next';
+import { useChatSocket } from '../hooks/useChatSocket';
 
 export type Message = {
   id: number;
   userId: number;
   content: string;
+  userId: number;
   user: { username?: string; email: string };
   createdAt: string;
 };
@@ -24,11 +27,13 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const { showError } = useNotification();
+  const { accessToken } = useAuth();
 
   // Fetch messages on mount or when event changes
   useEffect(() => {
+    if (!accessToken) return;
     let isMounted = true;
-    fetchEventMessages(eventId)
+    fetchEventMessages(eventId, accessToken)
       .then((data) => {
         if (isMounted) setMessages(data);
       })
@@ -48,13 +53,27 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     return () => {
       isMounted = false;
     };
-  }, [eventId, showError, t]);
+  }, [eventId, accessToken, showError, t]);
+
+  // Ajoute le message reçu en temps réel, en évitant les doublons
+  // (utile si le message optimiste de handleSendMessage arrive avant l'echo du socket)
+  const handleNewMessage = useCallback((msg: Message) => {
+    setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
+  }, []);
+
+  useChatSocket(handleNewMessage);
 
   // Handle sending through the backend
   const handleSendMessage = async (text: string) => {
+    if (!accessToken) {
+      showError('You must be logged in to send a message.');
+      return;
+    }
     try {
-      const newMessage = await sendEventMessage(eventId, text, currentUserId);
-      setMessages((prev) => [...prev, newMessage]);
+      const newMessage = await sendEventMessage(eventId, text, accessToken);
+      setMessages((prev) =>
+        prev.some((m) => m.id === newMessage.id) ? prev : [...prev, newMessage]
+      );
     } catch (err: unknown) {
       console.error('Error sending message:', err);
       const errorMessage = err instanceof Error ? err.message : '';

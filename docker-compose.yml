@@ -92,12 +92,13 @@ services:
     networks:
       - transcendence_network
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:${BACKEND_PORT:-3000}/health || exit 1"]
+      test:
+        ['CMD-SHELL', 'wget -q --spider http://localhost:${BACKEND_PORT:-3000}/health || exit 1']
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 30s
-    command: ['sh', '-c', 'npx prisma generate && npx prisma migrate deploy && exec npm run start']
+    command: ['sh', '-c', 'npx prisma generate && npx prisma db push && exec npm run start:dev']
 
   worker:
     image: localhost/transcendence_worker:latest
@@ -172,7 +173,7 @@ services:
     environment:
       - node.name=elasticsearch
       - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
       - xpack.security.enabled=false
       - 'logger.level=WARN'
     ports:
@@ -238,7 +239,7 @@ services:
     networks:
       - transcendence_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5601/api/status"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:5601/api/status']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -256,14 +257,10 @@ services:
         condition: service_healthy
     volumes:
       - ./kibana/scripts/setup.sh:/usr/local/bin/setup.sh:z
+      - ./kibana/scripts/kibana-dashboard.ndjson:/usr/local/bin/kibana-dashboard.ndjson:z
     networks:
       - transcendence_network
-    command: >
-      sh -c "
-        apk add --no-cache curl &&
-        chmod +x /usr/local/bin/setup.sh &&
-        /usr/local/bin/setup.sh
-      "
+    entrypoint: ['/bin/sh', '/usr/local/bin/setup.sh']
     logging:
       driver: 'json-file'
     profiles:

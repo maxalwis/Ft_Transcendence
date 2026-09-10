@@ -140,3 +140,9 @@ model TranslationCache {
   @@unique([eventId, lang, field])
   @@index([eventId])
 }
+
+model SystemState {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}

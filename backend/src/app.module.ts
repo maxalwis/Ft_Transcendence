@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import { PublicApiModule } from './public-api/public-api.module';
 import { FriendsModule } from './friends/friends.module';
 import { EventsInterestsModule } from './events-interest/events-interest.module';
+import { RealtimeModule } from './realtime/realtime.module';
 import { TranslationsModule } from './translations/translations.module';
 
 @Module({
@@ -29,6 +30,7 @@ import { TranslationsModule } from './translations/translations.module';
     AuthModule,
     FriendsModule,
     EventsInterestsModule,
+    RealtimeModule,
     TranslationsModule,
     PublicApiModule,
   ],

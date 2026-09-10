@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
+import { useSocket } from '../../../context/socket/SocketContext';
 import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 import {
@@ -29,6 +30,7 @@ export default function LikeButton({
   iconOnly = false,
 }: LikeButtonProps) {
   const { accessToken } = useAuth();
+  const { socket, isConnected } = useSocket();
   const { showError } = useNotification();
   const [isLiked, setIsLiked] = useState(false);
   const [count, setCount] = useState(interestedUsersCount);
@@ -89,6 +91,21 @@ export default function LikeButton({
       isCancelled = true;
     };
   }, [eventId, accessToken]);
+
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handler = (data: { eventId: string; count: number }) => {
+      if (data.eventId === eventId) {
+        setCount(data.count);
+      }
+    };
+
+    socket.on('interest:updated', handler);
+    return () => {
+      socket.off('interest:updated', handler);
+    };
+  }, [socket, isConnected, eventId]);
 
   const handleClick = async (event: MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
