@@ -11,6 +11,8 @@ import './styles/variables.css';
 import './styles/global.css';
 import { SocketProvider } from './context/socket/SocketContext';
 
+import { DeleteConfirmPage } from './features/gdpr/DeleteConfirmPage';
+
 export default function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
@@ -28,6 +30,7 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Map onOpenAuth={handleOpenAuth} />} />
                 <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
+				<Route path="/account/delete-confirm" element={<DeleteConfirmPage />} />
               </Routes>
             </div>
           </div>
