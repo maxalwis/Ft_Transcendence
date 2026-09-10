@@ -15,7 +15,6 @@ export class AppService implements OnApplicationBootstrap, OnApplicationShutdown
     // Wait a brief moment or ensure Prisma is connected
     setTimeout(async () => {
       await this.waitForDatabase();
-      await this.checkAndCreateDefaultUser();
       await this.checkAndIngestData();
     }, 1500);
   }
@@ -39,40 +38,6 @@ export class AppService implements OnApplicationBootstrap, OnApplicationShutdown
 
   onApplicationShutdown(signal: string) {
     this.logger.log(`Backend received ${signal} signal: shutting down gracefully...`);
-  }
-
-  private async checkAndCreateDefaultUser() {
-    try {
-      if (!this.prisma?.user) {
-        this.logger.error('Prisma user model is undefined.');
-        return;
-      }
-
-      const userCount = await this.prisma.user.count();
-
-      if (userCount > 0) {
-        this.logger.log(
-          `Database already contains ${userCount} user(s). Skipping default user creation.`
-        );
-        return;
-      }
-
-      this.logger.log('No users found. Creating default test user...');
-
-      const defaultUser = await this.prisma.user.create({
-        data: {
-          username: 'Test User',
-          email: 'test@transcendence.com',
-          password: 'mdp123secret',
-        },
-      });
-
-      this.logger.log(
-        `Default user created successfully (ID: ${defaultUser.id}, Email: ${defaultUser.email})`
-      );
-    } catch (error) {
-      this.logger.error(`Failed to create default user: ${error.message}`);
-    }
   }
 
   private async checkAndIngestData() {
