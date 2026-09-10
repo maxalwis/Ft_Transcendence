@@ -113,10 +113,10 @@ async function main() {
             faker.internet.username().toLowerCase() + faker.number.int({ min: 1, max: 999 }),
           email: faker.internet.email().toLowerCase(),
           password: isOAuth ? null : hashedPassword,
-          provider: isOAuth ? faker.helpers.arrayElement(['google', 'github']) : null,
+          provider: isOAuth ? faker.helpers.arrayElement(['google', '42']) : null,
           providerId: isOAuth ? faker.string.uuid() : null,
           avatar: faker.image.avatarGitHub(),
-          status: weightedBoolean(0.3) ? 'ONLINE' : 'OFFLINE',
+          status: 'OFFLINE', // met tous les users en offline par défaut
           createdAt,
           updatedAt: isPowerUser
             ? faker.date.recent({ days: 3 })

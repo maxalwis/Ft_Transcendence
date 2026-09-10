@@ -87,4 +87,15 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token invalid or expired');
     }
   }
+
+  async verifyAccessToken(token: string): Promise<{ id: number; email: string }> {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.config.get<string>('JWT_SECRET'),
+      });
+      return { id: payload.sub, email: payload.email };
+    } catch {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+  }
 }

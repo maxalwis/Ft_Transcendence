@@ -2,13 +2,17 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { User, Message } from '../generated/prisma/client';
+import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 
 @Injectable()
 export class MessagesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly emitter: RealtimeEmitterService
+  ) {}
 
-  async create(createMessageDto: CreateMessageDto): Promise<Message> {
-    const { content, userId, eventId } = createMessageDto;
+  async create(userId: number, createMessageDto: CreateMessageDto): Promise<Message> {
+    const { content, eventId } = createMessageDto;
 
     if (!eventId) {
       throw new NotFoundException('Event ID is required');
@@ -28,7 +32,7 @@ export class MessagesService {
       throw new NotFoundException(`Event with ID ${eventId} not found`);
     }
 
-    return this.prisma.message.create({
+    const message = await this.prisma.message.create({
       data: {
         content,
         userId,
@@ -38,6 +42,10 @@ export class MessagesService {
         user: true,
       },
     });
+
+    this.emitter.emitToEvent(eventId, 'message:new', message);
+
+    return message;
   }
 
   async findByEvent(eventId: string): Promise<Message[]> {

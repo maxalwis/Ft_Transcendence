@@ -4,6 +4,7 @@ import EventImage from './EventImage';
 import LikeButton from './LikeButton';
 import { useTranslation } from 'react-i18next';
 import { useTranslatedEvent } from '../hooks/useTranslatedEvent';
+import { useEventRoom } from '../hooks/useEventRoom';
 interface EventProps {
   event: EventItem;
 }
@@ -20,6 +21,8 @@ export default function Event({ event }: EventProps) {
   const displayedCategory = isTranslating
     ? undefined
     : ((translated?.category as unknown as string[])?.[0] ?? event.category?.[0]);
+
+  useEventRoom(event.id);
 
   return (
     <div className="flex h-full flex-col gap-1 overflow-y-auto">
