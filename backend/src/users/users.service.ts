@@ -3,13 +3,22 @@ import { PrismaService } from '../prisma/prisma.service';
 import { User, Prisma } from '../generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateLocalUserDto, CreateOAuthUserDto } from './dto/create-user.dto';
+import { SAFE_USER_SELECT, type SafeUser } from './safe-user-select';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<User[]> {
-    return this.prisma.user.findMany();
+  async findAll(): Promise<SafeUser[]> {
+    return this.prisma.user.findMany({ select: SAFE_USER_SELECT });
+  }
+
+  async findOnePublic(id: number): Promise<SafeUser> {
+    const user = await this.prisma.user.findUnique({ where: { id }, select: SAFE_USER_SELECT });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 
   async findOne(id: number): Promise<User> {
@@ -45,7 +54,7 @@ export class UsersService {
 
   // fonction pour chercher les users à ajouter dans la liste d'amis
   // exclut le user qui fait la recherche de la liste
-  async searchByUsername(query: string, excludeUserId?: number): Promise<User[]> {
+  async searchByUsername(query: string, excludeUserId?: number): Promise<SafeUser[]> {
     return this.prisma.user.findMany({
       where: {
         username: {
@@ -55,6 +64,7 @@ export class UsersService {
         ...(excludeUserId && { id: { not: excludeUserId } }),
       },
       take: 20, // renvoie 20 users max
+      select: SAFE_USER_SELECT, // ne renvoie pas toutes les données du user
     });
   }
 

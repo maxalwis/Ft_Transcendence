@@ -39,7 +39,7 @@ export class UsersController {
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
+    return this.usersService.findOnePublic(id);
   }
 
   @Put(':id')

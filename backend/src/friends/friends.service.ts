@@ -5,6 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { SAFE_USER_SELECT } from '../users/safe-user-select';
 
 @Injectable()
 export class FriendsService {
@@ -91,7 +92,7 @@ export class FriendsService {
         status: 'PENDING',
       },
       include: {
-        sender: true,
+        sender: { select: SAFE_USER_SELECT },
       },
     });
   }
@@ -104,7 +105,7 @@ export class FriendsService {
           { receiverId: userId, status: 'ACCEPTED' },
         ],
       },
-      include: { sender: true, receiver: true },
+      include: { sender: { select: SAFE_USER_SELECT }, receiver: { select: SAFE_USER_SELECT } },
     });
 
     // On extrait le "vrai" ami : celui des deux qui n'est pas l'utilisateur courant

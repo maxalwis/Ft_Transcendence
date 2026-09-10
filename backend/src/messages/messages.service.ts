@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { User, Message } from '../generated/prisma/client';
+import { SAFE_USER_SELECT } from '../users/safe-user-select';
 
 @Injectable()
 export class MessagesService {
@@ -35,7 +36,7 @@ export class MessagesService {
         eventId,
       },
       include: {
-        user: true,
+        user: { select: SAFE_USER_SELECT },
       },
     });
   }
@@ -44,7 +45,7 @@ export class MessagesService {
     return this.prisma.message.findMany({
       where: { eventId },
       include: {
-        user: true,
+        user: { select: SAFE_USER_SELECT },
       },
       orderBy: {
         createdAt: 'asc',
