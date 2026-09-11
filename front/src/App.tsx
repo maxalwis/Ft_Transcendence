@@ -30,7 +30,7 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Map onOpenAuth={handleOpenAuth} />} />
                 <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
-				<Route path="/account/delete-confirm" element={<DeleteConfirmPage />} />
+                <Route path="/account/delete-confirm" element={<DeleteConfirmPage />} />
               </Routes>
             </div>
           </div>
