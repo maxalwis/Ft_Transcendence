@@ -1,7 +1,7 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { EventItem } from '../../../types/event';
+import { useTranslatedEvent } from '../hooks/useTranslatedEvent';
 import { PriceIcon } from './PriceIcon';
 
 interface EventResultCardProps {
@@ -9,7 +9,11 @@ interface EventResultCardProps {
   onClick: (eventId: string) => void;
 }
 
-function formatDate(value?: string, locale = 'fr-FR', undefinedText = 'Undefined date') {
+function formatDate(
+  value?: string,
+  locale = 'fr-FR',
+  undefinedText = 'Undefined date',
+) {
   if (!value) return undefinedText;
 
   const date = new Date(value);
@@ -25,77 +29,127 @@ function formatDate(value?: string, locale = 'fr-FR', undefinedText = 'Undefined
   });
 }
 
-function formatTime(value?: string, locale = 'fr-FR', undefinedText = 'Undefined time') {
+function cleanText(value?: string) {
   if (!value) return '';
 
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return undefinedText;
-  }
-
-  return date.toLocaleTimeString(locale, {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return value
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;|&#160;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
-export default function EventResultCard({ event, onClick }: EventResultCardProps) {
+export default function EventResultCard({
+  event,
+  onClick,
+}: EventResultCardProps) {
   const { t, i18n } = useTranslation();
 
-  const currentLocale = (() => {
-    switch (i18n.language) {
-      case 'es':
-        return 'es-ES';
-      case 'en':
-        return 'en-US';
-      case 'ar':
-        return 'ar-SA';
-      default:
-        return 'fr-FR';
-    }
-  })();
+  const lang = i18n.language;
+
+  const { data: translated, loading } = useTranslatedEvent(
+    event.id,
+    lang,
+  );
+
+  const isTranslating = lang !== 'fr' && loading && !translated;
+
+  const currentLocale =
+    lang === 'es'
+      ? 'es-ES'
+      : lang === 'en'
+        ? 'en-US'
+        : lang === 'ar'
+          ? 'ar-SA'
+          : 'fr-FR';
 
   const undefinedDateText = t('eventPreview.undefinedDate');
 
-  const normalizedPrice = event.priceType?.trim().toLowerCase();
+  /*
+   * Use the translated values when available.
+   * While translation is loading, keep the original French
+   * data rather than displaying partially translated content.
+   */
+  const displayedTitle = isTranslating
+    ? undefined
+    : (translated?.title ?? event.title);
 
-  const formattedPrice =
-    normalizedPrice === 'payant'
-      ? React.createElement(PriceIcon, { paid: true })
-      : normalizedPrice?.includes('gratuit')
-        ? React.createElement(PriceIcon, { paid: false })
-        : event.priceType?.trim() || t('eventPreview.price.unspecified');
+  const displayedCategory = isTranslating
+    ? undefined
+    : (
+        (translated?.category as unknown as string[])?.[0]
+        ?? event.category?.[0]
+      );
 
-  const category = event.category?.[0] || t('categories.others', 'Autres');
+  const displayedPriceType = isTranslating
+    ? undefined
+    : (translated?.priceType ?? event.priceType);
+
+  const eventDate = formatDate(
+    event.dateStart,
+    currentLocale,
+    undefinedDateText,
+  );
+
+  const rawPriceType = cleanText(displayedPriceType).toLowerCase();
+
+  let isPaid: boolean | undefined;
+
+  if (
+    rawPriceType.includes('gratuit') ||
+    rawPriceType.includes('free') ||
+    rawPriceType.includes('gratis')
+  ) {
+    isPaid = false;
+  } else if (
+    rawPriceType.includes('payant') ||
+    rawPriceType.includes('fee') ||
+    rawPriceType.includes('pago')
+  ) {
+    isPaid = true;
+  }
 
   const handleClick = () => {
     onClick(event.id);
   };
 
   return (
-    <article onClick={handleClick} className="glass-article cursor-pointer transition-all">
+    <article
+      onClick={handleClick}
+      className="glass-article cursor-pointer transition-all"
+    >
       <div className="flex flex-col gap-3">
         {/* Event image */}
         <div className="shrink-0 overflow-hidden rounded-lg">
           <img
             src={event.coverUrl || '/event_image.webp'}
-            alt={event.title || t('eventPreview.defaultAlt')}
+            alt={displayedTitle || t('eventPreview.defaultAlt')}
             className="w-full object-cover"
           />
         </div>
 
         {/* Event content */}
         <div className="min-w-0 leading-tight">
-          <h2 className="mb-1! line-clamp-2">{event.title}</h2>
+          {isTranslating ? (
+            <div className="mb-1 h-5 w-3/4 animate-pulse rounded bg-slate-200" />
+          ) : (
+            <h2 className="mb-1! line-clamp-3">
+              {displayedTitle}
+            </h2>
+          )}
 
           <div className="flex items-center justify-between gap-2">
-            <p className="mb-3! text-xs">
-              {category || t('eventDetails.defaultCategory')}
-            </p>
-            <p className="mb-3!">
-              {formattedPrice}
-            </p>
+            <div>
+              <p className="mb-3! text-xs">
+                {displayedCategory || t('categories.others')}
+              </p>
+            </div>
+
+            {isPaid !== undefined && (
+              <p className="mb-3!">
+                <PriceIcon paid={isPaid} />
+              </p>
+            )}
           </div>
         </div>
       </div>

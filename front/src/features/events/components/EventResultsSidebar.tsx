@@ -98,7 +98,7 @@ export default function EventResultsSidebar({
         ))}
       </div>
 
-      <div className="shrink-0 flex items-center justify-between pt-3">
+      <div className="shrink-0 flex items-center justify-between">
         <button
           type="button"
           disabled={currentPage === 1}

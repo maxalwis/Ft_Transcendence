@@ -296,8 +296,24 @@ pre {
 }
 
 .glass-article {
-  border-radius: var(--radius-lg) var(--radius-lg) 0px 0px;
-  //border-bottom: 1px solid var(--color-orange-primary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+
+.glass-article:hover {
+  background: var(--color-orange-hover);
+  border-color: var(--color-orange-border);
+}
+
+.glass-article > div {
+  transition: transform 200ms ease;
+}
+
+.glass-article:hover > div {
+  transform: scale(0.98);
 }
 
 .glass-blue {
