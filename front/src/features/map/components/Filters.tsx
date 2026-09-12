@@ -1,14 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { FiltersProps } from '../../../types/map';
 import styles from '../Map.module.css';
 import CustomSelect from './CustomSelect';
 
-export default function Filters({ onApplyFilters }: FiltersProps) {
+type FiltersControlledProps = FiltersProps & {
+  // Le panneau est désormais ouvert depuis les boutons Prix/Date de <NavBar />
+  // (auparavant, un bouton svg local gérait son propre état isOpen).
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+export default function Filters({ onApplyFilters, isOpen, onClose }: FiltersControlledProps) {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(isOpen);
+
+  useEffect(() => {
+    if (isOpen) setIsAnimating(true);
+  }, [isOpen]);
 
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -33,7 +43,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
       endDate,
       priceType,
     });
-    setIsOpen(false);
+    onClose();
   };
 
   const handleReset = () => {
@@ -42,22 +52,11 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
     setEndDate('');
     setPriceType('');
     onApplyFilters?.(defaultFilters);
-    setIsOpen(false);
+    onClose();
   };
 
   return (
     <>
-      <button
-        type="button"
-        aria-label="Open Filters"
-        onClick={() => setIsOpen(true)}
-        className={`glass-panel icon-btn fixed left-4 top-1/2 -translate-y-1/2 z-500 w-10 h-10 rounded-full cursor-pointer active:scale-95 flex items-center justify-center ${styles.filterTrigger}`}
-      >
-        <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
-          <path d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
-        </svg>
-      </button>
-
       {(isOpen || isAnimating) &&
         createPortal(
           <div
@@ -69,7 +68,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               type="button"
               aria-label="Close"
               className="modal-close"
-              onClick={() => setIsOpen(false)}
+              onClick={onClose}
             >
               <svg
                 className="h-4 w-4"

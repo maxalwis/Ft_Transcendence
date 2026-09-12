@@ -9,7 +9,6 @@ import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 // Layouts & Feature Components
 import LanguageSelector from '../../../layouts/LanguageSelector';
 import BottomBar from '../../../layouts/BottomBar';
-import Filters from './Filters';
 import SideBar from '../../../layouts/Sidebar';
 import NavBar from '../../../layouts/NavBar';
 
@@ -142,12 +141,14 @@ export default function Map({ onOpenAuth }: MapProps) {
     });
   }, []);
 
-  // Handler mémorisé pour les filtres modaux
-  const handleApplyFilters = useCallback((newFilters: Partial<typeof filters>) => {
-    setFilters((prev) => ({
-      ...prev,
-      ...newFilters,
-    }));
+  // Handler mémorisé pour le filtre prix (appliqué immédiatement à la sélection)
+  const handlePriceChange = useCallback((priceType: string) => {
+    setFilters((prev) => ({ ...prev, priceType }));
+  }, []);
+
+  // Handler mémorisé pour le filtre date (appliqué immédiatement à la sélection)
+  const handleDateChange = useCallback((startDate: string) => {
+    setFilters((prev) => ({ ...prev, startDate }));
   }, []);
 
   return (
@@ -207,9 +208,14 @@ export default function Map({ onOpenAuth }: MapProps) {
         />
       )}
 
-      <Filters onApplyFilters={handleApplyFilters} />
-
-      <NavBar activeCategory={filters.category} onSelectCategory={handleSelectCategory} />
+      <NavBar
+        activeCategory={filters.category}
+        onSelectCategory={handleSelectCategory}
+        priceType={filters.priceType}
+        onPriceChange={handlePriceChange}
+        startDate={filters.startDate}
+        onDateChange={handleDateChange}
+      />
 
       {!activeSidebarEventId && <LanguageSelector />}
       <BottomBar onOpenAuth={onOpenAuth} />
@@ -224,7 +230,6 @@ export default function Map({ onOpenAuth }: MapProps) {
           }}
         />
       )}
-      {/* )} */}
     </>
   );
 }
