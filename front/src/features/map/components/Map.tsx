@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { MapContainer } from 'react-leaflet';
 
 // Third-Party Styles
@@ -16,6 +16,8 @@ import NavBar from '../../../layouts/NavBar';
 // Marker & Map Visual Components
 import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
 import EventPreview from '../../events/components/EventPreview';
+import EventSidebarContent from '../../events/components/EventSidebarContent';
+import EventResultsSidebar from '../../events/components/EventResultsSidebar';
 import { ClusterLayer } from './ClusterLayer';
 import { AdminPanelLinks } from '../../externalLinks/AdminPanelLinks';
 
@@ -38,15 +40,21 @@ interface MapProps {
   onOpenAuth: () => void;
 }
 
+type SidebarState =
+  | { type: 'event'; eventId: string }
+  | { type: 'results' }
+  | null;
+
 export default function Map({ onOpenAuth }: MapProps) {
   const { showError } = useNotification();
   const { user } = useAuth();
   const { i18n } = useTranslation();
   const lang = i18n.language;
-  const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
+
+  const [sidebar, setSidebar] = useState<SidebarState>(null);
+
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
-  // État local des filtres actif avec typage strict
   const [filters, setFilters] = useState<{
     city: string;
     startDate: string;
@@ -76,18 +84,29 @@ export default function Map({ onOpenAuth }: MapProps) {
     handleNextEvent,
   } = useMapEvents(showError, filters);
 
-  const { data: translatedHoverEvent, loading: hoverLoading } = useTranslatedEvent(
-    currentEvent?.id ?? '',
-    lang
-  );
-  const isHoverTranslating = lang !== 'fr' && hoverLoading && !translatedHoverEvent;
+  /*
+   * eventGroups are grouped for the map.
+   * The sidebar doesn't need those groups, so flatten them into
+   * a simple array of events.
+   */
+  const events = eventGroups.flatMap((group) => group.events);
+
+  const { data: translatedHoverEvent, loading: hoverLoading } =
+    useTranslatedEvent(currentEvent?.id ?? '', lang);
+
+  const isHoverTranslating =
+    lang !== 'fr' && hoverLoading && !translatedHoverEvent;
+
   const displayedHoverTitle = isHoverTranslating
     ? undefined
     : (translatedHoverEvent?.title ?? currentEvent?.title ?? '');
 
   const displayedHoverCategory = isHoverTranslating
     ? undefined
-    : ((translatedHoverEvent?.category as unknown as string[])?.[0] ?? currentEvent?.category?.[0]);
+    : (
+        (translatedHoverEvent?.category as unknown as string[])?.[0] ??
+        currentEvent?.category?.[0]
+      );
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -98,6 +117,7 @@ export default function Map({ onOpenAuth }: MapProps) {
 
   const handleMouseLeave = useCallback(() => {
     cancelCloseTimeout();
+
     closeTimeoutRef.current = setTimeout(() => {
       setActiveGroupId(null);
       setActiveEventIndex(0);
@@ -105,15 +125,52 @@ export default function Map({ onOpenAuth }: MapProps) {
     }, 150);
   }, [setActiveGroupId, setActiveEventIndex]);
 
+  /*
+   * Open the event detail sidebar.
+   */
   const handleOpenSidebar = useCallback(
     (id: string) => {
       cancelCloseTimeout();
-      setActiveSidebarEventId(id);
+
+      setSidebar({
+        type: 'event',
+        eventId: id,
+      });
+
       setActiveGroupId(null);
       setHoverPos(null);
     },
     [setActiveGroupId]
   );
+
+  /*
+   * Open the paginated results sidebar.
+   */
+  const handleOpenResults = useCallback(() => {
+    cancelCloseTimeout();
+
+    setSidebar({
+      type: 'results',
+    });
+
+    setActiveGroupId(null);
+    setHoverPos(null);
+  }, [setActiveGroupId]);
+
+  /*
+   * Called by EventResultsSidebar when the user clicks
+   * one of the events in the results list.
+   *
+   * This replaces the results content with the event details.
+   */
+  const handleResultsEventClick = useCallback((eventId: string) => {
+    setSidebar({
+      type: 'event',
+      eventId,
+    });
+
+    setHoverPos(null);
+  }, []);
 
   const handleMarkerHover = useCallback(
     (groupId: string) => {
@@ -123,15 +180,18 @@ export default function Map({ onOpenAuth }: MapProps) {
     [setActiveGroupId]
   );
 
-  // Handler mémorisé pour la sélection de catégorie via NavBar
   const handleSelectCategory = useCallback((selectedCategory: string) => {
     setFilters((prev) => {
       if (!selectedCategory || selectedCategory.trim() === '') {
-        return { ...prev, category: '' };
+        return {
+          ...prev,
+          category: '',
+        };
       }
 
       const isAlreadyActive =
-        prev.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase();
+        prev.category.trim().toLowerCase() ===
+        selectedCategory.trim().toLowerCase();
 
       const nextCategory = isAlreadyActive ? '' : selectedCategory;
 
@@ -142,13 +202,15 @@ export default function Map({ onOpenAuth }: MapProps) {
     });
   }, []);
 
-  // Handler mémorisé pour les filtres modaux
-  const handleApplyFilters = useCallback((newFilters: Partial<typeof filters>) => {
-    setFilters((prev) => ({
-      ...prev,
-      ...newFilters,
-    }));
-  }, []);
+  const handleApplyFilters = useCallback(
+    (newFilters: Partial<typeof filters>) => {
+      setFilters((prev) => ({
+        ...prev,
+        ...newFilters,
+      }));
+    },
+    []
+  );
 
   return (
     <>
@@ -162,9 +224,17 @@ export default function Map({ onOpenAuth }: MapProps) {
         zoomControl={false}
         style={{ height: '100vh', width: '100vw' }}
       >
-        <MapClickHandler closeSidebar={() => setActiveSidebarEventId(null)} />
+        <MapClickHandler
+          closeSidebar={() => {
+            setSidebar(null);
+            setHoverPos(null);
+          }}
+        />
+
         <MyTileLayer />
+
         <GlassZoomControl />
+
         <AdminPanelLinks />
 
         <MapEventsHandler
@@ -200,7 +270,9 @@ export default function Map({ onOpenAuth }: MapProps) {
           totalInGroup={activeGroup.events.length}
           currentIndex={activeEventIndex}
           onPrev={handlePrevEvent}
-          onNext={() => handleNextEvent(undefined, activeGroup.events.length - 1)}
+          onNext={() =>
+            handleNextEvent(undefined, activeGroup.events.length - 1)
+          }
           onClick={() => handleOpenSidebar(currentEvent.id)}
           onMouseEnter={cancelCloseTimeout}
           onMouseLeave={handleMouseLeave}
@@ -209,22 +281,39 @@ export default function Map({ onOpenAuth }: MapProps) {
 
       <Filters onApplyFilters={handleApplyFilters} />
 
-      <NavBar activeCategory={filters.category} onSelectCategory={handleSelectCategory} />
+      <NavBar
+        activeCategory={filters.category}
+        onSelectCategory={handleSelectCategory}
+        onOpenResults={handleOpenResults}
+      />
 
-      {!activeSidebarEventId && <LanguageSelector />}
+      {!sidebar && <LanguageSelector />}
+
       <BottomBar onOpenAuth={onOpenAuth} />
 
-      {activeSidebarEventId && (
+      {sidebar !== null && (
         <SideBar
-          eventId={activeSidebarEventId}
-          currentUserId={user?.id}
           onClose={() => {
-            setActiveSidebarEventId(null);
+            setSidebar(null);
             setHoverPos(null);
           }}
-        />
+        >
+          {sidebar.type === 'results' && (
+            <EventResultsSidebar
+              events={events}
+              isLoading={isLoading}
+              onEventClick={handleResultsEventClick}
+            />
+          )}
+
+          {sidebar.type === 'event' && (
+            <EventSidebarContent
+              eventId={sidebar.eventId}
+              currentUserId={user?.id}
+            />
+          )}
+        </SideBar>
       )}
-      {/* )} */}
     </>
   );
 }

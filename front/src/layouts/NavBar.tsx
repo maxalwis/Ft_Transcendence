@@ -3,12 +3,16 @@ import { useTranslation } from 'react-i18next';
 export type NavBarProps = {
   onSelectCategory?: (category: string) => void;
   activeCategory?: string;
+  onOpenResults?: () => void;
 };
 
-export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps) {
+export default function NavBar({
+  onSelectCategory,
+  activeCategory,
+  onOpenResults,
+}: NavBarProps) {
   const { t } = useTranslation();
 
-  // Updated to match the top database category groups
   const categories = [
     { label: t('categories.all', 'Tout'), value: '' },
     { label: t('categories.music', 'Musique'), value: 'musique' },
@@ -23,19 +27,19 @@ export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps
       dir="ltr"
       className="absolute top-0 left-0 right-0 z-500 flex items-center justify-between px-6 pointer-events-none"
     >
-      {/* Spacer gauche - garde la nav centrée, ne bouge jamais */}
+      {/* Left spacer - keeps navigation centered */}
       <div className="w-45 hidden md:block" />
 
-      {/* Category Navigation - Forced relative & pointer-events-auto */}
+      {/* Category Navigation */}
       <nav className="relative z-10 flex items-center gap-2 md:gap-3 pointer-events-auto overflow-x-auto max-w-full py-4">
         {categories.map((cat) => {
           const currentCategory = (activeCategory || '').trim().toLowerCase();
           const targetCategory = cat.value.trim().toLowerCase();
 
-          // "All" is active if target is empty AND current active category is empty
-          // Specific category is active if strings match case-insensitively
           const isActive =
-            targetCategory === '' ? currentCategory === '' : currentCategory === targetCategory;
+            targetCategory === ''
+              ? currentCategory === ''
+              : currentCategory === targetCategory;
 
           return (
             <button
@@ -43,7 +47,9 @@ export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
+
                 onSelectCategory?.(cat.value);
+                onOpenResults?.();
               }}
               className={`glass-panel cursor-pointer px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                 isActive ? 'isSelected' : ''
@@ -55,10 +61,7 @@ export default function NavBar({ onSelectCategory, activeCategory }: NavBarProps
         })}
       </nav>
 
-      {/* Spacer droit - même largeur que le spacer gauche, toujours présent.
-          Le sélecteur de langue vit désormais dans <LanguageSelector />,
-          positionné en fixed et rendu à côté de <NavBar />, donc il n'a
-          plus aucun impact sur ce layout. */}
+      {/* Right spacer - keeps navigation centered */}
       <div className="w-45 hidden md:block" />
     </div>
   );

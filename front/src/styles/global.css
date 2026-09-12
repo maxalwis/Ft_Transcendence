@@ -222,7 +222,6 @@ button.icon-btn,
 /* Structural & Surface Elements */
 card,
 section,
-article,
 aside {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
@@ -294,6 +293,11 @@ pre {
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
+}
+
+.glass-article {
+  border-radius: var(--radius-lg) var(--radius-lg) 0px 0px;
+  //border-bottom: 1px solid var(--color-orange-primary);
 }
 
 .glass-blue {

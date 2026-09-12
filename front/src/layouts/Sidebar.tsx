@@ -1,84 +1,39 @@
-import { useState, useEffect, useRef } from 'react';
-import Chat from '../features/chat/components/Chat';
-import Event from '../features/events/components/Event';
-import type { EventItem } from '../types/event';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../features/map/Map.module.css';
 import LanguageSelector from './LanguageSelector';
 
 interface SideBarProps {
   onClose: () => void;
-  eventId?: string;
-  currentUserId?: string | number;
-  events?: EventItem[];
-  event?: EventItem | null;
+  children: React.ReactNode;
 }
-
-const EMPTY_EVENT: EventItem[] = [];
 
 export default function SideBar({
   onClose,
-  eventId,
-  currentUserId,
-  events = EMPTY_EVENT,
-  event,
+  children,
 }: SideBarProps) {
-  const [fetchedEvent, setFetchedEvent] = useState<EventItem | null>(null);
-  const rootRef = useRef<HTMLDivElement | null>(null);
-
-  // Find in list synchronously or use passed event prop
-  const eventFromProps = event ?? events.find((ev) => ev.id === eventId) ?? null;
-
-  // Prefer event passed via props, fallback to manually fetched event
-  const eventDetails = eventFromProps || fetchedEvent;
   const [isOpen, setIsOpen] = useState(true);
   const { t } = useTranslation();
 
   const handleAnimationEnd = () => {
-    if (!isOpen) onClose();
-  };
-
-  useEffect(() => {
-    // Skip fetching if event is already provided or no eventId exists
-    if (eventFromProps || !eventId) {
-      return;
+    if (!isOpen) {
+      onClose();
     }
-
-    let isMounted = true;
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
-    fetch(`${baseUrl}/events/${eventId}`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data: EventItem | null) => {
-        if (isMounted) {
-          setFetchedEvent(data);
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setFetchedEvent(null);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [eventId, eventFromProps]);
+  };
 
   return (
     <div
-      ref={rootRef}
       data-state={isOpen ? 'open' : 'closed'}
       onAnimationEnd={handleAnimationEnd}
       className={`glass-panel ${styles.sidebarModal} fixed top-2 right-3 bottom-2 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col`}
     >
       <LanguageSelector embedded />
 
-      {/* Close Button Header */}
+      {/* Close Button */}
       <div className="shrink-0">
         <button
           type="button"
-          aria-label="Close"
+          aria-label={t('sidebar.close', 'Close')}
           onClick={() => setIsOpen(false)}
           className="modal-close"
         >
@@ -96,35 +51,8 @@ export default function SideBar({
         </button>
       </div>
 
-      {/* Event Details Section (limited to 40% of the sidebar) */}
-      <div className="shrink-0 max-h-[50%] overflow-y-auto border-b border-teal-200/20 pb-2 flex flex-col gap-2">
-        {eventDetails ? (
-          <Event event={eventDetails} />
-        ) : (
-          <div className="text-gray-400 text-sm flex items-center justify-center p-4">
-            {t('sidebar.selectEvent', 'Select an event.')}
-          </div>
-        )}
-      </div>
-
-      {/* Chat Section */}
-      <div className="flex-1 min-h-0 flex flex-col pt-2">
-        <div className="shrink-0 flex gap-2 mb-2 border-b border-teal-200/20 pb-1">
-          <span className="text-sm font-bold pb-1 text-teal-400 border-b-2 border-teal-400">
-            {t('chat.title', 'Chat')}
-          </span>
-        </div>
-
-        <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
-          {eventId && currentUserId ? (
-            <Chat eventId={eventId} currentUserId={Number(currentUserId)} />
-          ) : (
-            <div className="text-gray-400 text-sm p-4 flex items-center justify-center h-full">
-              {t('chat.connectPrompt', 'Connect to view chat.')}
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Sidebar content is decided by the parent */}
+      {children}
     </div>
   );
 }
