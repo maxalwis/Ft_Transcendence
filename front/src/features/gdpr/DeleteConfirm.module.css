@@ -1,0 +1,58 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 1rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.warning {
+  margin: 0;
+  line-height: 1.5;
+  color: var(--color-text-dark, #333);
+}
+
+.deleteButton {
+  background: #dc2626;
+  color: white;
+  border: 1px solid #dc2626;
+  border-radius: 999px;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+.deleteButton:hover {
+  background: #b91c1c !important;
+  border-color: #b91c1c !important;
+  color: white !important;
+}
+
+.deleteButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancelLink {
+  color: var(--color-text-muted, #888);
+  font-size: 0.9rem;
+  text-decoration: underline;
+}
+
+.error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 0.9rem;
+}
