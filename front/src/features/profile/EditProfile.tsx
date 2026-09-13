@@ -65,7 +65,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
       if (avatarFile) formData.append('avatar', avatarFile);
 
       const res = await fetch(
-        `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/users/${user?.id}`,
+        `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/users/me`,
         {
           method: 'PUT',
           credentials: 'include',

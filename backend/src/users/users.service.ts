@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { User, Prisma, UserStatus } from '../generated/prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -136,5 +136,24 @@ export class UsersService {
   async setStatus(id: number, status: UserStatus): Promise<User> {
     await this.findOne(id);
     return this.prisma.user.update({ where: { id }, data: { status } });
+  }
+
+  // met à jour le mot de passe
+  async changePassword(userId: number, currentPassword: string, newPassword: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user?.password) {
+      throw new ForbiddenException('No password set for this account');
+    }
+
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isValid) {
+      throw new ForbiddenException('Current password is incorrect');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
   }
 }
