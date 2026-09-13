@@ -3,10 +3,11 @@ FROM docker.io/library/node:20-alpine
 WORKDIR /app
 
 COPY package*.json prisma.config.ts* ./
+
 COPY prisma ./prisma
 
 RUN apk add --no-cache openssl wget \
-    && npm install \
+    && npm ci \
     && npx prisma generate
 
 COPY . .

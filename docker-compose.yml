@@ -103,7 +103,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-    command: ['sh', '-c', 'npx prisma db push && exec npm run start:dev']
+    command: ['sh', '-c', 'npx prisma db push && exec node -r dotenv/config node_modules/.bin/nest start --watch dotenv_config_path=.env']
 
   worker:
     image: localhost/transcendence_worker:latest
@@ -172,9 +172,14 @@ services:
     networks:
       - transcendence_network
     command: ['npm', 'run', 'studio']
+    profiles:
+      - tools
 
   libretranslate:
-    image: docker.io/libretranslate/libretranslate:latest
+    build:
+      context: ./libretranslate
+      dockerfile: Dockerfile
+    image: localhost/libretranslate:latest
     container_name: libretranslate
     restart: unless-stopped
     ports:
