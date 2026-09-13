@@ -132,10 +132,11 @@ export class UsersService {
     }
   }
 
-  // met à jour le statut de l'utilisateur
-  async setStatus(id: number, status: UserStatus): Promise<User> {
-    await this.findOne(id);
-    return this.prisma.user.update({ where: { id }, data: { status } });
+  // Update the user's status. No-op if the user no longer exists
+  // (e.g. account deleted while a socket was still connected), so a
+  // disconnect can never throw NotFoundException.
+  async setStatus(id: number, status: UserStatus): Promise<void> {
+    await this.prisma.user.updateMany({ where: { id }, data: { status } });
   }
 
   // met à jour le mot de passe

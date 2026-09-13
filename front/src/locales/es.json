@@ -162,7 +162,11 @@
     "preferredCategory": "Categoría preferida",
     "changePicture": "Cambiar foto",
     "cancel": "Cancelar",
-    "save": "Guardar"
+    "save": "Guardar",
+    "privacyTitle": "Privacidad",
+    "downloadData": "Descargar mis datos",
+    "deleteAccount": "Eliminar mi cuenta",
+    "deleteEmailSent": "Se ha enviado un correo de confirmación. Revisa tu bandeja de entrada para finalizar la eliminación."
   },
   "publicProfile": {
     "title": "Ver perfil",
@@ -203,5 +207,15 @@
     "termsUserConduct": "Usted se compromete a no utilizar la plataforma para acosar, insultar o enviar mensajes perturbadores a través del sistema de chat, ni a intentar comprometer la seguridad de los servidores y de la base de datos de la aplicación.",
     "termsSection3Title": "3. Responsabilidad de la cuenta",
     "termsAccountResponsibility": "Usted es responsable de mantener la confidencialidad de las credenciales de su cuenta y de todas las actividades que se produzcan bajo su cuenta de usuario."
+  },
+  "deleteConfirm": {
+    "title": "Eliminar tu cuenta",
+    "warning": "Esta acción es permanente. Elimina tu perfil, tus mensajes y tus amistades, y no se puede deshacer.",
+    "confirmButton": "Eliminar mi cuenta permanentemente",
+    "deleting": "Eliminando…",
+    "cancel": "Cancelar y volver",
+    "done": "Tu cuenta ha sido eliminada permanentemente. Redirigiendo…",
+    "invalidLink": "Enlace de confirmación no válido o ausente.",
+    "error": "El enlace de confirmación no es válido o ha caducado. Solicita la eliminación de nuevo."
   }
 }
