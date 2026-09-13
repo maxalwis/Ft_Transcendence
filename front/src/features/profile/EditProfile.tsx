@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/auth/useAuth';
 import { resolveAvatarUrl } from './utils/avatar';
 import PasswordModal from './PasswordModal';
+import { exportMyData, requestAccountDeletion } from '../../api/gdpr';
 import styles from './ProfileModal.module.css';
 
 interface EditProfileProps {
@@ -37,8 +38,27 @@ export default function EditProfile({ onClose }: EditProfileProps) {
   const [error, setError] = useState<string | null>(null);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [privacyMessage, setPrivacyMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isOAuthUser = Boolean(user?.provider && user.provider !== 'local');
+
+  const handleExportData = async () => {
+    if (!accessToken) return;
+    const data = await exportMyData(accessToken);
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'my-data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDeleteRequest = async () => {
+    if (!accessToken) return;
+    await requestAccountDeletion(accessToken);
+    setPrivacyMessage(t('profileSettings.deleteEmailSent'));
+  };
 
   const requestClose = () => setIsClosing(true);
 
@@ -197,6 +217,23 @@ export default function EditProfile({ onClose }: EditProfileProps) {
             <button type="submit" className={styles.btnPrimary} disabled={isSaving}>
               {isSaving ? t('profileSettings.saving') : t('profileSettings.save')}
             </button>
+          </div>
+
+          <div className={styles.privacySection}>
+            <h3>{t('profileSettings.privacyTitle')}</h3>
+            <div className={styles.privacyButtons}>
+              <button type="button" className={styles.btnSecondary} onClick={handleExportData}>
+                {t('profileSettings.downloadData')}
+              </button>
+              <button
+                type="button"
+                className={`${styles.btnSecondary} ${styles.btnDanger}`}
+                onClick={handleDeleteRequest}
+              >
+                {t('profileSettings.deleteAccount')}
+              </button>
+            </div>
+            {privacyMessage && <p className={styles.modalError}>{privacyMessage}</p>}
           </div>
         </form>
       </div>

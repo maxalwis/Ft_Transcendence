@@ -8,7 +8,7 @@ import {
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { UsePipes, ValidationPipe } from '@nestjs/common';
+import { UsePipes, ValidationPipe, Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
@@ -22,6 +22,7 @@ import { RealtimeEmitterService } from './realtime-emitter.service';
 })
 export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server!: Server;
+    private readonly logger = new Logger(RealtimeGateway.name);
 
   constructor(
     private authService: AuthService,

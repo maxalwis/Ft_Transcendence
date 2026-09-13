@@ -1,3 +1,5 @@
+import { GdprModule } from './gdpr/gdpr.module';
+import { MailModule } from './mail/mail.module';
 import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -33,6 +35,8 @@ import { TranslationsModule } from './translations/translations.module';
     RealtimeModule,
     TranslationsModule,
     PublicApiModule,
+    MailModule,
+    GdprModule,
   ],
   controllers: [AppController],
   providers: [AppService],

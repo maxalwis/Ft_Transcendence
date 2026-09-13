@@ -8,6 +8,12 @@ import { AppLogger } from './logger/app-logger.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PublicApiModule } from './public-api/public-api.module';
 
+// A stray promise rejection (e.g. in a socket lifecycle handler) must not
+// crash the whole backend; log it instead of letting the process exit.
+process.on('unhandledRejection', (reason) => {
+  Logger.error(`Unhandled promise rejection: ${reason}`, 'Bootstrap');
+});
+
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
