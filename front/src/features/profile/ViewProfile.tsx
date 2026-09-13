@@ -31,7 +31,12 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
         <div className={styles.modalHeader}>
           <h2>{t('publicProfile.title')}</h2>
 
-          <button type="button" className="modal-close" onClick={requestClose} aria-label="Fermer">
+          <button
+            type="button"
+            className="modal-button modal-close"
+            onClick={requestClose}
+            aria-label="Fermer"
+          >
             <svg
               className="h-4 w-4"
               viewBox="0 0 24 24"

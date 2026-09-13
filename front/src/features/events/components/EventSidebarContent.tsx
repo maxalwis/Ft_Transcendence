@@ -12,10 +12,7 @@ interface EventSidebarContentProps {
   currentUserId?: string | number;
 }
 
-export default function EventSidebarContent({
-  eventId,
-  currentUserId,
-}: EventSidebarContentProps) {
+export default function EventSidebarContent({ eventId, currentUserId }: EventSidebarContentProps) {
   const [fetchedEvent, setFetchedEvent] = useState<EventItem | null>(null);
 
   const { t } = useTranslation();
@@ -28,8 +25,7 @@ export default function EventSidebarContent({
 
     let isMounted = true;
 
-    const baseUrl =
-      import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
     fetch(`${baseUrl}/events/${eventId}`)
       .then((res) => (res.ok ? res.json() : null))
@@ -72,10 +68,7 @@ export default function EventSidebarContent({
 
         <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
           {eventId && currentUserId ? (
-            <Chat
-              eventId={eventId}
-              currentUserId={Number(currentUserId)}
-            />
+            <Chat eventId={eventId} currentUserId={Number(currentUserId)} />
           ) : (
             <div className="text-gray-400 text-sm p-4 flex items-center justify-center h-full">
               {t('chat.connectPrompt', 'Connect to view chat.')}

@@ -189,7 +189,7 @@ export default function EventPreview({
             type="button"
             onClick={handleExtendClick}
             title={t('eventPreview.seeDetails')}
-            className="modal-close pointer-events-auto"
+            className="modal-button modal-close pointer-events-auto"
           >
             <svg
               width="14"

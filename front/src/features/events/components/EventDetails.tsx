@@ -9,6 +9,7 @@ interface EventDetailsProps {
   priceType?: string;
   priceDetail?: string;
   accessLink?: string;
+  onBack?: () => void;
 }
 
 function formatDate(value?: string, locale = 'fr-FR', unknownText = 'Date inconnue') {
@@ -49,6 +50,7 @@ export default function EventDetails({
   priceType,
   priceDetail,
   accessLink,
+  onBack,
 }: EventDetailsProps) {
   const { t, i18n } = useTranslation();
 
@@ -89,6 +91,27 @@ export default function EventDetails({
 
   return (
     <div className="min-w-0 leading-tight">
+      {onBack && (
+        <button
+          type="button"
+          onClick={onBack}
+          aria-label={t('eventDetails.back')}
+          className="mb-3 flex items-center gap-1 text-sm font-medium text-slate-600 transition-colors hover:text-black"
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
+          </svg>
+
+          <span>{t('eventDetails.back')}</span>
+        </button>
+      )}
+
       {isTranslating ? (
         <div className="mb-2 h-6 w-3/4 animate-pulse rounded bg-slate-200" />
       ) : (

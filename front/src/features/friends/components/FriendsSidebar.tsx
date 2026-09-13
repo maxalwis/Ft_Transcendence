@@ -78,7 +78,7 @@ export default function FriendsSidebar({
         <button
           type="button"
           aria-label="Back"
-          className="modal-close left-3 right-auto"
+          className="modal-button modal-close left-3 right-auto"
           onClick={handleBack}
         >
           <svg
@@ -96,7 +96,12 @@ export default function FriendsSidebar({
       )}
 
       {/* Close Button (Top-Right) */}
-      <button type="button" aria-label="Close" className="modal-close" onClick={handleClose}>
+      <button
+        type="button"
+        aria-label="Close"
+        className="modal-button modal-close"
+        onClick={handleClose}
+      >
         <svg
           className="h-4 w-4"
           viewBox="0 0 24 24"

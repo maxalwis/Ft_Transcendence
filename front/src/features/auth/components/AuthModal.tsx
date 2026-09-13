@@ -60,7 +60,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           type="button"
           onClick={onClose}
           aria-label={t('authModal.close')}
-          className="modal-close"
+          className="modal-button modal-close"
         >
           <svg
             className="h-4 w-4"

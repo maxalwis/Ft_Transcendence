@@ -1,22 +1,33 @@
 import { useEffect, useRef, useState } from 'react';
 import type { EventItem } from '../../../types/event';
 import EventResultCard from './EventResultCard';
+import EventSidebarContent from './EventSidebarContent';
+import styles from '../Event.module.css';
 
 interface EventResultsSidebarProps {
   events: EventItem[];
   isLoading: boolean;
-  onEventClick: (eventId: string) => void;
+  currentUserId?: string;
 }
 
 export default function EventResultsSidebar({
   events,
   isLoading,
-  onEventClick,
+  currentUserId,
 }: EventResultsSidebarProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [eventsPerPage, setEventsPerPage] = useState(1);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
   const listRef = useRef<HTMLDivElement>(null);
+
+  const totalPages = Math.max(1, Math.ceil(events.length / eventsPerPage));
+
+  const startIndex = (currentPage - 1) * eventsPerPage;
+
+  const paginatedEvents = events.slice(startIndex, startIndex + eventsPerPage);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -34,45 +45,87 @@ export default function EventResultsSidebar({
 
       const containerHeight = list.clientHeight;
       const cardHeight = firstCard.getBoundingClientRect().height;
-      const styles = window.getComputedStyle(list);
-      const gap = parseFloat(styles.rowGap || styles.gap) || 0;
 
-      if (cardHeight <= 0) return;
+      const { rowGap } = window.getComputedStyle(list);
+      const gap = parseFloat(rowGap) || 0;
 
-      const count = Math.max(
-        1,
-        Math.floor((containerHeight + gap) / (cardHeight + gap)),
-      );
+      if (containerHeight <= 0 || cardHeight <= 0) return;
 
-      setEventsPerPage(count);
+      const count = Math.max(1, Math.floor((containerHeight + gap) / (cardHeight + gap))) + 1;
+
+      setEventsPerPage((previous) => (previous === count ? previous : count));
     };
 
     calculateEventsPerPage();
 
     const observer = new ResizeObserver(calculateEventsPerPage);
+
     observer.observe(list);
 
     return () => observer.disconnect();
   }, [events]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(events.length / eventsPerPage),
-  );
+  useEffect(() => {
+    const list = listRef.current;
 
-  const startIndex = (currentPage - 1) * eventsPerPage;
+    if (!list) return;
 
-  const paginatedEvents = events.slice(
-    startIndex,
-    startIndex + eventsPerPage,
-  );
+    const updateScrollState = () => {
+      const hasOverflow = list.scrollHeight > list.clientHeight + 1;
+      const isAtBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 1;
 
-  if (isLoading) {
+      setHasOverflow(hasOverflow);
+      setIsAtBottom(isAtBottom);
+    };
+
+    updateScrollState();
+
+    list.addEventListener('scroll', updateScrollState, { passive: true });
+
+    const observer = new ResizeObserver(updateScrollState);
+    observer.observe(list);
+
+    Array.from(list.children).forEach((child) => {
+      observer.observe(child);
+    });
+
+    return () => {
+      list.removeEventListener('scroll', updateScrollState);
+      observer.disconnect();
+    };
+  }, [paginatedEvents]);
+
+  if (selectedEventId) {
     return (
-      <div className="flex-1 flex items-center justify-center text-gray-400">
-        Loading...
+      <div className="flex min-h-0 flex-1 flex-col">
+        <button
+          type="button"
+          onClick={() => setSelectedEventId(null)}
+          aria-label="Back to results"
+          className="modal-button modal-back"
+        >
+          <svg
+            className="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <EventSidebarContent eventId={selectedEventId} currentUserId={currentUserId} />
+        </div>
       </div>
     );
+  }
+
+  if (isLoading) {
+    return <div className="flex-1 flex items-center justify-center text-gray-400">Loading...</div>;
   }
 
   if (events.length === 0) {
@@ -84,18 +137,21 @@ export default function EventResultsSidebar({
   }
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
+    <div className={styles.resultsWrapper}>
       <div
-        ref={listRef}
-        className="flex-1 overflow-hidden flex flex-col gap-2"
+        className={`${styles.resultsList} ${
+          hasOverflow && !isAtBottom ? styles.hasBottomFade : ''
+        }`}
       >
-        {paginatedEvents.map((event) => (
-          <EventResultCard
-            key={event.id}
-            event={event}
-            onClick={onEventClick}
-          />
-        ))}
+        <div ref={listRef} className="h-full overflow-y-auto flex flex-col gap-2">
+          {paginatedEvents.map((event) => (
+            <EventResultCard
+              key={event.id}
+              event={event}
+              onClick={() => setSelectedEventId(event.id)}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="shrink-0 flex items-center justify-between">

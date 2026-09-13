@@ -8,10 +8,7 @@ interface SideBarProps {
   children: React.ReactNode;
 }
 
-export default function SideBar({
-  onClose,
-  children,
-}: SideBarProps) {
+export default function SideBar({ onClose, children }: SideBarProps) {
   const [isOpen, setIsOpen] = useState(true);
   const { t } = useTranslation();
 
@@ -35,7 +32,7 @@ export default function SideBar({
           type="button"
           aria-label={t('sidebar.close', 'Close')}
           onClick={() => setIsOpen(false)}
-          className="modal-close"
+          className="modal-button modal-close"
         >
           <svg
             className="h-4 w-4"

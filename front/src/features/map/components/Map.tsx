@@ -302,7 +302,7 @@ export default function Map({ onOpenAuth }: MapProps) {
             <EventResultsSidebar
               events={events}
               isLoading={isLoading}
-              onEventClick={handleResultsEventClick}
+              currentUserId={user?.id}
             />
           )}
 
