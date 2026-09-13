@@ -173,7 +173,7 @@ services:
       - transcendence_network
     command: ['npm', 'run', 'studio']
     profiles:
-      - tools
+      - prisma-studio
 
   libretranslate:
     build:

@@ -28,6 +28,11 @@ elk: check-env
 	podman compose --profile elk up -d
 	podman compose logs -f
 
+prisma-studio: check-env
+	podman compose --profile prisma-studio build
+	podman compose --profile prisma-studio up -d
+	podman compose logs -f
+
 clean:
 	podman compose down -v
 
