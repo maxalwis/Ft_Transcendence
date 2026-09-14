@@ -117,7 +117,7 @@ export default function BottomBar({ onOpenAuth }: BottomBarProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
               )}
             </svg>
-            Menu
+            {t('nav.menu', 'Menu')}
           </button>
         </div>
       </div>

@@ -1,5 +1,10 @@
 {
   "welcome": "Welcome to our site",
+  "nav": {
+    "menu": "Menu",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right"
+  },
   "buttons": {
     "submit": "Submit"
   },
@@ -44,6 +49,8 @@
     "priceCategory": "Price category",
     "selectCategory": "Select category",
     "fromDate": "From :",
+    "priceButton": "Price",
+    "dateButton": "Date",
     "apply": "Apply",
     "reset": "Reset",
     "allPrices": "All",

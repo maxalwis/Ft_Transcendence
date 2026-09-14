@@ -1,5 +1,13 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import { fr, enUS, es, ar } from 'date-fns/locale';
+import 'react-datepicker/dist/react-datepicker.css';
+
+registerLocale('fr', fr);
+registerLocale('en', enUS);
+registerLocale('es', es);
+registerLocale('ar', ar);
 
 export type NavBarProps = {
   onSelectCategory?: (category: string) => void;
@@ -20,7 +28,8 @@ export default function NavBar({
   startDate,
   onDateChange,
 }: NavBarProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const datePickerLocale = i18n.language.split('-')[0];
   const [openPopover, setOpenPopover] = useState<'price' | 'date' | null>(null);
   const priceRef = useRef<HTMLDivElement>(null);
   const dateRef = useRef<HTMLDivElement>(null);
@@ -266,19 +275,22 @@ export default function NavBar({
           </button>
 
           {openPopover === 'date' && (
-			<div className="glass-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 min-h-10 min-w-35 flex items-center justify-center rounded-xl p-2 z-20">
-			<input
-				type="date"
-				min="2026-08-01"
-				max="2028-12-31"
-				value={startDate || ''}
-				onChange={(e) => {
-				onDateChange?.(e.target.value);
-				setOpenPopover(null);
-				}}
-				className="tracking px-3 py-1 rounded-xl bg-transparent outline-none"
-			/>
-			</div>
+            <div className="glass-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-xl p-2 z-20">
+              <DatePicker
+                inline
+                locale={datePickerLocale}
+                selected={startDate ? new Date(startDate) : null}
+                onChange={(date: Date | null) => {
+                  if (date) {
+                    const formatted = date.toLocaleDateString('en-CA');
+                    onDateChange?.(formatted);
+                  }
+                  setOpenPopover(null);
+                }}
+                minDate={new Date('2026-08-01')}
+                maxDate={new Date('2028-12-31')}
+              />
+            </div>
           )}
         </div>
       </nav>

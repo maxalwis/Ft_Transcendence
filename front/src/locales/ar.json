@@ -1,5 +1,10 @@
 {
   "welcome": "مرحباً بكم في موقعنا",
+  "nav": {
+    "menu": "القائمة",
+    "scrollLeft": "التمرير لليسار",
+    "scrollRight": "التمرير لليمين"
+  },
   "buttons": {
     "submit": "إرسال"
   },
@@ -44,6 +49,8 @@
     "priceCategory": "فئة السعر",
     "selectCategory": "اختر الفئة",
     "fromDate": "من تاريخ:",
+    "priceButton": "السعر",
+    "dateButton": "التاريخ",
     "apply": "تطبيق",
     "reset": "إعادة تعيين",
     "allPrices": "الكل",
