@@ -12,10 +12,8 @@ registerLocale('ar', ar);
 export type NavBarProps = {
   onSelectCategory?: (category: string) => void;
   activeCategory?: string;
-  // Filtre prix : appliqué immédiatement à la sélection, pas de bouton "Filtrer".
   priceType?: string;
   onPriceChange?: (priceType: string) => void;
-  // Filtre date : appliqué immédiatement à la sélection.
   startDate?: string;
   onDateChange?: (date: string) => void;
 };
@@ -34,7 +32,7 @@ export default function NavBar({
   const priceRef = useRef<HTMLDivElement>(null);
   const dateRef = useRef<HTMLDivElement>(null);
 
-  // --- Scroll des catégories (flèches façon Google Maps) ---
+//   Scroll for categories
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -111,10 +109,10 @@ export default function NavBar({
       className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-14 md:px-6 pointer-events-none"
     >
       <div className="w-full flex items-center justify-center md:justify-between">
-        {/* Spacer gauche - garde la nav centrée sur desktop, ne bouge jamais */}
+        {/* Left spacer, keeps navbar in the middle */}
         <div className="w-45 hidden md:block" />
 
-        {/* Category Navigation avec flèches de scroll sur small/medium */}
+        {/* Category Navigation on small/medium */}
         <div className="relative z-10 flex items-center pointer-events-auto max-w-full py-4">
           {canScrollLeft && (
             <>
@@ -211,15 +209,11 @@ export default function NavBar({
           )}
         </div>
 
-        {/* Spacer droit - même largeur que le spacer gauche, toujours présent.
-            Le sélecteur de langue vit désormais dans <LanguageSelector />,
-            positionné en fixed et rendu à côté de <NavBar />, donc il n'a
-            plus aucun impact sur ce layout. */}
+        {/* Right spacer */}
         <div className="w-45 hidden md:block" />
       </div>
 
-      {/* Boutons Prix / Date - chacun ouvre son propre popover juste en dessous,
-          qui applique le filtre dès la sélection (plus de bouton Filtrer/Réinitialiser). */}
+	{/* Price and date button */}
       <nav className="relative z-10 flex items-center gap-2 pointer-events-auto py-1">
         <div className="relative" ref={priceRef}>
           <button
