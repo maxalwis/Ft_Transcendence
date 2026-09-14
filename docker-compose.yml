@@ -103,7 +103,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-    command: ['sh', '-c', 'npx prisma db push && exec node -r dotenv/config node_modules/.bin/nest start --watch dotenv_config_path=.env']
+    command: ['sh', '-c', 'npx prisma generate && npx prisma db push && exec node -r dotenv/config node_modules/.bin/nest start --watch dotenv_config_path=.env']
 
   worker:
     image: localhost/transcendence_worker:latest
