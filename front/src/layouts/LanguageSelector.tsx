@@ -21,8 +21,8 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
     <div
       className={
         embedded
-          ? 'absolute top-0 right-full mr-4 z-1100 flex flex-col items-center gap-2 pointer-events-auto'
-          : 'fixed top-4 right-4 z-1100 flex flex-col items-center gap-2 pointer-events-auto'
+          ? 'absolute top-1/2 -translate-y-1/2 right-full mr-4 z-1100 flex flex-col items-center gap-2 pointer-events-auto'
+          : 'fixed top-1/2 -translate-y-1/2 right-4 z-1100 flex flex-col items-center gap-2 pointer-events-auto'
       }
     >
       {languages.map(({ code, title, Flag }) => (

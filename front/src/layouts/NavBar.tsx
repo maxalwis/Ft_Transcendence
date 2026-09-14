@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type NavBarProps = {
@@ -24,6 +24,46 @@ export default function NavBar({
   const [openPopover, setOpenPopover] = useState<'price' | 'date' | null>(null);
   const priceRef = useRef<HTMLDivElement>(null);
   const dateRef = useRef<HTMLDivElement>(null);
+
+  // --- Scroll des catégories (flèches façon Google Maps) ---
+  const categoriesScrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = useCallback(() => {
+    const el = categoriesScrollRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 4);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    updateScrollState();
+    const el = categoriesScrollRef.current;
+    if (!el) return;
+
+    const handleScroll = () => updateScrollState();
+    el.addEventListener('scroll', handleScroll, { passive: true });
+
+    const resizeObserver = new ResizeObserver(() => updateScrollState());
+    resizeObserver.observe(el);
+
+    window.addEventListener('resize', updateScrollState);
+
+    return () => {
+      el.removeEventListener('scroll', handleScroll);
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateScrollState);
+    };
+  }, [updateScrollState]);
+
+  const scrollCategories = (direction: 'left' | 'right') => {
+    const el = categoriesScrollRef.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.6;
+    el.scrollBy({ left: direction === 'left' ? -amount : amount, behavior: 'smooth' });
+  };
 
   // Ferme le popover ouvert si on clique en dehors (bouton + panneau)
   useEffect(() => {
@@ -59,40 +99,108 @@ export default function NavBar({
   return (
     <div
       dir="ltr"
-      className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-6 pointer-events-none"
+      className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-14 md:px-6 pointer-events-none"
     >
-      <div className="w-full flex items-center justify-between">
-        {/* Spacer gauche - garde la nav centrée, ne bouge jamais */}
+      <div className="w-full flex items-center justify-center md:justify-between">
+        {/* Spacer gauche - garde la nav centrée sur desktop, ne bouge jamais */}
         <div className="w-45 hidden md:block" />
 
-        {/* Category Navigation - Forced relative & pointer-events-auto */}
-        <nav className="relative z-10 flex items-center gap-2 md:gap-3 pointer-events-auto overflow-x-auto max-w-full py-4">
-          {categories.map((cat) => {
-            const currentCategory = (activeCategory || '').trim().toLowerCase();
-            const targetCategory = cat.value.trim().toLowerCase();
-
-            // "All" is active if target is empty AND current active category is empty
-            // Specific category is active if strings match case-insensitively
-            const isActive =
-              targetCategory === '' ? currentCategory === '' : currentCategory === targetCategory;
-
-            return (
+        {/* Category Navigation avec flèches de scroll sur small/medium */}
+        <div className="relative z-10 flex items-center pointer-events-auto max-w-full py-4">
+          {canScrollLeft && (
+            <>
               <button
-                key={cat.value || 'all'}
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSelectCategory?.(cat.value);
+                  scrollCategories('left');
                 }}
-                className={`glass-panel cursor-pointer px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
-                  isActive ? 'isSelected' : ''
-                }`}
+                aria-label={t('nav.scrollLeft', 'Défiler vers la gauche')}
+                className="glass-panel icon-btn md:hidden flex-shrink-0 w-8 h-8 rounded-full mr-1"
               >
-                {cat.label}
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
               </button>
-            );
-          })}
-        </nav>
+              <div
+                aria-hidden
+                className="md:hidden pointer-events-none absolute left-9 top-0 bottom-0 w-6 bg-gradient-to-r from-black/10 to-transparent"
+              />
+            </>
+          )}
+
+          <nav
+            ref={categoriesScrollRef}
+            className="flex items-center gap-2 md:gap-3 overflow-x-auto max-w-full [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {categories.map((cat) => {
+              const currentCategory = (activeCategory || '').trim().toLowerCase();
+              const targetCategory = cat.value.trim().toLowerCase();
+
+              // "All" is active if target is empty AND current active category is empty
+              // Specific category is active if strings match case-insensitively
+              const isActive =
+                targetCategory === '' ? currentCategory === '' : currentCategory === targetCategory;
+
+              return (
+                <button
+                  key={cat.value || 'all'}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectCategory?.(cat.value);
+                  }}
+                  className={`glass-panel cursor-pointer px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+                    isActive ? 'isSelected' : ''
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
+          </nav>
+
+          {canScrollRight && (
+            <>
+              <div
+                aria-hidden
+                className="md:hidden pointer-events-none absolute right-9 top-0 bottom-0 w-6 bg-gradient-to-l from-black/10 to-transparent"
+              />
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrollCategories('right');
+                }}
+                aria-label={t('nav.scrollRight', 'Défiler vers la droite')}
+                className="glass-panel icon-btn md:hidden flex-shrink-0 w-8 h-8 rounded-full ml-1"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </>
+          )}
+        </div>
 
         {/* Spacer droit - même largeur que le spacer gauche, toujours présent.
             Le sélecteur de langue vit désormais dans <LanguageSelector />,
@@ -158,19 +266,19 @@ export default function NavBar({
           </button>
 
           {openPopover === 'date' && (
-            <div className="glass-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 min-w-[180px] rounded-xl p- z-20">
-              <input
-                type="date"
-                min="2026-08-01"
-                max="2028-12-31"
-                value={startDate || ''}
-                onChange={(e) => {
-                  onDateChange?.(e.target.value);
-                  setOpenPopover(null);
-                }}
-                className="text-sm"
-              />
-            </div>
+			<div className="glass-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 min-h-10 min-w-35 flex items-center justify-center rounded-xl p-2 z-20">
+			<input
+				type="date"
+				min="2026-08-01"
+				max="2028-12-31"
+				value={startDate || ''}
+				onChange={(e) => {
+				onDateChange?.(e.target.value);
+				setOpenPopover(null);
+				}}
+				className="tracking px-3 py-1 rounded-xl bg-transparent outline-none"
+			/>
+			</div>
           )}
         </div>
       </nav>
