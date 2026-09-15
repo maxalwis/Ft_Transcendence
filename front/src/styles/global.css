@@ -302,6 +302,25 @@ pre {
   border: 2px solid var(--color-blue-dark);
 }
 
+.glass-filter {
+  /* Glass */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+
+  /* Shape & sizing */
+    border: 1px solid var(--color-orange-border);
+  padding: 0.375rem 1rem;
+  border-radius: var(--radius-lg);
+
+  /* Typography */
+  white-space: nowrap;
+
+  /* Interaction */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
 /* Icon Overrides */
 .menu-dots-icon svg {
   color: var(--color-blue-dark) !important;

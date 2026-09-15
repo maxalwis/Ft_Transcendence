@@ -32,7 +32,7 @@ export default function NavBar({
   const priceRef = useRef<HTMLDivElement>(null);
   const dateRef = useRef<HTMLDivElement>(null);
 
-//   Scroll for categories
+  //   Scroll for categories
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -138,10 +138,7 @@ export default function NavBar({
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
               </button>
-              <div
-                aria-hidden
-                className="md:hidden pointer-events-none absolute left-9 top-0 bottom-0 w-6 bg-gradient-to-r from-black/10 to-transparent"
-              />
+              <div aria-hidden className={`glass-filter ${isActive ? 'isSelected' : ''}`} />
             </>
           )}
 
@@ -167,9 +164,7 @@ export default function NavBar({
                     e.stopPropagation();
                     onSelectCategory?.(cat.value);
                   }}
-                  className={`glass-panel cursor-pointer px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
-                    isActive ? 'isSelected' : ''
-                  }`}
+                  className={`glass-filter ${isActive ? 'isSelected' : ''}`}
                 >
                   {cat.label}
                 </button>
@@ -213,7 +208,7 @@ export default function NavBar({
         <div className="w-45 hidden md:block" />
       </div>
 
-	{/* Price and date button */}
+      {/* Price and date button */}
       <nav className="relative z-10 flex items-center gap-2 pointer-events-auto py-1">
         <div className="relative" ref={priceRef}>
           <button
@@ -222,9 +217,7 @@ export default function NavBar({
               e.stopPropagation();
               setOpenPopover((prev) => (prev === 'price' ? null : 'price'));
             }}
-            className={`glass-panel cursor-pointer px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
-              openPopover === 'price' ? 'isSelected' : ''
-            }`}
+            className={`glass-filter ${openPopover === 'price' || priceType ? 'isSelected' : ''}`}
           >
             {t('filters.priceButton', 'Prix')}
           </button>
@@ -261,9 +254,7 @@ export default function NavBar({
               e.stopPropagation();
               setOpenPopover((prev) => (prev === 'date' ? null : 'date'));
             }}
-            className={`glass-panel cursor-pointer px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
-              openPopover === 'date' ? 'isSelected' : ''
-            }`}
+            className={`glass-filter ${openPopover === 'date' || startDate ? 'isSelected' : ''}`}
           >
             {t('filters.dateButton', 'Date')}
           </button>
@@ -278,12 +269,24 @@ export default function NavBar({
                   if (date) {
                     const formatted = date.toLocaleDateString('en-CA');
                     onDateChange?.(formatted);
+                    setOpenPopover(null);
                   }
-                  setOpenPopover(null);
                 }}
                 minDate={new Date('2026-08-01')}
                 maxDate={new Date('2028-12-31')}
               />
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDateChange?.('');
+                  setOpenPopover(null);
+                }}
+                className="w-full mt-1 px-3 py-1.5 rounded-lg text-sm transition-all"
+              >
+                {t('filters.resetDate', 'Réinitialiser')}
+              </button>
             </div>
           )}
         </div>
