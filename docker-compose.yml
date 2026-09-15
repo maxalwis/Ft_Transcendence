@@ -78,6 +78,7 @@ services:
       NODE_ENV: development
       PORT: ${BACKEND_PORT:-3000}
       LIBRETRANSLATE_URL: ${LIBRETRANSLATE_URL}
+      ENABLE_SEED_LOGS: ${ENABLE_SEED_LOGS:-false}
     ports:
       - '${BACKEND_PORT:-3000}:3000'
     volumes:

@@ -127,4 +127,19 @@ export class UsersService {
     await this.findOne(id);
     return this.prisma.user.update({ where: { id }, data: { status } });
   }
+
+  async setStatusIfExists(id: number, status: UserStatus): Promise<User | null> {
+    try {
+      return await this.prisma.user.update({
+        where: { id },
+        data: { status },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+        return null;
+      }
+
+      throw error;
+    }
+  }
 }
