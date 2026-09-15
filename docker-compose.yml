@@ -206,15 +206,6 @@ services:
     networks:
       - transcendence_network
 
-  mailpit:
-    image: docker.io/axllent/mailpit:latest
-    container_name: mailpit
-    restart: unless-stopped
-    ports:
-      - "${MAILPIT_UI_PORT:-8025}:8025"   # web UI to read caught emails (dev)
-    networks:
-      - transcendence_network
-
 volumes:
   postgres_data:
   backend_node_modules:
