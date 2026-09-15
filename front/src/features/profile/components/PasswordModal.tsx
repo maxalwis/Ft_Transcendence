@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from './ProfileModal.module.css';
+import styles from '../ProfileModal.module.css';
 
 interface PasswordModalProps {
   onClose: () => void;

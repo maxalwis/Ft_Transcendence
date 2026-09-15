@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from 'react';
-import styles from './chat.module.css';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
 import { fetchEventMessages, sendEventMessage } from '../chatService';
@@ -10,7 +9,6 @@ import { useChatSocket } from '../hooks/useChatSocket';
 
 export type Message = {
   id: number;
-  userId: number;
   content: string;
   userId: number;
   user: { username?: string; email: string };

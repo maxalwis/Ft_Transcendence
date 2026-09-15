@@ -48,8 +48,7 @@ export const WarningNotification = ({ message, onClose, duration = 5000 }: Notif
       'button',
       {
         onClick: handleDismiss,
-        className:
-          'modal-close',
+        className: 'modal-close',
       },
       '✕'
     )

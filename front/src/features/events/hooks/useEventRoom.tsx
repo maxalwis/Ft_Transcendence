@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSocket } from '../../../context/socket/SocketContext';
+import { useSocket } from '../../../context/socket/useSocket';
 
 export function useEventRoom(eventId: string) {
   const { socket, isConnected } = useSocket();

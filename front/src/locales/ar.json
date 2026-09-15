@@ -16,6 +16,9 @@
     "leisure": "رياضة وترفيه",
     "others": "أخرى"
   },
+  "common": {
+    "back": "رجوع"
+  },
   "events": {
     "defaultCategory": "فعالية",
     "unknownDate": "تاريخ غير معروف",
@@ -67,7 +70,7 @@
     "noFriends": "لا يوجد أصدقاء حتى الآن",
     "remove": "إزالة"
   },
-  "friendsSidebar": {
+  "friendsModal": {
     "notLoggedIn": "الرجاء تسجيل الدخول للوصول إلى قائمة أصدقائك.",
     "search": "البحث عن أصدقاء",
     "pendingRequests": "الطلبات المعلقة ({{count}})",

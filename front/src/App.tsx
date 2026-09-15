@@ -9,7 +9,7 @@ import AuthModal from './features/auth/components/AuthModal';
 import { AuthProvider } from './context/auth/AuthContext';
 import './styles/variables.css';
 import './styles/global.css';
-import { SocketProvider } from './context/socket/SocketContext';
+import { SocketProvider } from './context/socket/SocketProvider';
 
 export default function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);

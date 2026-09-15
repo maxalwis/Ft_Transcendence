@@ -1,13 +1,7 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { io, type Socket } from 'socket.io-client';
 import { useAuth } from '../auth/useAuth';
-
-interface SocketContextType {
-  socket: Socket | null;
-  isConnected: boolean;
-}
-
-const SocketContext = createContext<SocketContextType>({ socket: null, isConnected: false });
+import { SocketContext } from './SocketContext';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL ?? window.location.origin;
 
@@ -18,8 +12,6 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!accessToken) {
-      setSocket(null);
-      setIsConnected(false);
       return;
     }
 
@@ -28,11 +20,19 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       withCredentials: true,
     });
 
-    newSocket.on('connect', () => setIsConnected(true));
-    newSocket.on('disconnect', () => setIsConnected(false));
-    newSocket.on('connect_error', (err) => console.error('Socket connection error:', err.message));
+    newSocket.on('connect', () => {
+      setSocket(newSocket);
+      setIsConnected(true);
+    });
 
-    setSocket(newSocket);
+    newSocket.on('disconnect', () => {
+      setSocket(null);
+      setIsConnected(false);
+    });
+
+    newSocket.on('connect_error', (err) => {
+      console.error('Socket connection error:', err.message);
+    });
 
     return () => {
       newSocket.disconnect();
@@ -42,8 +42,4 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   return (
     <SocketContext.Provider value={{ socket, isConnected }}>{children}</SocketContext.Provider>
   );
-}
-
-export function useSocket() {
-  return useContext(SocketContext);
 }

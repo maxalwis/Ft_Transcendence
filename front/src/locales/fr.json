@@ -16,6 +16,9 @@
     "leisure": "Loisirs & Sport",
     "others": "Autres"
   },
+  "common": {
+    "back": "Retour"
+  },
   "events": {
     "defaultCategory": "Événement",
     "unknownDate": "Date inconnue",
@@ -67,7 +70,7 @@
     "noFriends": "Aucun ami pour le moment",
     "remove": "Supprimer"
   },
-  "friendsSidebar": {
+  "friendsModal": {
     "notLoggedIn": "Veuillez vous connecter pour accéder à votre liste d'amis.",
     "search": "Rechercher des amis",
     "pendingRequests": "Demandes en attente ({{count}})",

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { MouseEvent } from 'react';
-import { useSocket } from '../../../context/socket/SocketContext';
+import { useSocket } from '../../../context/socket/useSocket';
 import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 import {

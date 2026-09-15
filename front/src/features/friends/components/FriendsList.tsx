@@ -6,7 +6,7 @@ import type { User } from '../../../api/friends';
 import { searchUsers } from '../../../api/users';
 import type { UserSearchResult } from '../../../api/users';
 import { useAuth } from '../../../context/auth/useAuth';
-import ViewProfile from '../../profile/ViewProfile';
+import ViewProfile from '../../profile/components/ViewProfile';
 import styles from '../Friends.module.css';
 
 type FriendsListProps = {

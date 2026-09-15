@@ -125,7 +125,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </button>
             </div>
 
-            <div className="flex items-center justify-center gap-3 text-sm mt-4">
+            <div dir="ltr" className="flex items-center justify-center gap-3 text-sm mt-4">
               <span>{t('authModal.noAccount')}</span>
               <button
                 type="button"
@@ -179,7 +179,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </button>
             </form>
 
-            <div className="flex items-center justify-center gap-3 text-sm mt-4">
+            <div dir="ltr" className="flex items-center justify-center gap-3 text-sm mt-4">
               <span>{t('authModal.alreadyHaveAccount')}</span>
               <button
                 type="button"

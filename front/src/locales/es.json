@@ -16,6 +16,9 @@
     "leisure": "Deportes y Ocio",
     "others": "Otros"
   },
+  "common": {
+    "back": "Volver"
+  },
   "events": {
     "defaultCategory": "Evento",
     "unknownDate": "Fecha desconocida",
@@ -67,7 +70,7 @@
     "noFriends": "No hay amigos aún",
     "remove": "Eliminar"
   },
-  "friendsSidebar": {
+  "friendsModal": {
     "notLoggedIn": "Por favor, inicia sesión para ver tu lista de amigos.",
     "search": "Buscar amigos",
     "pendingRequests": "Solicitudes pendientes ({{count}})",

@@ -1,4 +1,5 @@
-import FriendsSidebar from './FriendsSidebar';
+import FriendsModal from './FriendsModal';
+import FriendsContent from './FriendsContent';
 import { getFriends, getPendingRequests } from '../../../api/friends';
 import type { User, PendingRequest } from '../../../api/friends';
 import { useState, useEffect, useCallback } from 'react';
@@ -17,10 +18,25 @@ export type OpenState = {
 };
 
 interface FriendsProps {
-  onOpenAuth?: () => void;
+  embedded?: boolean;
+  onBack?: () => void;
 }
 
-export default function Friends({ onOpenAuth }: FriendsProps) {
+export function FriendsButton({ onClick }: { onClick: () => void }) {
+  const { t } = useTranslation();
+
+  return (
+    <button
+      type="button"
+      className="glass-panel flex items-center justify-center whitespace-nowrap"
+      onClick={onClick}
+    >
+      {t('friends.buttonTitle', 'Friends')}
+    </button>
+  );
+}
+
+export default function Friends({ embedded = false, onBack }: FriendsProps) {
   const [action, setAction] = useState<FriendAction>('menu');
   const [isOpen, setIsOpen] = useState(false);
   const [friends, setFriends] = useState<User[]>([]);
@@ -85,27 +101,40 @@ export default function Friends({ onOpenAuth }: FriendsProps) {
   };
 
   return (
-    <div className="relative">
-      <button
-        type="button"
-        className="glass-panel flex items-center justify-center whitespace-nowrap"
-        onClick={handleClick}
-      >
-        {t('friends.buttonTitle', 'Friends')}
-      </button>
+    <div className={embedded ? 'w-full' : 'relative'}>
+      {!embedded && (
+        <button
+          type="button"
+          className="glass-panel flex items-center justify-center whitespace-nowrap"
+          onClick={handleClick}
+        >
+          {t('friends.buttonTitle', 'Friends')}
+        </button>
+      )}
 
-      <FriendsSidebar
-        action={action}
-        setAction={setAction}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        friends={friends}
-        requests={requests}
-        errorMsg={errorMsg}
-        onDataChanged={loadData}
-        isLoggedIn={!!user}
-        onOpenAuth={onOpenAuth}
-      />
+      {embedded ? (
+        <FriendsContent
+          action={action}
+          setAction={setAction}
+          friends={friends}
+          requests={requests}
+          onDataChanged={loadData}
+          isLoggedIn={!!user}
+          onBack={onBack}
+        />
+      ) : (
+        <FriendsModal
+          action={action}
+          setAction={setAction}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          friends={friends}
+          requests={requests}
+          errorMsg={errorMsg}
+          onDataChanged={loadData}
+          isLoggedIn={!!user}
+        />
+      )}
     </div>
   );
 }
