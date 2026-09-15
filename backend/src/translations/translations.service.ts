@@ -43,16 +43,44 @@ export class TranslationsService {
       throw new BadRequestException(`Unsupported language: ${lang}`);
     }
 
+    // 1. Cache DB
     const cached = await this.prisma.translationCache.findUnique({
-      where: { eventId_lang_field: { eventId, lang, field: 'category' } },
+      where: {
+        eventId_lang_field: {
+          eventId,
+          lang,
+          field: 'category',
+        },
+      },
     });
-    if (cached) return cached.translatedText;
 
+    if (cached) {
+      return cached.translatedText;
+    }
+
+    // 2. Traduction à la demande + mise en cache persistant
     const translatedText = await this.libreTranslate.translate(sourceText, lang);
-    await this.prisma.translationCache.create({
-      data: { eventId, lang, field: 'category', translatedText },
+
+    const saved = await this.prisma.translationCache.upsert({
+      where: {
+        eventId_lang_field: {
+          eventId,
+          lang,
+          field: 'category',
+        },
+      },
+      create: {
+        eventId,
+        lang,
+        field: 'category',
+        translatedText,
+      },
+      update: {
+        translatedText,
+      },
     });
-    return translatedText;
+
+    return saved.translatedText;
   }
 
   private async getTranslatedField(
@@ -87,18 +115,41 @@ export class TranslationsService {
 
     // 1. Cache DB
     const cached = await this.prisma.translationCache.findUnique({
-      where: { eventId_lang_field: { eventId, lang, field } },
+      where: {
+        eventId_lang_field: {
+          eventId,
+          lang,
+          field,
+        },
+      },
     });
+
     if (cached) {
       return cached.translatedText;
     }
 
     // 2. Traduction à la demande + mise en cache persistant
     const translatedText = await this.libreTranslate.translate(sourceText, lang);
-    await this.prisma.translationCache.create({
-      data: { eventId, lang, field, translatedText },
+
+    const saved = await this.prisma.translationCache.upsert({
+      where: {
+        eventId_lang_field: {
+          eventId,
+          lang,
+          field,
+        },
+      },
+      create: {
+        eventId,
+        lang,
+        field,
+        translatedText,
+      },
+      update: {
+        translatedText,
+      },
     });
 
-    return translatedText;
+    return saved.translatedText;
   }
 }
