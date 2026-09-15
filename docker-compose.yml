@@ -175,6 +175,106 @@ services:
     profiles:
       - prisma-studio
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+    container_name: elasticsearch
+    restart: unless-stopped
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - xpack.security.enabled=false
+      - 'logger.level=WARN'
+    ports:
+      - '9200:9200'
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+      - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:z
+      - ./elasticsearch/config/empty-aws-config:/usr/share/elasticsearch/.aws/config:ro,z
+    networks:
+      - transcendence_network
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          "curl -s http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging:
+      driver: 'json-file'
+    profiles:
+      - 'elk'
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.3
+    container_name: logstash
+    restart: unless-stopped
+    volumes:
+      - ./logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:z
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - '5044:5044'
+    environment:
+      - LS_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.monitoring.enabled=false
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - transcendence_network
+    logging:
+      driver: 'json-file'
+    profiles:
+      - 'elk'
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.3
+    container_name: kibana
+    restart: unless-stopped
+    environment:
+      - ELASTIC_APM_ACTIVE=false
+      - ELASTIC_APM_LOG_LEVEL=off
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    ports:
+      - '5601:5601'
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - transcendence_network
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:5601/api/status']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    logging:
+      driver: 'json-file'
+    profiles:
+      - 'elk'
+
+  kibana-setup:
+    image: docker.io/curlimages/curl:latest
+    container_name: kibana_setup
+    depends_on:
+      kibana:
+        condition: service_healthy
+    volumes:
+      - ./kibana/scripts/setup.sh:/usr/local/bin/setup.sh:z
+      - ./kibana/scripts/kibana-dashboard.ndjson:/usr/local/bin/kibana-dashboard.ndjson:z
+    networks:
+      - transcendence_network
+    entrypoint: ['/bin/sh', '/usr/local/bin/setup.sh']
+    logging:
+      driver: 'json-file'
+    profiles:
+      - 'elk'
+
   libretranslate:
     build:
       context: ./libretranslate
