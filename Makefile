@@ -1,4 +1,4 @@
-.PHONY: all up logs down elk clean fclean build check-env re restart lan test test-unit test-health test-e2e prepare-socket seed elk-seed
+.PHONY: all up logs down elk clean fclean build check-env re restart test-unit test-health test-e2e prepare-socket seed elk-seed
 export CONTAINERS_REGISTRIES_CONF = $(shell pwd)/.containers/registries.conf
 export PODMAN_COMPOSE_WARNING_LOGS=0
 LAN_IP := $(shell hostname -I | awk '{print $$1}')
@@ -45,15 +45,6 @@ re:
 	@$(MAKE) all
 
 restart: down up
-
-# Open up the LAN IP and port for other devices to access the services
-lan:
-	@echo "LAN IP: $(LAN_IP)"
-	@echo "Starting services..."
-	docker compose up -d
-	@echo ""
-	@echo "🌐 Open on another device:"
-	@echo "   https://$(LAN_IP):$(HTTPS_PORT)"
 
 # Run all test suites in sequence
 test: test-unit test-health test-e2e
