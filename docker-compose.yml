@@ -298,6 +298,7 @@ volumes:
   nginx_certs:
   libretranslate_models:
   avatars_data:
+  elasticsearch_data:
 
 networks:
   transcendence_network:
