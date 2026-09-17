@@ -1,10 +1,13 @@
-import FriendsModal from './FriendsModal';
-import FriendsContent from './FriendsContent';
+import { useState, useCallback } from 'react';
+import { useAuth } from '../../../context/auth/useAuth';
+import { useNotification } from '../../../context/notifications/useNotification';
+import { useTranslation } from 'react-i18next';
+
 import { getFriends, getPendingRequests } from '../../../api/friends';
 import type { User, PendingRequest } from '../../../api/friends';
-import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../../../context/auth/useAuth';
-import { useTranslation } from 'react-i18next';
+
+import FriendsContent from './FriendsContent';
+import FriendsModal from './FriendsModal';
 
 export type FriendAction = 'menu' | 'default' | 'add' | 'remove' | 'request';
 
@@ -22,82 +25,41 @@ interface FriendsProps {
   onBack?: () => void;
 }
 
-export function FriendsButton({ onClick }: { onClick: () => void }) {
-  const { t } = useTranslation();
-
-  return (
-    <button
-      type="button"
-      className="glass-panel flex items-center justify-center whitespace-nowrap"
-      onClick={onClick}
-    >
-      {t('friends.buttonTitle', 'Friends')}
-    </button>
-  );
-}
-
 export default function Friends({ embedded = false, onBack }: FriendsProps) {
   const [action, setAction] = useState<FriendAction>('menu');
   const [isOpen, setIsOpen] = useState(false);
   const [friends, setFriends] = useState<User[]>([]);
   const [requests, setRequests] = useState<PendingRequest[]>([]);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const { showWarning } = useNotification();
   const { t } = useTranslation();
   const { user, accessToken } = useAuth();
 
   const loadData = useCallback(async () => {
     if (!accessToken) return;
+
     try {
       const [friendsList, pendingList] = await Promise.all([
         getFriends(accessToken),
         getPendingRequests(accessToken),
       ]);
+
       setFriends(friendsList);
       setRequests(pendingList);
-      setErrorMsg(null);
     } catch (err) {
-      setErrorMsg(
-        err instanceof Error ? err.message : t('friends.errorLoading', 'Erreur de chargement.')
+      showWarning(
+        err instanceof Error ? err.message : t('friends.errorLoading', 'Error loading friends.')
       );
     }
-  }, [accessToken, t]);
-
-  useEffect(() => {
-    let active = true;
-
-    if (isOpen && user && accessToken) {
-      (async () => {
-        try {
-          const [friendsList, pendingList] = await Promise.all([
-            getFriends(accessToken),
-            getPendingRequests(accessToken),
-          ]);
-          if (active) {
-            setFriends(friendsList);
-            setRequests(pendingList);
-            setErrorMsg(null);
-          }
-        } catch (err) {
-          if (active) {
-            setErrorMsg(
-              err instanceof Error
-                ? err.message
-                : t('friends.errorLoading', 'Erreur de chargement.')
-            );
-          }
-        }
-      })();
-    }
-
-    return () => {
-      active = false;
-    };
-  }, [isOpen, accessToken, user, t]);
+  }, [accessToken, showWarning, t]);
 
   const handleClick = () => {
     setAction('menu');
     setIsOpen(true);
+
+    if (user && accessToken) {
+      loadData();
+    }
   };
 
   return (
@@ -130,7 +92,6 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
           setIsOpen={setIsOpen}
           friends={friends}
           requests={requests}
-          errorMsg={errorMsg}
           onDataChanged={loadData}
           isLoggedIn={!!user}
         />

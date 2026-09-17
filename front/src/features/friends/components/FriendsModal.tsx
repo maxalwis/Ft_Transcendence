@@ -8,7 +8,6 @@ type FriendsModalProps = OpenState & {
   setAction: React.Dispatch<React.SetStateAction<FriendAction>>;
   friends: User[];
   requests: PendingRequest[];
-  errorMsg: string | null;
   onDataChanged: () => void;
   isLoggedIn: boolean;
 };

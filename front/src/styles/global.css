@@ -190,6 +190,10 @@ button.icon-btn,
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   color: var(--color-orange-primary);
+
+  svg {
+    justify-self: center;
+  }
 }
 
 .modal-close-inline:hover {
@@ -278,7 +282,7 @@ pre {
 }
 
 .glass-modal {
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--glass-bg-whitened);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 2px solid var(--color-orange-primary);

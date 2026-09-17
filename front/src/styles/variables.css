@@ -17,6 +17,7 @@
 
   /* glass Presets */
   --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-bg-whitened: rgba(255, 255, 255, 0.9);
   --glass-border: rgba(255, 255, 255, 0.25);
   --glass-blur: blur(5px);
   --glass-shadow: rgba(0, 0, 0, 0.1) 0px 4px 30px;

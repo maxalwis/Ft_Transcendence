@@ -4,6 +4,7 @@ import { useAuth } from '../../../context/auth/useAuth';
 import { resolveAvatarUrl } from '../utils/avatar';
 import PasswordModal from './PasswordModal';
 import styles from '../ProfileModal.module.css';
+import { useNotification } from '../../../context/notifications/useNotification';
 
 interface EditProfileContentProps {
   onClose: () => void;
@@ -35,7 +36,7 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(resolveAvatarUrl(user?.avatar));
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { showWarning } = useNotification();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -53,7 +54,6 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    setError(null);
 
     try {
       const formData = new FormData();
@@ -93,7 +93,7 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
       updateUser(updated);
       onClose();
     } catch {
-      setError('Impossible de sauvegarder les modifications');
+      showWarning(t('profileSettings.saveError', 'Unable to save changes.'));
     } finally {
       setIsSaving(false);
     }
@@ -104,7 +104,12 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
       <div className={styles.modalHeader}>
         <h2>{t('profileSettings.title')}</h2>
 
-        <button type="button" className="icon-btn modal-close" onClick={onClose} aria-label="Fermer">
+        <button
+          type="button"
+          className="icon-btn modal-close"
+          onClick={onClose}
+          aria-label="Fermer"
+        >
           <svg
             className="h-4 w-4"
             viewBox="0 0 24 24"
@@ -196,8 +201,6 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
             {t('profileSettings.changePassword')}
           </button>
         )}
-
-        {error && <p className={styles.modalError}>{error}</p>}
 
         <div className={styles.modalActions}>
           <button type="button" className={styles.btnSecondary} onClick={onClose}>

@@ -172,6 +172,7 @@
 
 .sidebarModal {
   transform-origin: bottom right;
+  z-index: 1000 !important;
 }
 
 .sidebarModal[data-state='open'] {
@@ -233,8 +234,9 @@
     left: 0;
     right: 0;
     top: auto;
-    width: 100%;
+    width: 90%;
     height: 60vh;
+    margin: 0 auto;
     z-index: 1000;
 
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;

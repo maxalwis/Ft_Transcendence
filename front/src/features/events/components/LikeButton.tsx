@@ -31,7 +31,7 @@ export default function LikeButton({
 }: LikeButtonProps) {
   const { accessToken } = useAuth();
   const { socket, isConnected } = useSocket();
-  const { showError } = useNotification();
+  const { showWarning } = useNotification();
   const [isLiked, setIsLiked] = useState(false);
   const [count, setCount] = useState(interestedUsersCount);
   const [isLoading, setIsLoading] = useState(false);
@@ -111,7 +111,7 @@ export default function LikeButton({
     event.stopPropagation();
 
     if (!accessToken) {
-      showError(t('likeButton.loginRequired'));
+      showWarning(t('likeButton.loginRequired'));
       return;
     }
 

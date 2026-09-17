@@ -18,10 +18,10 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
   ] as const;
 
   const content = (
-    <div
+    <div dir='ltr'
       className={
         embedded
-          ? 'absolute top-1/2 -translate-y-1/2 right-full mr-4 z-1100 flex flex-col items-center gap-2 pointer-events-auto'
+          ? 'absolute top-1/2 -translate-y-1/2 right-full mr-4 z-1100 flex flex-col items-center gap-2 pointer-events-auto max-[899px]:top-auto max-[899px]:bottom-full max-[899px]:right-1/2 max-[899px]:translate-y-0 max-[899px]:translate-x-1/2 max-[899px]:mr-0 max-[899px]:mb-4 max-[899px]:flex-row'
           : 'fixed top-1/2 -translate-y-1/2 right-4 z-1100 flex flex-col items-center gap-2 pointer-events-auto'
       }
     >

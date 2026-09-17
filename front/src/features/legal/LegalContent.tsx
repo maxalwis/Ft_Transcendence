@@ -9,10 +9,7 @@ interface LegalContentProps {
   onClose: () => void;
 }
 
-export default function LegalContent({
-  initialTab = 'privacy',
-  onClose,
-}: LegalContentProps) {
+export default function LegalContent({ initialTab = 'privacy', onClose }: LegalContentProps) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'privacy' | 'terms'>(initialTab);
 
@@ -32,9 +29,7 @@ export default function LegalContent({
       <div className={styles.tabNav}>
         <button
           type="button"
-          className={`${styles.tabButton} ${
-            activeTab === 'privacy' ? styles.activeTab : ''
-          }`}
+          className={`${styles.tabButton} ${activeTab === 'privacy' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('privacy')}
         >
           {t('legal.privacy')}
@@ -42,9 +37,7 @@ export default function LegalContent({
 
         <button
           type="button"
-          className={`${styles.tabButton} ${
-            activeTab === 'terms' ? styles.activeTab : ''
-          }`}
+          className={`${styles.tabButton} ${activeTab === 'terms' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('terms')}
         >
           {t('legal.terms')}

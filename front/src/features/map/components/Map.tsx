@@ -33,12 +33,8 @@ import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
 // Local Styles
 import '../Map.module.css';
 
-interface MapProps {
-  onOpenAuth: () => void;
-}
-
-export default function Map({ onOpenAuth }: MapProps) {
-  const { showError } = useNotification();
+export default function Map() {
+  const { showWarning } = useNotification();
   const { user } = useAuth();
   const { i18n } = useTranslation();
   const lang = i18n.language;
@@ -73,7 +69,7 @@ export default function Map({ onOpenAuth }: MapProps) {
     setActiveEventIndex,
     handlePrevEvent,
     handleNextEvent,
-  } = useMapEvents(showError, filters);
+  } = useMapEvents(showWarning, filters);
 
   const { data: translatedHoverEvent, loading: hoverLoading } = useTranslatedEvent(
     currentEvent?.id ?? '',
@@ -218,7 +214,7 @@ export default function Map({ onOpenAuth }: MapProps) {
       />
 
       {!activeSidebarEventId && <LanguageSelector />}
-      <BottomBar onOpenAuth={onOpenAuth} />
+      <BottomBar />
 
       {activeSidebarEventId && (
         <SideBar

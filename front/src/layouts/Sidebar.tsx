@@ -71,7 +71,7 @@ export default function SideBar({
       ref={rootRef}
       data-state={isOpen ? 'open' : 'closed'}
       onAnimationEnd={handleAnimationEnd}
-      className={`glass-panel ${styles.sidebarModal} fixed top-2 right-3 bottom-2 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col`}
+      className={`glass-panel ${styles.sidebarModal} fixed top-15 right-3 bottom-15 w-[20vw] rounded-xl p-5 shadow-lg flex flex-col`}
     >
       <LanguageSelector embedded />
 
@@ -123,10 +123,10 @@ export default function SideBar({
       {/* Event Details */}
       <div
         className={`
-    shrink-0 overflow-y-auto border-b border-teal-200/20 pb-2 flex flex-col gap-2
-    max-[900px]:flex-1 max-[900px]:min-h-0
-    ${mobileView === 'chat' ? 'max-[900px]:hidden' : ''}
-    min-[901px]:max-h-[50%]
+            shrink-0 overflow-y-auto border-b border-teal-200/20 pb-2 flex flex-col gap-2
+            max-[900px]:flex-1 max-[900px]:min-h-0
+            ${mobileView === 'chat' ? 'max-[900px]:hidden' : ''}
+            min-[901px]:max-h-[50%]
   `}
       >
         {eventDetails ? (
