@@ -23,7 +23,7 @@ export const WarningNotification = ({ message, onClose, duration = 5000 }: Notif
     setTimeout(() => {
       onClose();
       setIsExiting(false);
-    }, 3000000);
+    }, 300);
   }, [onClose]);
 
   useEffect(() => {
