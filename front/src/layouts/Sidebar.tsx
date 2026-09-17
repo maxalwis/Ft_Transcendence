@@ -4,7 +4,6 @@ import Event from '../features/events/components/Event';
 import type { EventItem } from '../types/event';
 import { useTranslation } from 'react-i18next';
 import styles from '../features/map/Map.module.css';
-import LanguageSelector from './LanguageSelector';
 
 interface SideBarProps {
   onClose: () => void;
@@ -73,8 +72,6 @@ export default function SideBar({
       onAnimationEnd={handleAnimationEnd}
       className={`glass-panel ${styles.sidebarModal} fixed top-15 right-3 bottom-15 w-[20vw] rounded-xl p-5 shadow-lg flex flex-col`}
     >
-      <LanguageSelector embedded />
-
       {/* Close Button Header */}
       <div className="shrink-0">
         <button

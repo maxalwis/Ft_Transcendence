@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { fr, enUS, es, ar } from 'date-fns/locale';
+import LanguageSelector from './LanguageSelector';
 import 'react-datepicker/dist/react-datepicker.css';
 
 registerLocale('fr', fr);
@@ -108,7 +109,9 @@ export default function NavBar({
       dir="ltr"
       className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-14 md:px-6 pointer-events-none"
     >
-      <div className="w-full flex items-center justify-center md:justify-between">
+      <LanguageSelector embedded />
+
+      <div className="w-full flex items-center justify-center md:justify-between pr-4">
         {/* Left spacer, keeps navbar in the middle */}
         <div className="w-45 hidden md:block" />
 

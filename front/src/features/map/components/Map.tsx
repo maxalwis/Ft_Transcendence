@@ -7,7 +7,6 @@ import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
 // Layouts & Feature Components
-import LanguageSelector from '../../../layouts/LanguageSelector';
 import BottomBar from '../../../layouts/BottomBar';
 import SideBar from '../../../layouts/Sidebar';
 import NavBar from '../../../layouts/NavBar';
@@ -213,7 +212,7 @@ export default function Map() {
         onDateChange={handleDateChange}
       />
 
-      {!activeSidebarEventId && <LanguageSelector />}
+      {!activeSidebarEventId}
       <BottomBar />
 
       {activeSidebarEventId && (
