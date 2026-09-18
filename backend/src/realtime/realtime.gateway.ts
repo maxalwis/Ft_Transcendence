@@ -25,7 +25,6 @@ import { LoggerMiddleware } from '../logger.middleware';
 export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(RealtimeGateway.name);
   @WebSocketServer() server!: Server;
-    private readonly logger = new Logger(RealtimeGateway.name);
 
   constructor(
     private authService: AuthService,
