@@ -351,7 +351,7 @@ export default function Map() {
                 </svg>
               </button>
 
-              <div className="min-h-0 flex-1 overflow-y-auto">
+              <div className="min-h-0 flex-1 flex flex-col overflow-y-auto">
                 <EventSidebarContent eventId={sidebar.eventId} currentUserId={user?.id} />
               </div>
             </div>

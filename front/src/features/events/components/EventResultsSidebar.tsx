@@ -14,6 +14,27 @@ interface EventResultsSidebarProps {
   onScrollTopChange: (scrollTop: number) => void;
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 900);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 900px)');
+
+    const handleChange = () => {
+      setIsMobile(mediaQuery.matches);
+    };
+
+    handleChange();
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
+
+  return isMobile;
+}
+
 export default function EventResultsSidebar({
   events,
   isLoading,
@@ -28,7 +49,7 @@ export default function EventResultsSidebar({
   const [hasOverflow, setHasOverflow] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const listRef = useRef<HTMLDivElement>(null);
-  const isMobile = window.innerWidth <= 900;
+  const isMobile = useIsMobile();
   const itemsPerPage = isMobile ? 5 : eventsPerPage;
   const totalPages = Math.max(1, Math.ceil(events.length / (isMobile ? 5 : eventsPerPage)));
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -45,6 +66,8 @@ export default function EventResultsSidebar({
    * The cards therefore need to have a consistent height.
    */
   useEffect(() => {
+    if (isMobile) return;
+
     const list = listRef.current;
 
     if (!list) return;
@@ -62,7 +85,15 @@ export default function EventResultsSidebar({
 
       if (containerHeight <= 0 || cardHeight <= 0) return;
 
-      const count = Math.max(1, Math.floor((containerHeight + gap) / (cardHeight + gap)));
+      const count = Math.max(1, Math.floor((containerHeight + gap + 10) / (cardHeight + gap)));
+
+      console.log({
+        containerHeight,
+        cardHeight,
+        gap,
+        calculated: count,
+        fiveCardsHeight: cardHeight * 5 + gap * 4,
+      });
 
       setEventsPerPage((previous) => (previous === count ? previous : count));
     };
@@ -75,7 +106,7 @@ export default function EventResultsSidebar({
     return () => {
       observer.disconnect();
     };
-  }, [events]);
+  }, [events, isMobile]);
 
   /*
    * Track whether the results list is overflowing and whether
@@ -149,7 +180,7 @@ export default function EventResultsSidebar({
           hasOverflow && !isAtBottom ? styles.hasBottomFade : ''
         }`}
       >
-        <div ref={listRef} className="flex h-full max-h-[70vh] flex-col gap-2 overflow-y-auto">
+        <div ref={listRef} className="flex h-full flex-col gap-2 overflow-y-auto">
           {paginatedEvents.map((event) => (
             <EventResultCard
               key={event.id}

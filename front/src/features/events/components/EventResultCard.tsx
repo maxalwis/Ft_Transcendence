@@ -69,7 +69,7 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
       className="glass-article flex cursor-pointer flex-col transition-all"
     >
       <div className="flex flex-col">
-        <div className="aspect-[15/11] shrink-0 overflow-hidden rounded-lg">
+        <div className="aspect-[16/11] shrink-0 overflow-hidden rounded-lg">
           <img
             src={event.coverUrl || '/event_image.webp'}
             alt={displayedTitle || t('eventPreview.defaultAlt')}
