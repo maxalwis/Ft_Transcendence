@@ -119,7 +119,7 @@ const DropdownMenu: React.FC = () => {
               position: 'fixed',
               top: `${coords.top}px`,
               left: `${coords.left}px`,
-              zIndex: 9999,
+              zIndex: 50,
             }}
             className="glass-panel glass-animate-in w-64 p-3 pointer-events-auto"
           >
@@ -174,7 +174,7 @@ export const AdminPanelLinks: React.FC = () => {
 
         // Force the element onto its own layer on top of Leaflet controls
         controlDiv.style.position = 'relative';
-        controlDiv.style.zIndex = '1000';
+        controlDiv.style.zIndex = '50';
 
         L.DomEvent.disableClickPropagation(controlDiv);
         L.DomEvent.disableScrollPropagation(controlDiv);

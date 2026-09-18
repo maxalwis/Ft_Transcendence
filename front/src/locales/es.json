@@ -1,5 +1,10 @@
 {
   "welcome": "Bienvenido a nuestro sitio",
+  "nav": {
+    "menu": "Menú",
+    "scrollLeft": "Desplazar a la izquierda",
+    "scrollRight": "Desplazar a la derecha"
+  },
   "buttons": {
     "submit": "Enviar"
   },
@@ -11,10 +16,16 @@
     "leisure": "Deportes y Ocio",
     "others": "Otros"
   },
+  "common": {
+    "back": "Volver"
+  },
   "events": {
     "defaultCategory": "Evento",
     "unknownDate": "Fecha desconocida",
-    "linkLabel": "Enlace:"
+    "linkLabel": "Enlace:",
+    "errors": {
+      "loadFailed": "Error al cargar el evento"
+    }
   },
   "eventDetails": {
     "defaultCategory": "Evento",
@@ -44,6 +55,8 @@
     "priceCategory": "Categoría de precio",
     "selectCategory": "Seleccionar categoría",
     "fromDate": "Desde :",
+    "priceButton": "Precio",
+    "dateButton": "Fecha",
     "apply": "Filtrar",
     "reset": "Restablecer",
     "allPrices": "Todos",
@@ -60,7 +73,7 @@
     "noFriends": "No hay amigos aún",
     "remove": "Eliminar"
   },
-  "friendsSidebar": {
+  "friendsModal": {
     "notLoggedIn": "Por favor, inicia sesión para ver tu lista de amigos.",
     "search": "Buscar amigos",
     "pendingRequests": "Solicitudes pendientes ({{count}})",
@@ -95,17 +108,22 @@
     "fallbackUser": "Usuario #{{id}}",
     "errors": {
       "acceptFailed": "Error al aceptar la solicitud.",
-      "rejectFailed": "Error al rechazar la solicitud."
+      "rejectFailed": "Error al rechazar la solicitud.",
+      "sendFailed": "Error al enviar la solicitud de amistad.",
+      "removeFailed": "Error al eliminar al amigo."
     }
   },
   "chat": {
     "title": "Chat",
     "connectPrompt": "Conéctate para ver el chat.",
     "loadingMessages": "Cargando mensajes...",
-    "errorLoadMessages": "Error al cargar los mensajes",
-    "errorSend": "Error al intentar enviar el mensaje",
     "placeholder": "Escribe tu mensaje...",
-    "send": "Enviar"
+    "send": "Enviar",
+    "errors": {
+      "loginRequiredToSend": "Debes iniciar sesión para enviar un mensaje.",
+      "loadMessages": "Error al cargar los mensajes",
+      "sendMessage": "Error al enviar el mensaje"
+    }
   },
   "passwordModal": {
     "title": "Cambiar contraseña",

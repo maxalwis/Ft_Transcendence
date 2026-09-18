@@ -7,9 +7,7 @@ import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
 // Layouts & Feature Components
-import LanguageSelector from '../../../layouts/LanguageSelector';
 import BottomBar from '../../../layouts/BottomBar';
-import Filters from './Filters';
 import SideBar from '../../../layouts/Sidebar';
 import NavBar from '../../../layouts/NavBar';
 
@@ -34,12 +32,8 @@ import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
 // Local Styles
 import '../Map.module.css';
 
-interface MapProps {
-  onOpenAuth: () => void;
-}
-
-export default function Map({ onOpenAuth }: MapProps) {
-  const { showError } = useNotification();
+export default function Map() {
+  const { showWarning } = useNotification();
   const { user } = useAuth();
   const { i18n } = useTranslation();
   const lang = i18n.language;
@@ -74,7 +68,7 @@ export default function Map({ onOpenAuth }: MapProps) {
     setActiveEventIndex,
     handlePrevEvent,
     handleNextEvent,
-  } = useMapEvents(showError, filters);
+  } = useMapEvents(showWarning, filters);
 
   const { data: translatedHoverEvent, loading: hoverLoading } = useTranslatedEvent(
     currentEvent?.id ?? '',
@@ -142,12 +136,14 @@ export default function Map({ onOpenAuth }: MapProps) {
     });
   }, []);
 
-  // Handler mémorisé pour les filtres modaux
-  const handleApplyFilters = useCallback((newFilters: Partial<typeof filters>) => {
-    setFilters((prev) => ({
-      ...prev,
-      ...newFilters,
-    }));
+  // Handler mémorisé pour le filtre prix (appliqué immédiatement à la sélection)
+  const handlePriceChange = useCallback((priceType: string) => {
+    setFilters((prev) => ({ ...prev, priceType }));
+  }, []);
+
+  // Handler mémorisé pour le filtre date (appliqué immédiatement à la sélection)
+  const handleDateChange = useCallback((startDate: string) => {
+    setFilters((prev) => ({ ...prev, startDate }));
   }, []);
 
   return (
@@ -207,12 +203,17 @@ export default function Map({ onOpenAuth }: MapProps) {
         />
       )}
 
-      <Filters onApplyFilters={handleApplyFilters} />
+      <NavBar
+        activeCategory={filters.category}
+        onSelectCategory={handleSelectCategory}
+        priceType={filters.priceType}
+        onPriceChange={handlePriceChange}
+        startDate={filters.startDate}
+        onDateChange={handleDateChange}
+      />
 
-      <NavBar activeCategory={filters.category} onSelectCategory={handleSelectCategory} />
-
-      {!activeSidebarEventId && <LanguageSelector />}
-      <BottomBar onOpenAuth={onOpenAuth} />
+      {!activeSidebarEventId}
+      <BottomBar />
 
       {activeSidebarEventId && (
         <SideBar
@@ -224,7 +225,6 @@ export default function Map({ onOpenAuth }: MapProps) {
           }}
         />
       )}
-      {/* )} */}
     </>
   );
 }

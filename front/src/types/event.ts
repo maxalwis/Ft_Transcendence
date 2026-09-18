@@ -23,7 +23,6 @@ export interface EventGroup {
 }
 
 export type EventFilters = {
-  city: string;
   startDate: string;
   endDate: string;
   priceType: string;
