@@ -314,7 +314,6 @@ pre {
 }
 
 .glass-article {
-  border: 1px solid transparent;
   border-radius: var(--radius-lg);
   transition:
     background-color 200ms ease,

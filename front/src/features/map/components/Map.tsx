@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { MapContainer } from 'react-leaflet';
 
 // Third-Party Styles
@@ -31,13 +31,12 @@ import { useTranslatedEvent } from '../../events/hooks/useTranslatedEvent';
 // Constants & Configuration
 import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
 
+import { EventMapController } from './EventMapController';
+
 // Local Styles
 import '../Map.module.css';
 
-type SidebarState =
-  | { type: 'event'; eventId: string }
-  | { type: 'results' }
-  | null;
+type SidebarState = { type: 'event'; eventId: string } | { type: 'results' } | null;
 
 export default function Map() {
   const { showWarning } = useNotification();
@@ -46,6 +45,7 @@ export default function Map() {
   const lang = i18n.language;
 
   const [sidebar, setSidebar] = useState<SidebarState>(null);
+  const [currentResultsPage, setCurrentResultsPage] = useState(1);
 
   const [hoverPos, setHoverPos] = useState<{
     x: number;
@@ -81,18 +81,20 @@ export default function Map() {
     handleNextEvent,
   } = useMapEvents(showWarning, filters);
 
-  /*
-   * eventGroups are grouped for the map.
-   * The sidebar doesn't need those groups, so flatten them into
-   * a simple array of events.
-   */
-  const events = eventGroups.flatMap((group) => group.events);
+  const events = useMemo(() => eventGroups.flatMap((group) => group.events), [eventGroups]);
 
-  const { data: translatedHoverEvent, loading: hoverLoading } =
-    useTranslatedEvent(currentEvent?.id ?? '', lang);
+  const eventIds = useMemo(() => events.map((event) => event.id).join(','), [events]);
 
-  const isHoverTranslating =
-    lang !== 'fr' && hoverLoading && !translatedHoverEvent;
+  useEffect(() => {
+    setCurrentResultsPage(1);
+  }, [eventIds]);
+
+  const { data: translatedHoverEvent, loading: hoverLoading } = useTranslatedEvent(
+    currentEvent?.id ?? '',
+    lang
+  );
+
+  const isHoverTranslating = lang !== 'fr' && hoverLoading && !translatedHoverEvent;
 
   const displayedHoverTitle = isHoverTranslating
     ? undefined
@@ -100,10 +102,7 @@ export default function Map() {
 
   const displayedHoverCategory = isHoverTranslating
     ? undefined
-    : (
-        (translatedHoverEvent?.category as unknown as string[])?.[0] ??
-        currentEvent?.category?.[0]
-      );
+    : ((translatedHoverEvent?.category as unknown as string[])?.[0] ?? currentEvent?.category?.[0]);
 
   const cancelCloseTimeout = () => {
     if (closeTimeoutRef.current) {
@@ -188,8 +187,7 @@ export default function Map() {
       }
 
       const isAlreadyActive =
-        prev.category.trim().toLowerCase() ===
-        selectedCategory.trim().toLowerCase();
+        prev.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase();
 
       const nextCategory = isAlreadyActive ? '' : selectedCategory;
 
@@ -203,15 +201,12 @@ export default function Map() {
   /*
    * Generic filter handler used by the Filters component.
    */
-  const handleApplyFilters = useCallback(
-    (newFilters: Partial<typeof filters>) => {
-      setFilters((prev) => ({
-        ...prev,
-        ...newFilters,
-      }));
-    },
-    []
-  );
+  const handleApplyFilters = useCallback((newFilters: Partial<typeof filters>) => {
+    setFilters((prev) => ({
+      ...prev,
+      ...newFilters,
+    }));
+  }, []);
 
   /*
    * Price filter handler.
@@ -245,6 +240,10 @@ export default function Map() {
         zoomControl={false}
         style={{ height: '100vh', width: '100vw' }}
       >
+        <EventMapController
+          eventId={sidebar?.type === 'event' ? sidebar.eventId : null}
+          events={events}
+        />
         <MapClickHandler
           closeSidebar={() => {
             setSidebar(null);
@@ -292,12 +291,7 @@ export default function Map() {
           totalInGroup={activeGroup.events.length}
           currentIndex={activeEventIndex}
           onPrev={handlePrevEvent}
-          onNext={() =>
-            handleNextEvent(
-              undefined,
-              activeGroup.events.length - 1
-            )
-          }
+          onNext={() => handleNextEvent(undefined, activeGroup.events.length - 1)}
           onClick={() => handleOpenSidebar(currentEvent.id)}
           onMouseEnter={cancelCloseTimeout}
           onMouseLeave={handleMouseLeave}
@@ -331,16 +325,41 @@ export default function Map() {
               events={events}
               isLoading={isLoading}
               currentUserId={user?.id}
+              currentPage={currentResultsPage}
+              onPageChange={setCurrentResultsPage}
               onEventClick={handleResultsEventClick}
             />
           )}
 
           {/* Event details sidebar */}
           {sidebar.type === 'event' && (
-            <EventSidebarContent
-              eventId={sidebar.eventId}
-              currentUserId={user?.id}
-            />
+            <div className="flex min-h-0 flex-1 flex-col">
+              <button
+                type="button"
+                onClick={() => {
+                  setSidebar({ type: 'results' });
+                  setHoverPos(null);
+                }}
+                aria-label="Back to results"
+                className="modal-button modal-back"
+              >
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+
+              <div className="min-h-0 flex-1 overflow-y-auto">
+                <EventSidebarContent eventId={sidebar.eventId} currentUserId={user?.id} />
+              </div>
+            </div>
           )}
         </SideBar>
       )}

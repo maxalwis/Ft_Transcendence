@@ -9,11 +9,7 @@ interface EventResultCardProps {
   onClick: (eventId: string) => void;
 }
 
-function formatDate(
-  value?: string,
-  locale = 'fr-FR',
-  undefinedText = 'Undefined date',
-) {
+function formatDate(value?: string, locale = 'fr-FR', undefinedText = 'Undefined date') {
   if (!value) return undefinedText;
 
   const date = new Date(value);
@@ -39,29 +35,17 @@ function cleanText(value?: string) {
     .trim();
 }
 
-export default function EventResultCard({
-  event,
-  onClick,
-}: EventResultCardProps) {
+export default function EventResultCard({ event, onClick }: EventResultCardProps) {
   const { t, i18n } = useTranslation();
 
   const lang = i18n.language;
 
-  const { data: translated, loading } = useTranslatedEvent(
-    event.id,
-    lang,
-  );
+  const { data: translated, loading } = useTranslatedEvent(event.id, lang);
 
   const isTranslating = lang !== 'fr' && loading && !translated;
 
   const currentLocale =
-    lang === 'es'
-      ? 'es-ES'
-      : lang === 'en'
-        ? 'en-US'
-        : lang === 'ar'
-          ? 'ar-SA'
-          : 'fr-FR';
+    lang === 'es' ? 'es-ES' : lang === 'en' ? 'en-US' : lang === 'ar' ? 'ar-SA' : 'fr-FR';
 
   const undefinedDateText = t('eventPreview.undefinedDate');
 
@@ -70,26 +54,15 @@ export default function EventResultCard({
    * While translation is loading, keep the original French
    * data rather than displaying partially translated content.
    */
-  const displayedTitle = isTranslating
-    ? undefined
-    : (translated?.title ?? event.title);
+  const displayedTitle = isTranslating ? undefined : (translated?.title ?? event.title);
 
   const displayedCategory = isTranslating
     ? undefined
-    : (
-        (translated?.category as unknown as string[])?.[0]
-        ?? event.category?.[0]
-      );
+    : ((translated?.category as unknown as string[])?.[0] ?? event.category?.[0]);
 
-  const displayedPriceType = isTranslating
-    ? undefined
-    : (translated?.priceType ?? event.priceType);
+  const displayedPriceType = isTranslating ? undefined : (translated?.priceType ?? event.priceType);
 
-  const eventDate = formatDate(
-    event.dateStart,
-    currentLocale,
-    undefinedDateText,
-  );
+  const eventDate = formatDate(event.dateStart, currentLocale, undefinedDateText);
 
   const rawPriceType = cleanText(displayedPriceType).toLowerCase();
 
@@ -116,34 +89,26 @@ export default function EventResultCard({
   return (
     <article
       onClick={handleClick}
-      className="glass-article cursor-pointer transition-all"
+      className="glass-article flex cursor-pointer flex-col transition-all"
     >
-      <div className="flex flex-col gap-3">
-        {/* Event image */}
-        <div className="shrink-0 overflow-hidden rounded-lg">
+      <div className="flex flex-col">
+        <div className="aspect-[15/11] shrink-0 overflow-hidden rounded-lg">
           <img
             src={event.coverUrl || '/event_image.webp'}
             alt={displayedTitle || t('eventPreview.defaultAlt')}
-            className="w-full object-cover"
+            className="h-full w-full object-cover"
           />
         </div>
 
-        {/* Event content */}
-        <div className="min-w-0 leading-tight">
+        <div className="flex min-h-[76px] flex-col pt-3 leading-tight">
           {isTranslating ? (
-            <div className="mb-1 h-5 w-3/4 animate-pulse rounded bg-slate-200" />
+            <div className="mb-1! h-5 w-3/4 animate-pulse rounded bg-slate-200" />
           ) : (
-            <h2 className="mb-1! line-clamp-3">
-              {displayedTitle}
-            </h2>
+            <h2 className="line-clamp-2 leading-5">{displayedTitle}</h2>
           )}
 
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <p className="mb-3! text-xs">
-                {displayedCategory || t('categories.others')}
-              </p>
-            </div>
+          <div className="mt-auto flex items-center justify-between gap-2">
+            <p className="mb-3! text-xs">{displayedCategory || t('categories.others')}</p>
 
             {isPaid !== undefined && (
               <p className="mb-3!">
