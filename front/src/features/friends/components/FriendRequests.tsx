@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PendingRequest } from '../../../api/friends';
 import { acceptFriendRequest, rejectFriendRequest } from '../../../api/friends';
 import { useAuth } from '../../../context/auth/useAuth';
 import styles from '../Friends.module.css';
+import { useNotification } from '../../../context/notifications/useNotification';
 
 type FriendsRequestsProps = {
   requests: PendingRequest[];
@@ -12,26 +12,24 @@ type FriendsRequestsProps = {
 
 export default function FriendsRequests({ requests, onDataChanged }: FriendsRequestsProps) {
   const { t } = useTranslation();
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const { showWarning } = useNotification();
   const { accessToken } = useAuth();
 
   const handleAccept = async (senderId: number) => {
     try {
       await acceptFriendRequest(senderId, accessToken!);
-      setErrorMsg(null);
       onDataChanged();
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : t('friendsRequests.errors.acceptFailed'));
+      showWarning(err instanceof Error ? err.message : t('friendsRequests.errors.acceptFailed'));
     }
   };
 
   const handleReject = async (senderId: number) => {
     try {
       await rejectFriendRequest(senderId, accessToken!);
-      setErrorMsg(null);
       onDataChanged();
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : t('friendsRequests.errors.rejectFailed'));
+      showWarning(err instanceof Error ? err.message : t('friendsRequests.errors.rejectFailed'));
     }
   };
 
@@ -45,7 +43,6 @@ export default function FriendsRequests({ requests, onDataChanged }: FriendsRequ
 
   return (
     <div className="flex flex-col gap-2 p-2">
-      {errorMsg && <p className="text-xs text-red-500">{errorMsg}</p>}
       {requests.map((req) => {
         const senderObj =
           'sender' in req

@@ -7,9 +7,7 @@ import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
 // Layouts & Feature Components
-import LanguageSelector from '../../../layouts/LanguageSelector';
 import BottomBar from '../../../layouts/BottomBar';
-import Filters from './Filters';
 import SideBar from '../../../layouts/Sidebar';
 import NavBar from '../../../layouts/NavBar';
 
@@ -36,24 +34,23 @@ import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
 // Local Styles
 import '../Map.module.css';
 
-interface MapProps {
-  onOpenAuth: () => void;
-}
-
 type SidebarState =
   | { type: 'event'; eventId: string }
   | { type: 'results' }
   | null;
 
-export default function Map({ onOpenAuth }: MapProps) {
-  const { showError } = useNotification();
+export default function Map() {
+  const { showWarning } = useNotification();
   const { user } = useAuth();
   const { i18n } = useTranslation();
   const lang = i18n.language;
 
   const [sidebar, setSidebar] = useState<SidebarState>(null);
 
-  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
+  const [hoverPos, setHoverPos] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
 
   const [filters, setFilters] = useState<{
     city: string;
@@ -82,7 +79,7 @@ export default function Map({ onOpenAuth }: MapProps) {
     setActiveEventIndex,
     handlePrevEvent,
     handleNextEvent,
-  } = useMapEvents(showError, filters);
+  } = useMapEvents(showWarning, filters);
 
   /*
    * eventGroups are grouped for the map.
@@ -158,10 +155,8 @@ export default function Map({ onOpenAuth }: MapProps) {
   }, [setActiveGroupId]);
 
   /*
-   * Called by EventResultsSidebar when the user clicks
-   * one of the events in the results list.
-   *
-   * This replaces the results content with the event details.
+   * Called when an event is selected from the results sidebar.
+   * Replace the results sidebar with the selected event details.
    */
   const handleResultsEventClick = useCallback((eventId: string) => {
     setSidebar({
@@ -180,6 +175,9 @@ export default function Map({ onOpenAuth }: MapProps) {
     [setActiveGroupId]
   );
 
+  /*
+   * Category filter handler.
+   */
   const handleSelectCategory = useCallback((selectedCategory: string) => {
     setFilters((prev) => {
       if (!selectedCategory || selectedCategory.trim() === '') {
@@ -202,6 +200,9 @@ export default function Map({ onOpenAuth }: MapProps) {
     });
   }, []);
 
+  /*
+   * Generic filter handler used by the Filters component.
+   */
   const handleApplyFilters = useCallback(
     (newFilters: Partial<typeof filters>) => {
       setFilters((prev) => ({
@@ -211,6 +212,26 @@ export default function Map({ onOpenAuth }: MapProps) {
     },
     []
   );
+
+  /*
+   * Price filter handler.
+   */
+  const handlePriceChange = useCallback((priceType: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      priceType,
+    }));
+  }, []);
+
+  /*
+   * Date filter handler.
+   */
+  const handleDateChange = useCallback((startDate: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      startDate,
+    }));
+  }, []);
 
   return (
     <>
@@ -254,6 +275,7 @@ export default function Map({ onOpenAuth }: MapProps) {
         )}
       </MapContainer>
 
+      {/* Event preview shown when hovering a marker group */}
       {currentEvent && activeGroup && hoverPos && (
         <EventPreview
           position={hoverPos}
@@ -271,7 +293,10 @@ export default function Map({ onOpenAuth }: MapProps) {
           currentIndex={activeEventIndex}
           onPrev={handlePrevEvent}
           onNext={() =>
-            handleNextEvent(undefined, activeGroup.events.length - 1)
+            handleNextEvent(
+              undefined,
+              activeGroup.events.length - 1
+            )
           }
           onClick={() => handleOpenSidebar(currentEvent.id)}
           onMouseEnter={cancelCloseTimeout}
@@ -279,18 +304,20 @@ export default function Map({ onOpenAuth }: MapProps) {
         />
       )}
 
-      <Filters onApplyFilters={handleApplyFilters} />
-
+      {/* Navigation and category filters */}
       <NavBar
         activeCategory={filters.category}
         onSelectCategory={handleSelectCategory}
         onOpenResults={handleOpenResults}
+        priceType={filters.priceType}
+        onPriceChange={handlePriceChange}
+        startDate={filters.startDate}
+        onDateChange={handleDateChange}
       />
 
-      {!sidebar && <LanguageSelector />}
+      <BottomBar />
 
-      <BottomBar onOpenAuth={onOpenAuth} />
-
+      {/* Sidebar */}
       {sidebar !== null && (
         <SideBar
           onClose={() => {
@@ -298,14 +325,17 @@ export default function Map({ onOpenAuth }: MapProps) {
             setHoverPos(null);
           }}
         >
+          {/* Results sidebar */}
           {sidebar.type === 'results' && (
             <EventResultsSidebar
               events={events}
               isLoading={isLoading}
               currentUserId={user?.id}
+              onEventClick={handleResultsEventClick}
             />
           )}
 
+          {/* Event details sidebar */}
           {sidebar.type === 'event' && (
             <EventSidebarContent
               eventId={sidebar.eventId}

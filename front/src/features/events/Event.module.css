@@ -240,6 +240,22 @@
   color: #ef4444;
 }
 
+.event-details-image {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  object-fit: cover;
+  align-self: center;
+
+  @media (max-width: 900px) and (min-width: 750px) {
+    width: 60vw;
+  }
+
+  @media (max-width: 750px) and (min-width: 600px) {
+    width: 70vw;
+  }
+}
+
 @keyframes pulse {
   0%,
   100% {

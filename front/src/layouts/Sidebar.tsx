@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../features/map/Map.module.css';
-import LanguageSelector from './LanguageSelector';
 
 interface SideBarProps {
   onClose: () => void;
@@ -22,10 +21,8 @@ export default function SideBar({ onClose, children }: SideBarProps) {
     <div
       data-state={isOpen ? 'open' : 'closed'}
       onAnimationEnd={handleAnimationEnd}
-      className={`glass-panel ${styles.sidebarModal} fixed top-2 right-3 bottom-2 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col`}
+      className={`glass-panel ${styles.sidebarModal} fixed top-15 right-3 bottom-15 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col`}
     >
-      <LanguageSelector embedded />
-
       {/* Close Button */}
       <div className="shrink-0">
         <button
@@ -48,7 +45,7 @@ export default function SideBar({ onClose, children }: SideBarProps) {
         </button>
       </div>
 
-      {/* Sidebar content is decided by the parent */}
+      {/* Sidebar content */}
       {children}
     </div>
   );

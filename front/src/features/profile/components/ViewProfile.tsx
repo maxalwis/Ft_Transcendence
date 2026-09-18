@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { User } from '../../api/friends';
+import type { User } from '../../../api/friends';
 import { useTranslation } from 'react-i18next';
-import { resolveAvatarUrl } from './utils/avatar';
-import styles from './ProfileModal.module.css';
+import { resolveAvatarUrl } from '../utils/avatar';
+import styles from '../ProfileModal.module.css';
 
 interface ViewProfileProps {
   friend: User;
