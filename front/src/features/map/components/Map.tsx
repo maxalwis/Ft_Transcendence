@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { MapContainer } from 'react-leaflet';
 
 // Third-Party Styles
@@ -46,6 +46,7 @@ export default function Map() {
 
   const [sidebar, setSidebar] = useState<SidebarState>(null);
   const [currentResultsPage, setCurrentResultsPage] = useState(1);
+  const [resultsScrollTop, setResultsScrollTop] = useState(0);
 
   const [hoverPos, setHoverPos] = useState<{
     x: number;
@@ -82,12 +83,6 @@ export default function Map() {
   } = useMapEvents(showWarning, filters);
 
   const events = useMemo(() => eventGroups.flatMap((group) => group.events), [eventGroups]);
-
-  const eventIds = useMemo(() => events.map((event) => event.id).join(','), [events]);
-
-  useEffect(() => {
-    setCurrentResultsPage(1);
-  }, [eventIds]);
 
   const { data: translatedHoverEvent, loading: hoverLoading } = useTranslatedEvent(
     currentEvent?.id ?? '',
@@ -178,6 +173,9 @@ export default function Map() {
    * Category filter handler.
    */
   const handleSelectCategory = useCallback((selectedCategory: string) => {
+    setCurrentResultsPage(1);
+    setResultsScrollTop(0);
+
     setFilters((prev) => {
       if (!selectedCategory || selectedCategory.trim() === '') {
         return {
@@ -199,19 +197,12 @@ export default function Map() {
   }, []);
 
   /*
-   * Generic filter handler used by the Filters component.
-   */
-  const handleApplyFilters = useCallback((newFilters: Partial<typeof filters>) => {
-    setFilters((prev) => ({
-      ...prev,
-      ...newFilters,
-    }));
-  }, []);
-
-  /*
    * Price filter handler.
    */
   const handlePriceChange = useCallback((priceType: string) => {
+    setCurrentResultsPage(1);
+    setResultsScrollTop(0);
+
     setFilters((prev) => ({
       ...prev,
       priceType,
@@ -222,6 +213,9 @@ export default function Map() {
    * Date filter handler.
    */
   const handleDateChange = useCallback((startDate: string) => {
+    setCurrentResultsPage(1);
+    setResultsScrollTop(0);
+
     setFilters((prev) => ({
       ...prev,
       startDate,
@@ -324,10 +318,11 @@ export default function Map() {
             <EventResultsSidebar
               events={events}
               isLoading={isLoading}
-              currentUserId={user?.id}
               currentPage={currentResultsPage}
               onPageChange={setCurrentResultsPage}
               onEventClick={handleResultsEventClick}
+              scrollTop={resultsScrollTop}
+              onScrollTopChange={setResultsScrollTop}
             />
           )}
 

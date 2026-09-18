@@ -223,13 +223,9 @@ export default function NavBar({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setOpenPopover((prev) =>
-                prev === 'price' ? null : 'price'
-              );
+              setOpenPopover((prev) => (prev === 'price' ? null : 'price'));
             }}
-            className={`glass-filter ${
-              openPopover === 'price' || priceType ? 'isSelected' : ''
-            }`}
+            className={`glass-filter ${openPopover === 'price' || priceType ? 'isSelected' : ''}`}
           >
             {t('filters.priceButton', 'Prix')}
           </button>
@@ -265,13 +261,9 @@ export default function NavBar({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setOpenPopover((prev) =>
-                prev === 'date' ? null : 'date'
-              );
+              setOpenPopover((prev) => (prev === 'date' ? null : 'date'));
             }}
-            className={`glass-filter ${
-              openPopover === 'date' || startDate ? 'isSelected' : ''
-            }`}
+            className={`glass-filter ${openPopover === 'date' || startDate ? 'isSelected' : ''}`}
           >
             {t('filters.dateButton', 'Date')}
           </button>

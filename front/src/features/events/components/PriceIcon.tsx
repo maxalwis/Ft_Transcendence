@@ -1,4 +1,4 @@
-import styles from '../Event.module.css'
+import styles from '../Event.module.css';
 
 export const PriceIcon = ({ paid }) => (
   <svg

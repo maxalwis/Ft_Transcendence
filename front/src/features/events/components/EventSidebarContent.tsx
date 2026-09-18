@@ -8,29 +8,20 @@ import type { EventItem } from '../../../types/event';
 import { useTranslation } from 'react-i18next';
 
 interface EventSidebarContentProps {
-  eventId?: string;
+  eventId: string;
   currentUserId?: string | number;
 }
 
-export default function EventSidebarContent({
-  eventId,
-  currentUserId,
-}: EventSidebarContentProps) {
+export default function EventSidebarContent({ eventId, currentUserId }: EventSidebarContentProps) {
   const [fetchedEvent, setFetchedEvent] = useState<EventItem | null>(null);
   const [mobileView, setMobileView] = useState<'chat' | 'event'>('event');
 
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (!eventId) {
-      setFetchedEvent(null);
-      return;
-    }
-
     let isMounted = true;
 
-    const baseUrl =
-      import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
     fetch(`${baseUrl}/events/${eventId}`)
       .then((res) => (res.ok ? res.json() : null))
@@ -57,9 +48,7 @@ export default function EventSidebarContent({
         <button
           type="button"
           onClick={() => setMobileView('event')}
-          className={`flex-1 ${
-            mobileView === 'event'
-          }`}
+          className={`flex-1 ${mobileView === 'event'}`}
         >
           {t('sidebar.event', 'Event')}
         </button>
@@ -67,9 +56,7 @@ export default function EventSidebarContent({
         <button
           type="button"
           onClick={() => setMobileView('chat')}
-          className={`flex-1 ${
-            mobileView === 'chat'
-          }`}
+          className={`flex-1 ${mobileView === 'chat'}`}
         >
           {t('chat.title', 'Chat')}
         </button>
@@ -109,15 +96,9 @@ export default function EventSidebarContent({
           </span>
         </div>
 
-        <div
-          dir="ltr"
-          className="flex-1 min-h-0 overflow-hidden flex flex-col"
-        >
+        <div dir="ltr" className="flex-1 min-h-0 overflow-hidden flex flex-col">
           {eventId && currentUserId ? (
-            <Chat
-              eventId={eventId}
-              currentUserId={Number(currentUserId)}
-            />
+            <Chat eventId={eventId} currentUserId={Number(currentUserId)} />
           ) : (
             <div className="text-gray-400 text-sm p-4 flex items-center justify-center h-full">
               {t('chat.connectPrompt', 'Connect to view chat.')}

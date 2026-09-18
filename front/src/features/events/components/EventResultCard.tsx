@@ -9,22 +9,6 @@ interface EventResultCardProps {
   onClick: (eventId: string) => void;
 }
 
-function formatDate(value?: string, locale = 'fr-FR', undefinedText = 'Undefined date') {
-  if (!value) return undefinedText;
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return undefinedText;
-  }
-
-  return date.toLocaleDateString(locale, {
-    day: 'numeric',
-    month: 'numeric',
-    year: 'numeric',
-  });
-}
-
 function cleanText(value?: string) {
   if (!value) return '';
 
@@ -44,11 +28,6 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
 
   const isTranslating = lang !== 'fr' && loading && !translated;
 
-  const currentLocale =
-    lang === 'es' ? 'es-ES' : lang === 'en' ? 'en-US' : lang === 'ar' ? 'ar-SA' : 'fr-FR';
-
-  const undefinedDateText = t('eventPreview.undefinedDate');
-
   /*
    * Use the translated values when available.
    * While translation is loading, keep the original French
@@ -61,8 +40,6 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
     : ((translated?.category as unknown as string[])?.[0] ?? event.category?.[0]);
 
   const displayedPriceType = isTranslating ? undefined : (translated?.priceType ?? event.priceType);
-
-  const eventDate = formatDate(event.dateStart, currentLocale, undefinedDateText);
 
   const rawPriceType = cleanText(displayedPriceType).toLowerCase();
 
