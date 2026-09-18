@@ -16,16 +16,23 @@ ifeq (,$(wildcard .env))
 endif
 
 up: check-env
-	podman compose build
 	podman compose up -d
 	podman compose logs -f
 
+build: check-env
+	podman compose build
+	
 down:
 	podman compose down
 
 elk: check-env
 	podman compose --profile elk build 
 	podman compose --profile elk up -d
+	podman compose logs -f
+
+prisma-studio: check-env
+	podman compose --profile prisma-studio build
+	podman compose --profile prisma-studio up -d
 	podman compose logs -f
 
 clean:

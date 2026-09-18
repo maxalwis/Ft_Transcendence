@@ -167,7 +167,11 @@
     "preferredCategory": "Preferred Category",
     "changePicture": "Change Picture",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "privacyTitle": "Privacy",
+    "downloadData": "Download my data",
+    "deleteAccount": "Delete my account",
+    "deleteEmailSent": "A confirmation email has been sent. Check your inbox to finish deleting your account."
   },
   "publicProfile": {
     "title": "View Profile",
@@ -207,5 +211,15 @@
     "termsUserConduct": "You agree not to use the platform to harass, insult, or send disruptive messages via the chat system, nor to attempt to compromise the security of the application's servers and database.",
     "termsSection3Title": "3. Account Responsibility",
     "termsAccountResponsibility": "You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your user account."
+	},
+  "deleteConfirm": {
+    "title": "Delete your account",
+    "warning": "This is permanent. It removes your profile, messages, and friendships, and cannot be undone.",
+    "confirmButton": "Permanently delete my account",
+    "deleting": "Deleting…",
+    "cancel": "Cancel and go back",
+    "done": "Your account has been permanently deleted. Redirecting…",
+    "invalidLink": "Invalid or missing confirmation link.",
+    "error": "The confirmation link is invalid or expired. Please request deletion again."
   }
 }

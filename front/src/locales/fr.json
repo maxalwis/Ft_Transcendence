@@ -167,7 +167,11 @@
     "preferredCategory": "Catégorie préférée",
     "changePicture": "Changer photo",
     "cancel": "Annuler",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "privacyTitle": "Confidentialité",
+    "downloadData": "Télécharger mes données",
+    "deleteAccount": "Supprimer mon compte",
+    "deleteEmailSent": "Un e-mail de confirmation a été envoyé. Consultez votre boîte de réception pour finaliser la suppression."
   },
   "publicProfile": {
     "title": "Voir profil",
@@ -207,5 +211,15 @@
     "termsUserConduct": "Vous vous engagez à ne pas utiliser la plateforme pour harceler, insulter ou envoyer des messages perturbateurs via le système de chat, ni à tenter de compromettre la sécurité des serveurs et de la base de données de l'application.",
     "termsSection3Title": "3. Responsabilité du compte",
     "termsAccountResponsibility": "Vous êtes responsable du maintien de la confidentialité des identifiants de votre compte et de toutes les activités qui se produisent sous votre compte utilisateur."
+  },
+  "deleteConfirm": {
+    "title": "Supprimer votre compte",
+    "warning": "Cette action est définitive. Elle supprime votre profil, vos messages et vos amis, et ne peut pas être annulée.",
+    "confirmButton": "Supprimer définitivement mon compte",
+    "deleting": "Suppression…",
+    "cancel": "Annuler et revenir",
+    "done": "Votre compte a été définitivement supprimé. Redirection…",
+    "invalidLink": "Lien de confirmation invalide ou manquant.",
+    "error": "Le lien de confirmation est invalide ou expiré. Veuillez refaire une demande de suppression."
   }
 }
