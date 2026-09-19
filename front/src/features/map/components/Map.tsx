@@ -45,6 +45,7 @@ export default function Map() {
   const lang = i18n.language;
 
   const [sidebar, setSidebar] = useState<SidebarState>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentResultsPage, setCurrentResultsPage] = useState(1);
   const [resultsScrollTop, setResultsScrollTop] = useState(0);
 
@@ -128,6 +129,7 @@ export default function Map() {
         eventId: id,
       });
 
+      setIsSidebarOpen(true);
       setActiveGroupId(null);
       setHoverPos(null);
     },
@@ -144,6 +146,7 @@ export default function Map() {
       type: 'results',
     });
 
+    setIsSidebarOpen(true);
     setActiveGroupId(null);
     setHoverPos(null);
   }, [setActiveGroupId]);
@@ -158,6 +161,7 @@ export default function Map() {
       eventId,
     });
 
+    setIsSidebarOpen(true);
     setHoverPos(null);
   }, []);
 
@@ -313,6 +317,8 @@ export default function Map() {
       {/* Sidebar */}
       {sidebar !== null && (
         <SideBar
+          isOpen={isSidebarOpen}
+          onToggle={() => setIsSidebarOpen((prev) => !prev)}
           onClose={() => {
             setSidebar(null);
             setHoverPos(null);
@@ -338,6 +344,7 @@ export default function Map() {
                 type="button"
                 onClick={() => {
                   setSidebar({ type: 'results' });
+                  setIsSidebarOpen(true);
                   setHoverPos(null);
                 }}
                 aria-label="Back to results"
