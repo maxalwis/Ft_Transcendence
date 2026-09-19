@@ -23,6 +23,8 @@
     "defaultCategory": "فعالية",
     "unknownDate": "تاريخ غير معروف",
     "linkLabel": "الرابط:",
+    "loading": "جارٍ تحميل الفعاليات...",
+    "noEvents": "لم يتم العثور على فعاليات",
     "errors": {
       "loadFailed": "حدث خطأ أثناء تحميل الفعالية"
     }
@@ -31,6 +33,7 @@
     "defaultCategory": "فعالية",
     "unknownDate": "تاريخ غير معروف",
     "accessLink": "تفاصيل الفعالية",
+    "back": "رجوع",
     "price": {
       "free": "مجاني",
       "feeBased": "مدفوع"
@@ -61,7 +64,8 @@
     "reset": "إعادة تعيين",
     "allPrices": "الكل",
     "free": "مجاني",
-    "feeBased": "مدفوع"
+    "feeBased": "مدفوع",
+    "resetDate": "إعادة تعيين التاريخ"
   },
   "friends": {
     "buttonTitle": "الأصدقاء",
@@ -71,7 +75,11 @@
     "addTab": "إضافة",
     "requestsTab": "الطلبات",
     "noFriends": "لا يوجد أصدقاء حتى الآن",
-    "remove": "إزالة"
+    "remove": "إزالة",
+    "errors": {
+      "sendFailed": "حدث خطأ أثناء الإرسال.",
+      "removeFailed": "حدث خطأ أثناء الإزالة."
+    }
   },
   "friendsModal": {
     "notLoggedIn": "الرجاء تسجيل الدخول للوصول إلى قائمة أصدقائك.",
@@ -99,7 +107,8 @@
     }
   },
   "friendsList": {
-    "viewProfile": "عرض الملف الشخصي"
+    "viewProfile": "عرض الملف الشخصي",
+    "noUsersFound": "لم يتم العثور على مستخدمين."
   },
   "friendsRequests": {
     "noPendingRequests": "لا توجد طلبات صداقة معلقة.",
@@ -112,6 +121,9 @@
       "sendFailed": "حدث خطأ أثناء إرسال طلب الصداقة.",
       "removeFailed": "حدث خطأ أثناء إزالة الصديق."
     }
+  },
+  "friendsSidebar": {
+    "notLoggedIn": "أنت غير مسجل الدخول."
   },
   "chat": {
     "title": "الدردشة",
@@ -196,7 +208,7 @@
   },
   "likeButton": {
     "loginRequired": "يجب تسجيل الدخول لإضافة حدث إلى المفضلة لديك",
-    "interested_zero": "0 مهتم",
+    "interested": "{{count}} مهتم",
     "interested_one": "{{count}} مهتم",
     "interested_other": "{{count}} مهتمون"
   },
@@ -233,5 +245,10 @@
     "done": "تم حذف حسابك نهائيًا. جارٍ إعادة التوجيه…",
     "invalidLink": "رابط التأكيد غير صالح أو مفقود.",
     "error": "رابط التأكيد غير صالح أو منتهي الصلاحية. يرجى طلب الحذف مرة أخرى."
+  },
+  "sidebar": {
+    "event": "فعالية",
+    "selectEvent": "اختر فعالية.",
+    "close": "إغلاق"
   }
 }
