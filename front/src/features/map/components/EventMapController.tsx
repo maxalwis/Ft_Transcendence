@@ -12,7 +12,13 @@ export function EventMapController({
   const map = useMap();
 
   useEffect(() => {
-    if (!eventId) return;
+    // No event selected → zoom back out
+    if (!eventId) {
+      map.flyTo(map.getCenter(), 14, {
+        duration: 0.8,
+      });
+      return;
+    }
 
     const event = events.find((event) => event.id === eventId);
 
@@ -25,7 +31,8 @@ export function EventMapController({
       return;
     }
 
-    map.flyTo([latitude, longitude], 16, {
+    // Map flyTo with a duration of 0.8 seconds to the event's coordinates at zoom level 16
+    map.flyTo([latitude, longitude], 18, {
       duration: 0.8,
     });
   }, [eventId, events, map]);
