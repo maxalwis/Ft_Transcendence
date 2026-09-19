@@ -264,8 +264,6 @@
   padding: 0 !important;
 
   border: 1px solid var(--color-orange-border);
-  border-radius: var(--radius-lg);
-
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: blur(var(--glass-blur));
@@ -305,6 +303,49 @@
   width: 1.25rem;
   height: 1.25rem;
   display: block;
+}
+
+@media (max-width: 900px) {
+  /* * Sidebar is 90% wide and centered, * so its right edge is 5% from the viewport edge. */
+  .sidebarToggle {
+    width: 3rem;
+    height: 1.75rem;
+
+    left: 50%;
+    right: auto;
+    top: 38.5vh;
+    bottom: auto;
+
+    transform: translate(-50%, -50%);
+  }
+
+  .sidebarToggle[data-state='open'] {
+    top: 38.5vh;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+  }
+
+  .sidebarToggle[data-state='closed'] {
+    top: auto;
+    bottom: calc(3.5rem + env(safe-area-inset-bottom));
+    left: 50%;
+    right: auto;
+
+    transform: translateX(-50%);
+  }
+
+  .sidebarToggle svg {
+    transform: rotate(90deg);
+  }
+
+  .sidebarToggle:hover {
+    width: 3.25rem;
+  }
+
+  .sidebarToggle:active {
+    transform: translate(-50%, -50%) scale(0.9);
+  }
 }
 
 /* ==========================================================================

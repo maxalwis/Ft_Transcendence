@@ -244,7 +244,7 @@ export default function Map() {
         />
         <MapClickHandler
           closeSidebar={() => {
-            setSidebar(null);
+            setIsSidebarOpen(false);
             setHoverPos(null);
           }}
         />

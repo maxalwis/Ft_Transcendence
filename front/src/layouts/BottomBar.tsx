@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import LoginButton from '../features/auth/components/Auth';
 import AuthModal from '../features/auth/components/AuthModal';
@@ -76,6 +76,24 @@ export default function BottomBar() {
     setMobileView('menu');
   };
 
+  useEffect(() => {
+  const mediaQuery = window.matchMedia('(min-width: 900px)');
+
+  const handleChange = (event: MediaQueryListEvent) => {
+    if (event.matches) {
+      setMobileMenuOpen(false);
+      setMobileView('menu');
+      setIsAuthOpen(false);
+    }
+  };
+
+  mediaQuery.addEventListener('change', handleChange);
+
+  return () => {
+    mediaQuery.removeEventListener('change', handleChange);
+  };
+}, []);
+
   return (
     <>
       <div dir="ltr" className="fixed bottom-2 w-full px-4 sm:px-6 z-[1000] pointer-events-none">
@@ -108,7 +126,7 @@ export default function BottomBar() {
               >
                 <div
                   className="glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
-                    glass-panel p-3 flex flex-col items-center gap-2.5
+                    glass-panel p-3 max-[900px]:p-6 flex flex-col items-center gap-2.5
                     shadow-2xl rounded-2xl
                     w-[calc(100vw-2rem)] max-w-xs"
                   onClick={(e) => e.stopPropagation()}

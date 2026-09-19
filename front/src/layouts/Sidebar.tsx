@@ -11,19 +11,32 @@ interface SideBarProps {
 
 export default function SideBar({ isOpen, onToggle, onClose, children }: SideBarProps) {
   const { t } = useTranslation();
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+  };
+
+  const handleAnimationEnd = () => {
+    if (isClosing) {
+      onClose();
+    }
+  };
+
+  const sidebarIsOpen = isOpen && !isClosing;
 
   return (
     <>
       <div
-        data-state={isOpen ? 'open' : 'closed'}
+        data-state={sidebarIsOpen ? 'open' : 'closed'}
+        onAnimationEnd={handleAnimationEnd}
         className={`glass-panel ${styles.sidebarModal} fixed top-15 right-3 bottom-15 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col`}
       >
-        {/* Close Button */}
         <div className="shrink-0">
           <button
             type="button"
             aria-label={t('sidebar.close', 'Close')}
-            onClick={onClose}
+            onClick={handleClose}
             className="modal-button modal-close"
           >
             <svg
@@ -45,9 +58,11 @@ export default function SideBar({ isOpen, onToggle, onClose, children }: SideBar
 
       <button
         type="button"
-        data-state={isOpen ? 'open' : 'closed'}
+        data-state={sidebarIsOpen ? 'open' : 'closed'}
         aria-label={
-          isOpen ? t('sidebar.collapse', 'Collapse sidebar') : t('sidebar.expand', 'Expand sidebar')
+          sidebarIsOpen
+            ? t('sidebar.collapse', 'Collapse sidebar')
+            : t('sidebar.expand', 'Expand sidebar')
         }
         onClick={onToggle}
         className={styles.sidebarToggle}
@@ -60,7 +75,11 @@ export default function SideBar({ isOpen, onToggle, onClose, children }: SideBar
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          {isOpen ? <path d="M15 18l-6-6 6-6" /> : <path d="M9 18l6-6-6-6" />}
+          {sidebarIsOpen ? (
+            <path d="M15 18l-6-6 6-6" />
+          ) : (
+            <path d="M9 18l6-6-6-6" />
+          )}
         </svg>
       </button>
     </>

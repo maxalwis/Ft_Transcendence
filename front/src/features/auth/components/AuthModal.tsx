@@ -211,5 +211,9 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
     return content;
   }
 
-  return <div className="glass-modal-overlay">{content}</div>;
+  return (
+    <div className="glass-modal-overlay" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()}>{content}</div>
+    </div>
+  );
 }
