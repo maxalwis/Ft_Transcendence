@@ -30,7 +30,6 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
 
   const handleApply = () => {
     onApplyFilters?.({
-      city,
       startDate,
       endDate,
       priceType,

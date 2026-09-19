@@ -25,7 +25,6 @@ export default function LoginButton({
   const { t } = useTranslation();
   const { user, logout } = useAuth();
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);

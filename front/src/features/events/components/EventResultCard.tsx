@@ -39,7 +39,7 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
     ? undefined
     : ((translated?.category as unknown as string[])?.[0] ?? event.category?.[0]);
 
-  const displayedPriceType = isTranslating ? undefined : (translated?.priceType ?? event.priceType);
+  const displayedPriceType = isTranslating ? undefined : event.priceType;
 
   const rawPriceType = cleanText(displayedPriceType).toLowerCase();
 

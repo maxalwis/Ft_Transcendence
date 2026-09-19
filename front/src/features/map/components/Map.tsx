@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
-import { MapContainer, useMap, TileLayer } from 'react-leaflet';
+import { useState, useRef, useCallback, useMemo } from 'react';
+import { MapContainer, TileLayer } from 'react-leaflet';
 
 // Third-Party Styles
 import 'leaflet/dist/leaflet.css';

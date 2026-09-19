@@ -77,22 +77,22 @@ export default function BottomBar() {
   };
 
   useEffect(() => {
-  const mediaQuery = window.matchMedia('(min-width: 900px)');
+    const mediaQuery = window.matchMedia('(min-width: 900px)');
 
-  const handleChange = (event: MediaQueryListEvent) => {
-    if (event.matches) {
-      setMobileMenuOpen(false);
-      setMobileView('menu');
-      setIsAuthOpen(false);
-    }
-  };
+    const handleChange = (event: MediaQueryListEvent) => {
+      if (event.matches) {
+        setMobileMenuOpen(false);
+        setMobileView('menu');
+        setIsAuthOpen(false);
+      }
+    };
 
-  mediaQuery.addEventListener('change', handleChange);
+    mediaQuery.addEventListener('change', handleChange);
 
-  return () => {
-    mediaQuery.removeEventListener('change', handleChange);
-  };
-}, []);
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
 
   return (
     <>

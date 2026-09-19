@@ -249,6 +249,8 @@
   "sidebar": {
     "event": "Événement",
     "selectEvent": "Sélectionnez un événement.",
-    "close": "Fermer"
+    "close": "Fermer",
+    "collapse": "Réduire la barre latérale",
+    "expand": "Développer la barre latérale"
   }
 }

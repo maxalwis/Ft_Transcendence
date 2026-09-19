@@ -249,6 +249,8 @@
   "sidebar": {
     "event": "Event",
     "selectEvent": "Select an event.",
-    "close": "Close"
+    "close": "Close",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar"
   }
 }

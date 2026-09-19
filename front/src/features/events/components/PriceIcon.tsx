@@ -1,6 +1,10 @@
 import styles from '../Event.module.css';
 
-export const PriceIcon = ({ paid }) => (
+type PriceIconProps = {
+  paid: boolean;
+};
+
+export const PriceIcon = ({ paid }: PriceIconProps) => (
   <svg
     className={`${styles.priceIcon} ${paid ? styles.paid : styles.free}`}
     width="16"

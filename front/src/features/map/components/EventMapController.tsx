@@ -32,7 +32,6 @@ export function EventMapController({
       return;
     }
 
-
     // Map flyTo with a duration of 0.8 seconds to the event's coordinates at zoom level 16
     map.flyTo([latitude, longitude], 16, {
       duration: 0.8,

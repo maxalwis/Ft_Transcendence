@@ -75,11 +75,7 @@ export default function SideBar({ isOpen, onToggle, onClose, children }: SideBar
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          {sidebarIsOpen ? (
-            <path d="M15 18l-6-6 6-6" />
-          ) : (
-            <path d="M9 18l6-6-6-6" />
-          )}
+          {sidebarIsOpen ? <path d="M15 18l-6-6 6-6" /> : <path d="M9 18l6-6-6-6" />}
         </svg>
       </button>
     </>
