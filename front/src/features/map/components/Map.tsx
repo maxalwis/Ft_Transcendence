@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback, useMemo } from 'react';
-import { MapContainer } from 'react-leaflet';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
+import { MapContainer, useMap, TileLayer } from 'react-leaflet';
 
 // Third-Party Styles
 import 'leaflet/dist/leaflet.css';
@@ -12,7 +12,7 @@ import SideBar from '../../../layouts/Sidebar';
 import NavBar from '../../../layouts/NavBar';
 
 // Marker & Map Visual Components
-import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
+import { MapClickHandler, GlassZoomControl } from '../MapControls';
 import EventPreview from '../../events/components/EventPreview';
 import EventSidebarContent from '../../events/components/EventSidebarContent';
 import EventResultsSidebar from '../../events/components/EventResultsSidebar';
@@ -228,11 +228,11 @@ export default function Map() {
         center={PARIS_CENTER}
         zoom={DEFAULT_ZOOM}
         minZoom={DEFAULT_ZOOM}
-        scrollWheelZoom={true}
+        scrollWheelZoom
         maxBounds={IDF_BOUNDS}
-        maxBoundsViscosity={1.0}
+        maxBoundsViscosity={1}
         zoomControl={false}
-        style={{ height: '100vh', width: '100vw' }}
+        className="h-full w-full"
       >
         <EventMapController
           eventId={sidebar?.type === 'event' ? sidebar.eventId : null}
@@ -245,7 +245,12 @@ export default function Map() {
           }}
         />
 
-        <MyTileLayer />
+        <TileLayer
+          attribution='&copy; <a href="https://jawg.io">JawgMaps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="/api/tiles/{z}/{x}/{y}{r}.png"
+          bounds={IDF_BOUNDS}
+          keepBuffer={0}
+        />
 
         <GlassZoomControl />
 

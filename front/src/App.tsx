@@ -16,9 +16,8 @@ export default function App() {
     <AuthProvider>
       <SocketProvider>
         <NotificationProvider>
-          <div className="relative w-screen h-screen overflow-hidden">
-            {/* The Map takes up the full screen underneath */}
-            <div className="absolute inset-0 w-full h-full z-0">
+          <div className="relative h-screen w-screen overflow-hidden">
+            <div className="absolute inset-0 z-0 overflow-hidden">
               <Routes>
                 <Route path="/" element={<Map />} />
                 <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
