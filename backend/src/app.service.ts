@@ -12,10 +12,21 @@ export class AppService implements OnApplicationBootstrap, OnApplicationShutdown
   }
 
   async onApplicationBootstrap() {
-    // Wait a brief moment or ensure Prisma is connected
+    if (process.env.NODE_ENV === 'test') {
+      return;
+    }
+
     setTimeout(async () => {
-      await this.waitForDatabase();
-      await this.checkAndIngestData();
+      try {
+        await this.waitForDatabase();
+        await this.checkAndIngestData();
+      } catch (error) {
+        this.logger.error(
+          `Application bootstrap task failed: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
+      }
     }, 1500);
   }
 

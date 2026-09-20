@@ -208,8 +208,6 @@ describe('Realtime multi-user concurrency (e2e)', () => {
       .post(`/friends/request/${userBId}`)
       .set('Authorization', `Bearer ${tokenA}`);
 
-    console.log('FRIEND REQUEST HTTP STATUS:', response.status);
-
     expect(response.status).toBe(201);
 
     const notification = await requestPromise;

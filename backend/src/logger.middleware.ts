@@ -2,6 +2,28 @@ import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { WinstonInstance } from './logger/winston-logger';
 
+function sanitize(value: unknown): unknown {
+  if (!value || typeof value !== 'object') {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(sanitize);
+  }
+
+  const result: Record<string, unknown> = {};
+
+  for (const [key, currentValue] of Object.entries(value)) {
+    if (key === 'password' || key === 'accessToken' || key === 'refreshToken') {
+      result[key] = '[REDACTED]';
+    } else {
+      result[key] = sanitize(currentValue);
+    }
+  }
+
+  return result;
+}
+
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   private readonly logger = new Logger('HTTP');
@@ -58,8 +80,8 @@ export class LoggerMiddleware implements NestMiddleware {
       // Format human-readable terminal output with reason
       const logLines = [
         `${method} ${grey}${decodedUrl} ${statusCode} - ${duration}ms`,
-        `${padding}${invisible}${method}${reset}${grey}|- Body: ${JSON.stringify(body)}`,
-        `${padding}${invisible}${method}${reset}${grey}|- Query: ${JSON.stringify(query)}`,
+        `${padding}${invisible}${method}${reset}${grey}|- Body: ${JSON.stringify(sanitize(body))}`,
+        `${padding}${invisible}${method}${reset}${grey}|- Query: ${JSON.stringify(sanitize(query))}`,
       ];
 
       if (reason) {
@@ -71,16 +93,16 @@ export class LoggerMiddleware implements NestMiddleware {
       const humanMessage = logLines.join('\n');
 
       const logPayload = {
-        '@timestamp': new Date().toISOString(), // Guaranteed UTC format (e.g. "2026-09-09T18:09:49.000Z")
+        '@timestamp': new Date().toISOString(),
         http: {
           method,
           originalUrl: decodedUrl,
           statusCode,
           duration,
-          body,
-          query,
+          body: sanitize(body),
+          query: sanitize(query),
           reason,
-          response: responseBody,
+          response: sanitize(responseBody),
         },
       };
 
