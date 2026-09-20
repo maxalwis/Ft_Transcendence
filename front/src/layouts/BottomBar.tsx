@@ -38,8 +38,6 @@ export default function BottomBar() {
   const [legalTab, setLegalTab] = useState<'privacy' | 'terms'>('privacy');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const [mobileView, setMobileView] = useState<
     'menu' | 'friends' | 'auth' | 'profileMenu' | 'profile' | 'legal'
   >('menu');
