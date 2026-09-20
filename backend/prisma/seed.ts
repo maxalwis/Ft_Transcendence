@@ -27,6 +27,8 @@ const prisma = new PrismaClient({ adapter });
 
 // ---- Logstash HTTP Logger Helper ------------------------------------------
 
+const ENABLE_SEED_LOGS = process.env.ENABLE_SEED_LOGS === 'true';
+
 function sendSeedLog(data: {
   message: string;
   action: string;
@@ -34,6 +36,8 @@ function sendSeedLog(data: {
   eventId?: string;
   status?: string;
 }) {
+  if (!ENABLE_SEED_LOGS) return;
+
   const payload = JSON.stringify({
     '@timestamp': new Date().toISOString(),
     service: 'nestjs-backend-seed',
@@ -56,9 +60,9 @@ function sendSeedLog(data: {
     },
   });
 
-  req.on('error', () => {}); // Silently ignore if Logstash is unreachable
-  req.write(payload);
-  req.end();
+  req.setTimeout(1000, () => req.destroy());
+  req.on('error', () => {}); // Silently ignore if Logstash is unreachable after 1s
+  req.end(payload);
 }
 
 // ---- Flags pour activer/désactiver des étapes du seed ---------------------

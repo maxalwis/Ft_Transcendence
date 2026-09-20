@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import LoginButton from '../features/auth/components/Auth';
 import AuthModal from '../features/auth/components/AuthModal';
@@ -36,7 +36,6 @@ export default function BottomBar() {
 
   const [legalModalOpen, setLegalModalOpen] = useState(false);
   const [legalTab, setLegalTab] = useState<'privacy' | 'terms'>('privacy');
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [mobileView, setMobileView] = useState<
@@ -75,6 +74,40 @@ export default function BottomBar() {
     setIsAuthOpen(false);
     setMobileView('menu');
   };
+
+  // Ferme la modale légale au clic n'importe où sur l'écran
+  useEffect(() => {
+    if (!legalModalOpen) return;
+
+    const handleGlobalClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('button')) {
+        setLegalModalOpen(false);
+      }
+    };
+
+    window.addEventListener('click', handleGlobalClick);
+    return () => window.removeEventListener('click', handleGlobalClick);
+  }, [legalModalOpen]);
+
+  const LegalButtons = () => (
+    <>
+      <button
+        type="button"
+        onClick={() => openLegalModal('privacy')}
+        className="glass-panel px-3 py-1.5 text-sm whitespace-nowrap"
+      >
+        {t('legal.privacyButton')}
+      </button>
+      <button
+        type="button"
+        onClick={() => openLegalModal('terms')}
+        className="glass-panel px-3 py-1.5 text-sm whitespace-nowrap"
+      >
+        {t('legal.termsButton')}
+      </button>
+    </>
+  );
 
   return (
     <>
