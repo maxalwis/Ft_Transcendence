@@ -41,11 +41,15 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
     server.use(async (socket: Socket, next) => {
       try {
         const token = socket.handshake.auth?.token;
-        if (!token) return next(new Error('Unauthorized'));
+
+        if (!token) {
+          return next(new Error('Unauthorized'));
+        }
 
         socket.data.user = await this.authService.verifyAccessToken(token);
+
         next();
-      } catch {
+      } catch (error) {
         next(new Error('Unauthorized'));
       }
     });
@@ -57,7 +61,9 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
     client.join(`user:${userId}`);
 
     this.sessionTracker.addSession(userId, client.id);
+
     await this.usersService.setStatus(userId, 'ONLINE');
+
     this.emitter.emitGlobal('user:online', { userId });
   }
 
@@ -75,7 +81,13 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   @SubscribeMessage('event:join')
   async handleJoinEvent(@ConnectedSocket() client: Socket, @MessageBody() eventId: string) {
     await this.eventsService.findOne(eventId);
+
     client.join(`event:${eventId}`);
+
+    return {
+      joined: true,
+      eventId,
+    };
   }
 
   @SubscribeMessage('event:leave')
@@ -86,7 +98,11 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   @UsePipes(new ValidationPipe())
   @SubscribeMessage('message:send')
   async handleMessage(@ConnectedSocket() client: Socket, @MessageBody() dto: CreateMessageDto) {
-    if (!dto.eventId) throw new Error('eventId is required');
+
+    if (!dto.eventId) {
+      throw new Error('eventId is required');
+    }
+
     return this.messagesService.create(client.data.user.id, dto);
   }
 }

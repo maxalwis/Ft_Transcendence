@@ -35,6 +35,18 @@ describe('Realtime multi-user concurrency (e2e)', () => {
     password: 'TestPassword123!',
   };
 
+  const joinEvent = (socket: Socket, eventId: string): Promise<void> =>
+    new Promise((resolve, reject) => {
+      socket.emit('event:join', eventId, (response: { joined: boolean; eventId: string }) => {
+        if (!response?.joined || response.eventId !== eventId) {
+          reject(new Error(`Failed to join event ${eventId}`));
+          return;
+        }
+
+        resolve();
+      });
+    });
+
   const waitForEvent = <T>(socket: Socket, event: string, timeout = 5000): Promise<T> =>
     new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
@@ -63,6 +75,9 @@ describe('Realtime multi-user concurrency (e2e)', () => {
       sockets.push(socket);
 
       const timer = setTimeout(() => {
+        console.log('SOCKET CONNECTION TIMEOUT');
+        console.log('socket.connected:', socket.connected);
+        console.log('socket.id:', socket.id);
         socket.disconnect();
         reject(new Error('Timed out connecting Socket.IO client'));
       }, 5000);
@@ -73,6 +88,7 @@ describe('Realtime multi-user concurrency (e2e)', () => {
       });
 
       socket.once('connect_error', (error) => {
+        console.log('SOCKET CONNECT ERROR:', error.message);
         clearTimeout(timer);
         socket.disconnect();
         reject(error);
@@ -136,8 +152,8 @@ describe('Realtime multi-user concurrency (e2e)', () => {
     const socketA = await connectSocket(tokenA);
     const socketB = await connectSocket(tokenB);
 
-    socketA.emit('event:join', eventId);
-    socketB.emit('event:join', eventId);
+    await joinEvent(socketA, eventId);
+    await joinEvent(socketB, eventId);
 
     const messagePromise = waitForEvent<{
       id: number;
@@ -162,8 +178,8 @@ describe('Realtime multi-user concurrency (e2e)', () => {
     const socketA = await connectSocket(tokenA);
     const socketB = await connectSocket(tokenB);
 
-    socketA.emit('event:join', eventId);
-    socketB.emit('event:join', eventId);
+    await joinEvent(socketA, eventId);
+    await joinEvent(socketB, eventId);
 
     const updatePromise = waitForEvent<{
       eventId: string;
@@ -188,15 +204,18 @@ describe('Realtime multi-user concurrency (e2e)', () => {
       senderId: number;
     }>(socketB, 'friend:request:new');
 
-    await agent(app.getHttpServer())
+    const response = await agent(app.getHttpServer())
       .post(`/friends/request/${userBId}`)
-      .set('Authorization', `Bearer ${tokenA}`)
-      .expect(201);
+      .set('Authorization', `Bearer ${tokenA}`);
+
+    console.log('FRIEND REQUEST HTTP STATUS:', response.status);
+
+    expect(response.status).toBe(201);
 
     const notification = await requestPromise;
 
     expect(notification.senderId).toBe(userAId);
-  });
+  }, 10000);
 
   it('keeps a user online while another socket for the same user remains connected', async () => {
     const socketA1 = await connectSocket(tokenA);

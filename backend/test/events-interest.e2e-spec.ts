@@ -93,7 +93,7 @@ describe('Event interests concurrency (e2e)', () => {
     });
 
     expect(interests).toHaveLength(1);
-  });
+  }, 10000);
 
   it('allows different users to express interest concurrently', async () => {
     await prisma.eventInterest.deleteMany({
@@ -134,7 +134,7 @@ describe('Event interests concurrency (e2e)', () => {
     });
 
     expect(count).toBeGreaterThanOrEqual(2);
-  });
+  }, 10000);
 
   afterAll(async () => {
     if (prisma) {

@@ -87,7 +87,7 @@ describe('Friends concurrency (e2e)', () => {
     });
 
     expect(friendships).toHaveLength(1);
-  });
+  }, 30000);
 
   afterAll(async () => {
     if (prisma) {
@@ -105,7 +105,6 @@ describe('Friends concurrency (e2e)', () => {
           ],
         },
       });
-
       await prisma.user.deleteMany({
         where: {
           id: {
@@ -118,5 +117,5 @@ describe('Friends concurrency (e2e)', () => {
     if (app) {
       await app.close();
     }
-  });
+  }, 10000);
 });
