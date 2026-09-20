@@ -1,6 +1,8 @@
-.PHONY: all up logs down clean fclean build check-env re restart test test-unit test-health test-e2e prepare-socket elk
+.PHONY: all up logs down elk clean fclean build check-env re restart test-unit test-health test-e2e prepare-socket seed elk-seed
 export CONTAINERS_REGISTRIES_CONF = $(shell pwd)/.containers/registries.conf
 export PODMAN_COMPOSE_WARNING_LOGS=0
+LAN_IP := $(shell hostname -I | awk '{print $$1}')
+HTTPS_PORT := 8443
 
 all: up
 
@@ -67,3 +69,9 @@ test-health:
 # Run E2E tests in an isolated container (requests based tests)
 test-e2e:
 	podman compose run --rm backend npm run test:e2e
+
+seed:
+	podman compose exec backend npx prisma db seed
+
+elk-seed:
+	ENABLE_SEED_LOGS=true podman compose exec backend npx prisma db seed

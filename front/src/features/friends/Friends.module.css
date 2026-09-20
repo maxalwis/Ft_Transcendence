@@ -115,3 +115,14 @@
     background: var(--color-taupe-50) !important;
   }
 }
+
+@media (max-width: 900px) {
+.sidebarModal {
+	position: fixed !important;
+    bottom: 140px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 1000 !important;
+	background: var(--color-taupe-50) !important;
+	}
+}
