@@ -1,13 +1,25 @@
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/useAuth';
 import { useState, useRef, useEffect } from 'react';
-import EditProfile from '../../profile/EditProfile.tsx';
+import EditProfile from '../../profile/components/EditProfile.tsx';
 
 interface LoginButtonProps {
   onOpenAuth: () => void;
+  embedded?: boolean;
+  mobileProfileMenu?: boolean;
+  onOpenProfile?: () => void;
+  onOpenEditProfile?: () => void;
+  onBack?: () => void;
 }
 
-export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
+export default function LoginButton({
+  onOpenAuth,
+  embedded = false,
+  mobileProfileMenu = false,
+  onOpenProfile,
+  onOpenEditProfile,
+  onBack,
+}: LoginButtonProps) {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
 
@@ -40,6 +52,30 @@ export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
     }
   };
 
+  if (user && mobileProfileMenu) {
+    return (
+      <div className="w-full flex flex-col gap-2">
+        <button
+          type="button"
+          className="w-full px-4 py-2"
+          onClick={() => {
+            onOpenEditProfile?.();
+          }}
+        >
+          {t('authBtn.editProfile')}
+        </button>
+
+        <button type="button" className="w-full px-4 py-2" onClick={handleLogout}>
+          {t('authBtn.logout')}
+        </button>
+
+        <button type="button" onClick={() => onBack?.()}>
+          {t('common.back')}
+        </button>
+      </div>
+    );
+  }
+
   if (user) {
     return (
       <div className="relative" ref={menuRef}>
@@ -48,8 +84,12 @@ export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
           aria-label={`Ouvrir le menu de ${user.username ?? 'Profil'}`}
           title={user.username ?? 'Profil'}
           onClick={() => {
+            if (embedded && onOpenProfile) {
+              onOpenProfile();
+              return;
+            }
+
             setIsMenuOpen((prev) => !prev);
-            console.log('clicked, isMenuOpen avant:', isMenuOpen);
           }}
         >
           {user.avatar ? (
@@ -81,7 +121,14 @@ export default function LoginButton({ onOpenAuth }: LoginButtonProps) {
           </div>
         )}
 
-        {isEditOpen && <EditProfile onClose={() => setIsEditOpen(false)} />}
+        {isEditOpen && (
+          <EditProfile
+            onClose={() => {
+              setIsEditOpen(false);
+              onBack?.();
+            }}
+          />
+        )}
       </div>
     );
   }

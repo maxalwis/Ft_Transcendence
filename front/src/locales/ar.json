@@ -16,10 +16,16 @@
     "leisure": "رياضة وترفيه",
     "others": "أخرى"
   },
+  "common": {
+    "back": "رجوع"
+  },
   "events": {
     "defaultCategory": "فعالية",
     "unknownDate": "تاريخ غير معروف",
-    "linkLabel": "الرابط:"
+    "linkLabel": "الرابط:",
+    "errors": {
+      "loadFailed": "حدث خطأ أثناء تحميل الفعالية"
+    }
   },
   "eventDetails": {
     "defaultCategory": "فعالية",
@@ -67,7 +73,7 @@
     "noFriends": "لا يوجد أصدقاء حتى الآن",
     "remove": "إزالة"
   },
-  "friendsSidebar": {
+  "friendsModal": {
     "notLoggedIn": "الرجاء تسجيل الدخول للوصول إلى قائمة أصدقائك.",
     "search": "البحث عن أصدقاء",
     "pendingRequests": "الطلبات المعلقة ({{count}})",
@@ -102,17 +108,22 @@
     "fallbackUser": "مستخدم #{{id}}",
     "errors": {
       "acceptFailed": "حدث خطأ أثناء قبول الطلب.",
-      "rejectFailed": "حدث خطأ أثناء رفض الطلب."
+      "rejectFailed": "حدث خطأ أثناء رفض الطلب.",
+      "sendFailed": "حدث خطأ أثناء إرسال طلب الصداقة.",
+      "removeFailed": "حدث خطأ أثناء إزالة الصديق."
     }
   },
   "chat": {
     "title": "الدردشة",
     "connectPrompt": "سجل الدخول لعرض الدردشة.",
     "loadingMessages": "جاري تحميل الرسائل...",
-    "errorLoadMessages": "فشل تحميل الرسائل",
-    "errorSend": "خطأ أثناء محاولة إرسال الرسالة",
     "placeholder": "اكتب رسالتك...",
-    "send": "إرسال"
+    "send": "إرسال",
+    "errors": {
+      "loginRequiredToSend": "يجب تسجيل الدخول لإرسال رسالة.",
+      "loadMessages": "تعذّر تحميل الرسائل",
+      "sendMessage": "حدث خطأ أثناء إرسال الرسالة"
+    }
   },
   "passwordModal": {
     "title": "تغيير كلمة المرور",

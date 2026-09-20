@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { fr, enUS, es, ar } from 'date-fns/locale';
+import LanguageSelector from './LanguageSelector';
 import 'react-datepicker/dist/react-datepicker.css';
 
 registerLocale('fr', fr);
@@ -108,99 +109,95 @@ export default function NavBar({
       dir="ltr"
       className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-14 md:px-6 pointer-events-none"
     >
-      <div className="w-full flex items-center justify-center md:justify-between">
+      <LanguageSelector embedded />
+
+      <div className="w-full flex items-center justify-center md:justify-between pr-4">
         {/* Left spacer, keeps navbar in the middle */}
         <div className="w-45 hidden md:block" />
 
         {/* Category Navigation on small/medium */}
-        <div className="relative z-10 flex items-center pointer-events-auto max-w-full py-4">
+        <div className="relative z-10 flex items-center max-w-full py-4">
           {canScrollLeft && (
-            <>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  scrollCategories('left');
-                }}
-                aria-label={t('nav.scrollLeft', 'Défiler vers la gauche')}
-                className="glass-panel icon-btn md:hidden flex-shrink-0 w-8 h-8 rounded-full mr-1"
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                scrollCategories('left');
+              }}
+              aria-label={t('nav.scrollLeft', 'Défiler vers la gauche')}
+              className="glass-icon-filter icon-btn md:hidden absolute left-0 z-20"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-              <div aria-hidden className={`glass-filter ${isActive ? 'isSelected' : ''}`} />
-            </>
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
           )}
 
-          <nav
-            ref={categoriesScrollRef}
-            className="flex items-center gap-2 md:gap-3 overflow-x-auto max-w-full [&::-webkit-scrollbar]:hidden"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {categories.map((cat) => {
-              const currentCategory = (activeCategory || '').trim().toLowerCase();
-              const targetCategory = cat.value.trim().toLowerCase();
+          {/* Actual clipping area */}
+          <div className="max-w-full overflow-hidden px-4">
+            <nav
+              ref={categoriesScrollRef}
+              className="flex items-center gap-2 md:gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {categories.map((cat) => {
+                const currentCategory = (activeCategory || '').trim().toLowerCase();
+                const targetCategory = cat.value.trim().toLowerCase();
 
-              // "All" is active if target is empty AND current active category is empty
-              // Specific category is active if strings match case-insensitively
-              const isActive =
-                targetCategory === '' ? currentCategory === '' : currentCategory === targetCategory;
+                const isActive =
+                  targetCategory === ''
+                    ? currentCategory === ''
+                    : currentCategory === targetCategory;
 
-              return (
-                <button
-                  key={cat.value || 'all'}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSelectCategory?.(cat.value);
-                  }}
-                  className={`glass-filter ${isActive ? 'isSelected' : ''}`}
-                >
-                  {cat.label}
-                </button>
-              );
-            })}
-          </nav>
+                return (
+                  <button
+                    key={cat.value || 'all'}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectCategory?.(cat.value);
+                    }}
+                    className={`glass-filter ${isActive ? 'isSelected' : ''}`}
+                  >
+                    {cat.label}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
 
           {canScrollRight && (
-            <>
-              <div
-                aria-hidden
-                className="md:hidden pointer-events-none absolute right-9 top-0 bottom-0 w-6 bg-gradient-to-l from-black/10 to-transparent"
-              />
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  scrollCategories('right');
-                }}
-                aria-label={t('nav.scrollRight', 'Défiler vers la droite')}
-                className="glass-panel icon-btn md:hidden flex-shrink-0 w-8 h-8 rounded-full ml-1"
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                scrollCategories('right');
+              }}
+              aria-label={t('nav.scrollRight', 'Défiler vers la droite')}
+              className="glass-icon-filter icon-btn md:hidden absolute right-0 z-20"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-            </>
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
           )}
         </div>
 

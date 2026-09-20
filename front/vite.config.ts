@@ -73,7 +73,7 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           // 2. Log proxy connection errors to terminal
           configure: (proxy) => {
-            proxy.on('error', (err, _req, _res) => {
+            proxy.on('error', (err) => {
               console.error(`${RED}[Vite Proxy Error] ${err.message}${RESET}`);
             });
           },

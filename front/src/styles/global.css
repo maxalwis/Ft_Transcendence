@@ -144,6 +144,9 @@ button.icon-btn,
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .modal-close {
@@ -187,6 +190,10 @@ button.icon-btn,
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   color: var(--color-orange-primary);
+
+  svg {
+    justify-self: center;
+  }
 }
 
 .modal-close-inline:hover {
@@ -275,7 +282,7 @@ pre {
 }
 
 .glass-modal {
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--glass-bg-whitened);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 2px solid var(--color-orange-primary);
@@ -287,7 +294,7 @@ pre {
 .glass-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 999;
+  z-index: 400;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -302,23 +309,42 @@ pre {
   border: 2px solid var(--color-blue-dark);
 }
 
-.glass-filter {
-  /* Glass */
+.glass-filter,
+.glass-icon-filter {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
 
-  /* Shape & sizing */
-    border: 1px solid var(--color-orange-border);
+  border: 1px solid var(--color-orange-border);
+
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s ease;
+}
+
+.glass-filter {
+  min-height: 2.5rem;
   padding: 0.375rem 1rem;
   border-radius: var(--radius-lg);
-
-  /* Typography */
   white-space: nowrap;
+}
 
-  /* Interaction */
-  cursor: pointer;
-  transition: all 0.2s ease;
+.glass-icon-filter {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 !important;
+  border-radius: 50%;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .glass-icon-filter {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
 }
 
 /* Icon Overrides */
@@ -449,5 +475,32 @@ pre {
     background: var(--color-orange-hover);
     border-color: var(--color-orange-border);
     transform: scale(0.98);
+  }
+}
+
+/* ==========================================================================
+   Media Queries
+   ========================================================================== */
+
+.mobile-only {
+  display: none;
+}
+
+.mobile-desktop {
+  display: flex;
+}
+
+@media (max-width: 900px) {
+  .mobile-only {
+    display: flex;
+  }
+
+  .mobile-desktop {
+    display: none;
+  }
+
+  .glass-modal {
+    width: 90%;
+    max-width: 400px;
   }
 }
