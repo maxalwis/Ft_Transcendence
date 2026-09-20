@@ -45,16 +45,22 @@ export class UsersService {
 
   // fonction pour chercher les users à ajouter dans la liste d'amis
   // exclut le user qui fait la recherche de la liste
-  async searchByUsername(query: string, excludeUserId?: number): Promise<User[]> {
+  async searchByUsername(query: string, excludeUserId?: number) {
     return this.prisma.user.findMany({
       where: {
         username: {
           contains: query,
-          mode: 'insensitive', // recherche insensible à la casse
+          mode: 'insensitive',
         },
         ...(excludeUserId && { id: { not: excludeUserId } }),
       },
-      take: 20, // renvoie 20 users max
+      select: {
+        id: true,
+        username: true,
+        avatar: true,
+        status: true,
+      },
+      take: 20,
     });
   }
 

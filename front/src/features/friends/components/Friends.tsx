@@ -67,6 +67,20 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
   useEffect(() => {
     if (!socket) return;
 
+    const handleFriendUpdate = () => {
+      loadData();
+    };
+
+    socket.on('friend:updated', handleFriendUpdate);
+
+    return () => {
+      socket.off('friend:updated', handleFriendUpdate);
+    };
+  }, [socket, loadData]);
+
+  useEffect(() => {
+    if (!socket) return;
+
     const handleFriendRequest = () => {
       loadData();
     };

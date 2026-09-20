@@ -75,7 +75,7 @@
   },
   "friendsModal": {
     "notLoggedIn": "Por favor, inicia sesión para ver tu lista de amigos.",
-    "search": "Buscar amigos",
+    "friendlist": "Lista de amigos",
     "pendingRequests": "Solicitudes pendientes ({{count}})",
     "pendingRequests_one": "Solicitud pendiente ({{count}})",
     "add": "Añadir amigo",
