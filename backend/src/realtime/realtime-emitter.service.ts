@@ -16,4 +16,8 @@ export class RealtimeEmitterService {
   emitGlobal(event: string, payload: unknown) {
     this.server?.emit(event, payload);
   }
+
+  emitToUser(userId: number, event: string, payload: unknown) {
+    this.server?.to(`user:${userId}`).emit(event, payload);
+  }
 }

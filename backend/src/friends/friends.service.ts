@@ -4,11 +4,16 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '../generated/prisma/client';
 
 @Injectable()
 export class FriendsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private emitter: RealtimeEmitterService
+  ) {}
 
   async sendFriendRequest(senderId: number, receiverId: number) {
     if (senderId === receiverId) {
@@ -38,13 +43,27 @@ export class FriendsService {
     }
 
     // 3. Créer la demande en attente
-    return this.prisma.friendship.create({
-      data: {
-        senderId: senderId,
-        receiverId: receiverId,
-        status: 'PENDING',
-      },
-    });
+    try {
+      const friendship = await this.prisma.friendship.create({
+        data: {
+          senderId,
+          receiverId,
+          status: 'PENDING',
+        },
+      });
+
+      this.emitter.emitToUser(receiverId, 'friend:request:new', {
+        senderId,
+      });
+
+      return friendship;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new ConflictException('Une demande ou une amitié existe déjà.');
+      }
+
+      throw error;
+    }
   }
 
   async acceptFriendRequest(senderId: number, receiverId: number) {

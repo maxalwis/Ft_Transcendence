@@ -16,20 +16,22 @@ import { MessagesService } from '../messages/messages.service';
 import { CreateMessageDto } from '../messages/dto/create-message.dto';
 import { SessionTrackerService } from './session-tracker.service';
 import { RealtimeEmitterService } from './realtime-emitter.service';
+import { EventsService } from '../events/events.service';
 
 @WebSocketGateway({
   cors: { origin: process.env.FRONTEND_URL, credentials: true },
 })
 export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server!: Server;
-    private readonly logger = new Logger(RealtimeGateway.name);
+  private readonly logger = new Logger(RealtimeGateway.name);
 
   constructor(
     private authService: AuthService,
     private sessionTracker: SessionTrackerService,
     private usersService: UsersService,
     private messagesService: MessagesService,
-    private emitter: RealtimeEmitterService
+    private emitter: RealtimeEmitterService,
+    private eventsService: EventsService
   ) {}
 
   afterInit(server: Server) {
@@ -51,6 +53,9 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
   async handleConnection(client: Socket) {
     const userId = client.data.user.id;
+
+    client.join(`user:${userId}`);
+
     this.sessionTracker.addSession(userId, client.id);
     await this.usersService.setStatus(userId, 'ONLINE');
     this.emitter.emitGlobal('user:online', { userId });
@@ -68,7 +73,8 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   }
 
   @SubscribeMessage('event:join')
-  handleJoinEvent(@ConnectedSocket() client: Socket, @MessageBody() eventId: string) {
+  async handleJoinEvent(@ConnectedSocket() client: Socket, @MessageBody() eventId: string) {
+    await this.eventsService.findOne(eventId);
     client.join(`event:${eventId}`);
   }
 

@@ -6,7 +6,9 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
+  "transformIgnorePatterns": ["node_modules/(?!(htmlparser2)/)"],
   "moduleNameMapper": {
+    "^sanitize-html$": "<rootDir>/__mocks__/sanitize-html.ts",
     "^(\\.\\.?\\/.+)\\.js$": "$1"
   }
 }
