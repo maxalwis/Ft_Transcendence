@@ -4,11 +4,16 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '../generated/prisma/client';
 
 @Injectable()
 export class FriendsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private emitter: RealtimeEmitterService
+  ) {}
 
   async sendFriendRequest(senderId: number, receiverId: number) {
     if (senderId === receiverId) {
@@ -38,13 +43,30 @@ export class FriendsService {
     }
 
     // 3. Créer la demande en attente
-    return this.prisma.friendship.create({
-      data: {
-        senderId: senderId,
-        receiverId: receiverId,
-        status: 'PENDING',
-      },
-    });
+    try {
+      const friendship = await this.prisma.friendship.create({
+        data: {
+          senderId,
+          receiverId,
+          status: 'PENDING',
+        },
+      });
+
+      this.emitter.emitToUser(senderId, 'friend:request:new', {
+        receiverId,
+      });
+      this.emitter.emitToUser(receiverId, 'friend:request:new', {
+        senderId,
+      });
+
+      return friendship;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new ConflictException('Une demande ou une amitié existe déjà.');
+      }
+
+      throw error;
+    }
   }
 
   async acceptFriendRequest(senderId: number, receiverId: number) {
@@ -60,10 +82,22 @@ export class FriendsService {
       throw new NotFoundException('Aucune demande d’ami en attente trouvée.');
     }
 
-    return this.prisma.friendship.update({
+    const friendship = await this.prisma.friendship.update({
       where: { id: pendingRequest.id },
       data: { status: 'ACCEPTED' },
     });
+
+    this.emitter.emitToUser(senderId, 'friend:updated', {
+      friendId: receiverId,
+      action: 'accepted',
+    });
+
+    this.emitter.emitToUser(receiverId, 'friend:updated', {
+      friendId: senderId,
+      action: 'accepted',
+    });
+
+    return friendship;
   }
 
   async rejectFriendRequest(senderId: number, receiverId: number) {
@@ -112,7 +146,7 @@ export class FriendsService {
   }
 
   async removeFriend(userId: number, friendId: number) {
-    const friendship = await this.prisma.friendship.findFirst({
+    const result = await this.prisma.friendship.deleteMany({
       where: {
         OR: [
           { senderId: userId, receiverId: friendId },
@@ -122,13 +156,21 @@ export class FriendsService {
       },
     });
 
-    if (!friendship) {
+    if (result.count === 0) {
       throw new NotFoundException("Cette amitié n'existe pas.");
     }
 
-    return this.prisma.friendship.delete({
-      where: { id: friendship.id },
+    this.emitter.emitToUser(userId, 'friend:updated', {
+      friendId,
+      action: 'removed',
     });
+
+    this.emitter.emitToUser(friendId, 'friend:updated', {
+      friendId: userId,
+      action: 'removed',
+    });
+
+    return { success: true };
   }
 
   // utilisé pour events-interest, plus léger que getUserFriends (renvoie seulement des id)

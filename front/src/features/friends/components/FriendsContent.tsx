@@ -89,7 +89,7 @@ export default function FriendsContent({
               className={`${styles.menuButton} ${styles.menuButtonBlue}`}
               onClick={() => setAction('default')}
             >
-              {t('friendsModal.search')}
+              {t('friendsModal.friendlist')}
             </button>
 
             <button

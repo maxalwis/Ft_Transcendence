@@ -131,6 +131,13 @@ CREATE UNIQUE INDEX "User_provider_providerId_key" ON "User"("provider", "provid
 CREATE UNIQUE INDEX "Friendship_senderId_receiverId_key" ON "Friendship"("senderId", "receiverId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Friendship_user_pair_unique"
+ON "Friendship" (
+    LEAST("senderId", "receiverId"),
+    GREATEST("senderId", "receiverId")
+);
+
+-- CreateIndex
 CREATE INDEX "EventInterest_eventId_idx" ON "EventInterest"("eventId");
 
 -- CreateIndex

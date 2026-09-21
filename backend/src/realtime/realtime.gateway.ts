@@ -16,6 +16,7 @@ import { MessagesService } from '../messages/messages.service';
 import { CreateMessageDto } from '../messages/dto/create-message.dto';
 import { SessionTrackerService } from './session-tracker.service';
 import { RealtimeEmitterService } from './realtime-emitter.service';
+import { EventsService } from '../events/events.service';
 import { User, UserStatus } from '../generated/prisma/browser';
 import { LoggerMiddleware } from '../logger.middleware';
 
@@ -31,7 +32,8 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
     private sessionTracker: SessionTrackerService,
     private usersService: UsersService,
     private messagesService: MessagesService,
-    private emitter: RealtimeEmitterService
+    private emitter: RealtimeEmitterService,
+    private eventsService: EventsService
   ) {}
 
   afterInit(server: Server) {
@@ -41,11 +43,15 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
     server.use(async (socket: Socket, next) => {
       try {
         const token = socket.handshake.auth?.token;
-        if (!token) return next(new Error('Unauthorized'));
+
+        if (!token) {
+          return next(new Error('Unauthorized'));
+        }
 
         socket.data.user = await this.authService.verifyAccessToken(token);
+
         next();
-      } catch {
+      } catch (error) {
         next(new Error('Unauthorized'));
       }
     });
@@ -53,6 +59,9 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
   async handleConnection(client: Socket) {
     const userId = client.data.user.id;
+
+    client.join(`user:${userId}`);
+
     this.sessionTracker.addSession(userId, client.id);
 
     const user = await this.usersService.setStatusIfExists(userId, 'ONLINE');
@@ -85,8 +94,15 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   }
 
   @SubscribeMessage('event:join')
-  handleJoinEvent(@ConnectedSocket() client: Socket, @MessageBody() eventId: string) {
+  async handleJoinEvent(@ConnectedSocket() client: Socket, @MessageBody() eventId: string) {
+    await this.eventsService.findOne(eventId);
+
     client.join(`event:${eventId}`);
+
+    return {
+      joined: true,
+      eventId,
+    };
   }
 
   @SubscribeMessage('event:leave')

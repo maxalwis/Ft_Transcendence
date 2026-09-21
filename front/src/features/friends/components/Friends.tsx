@@ -1,10 +1,11 @@
-import { useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 import { useTranslation } from 'react-i18next';
 
 import { getFriends, getPendingRequests } from '../../../api/friends';
 import type { User, PendingRequest } from '../../../api/friends';
+import { useSocket } from '../../../context/socket/useSocket';
 
 import FriendsContent from './FriendsContent';
 import FriendsModal from './FriendsModal';
@@ -34,6 +35,7 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
   const { showWarning } = useNotification();
   const { t } = useTranslation();
   const { user, accessToken } = useAuth();
+  const { socket } = useSocket();
 
   const loadData = useCallback(async () => {
     if (!accessToken) return;
@@ -61,6 +63,34 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
       loadData();
     }
   };
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleFriendUpdate = () => {
+      loadData();
+    };
+
+    socket.on('friend:updated', handleFriendUpdate);
+
+    return () => {
+      socket.off('friend:updated', handleFriendUpdate);
+    };
+  }, [socket, loadData]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleFriendRequest = () => {
+      loadData();
+    };
+
+    socket.on('friend:request:new', handleFriendRequest);
+
+    return () => {
+      socket.off('friend:request:new', handleFriendRequest);
+    };
+  }, [socket, loadData]);
 
   return (
     <div className={embedded ? 'w-full' : 'relative'}>

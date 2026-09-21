@@ -83,7 +83,7 @@
   },
   "friendsModal": {
     "notLoggedIn": "الرجاء تسجيل الدخول للوصول إلى قائمة أصدقائك.",
-    "search": "البحث عن أصدقاء",
+    "friendslist": "قائمة الأصدقاء",
     "pendingRequests": "الطلبات المعلقة ({{count}})",
     "pendingRequests_one": "طلب معلق ({{count}})",
     "add": "إضافة صديق",

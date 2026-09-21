@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Param,
   Put,
@@ -12,6 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
@@ -64,8 +64,13 @@ export class UsersController {
       preferredLanguage?: 'FR' | 'EN' | 'ES' | 'AR';
       preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS';
     },
+    @Req() req: any,
     @UploadedFile() file?: Express.Multer.File
   ) {
+    if (req.user?.id !== id) {
+      throw new ForbiddenException('You can only update your own account');
+    }
+
     return this.usersService.update(id, {
       ...body,
       avatar: file ? `/uploads/avatars/${file.filename}` : undefined,
@@ -74,7 +79,11 @@ export class UsersController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+    if (req.user?.id !== id) {
+      throw new ForbiddenException('You can only delete your own account');
+    }
+
     return this.usersService.remove(id);
   }
 }
