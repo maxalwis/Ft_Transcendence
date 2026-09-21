@@ -50,70 +50,64 @@ export default function FriendsContent({
   }
 
   return (
-    <>
-      {showRequests && (
-        <button
-          type="button"
-          aria-label={t('friendsModal.back', 'Back')}
-          className="modal-close left-3 right-auto"
-          onClick={handleBack}
-        >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-        </button>
-      )}
+  <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+    {/* Back button */}
 
-      <div className={`flex-1 overflow-y-auto ${showRequests ? 'pt-12' : 'pt-2'}`}>
-        {showRequests ? (
-          <FriendsRequests requests={requests} onDataChanged={onDataChanged} />
-        ) : input.trim() ? (
-          <FriendsSearchResults
-            input={input}
-            friends={friends}
-            onDataChanged={onDataChanged}
-            onSelectFriend={setSelectedFriend}
-          />
-        ) : (
-          <FriendsList friends={friends} onSelectFriend={setSelectedFriend} />
-        )}
-      </div>
-
-      {!showRequests && (
-        <>
-          {requests.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setShowRequests(true)}
-              className="px-3 py-2 text-center text-xs font-medium text-black/70 transition hover:text-black"
-            >
-              {t('friendsModal.pendingRequests', {
-                count: requests.length,
-              })}
-            </button>
-          )}
-
-          <div className="glass-panel">
-            <FriendsSearchBar input={input} setInput={setInput} />
-          </div>
-        </>
-      )}
-
-      {selectedFriend && (
-        <ViewProfile
-          friend={selectedFriend}
-          onClose={() => setSelectedFriend(null)}
-          onRemove={onRemoveFriend}
+    <div
+      className={`min-h-0 flex-1 overflow-y-auto ${
+        showRequests ? 'pt-12' : 'pt-2'
+      }`}
+    >
+      {showRequests ? (
+        <FriendsRequests
+          requests={requests}
+          onDataChanged={onDataChanged}
+        />
+      ) : input.trim() ? (
+        <FriendsSearchResults
+          input={input}
+          friends={friends}
+          onDataChanged={onDataChanged}
+          onSelectFriend={setSelectedFriend}
+        />
+      ) : (
+        <FriendsList
+          friends={friends}
+          onSelectFriend={setSelectedFriend}
         />
       )}
-    </>
-  );
+    </div>
+
+    {!showRequests && (
+      <div className="shrink-0">
+        {requests.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowRequests(true)}
+            className="w-full bg-transparent! border-hidden! py-3!"
+          >
+            {t('friendsModal.pendingRequests', {
+              count: requests.length,
+            })}
+          </button>
+        )}
+
+        <div className="glass-panel shrink-0">
+          <FriendsSearchBar
+            input={input}
+            setInput={setInput}
+          />
+        </div>
+      </div>
+    )}
+
+    {selectedFriend && (
+      <ViewProfile
+        friend={selectedFriend}
+        onClose={() => setSelectedFriend(null)}
+        onRemove={onRemoveFriend}
+      />
+    )}
+  </div>
+);
 }

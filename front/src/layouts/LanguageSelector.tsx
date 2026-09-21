@@ -42,12 +42,26 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
   ] as const;
 
   const content = embedded ? (
-    // Mobile
-    <div ref={selectorRef} className="fixed top-4 right-4 z-1100 pointer-events-auto">
+    <div
+      ref={selectorRef}
+      className="
+      fixed
+      top-4
+      right-4
+      z-1100
+      pointer-events-auto
+
+      min-[901px]:flex
+      min-[901px]:items-center
+      min-[901px]:gap-2
+      min-[901px]:flex-row-reverse
+    "
+    >
+      {/* Language toggle */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="glass-panel cursor-pointer p-2 rounded-full"
+        className="glass-panel cursor-pointer p-2 rounded-full max-[900px]:mb-1"
         title="Language"
         aria-label="Language"
         aria-expanded={isOpen}
@@ -56,7 +70,15 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 flex flex-col gap-2">
+        <div
+          className="
+          flex
+          flex-col
+          gap-2
+
+          min-[901px]:flex-row
+        "
+        >
           {languages.map(({ code, title, Flag }) => (
             <button
               key={code}
@@ -77,8 +99,24 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
       )}
     </div>
   ) : (
-    // Desktop
-    <div className="fixed top-1/2 -translate-y-1/2 right-4 z-1100 flex flex-col items-center gap-2 pointer-events-auto max-[900px]:top-[19%]">
+    // Desktop / non-embedded
+    <div
+      className="
+      fixed
+      top-1/2
+      -translate-y-1/2
+      right-4
+      z-1100
+      flex
+      flex-row
+      items-center
+      gap-2
+      pointer-events-auto
+
+      max-[900px]:top-[19%]
+      max-[900px]:flex-col
+    "
+    >
       {languages.map(({ code, title, Flag }) => (
         <button
           key={code}

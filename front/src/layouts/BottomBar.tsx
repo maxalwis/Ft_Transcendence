@@ -125,7 +125,7 @@ export default function BottomBar() {
                     glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
                     glass-panel p-3 flex flex-col items-center gap-2.5
                     shadow-2xl rounded-2xl
-                    w-[calc(100vw-2rem)] max-w-xs
+                    w-[calc(100vw-2rem)] max-w-xs max-h-[50vh]
                   "
                   onClick={(e) => e.stopPropagation()}
                 >

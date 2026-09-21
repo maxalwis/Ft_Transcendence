@@ -47,7 +47,7 @@ export default function ViewProfile({ friend, onClose, onRemove }: ViewProfilePr
 
           <button
             type="button"
-            className="modal-close"
+            className="modal-buttonmodal-close"
             onClick={requestClose}
             aria-label={t('common.close', 'Close')}
           >

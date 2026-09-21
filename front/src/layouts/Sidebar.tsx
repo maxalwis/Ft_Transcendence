@@ -7,9 +7,10 @@ interface SideBarProps {
   onToggle: () => void;
   onClose: () => void;
   children: React.ReactNode;
+  type?: 'results' | 'event';
 }
 
-export default function SideBar({ isOpen, onToggle, onClose, children }: SideBarProps) {
+export default function SideBar({ isOpen, onToggle, onClose, children, type }: SideBarProps) {
   const { t } = useTranslation();
   const [isClosing, setIsClosing] = useState(false);
 
@@ -30,7 +31,8 @@ export default function SideBar({ isOpen, onToggle, onClose, children }: SideBar
       <div
         data-state={sidebarIsOpen ? 'open' : 'closed'}
         onAnimationEnd={handleAnimationEnd}
-        className={`glass-panel ${styles.sidebarModal} fixed top-15 right-3 bottom-15 w-[20vw] rounded-xl p-5 shadow-lg z-1000 flex flex-col`}
+        data-sidebar-type={type}
+        className={`glass-panel ${styles.sidebarModal} fixed top-15 right-3 bottom-15 w-[20vw] rounded-xl shadow-lg z-1000 flex flex-col`}
       >
         <div className="shrink-0">
           <button

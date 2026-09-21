@@ -323,6 +323,7 @@ export default function Map() {
             setSidebar(null);
             setHoverPos(null);
           }}
+          type={sidebar.type}
         >
           {/* Results sidebar */}
           {sidebar.type === 'results' && (

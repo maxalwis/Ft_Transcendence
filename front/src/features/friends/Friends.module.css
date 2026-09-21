@@ -3,6 +3,7 @@
   transform-origin: bottom left;
   z-index: 10;
   min-width: 280px; /* Ensures friends keeps its proper width */
+  max-height: 50vh;
 }
 
 .friendsModal[data-state='open'] {

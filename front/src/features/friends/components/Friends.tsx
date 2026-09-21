@@ -100,7 +100,13 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
   }, [socket, loadData]);
 
   return (
-    <div className={embedded ? 'w-full' : 'relative'}>
+    <div
+  className={
+    embedded
+      ? 'flex h-full min-h-0 w-full flex-col overflow-hidden'
+      : 'relative'
+  }
+>
       {!embedded && (
         <button
           type="button"

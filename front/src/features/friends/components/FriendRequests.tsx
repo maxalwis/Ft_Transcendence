@@ -44,20 +44,27 @@ export default function FriendsRequests({ requests, onDataChanged }: FriendsRequ
   return (
     <div className="flex flex-col gap-2 p-2">
       {requests.map((req) => {
-        const senderObj =
-          'sender' in req
-            ? (req as { sender?: { username?: string; id?: number } }).sender
-            : undefined;
-        const targetId = req.senderId || senderObj?.id || req.id;
+        const senderObj = req.sender;
+        const targetId = req.senderId || senderObj.id || req.id;
+
         const displayName =
-          senderObj?.username || t('friendsRequests.fallbackUser', { id: targetId });
+          senderObj.username || t('friendsRequests.fallbackUser', { id: targetId });
+
+        const displayPhoto = senderObj.avatar;
 
         return (
-          <div
-            key={req.id}
-            className="flex items-center justify-between gap-1 rounded-lg bg-white/10 px-3 py-2 text-sm text-black"
-          >
-            <span className="font-medium">{displayName}</span>
+          <div key={req.id} className="flex items-center justify-between gap-1 px-3 py-2">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-xs font-semibold text-white">
+                {displayPhoto ? (
+                  <img src={displayPhoto} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  displayName.charAt(0).toUpperCase()
+                )}
+              </div>
+
+              <span className="truncate">{displayName}</span>
+            </div>
             <div className="flex">
               <button
                 type="button"
