@@ -1,17 +1,29 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { createHash } from 'crypto';
 import { User } from '../generated/prisma/client';
+
+const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private prisma: PrismaService,
     private jwtService: JwtService,
     private config: ConfigService
   ) {}
+
+  // Le JWT lui-même n'est jamais stocké : seul son hash sert de clé de
+  // recherche/révocation en base, pour ne pas garder un secret exploitable
+  // en clair côté serveur si la table fuit.
+  private hashToken(token: string): string {
+    return createHash('sha256').update(token).digest('hex');
+  }
 
   async validateUser(email: string, pass: string) {
     const user = await this.usersService.findFromEmailOrNull(email);
@@ -58,7 +70,13 @@ export class AuthService {
       expiresIn: '7d',
     });
 
-    // METTRE LE REFRESH TOKEN DANS LA DB?
+    await this.prisma.refreshToken.create({
+      data: {
+        tokenHash: this.hashToken(refreshToken),
+        userId: user.id,
+        expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL_MS),
+      },
+    });
 
     return { accessToken, refreshToken };
   }
@@ -68,6 +86,13 @@ export class AuthService {
       const payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: this.config.get<string>('JWT_REFRESH_SECRET'),
       });
+
+      const stored = await this.prisma.refreshToken.findUnique({
+        where: { tokenHash: this.hashToken(refreshToken) },
+      });
+      if (!stored || stored.revoked || stored.expiresAt < new Date()) {
+        throw new UnauthorizedException('Refresh token revoked or expired');
+      }
 
       const user = await this.usersService.findOne(payload.sub);
       if (!user) {
@@ -86,6 +111,30 @@ export class AuthService {
     } catch {
       throw new UnauthorizedException('Refresh token invalid or expired');
     }
+  }
+
+  // Utilisé au logout : on a seulement le cookie refresh_token sous la main
+  // (le front n'envoie pas l'access token sur cet appel), donc on le décode
+  // pour retrouver l'utilisateur à déconnecter des sockets temps réel.
+  async getUserIdFromRefreshToken(refreshToken: string): Promise<number | null> {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.config.get<string>('JWT_REFRESH_SECRET'),
+      });
+      return payload.sub;
+    } catch {
+      return null;
+    }
+  }
+
+  // Marque le token comme révoqué en base : la signature JWT reste valide
+  // jusqu'à son expiration naturelle, mais refreshAccessToken() le rejettera
+  // désormais via la vérification `stored.revoked`.
+  async revokeRefreshToken(refreshToken: string): Promise<void> {
+    await this.prisma.refreshToken.updateMany({
+      where: { tokenHash: this.hashToken(refreshToken) },
+      data: { revoked: true },
+    });
   }
 
   async verifyAccessToken(token: string): Promise<{ id: number; email: string }> {
