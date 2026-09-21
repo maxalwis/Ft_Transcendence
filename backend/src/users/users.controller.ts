@@ -13,7 +13,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Patch,
-  BadRequestException
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
@@ -48,15 +48,8 @@ export class UsersController {
 
   @Patch('password')
   @UseGuards(JwtAuthGuard)
-  changePassword(
-    @Req() req: any,
-    @Body() body: { currentPassword: string; newPassword: string }
-  ) {
-    return this.usersService.changePassword(
-      req.user.id,
-      body.currentPassword,
-      body.newPassword
-    );
+  changePassword(@Req() req: any, @Body() body: { currentPassword: string; newPassword: string }) {
+    return this.usersService.changePassword(req.user.id, body.currentPassword, body.newPassword);
   }
 
   @Put('me')
