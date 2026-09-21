@@ -19,7 +19,7 @@ export default function LegalContent({ initialTab = 'privacy', onClose }: LegalC
         type="button"
         onClick={onClose}
         aria-label={t('authModal.close')}
-        className="modal-close"
+        className="modal-button modal-close"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor">
           <path d="M6 6l12 12M18 6L6 18" />

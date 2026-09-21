@@ -52,7 +52,7 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
           <h2>{t('passwordModal.title')}</h2>
           <button
             type="button"
-            className="modal-close"
+            className="modal-button modal-close"
             onClick={requestClose}
             aria-label={t('passwordModal.close')}
           >

@@ -18,6 +18,7 @@ import { FriendsModule } from './friends/friends.module';
 import { EventsInterestsModule } from './events-interest/events-interest.module';
 import { RealtimeModule } from './realtime/realtime.module';
 import { TranslationsModule } from './translations/translations.module';
+import { TilesModule } from './tiles.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { TranslationsModule } from './translations/translations.module';
     PublicApiModule,
     MailModule,
     GdprModule,
+    TilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

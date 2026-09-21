@@ -68,7 +68,7 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
         type="button"
         onClick={onClose}
         aria-label={t('authModal.close')}
-        className="modal-close"
+        className="modal-button modal-close"
       >
         <svg
           className="h-4 w-4"
@@ -211,5 +211,9 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
     return content;
   }
 
-  return <div className="glass-modal-overlay">{content}</div>;
+  return (
+    <div className="glass-modal-overlay" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()}>{content}</div>
+    </div>
+  );
 }

@@ -106,7 +106,7 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
 
         <button
           type="button"
-          className="icon-btn modal-close"
+          className="modal-button modal-close"
           onClick={onClose}
           aria-label="Fermer"
         >

@@ -65,7 +65,7 @@ export const WarningNotification = ({ message, onClose, duration = 5000 }: Notif
         type="button"
         onClick={handleDismiss}
         aria-label="Close notification"
-        className="modal-close-inline"
+        className="modal-button modal-close-inline"
       >
         <svg
           className="h-4 w-4"

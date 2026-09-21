@@ -34,7 +34,6 @@ export function MapEventsHandler({ activeGroup, setActiveGroupId, setHoverPos }:
     };
 
     // Clear active group on zoom change
-    // Do NOT handle map 'click' here!
     const handleZoomStart = () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       setActiveGroupId(null);

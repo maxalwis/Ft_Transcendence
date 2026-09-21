@@ -10,6 +10,7 @@ interface LoginButtonProps {
   onOpenProfile?: () => void;
   onOpenEditProfile?: () => void;
   onBack?: () => void;
+  onCloseMobileMenu?: () => void;
 }
 
 export default function LoginButton({
@@ -19,6 +20,7 @@ export default function LoginButton({
   onOpenProfile,
   onOpenEditProfile,
   onBack,
+  onCloseMobileMenu,
 }: LoginButtonProps) {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
@@ -69,7 +71,13 @@ export default function LoginButton({
           {t('authBtn.logout')}
         </button>
 
-        <button type="button" onClick={() => onBack?.()}>
+        <button
+          type="button"
+          onClick={() => {
+            onBack?.();
+            onCloseMobileMenu?.();
+          }}
+        >
           {t('common.back')}
         </button>
       </div>
@@ -81,8 +89,8 @@ export default function LoginButton({
       <div className="relative" ref={menuRef}>
         <button
           className="h-12 w-12 rounded-full! overflow-hidden p-0! glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
-          aria-label={`Ouvrir le menu de ${user.username ?? 'Profil'}`}
-          title={user.username ?? 'Profil'}
+          aria-label={`Ouvrir le menu de ${user.username ?? 'Profile'}`}
+          title={user.username ?? 'Profile'}
           onClick={() => {
             if (embedded && onOpenProfile) {
               onOpenProfile();

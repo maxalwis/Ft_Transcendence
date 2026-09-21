@@ -13,6 +13,7 @@ registerLocale('ar', ar);
 export type NavBarProps = {
   onSelectCategory?: (category: string) => void;
   activeCategory?: string;
+  onOpenResults?: () => void;
   priceType?: string;
   onPriceChange?: (priceType: string) => void;
   startDate?: string;
@@ -22,6 +23,7 @@ export type NavBarProps = {
 export default function NavBar({
   onSelectCategory,
   activeCategory,
+  onOpenResults,
   priceType,
   onPriceChange,
   startDate,
@@ -33,7 +35,7 @@ export default function NavBar({
   const priceRef = useRef<HTMLDivElement>(null);
   const dateRef = useRef<HTMLDivElement>(null);
 
-  //   Scroll for categories
+  // Scroll for categories
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -41,6 +43,7 @@ export default function NavBar({
   const updateScrollState = useCallback(() => {
     const el = categoriesScrollRef.current;
     if (!el) return;
+
     const { scrollLeft, scrollWidth, clientWidth } = el;
     setCanScrollLeft(scrollLeft > 4);
     setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 4);
@@ -48,6 +51,7 @@ export default function NavBar({
 
   useEffect(() => {
     updateScrollState();
+
     const el = categoriesScrollRef.current;
     if (!el) return;
 
@@ -69,8 +73,13 @@ export default function NavBar({
   const scrollCategories = (direction: 'left' | 'right') => {
     const el = categoriesScrollRef.current;
     if (!el) return;
+
     const amount = el.clientWidth * 0.6;
-    el.scrollBy({ left: direction === 'left' ? -amount : amount, behavior: 'smooth' });
+
+    el.scrollBy({
+      left: direction === 'left' ? -amount : amount,
+      behavior: 'smooth',
+    });
   };
 
   // Ferme le popover ouvert si on clique en dehors (bouton + panneau)
@@ -79,16 +88,17 @@ export default function NavBar({
 
     const handleClickOutside = (e: MouseEvent) => {
       const ref = openPopover === 'price' ? priceRef : dateRef;
+
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpenPopover(null);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
+
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openPopover]);
 
-  // Updated to match the top database category groups
   const categories = [
     { label: t('categories.all', 'Tout'), value: '' },
     { label: t('categories.music', 'Musique'), value: 'musique' },
@@ -104,6 +114,20 @@ export default function NavBar({
     { label: t('filters.feeBased', 'Payant'), value: 'fee-based' },
   ];
 
+  const filters = [
+    {
+      type: 'price' as const,
+      label: t('filters.priceButton', 'Prix'),
+      value: priceType || '',
+      options: priceOptions,
+    },
+    {
+      type: 'date' as const,
+      label: t('filters.dateButton', 'Date'),
+      value: startDate || '',
+    },
+  ];
+
   return (
     <div
       dir="ltr"
@@ -115,7 +139,7 @@ export default function NavBar({
         {/* Left spacer, keeps navbar in the middle */}
         <div className="w-45 hidden md:block" />
 
-        {/* Category Navigation on small/medium */}
+        {/* Category Navigation */}
         <div className="relative z-10 flex items-center max-w-full py-4">
           {canScrollLeft && (
             <button
@@ -165,6 +189,7 @@ export default function NavBar({
                     onClick={(e) => {
                       e.stopPropagation();
                       onSelectCategory?.(cat.value);
+                      onOpenResults?.();
                     }}
                     className={`glass-filter ${isActive ? 'isSelected' : ''}`}
                   >
@@ -207,86 +232,89 @@ export default function NavBar({
 
       {/* Price and date button */}
       <nav className="relative z-10 flex items-center gap-2 pointer-events-auto py-1">
-        <div className="relative" ref={priceRef}>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenPopover((prev) => (prev === 'price' ? null : 'price'));
-            }}
-            className={`glass-filter ${openPopover === 'price' || priceType ? 'isSelected' : ''}`}
-          >
-            {t('filters.priceButton', 'Prix')}
-          </button>
+        {filters.map((filter) => {
+          const isOpen = openPopover === filter.type;
 
-          {openPopover === 'price' && (
-            <div className="glass-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 flex flex-col gap-1 min-w-[140px] rounded-xl p-1.5 z-20">
-              {priceOptions.map((opt) => {
-                const isActive = (priceType || '') === opt.value;
-                return (
-                  <button
-                    key={opt.value || 'all-prices'}
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onPriceChange?.(opt.value);
-                      setOpenPopover(null);
-                    }}
-                    className={`text-left px-3 py-1.5 rounded-lg text-sm whitespace-nowrap ${
-                      isActive ? 'isSelected' : ''
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
+          const isSelected = filter.type === 'price' ? !!priceType : !!startDate;
 
-        <div className="relative" ref={dateRef}>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenPopover((prev) => (prev === 'date' ? null : 'date'));
-            }}
-            className={`glass-filter ${openPopover === 'date' || startDate ? 'isSelected' : ''}`}
-          >
-            {t('filters.dateButton', 'Date')}
-          </button>
-
-          {openPopover === 'date' && (
-            <div className="glass-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-xl p-2 z-20">
-              <DatePicker
-                inline
-                locale={datePickerLocale}
-                selected={startDate ? new Date(startDate) : null}
-                onChange={(date: Date | null) => {
-                  if (date) {
-                    const formatted = date.toLocaleDateString('en-CA');
-                    onDateChange?.(formatted);
-                    setOpenPopover(null);
-                  }
-                }}
-                minDate={new Date('2026-08-01')}
-                maxDate={new Date('2028-12-31')}
-              />
-
+          return (
+            <div key={filter.type} className="relative">
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDateChange?.('');
-                  setOpenPopover(null);
+                  setOpenPopover((prev) => (prev === filter.type ? null : filter.type));
                 }}
-                className="w-full mt-1 px-3 py-1.5 rounded-lg text-sm transition-all"
+                className={`glass-filter ${isOpen || isSelected ? 'isSelected' : ''}`}
               >
-                {t('filters.resetDate', 'Réinitialiser')}
+                {filter.label}
               </button>
+
+              {isOpen && (
+                <>
+                  {filter.type === 'price' && (
+                    <div className="glass-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 flex flex-col gap-1 min-w-[140px] rounded-xl p-1.5 z-20">
+                      {priceOptions.map((opt) => {
+                        const isActive = (priceType || '') === opt.value;
+
+                        return (
+                          <button
+                            key={opt.value || 'all-prices'}
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onPriceChange?.(opt.value);
+                              setOpenPopover(null);
+                              onOpenResults?.();
+                            }}
+                            className={`text-left px-3 py-1.5 rounded-lg text-sm whitespace-nowrap ${
+                              isActive ? 'isSelected' : ''
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {filter.type === 'date' && (
+                    <div className="glass-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-xl p-2 z-20">
+                      <DatePicker
+                        inline
+                        locale={datePickerLocale}
+                        selected={startDate ? new Date(startDate) : null}
+                        onChange={(date: Date | null) => {
+                          if (date) {
+                            const formatted = date.toLocaleDateString('en-CA');
+                            onDateChange?.(formatted);
+                            setOpenPopover(null);
+                            onOpenResults?.();
+                          }
+                        }}
+                        minDate={new Date('2026-08-01')}
+                        maxDate={new Date('2028-12-31')}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDateChange?.('');
+                          setOpenPopover(null);
+                          onOpenResults?.();
+                        }}
+                        className="w-full mt-1 px-3 py-1.5 rounded-lg text-sm transition-all"
+                      >
+                        {t('filters.resetDate', 'Réinitialiser')}
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
-          )}
-        </div>
+          );
+        })}
       </nav>
     </div>
   );

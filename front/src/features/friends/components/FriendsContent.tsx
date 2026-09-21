@@ -57,7 +57,7 @@ export default function FriendsContent({
         <button
           type="button"
           aria-label="Back"
-          className="modal-close left-3 right-auto"
+          className="modal-button modal-close left-3 right-auto"
           onClick={handleBack}
         >
           <svg
@@ -74,8 +74,15 @@ export default function FriendsContent({
         </button>
       )}
 
-      <div className={`flex-1 overflow-y-auto ${action !== 'menu' ? 'pt-12' : 'pt-2'}`}>
-        {action === 'menu' ? (
+      {/* Main Content Area */}
+      <div
+        className={`flex-1 overflow-y-auto ${!isLoggedIn ? 'pt-8' : action !== 'menu' ? 'pt-12' : 'pt-2'}`}
+      >
+        {!isLoggedIn ? (
+          <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+            <p className="text-sm font-medium">{t('friendsSidebar.notLoggedIn')}</p>
+          </div>
+        ) : action === 'menu' ? (
           <div className="flex flex-col gap-2 py-2">
             <button
               type="button"

@@ -75,16 +75,14 @@ services:
     env_file:
       - .env
     environment:
-      environment:
-      NODE_ENV: development
-      PORT: ${BACKEND_PORT:-3000}
-      LIBRETRANSLATE_URL: ${LIBRETRANSLATE_URL}
-      ENABLE_SEED_LOGS: ${ENABLE_SEED_LOGS:-false}
-      MAIL_HOST: ${MAIL_HOST:-mailpit}
-      MAIL_PORT: ${MAIL_PORT:-1025}
-      MAIL_FROM: ${MAIL_FROM:-no-reply@transcendence.local}
-      UV_THREADPOOL_SIZE: 2
-      NODE_OPTIONS: --max-old-space-size=2048
+        - MAIL_HOST=${MAIL_HOST:-mailpit}
+        - MAIL_PORT=${MAIL_PORT:-1025}
+        - MAIL_FROM=${MAIL_FROM:-no-reply@transcendence.local}
+        - NODE_ENV=development
+        - PORT=${BACKEND_PORT:-3000}
+        - LIBRETRANSLATE_URL=${LIBRETRANSLATE_URL}
+        - UV_THREADPOOL_SIZE=2
+        - NODE_OPTIONS=--max-old-space-size=2048
     ports:
       - '${BACKEND_PORT:-3000}:3000'
     volumes:

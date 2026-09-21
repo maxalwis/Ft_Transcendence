@@ -126,7 +126,8 @@ button * {
 button:hover,
 input[type='submit']:hover,
 input[type='button']:hover,
-input[type='reset']:hover {
+input[type='reset']:hover,
+button.true {
   background: var(--color-orange-hover) !important;
   color: var(--color-orange-500);
   border-color: var(--color-orange-border);
@@ -149,14 +150,10 @@ button.icon-btn,
   cursor: pointer;
 }
 
-.modal-close {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  z-index: 10;
+.modal-button {
   display: inline-flex;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2rem;
+  height: 2rem;
   align-items: center;
   justify-content: center;
   padding: 0 !important;
@@ -164,19 +161,37 @@ button.icon-btn,
   border-radius: var(--radius-lg);
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.modal-close:hover {
+.modal-button:hover {
   border-color: rgba(232, 122, 38, 0.724);
   background: var(--color-orange-hover);
   color: #f06901 !important;
 }
 
-.modal-close:active {
+.modal-button:active {
   transform: scale(0.7);
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+
+  @media (max-width: 900px) {
+    top: 0rem;
+  }
+}
+
+.modal-back {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10;
 }
 
 .modal-close-inline {
@@ -229,7 +244,6 @@ button.icon-btn,
 /* Structural & Surface Elements */
 card,
 section,
-article,
 aside {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
@@ -301,6 +315,26 @@ pre {
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
+}
+
+.glass-article {
+  border-radius: var(--radius-lg);
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+
+.glass-article:hover {
+  background: var(--color-orange-hover);
+  border-color: var(--color-orange-border);
+}
+
+.glass-article > div {
+  transition: transform 200ms ease;
+}
+
+.glass-article:hover > div {
+  transform: scale(0.98);
 }
 
 .glass-blue {

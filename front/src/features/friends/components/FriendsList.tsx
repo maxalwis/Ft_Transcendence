@@ -96,7 +96,7 @@ export default function FriendsList({
               <button
                 type="button"
                 onClick={() => handleAddFriend(user.id)}
-                className="modal-close-inline modal-close-inline-green icon-btn shrink-0 cursor-pointer active:scale-70"
+                className="modal-button modal-close-inline modal-button modal-close-inline-green icon-btn shrink-0 cursor-pointer active:scale-70"
               >
                 <svg
                   className="h-4 w-4"
@@ -149,7 +149,7 @@ export default function FriendsList({
               <button
                 type="button"
                 onClick={() => handleRemoveFriend(friend.id)}
-                className="modal-close-inline modal-close-inline-red icon-btn shrink-0 cursor-pointer active:scale-70"
+                className="modal-button modal-close-inline modal-button modal-close-inline-red icon-btn shrink-0 cursor-pointer active:scale-70"
               >
                 <svg
                   className="h-4 w-4"

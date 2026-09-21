@@ -31,7 +31,7 @@ export default function FriendsModal({
       <button
         type="button"
         aria-label="Close"
-        className="modal-close"
+        className="modal-button modal-close"
         onClick={() => setIsOpen(false)}
       >
         <svg

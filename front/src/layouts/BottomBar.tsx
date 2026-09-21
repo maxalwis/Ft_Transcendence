@@ -75,39 +75,23 @@ export default function BottomBar() {
     setMobileView('menu');
   };
 
-  // Ferme la modale légale au clic n'importe où sur l'écran
   useEffect(() => {
-    if (!legalModalOpen) return;
+    const mediaQuery = window.matchMedia('(min-width: 900px)');
 
-    const handleGlobalClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest('button')) {
-        setLegalModalOpen(false);
+    const handleChange = (event: MediaQueryListEvent) => {
+      if (event.matches) {
+        setMobileMenuOpen(false);
+        setMobileView('menu');
+        setIsAuthOpen(false);
       }
     };
 
-    window.addEventListener('click', handleGlobalClick);
-    return () => window.removeEventListener('click', handleGlobalClick);
-  }, [legalModalOpen]);
+    mediaQuery.addEventListener('change', handleChange);
 
-  const LegalButtons = () => (
-    <>
-      <button
-        type="button"
-        onClick={() => openLegalModal('privacy')}
-        className="glass-panel px-3 py-1.5 text-sm whitespace-nowrap"
-      >
-        {t('legal.privacyButton')}
-      </button>
-      <button
-        type="button"
-        onClick={() => openLegalModal('terms')}
-        className="glass-panel px-3 py-1.5 text-sm whitespace-nowrap"
-      >
-        {t('legal.termsButton')}
-      </button>
-    </>
-  );
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
 
   return (
     <>
@@ -141,7 +125,7 @@ export default function BottomBar() {
               >
                 <div
                   className="glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
-                    glass-panel p-3 flex flex-col items-center gap-2.5
+                    glass-panel p-3 max-[900px]:p-6 flex flex-col items-center gap-2.5
                     shadow-2xl rounded-2xl
                     w-[calc(100vw-2rem)] max-w-xs"
                   onClick={(e) => e.stopPropagation()}
