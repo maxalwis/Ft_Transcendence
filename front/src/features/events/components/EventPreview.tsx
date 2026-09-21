@@ -159,7 +159,7 @@ export default function EventPreview({
         e.stopPropagation();
         if (onClick) onClick();
       }}
-      className={`glass-panel ${styles['events-details-popup']} fixed w-[300px] z-[1000] flex flex-col justify-center cursor-default ${
+      className={`glass-panel ${styles['events-details-popup']} fixed w-[300px] flex flex-col justify-center cursor-default ${
         cardHeight !== null ? (isFlippedDownward ? styles.popupDown : styles.popupUp) : ''
       } ${
         isFlippedDownward
@@ -189,7 +189,7 @@ export default function EventPreview({
             type="button"
             onClick={handleExtendClick}
             title={t('eventPreview.seeDetails')}
-            className="modal-close pointer-events-auto"
+            className="modal-button modal-close pointer-events-auto"
           >
             <svg
               width="14"
@@ -212,7 +212,7 @@ export default function EventPreview({
       </div>
 
       {totalInGroup > 1 && (
-        <div className="flex justify-between items-center px-3 py-1.5">
+        <div dir="ltr" className="flex justify-between items-center px-3 py-1.5">
           <button
             type="button"
             onClick={(e) => {

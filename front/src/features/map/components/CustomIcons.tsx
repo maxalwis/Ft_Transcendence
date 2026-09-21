@@ -1,5 +1,5 @@
+import 'leaflet.markercluster';
 import L from 'leaflet';
-import type { MarkerCluster } from 'leaflet';
 
 export const clusterCountCache = new Map<number, number>();
 
@@ -164,7 +164,7 @@ const getClusterConfig = (count: number) => {
 /**
  * 3. LEAFLET CLUSTER BADGE
  */
-export const createClusterIcon = (cluster: MarkerCluster, isHovered: boolean = false) => {
+export const createClusterIcon = (cluster: L.MarkerCluster, isHovered: boolean = false) => {
   const count = cluster.getChildCount();
   const clusterId = (cluster as unknown as { _leaflet_id: number })._leaflet_id;
 

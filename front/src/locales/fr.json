@@ -1,5 +1,10 @@
 {
   "welcome": "Bienvenue sur notre site",
+  "nav": {
+    "menu": "Menu",
+    "scrollLeft": "Défiler vers la gauche",
+    "scrollRight": "Défiler vers la droite"
+  },
   "buttons": {
     "submit": "Valider"
   },
@@ -11,15 +16,24 @@
     "leisure": "Loisirs & Sport",
     "others": "Autres"
   },
+  "common": {
+    "back": "Retour"
+  },
   "events": {
     "defaultCategory": "Événement",
     "unknownDate": "Date inconnue",
-    "linkLabel": "Lien :"
+    "linkLabel": "Lien :",
+    "loading": "Chargement des événements...",
+    "noEvents": "Aucun événement trouvé",
+    "errors": {
+      "loadFailed": "Erreur lors du chargement de l'événement"
+    }
   },
   "eventDetails": {
     "defaultCategory": "Événement",
     "unknownDate": "Date inconnue",
     "accessLink": "Détails de l'événement",
+    "back": "Retour",
     "price": {
       "free": "Gratuit",
       "feeBased": "Payant"
@@ -44,11 +58,14 @@
     "priceCategory": "Catégorie de prix",
     "selectCategory": "Sélectionner la catégorie",
     "fromDate": "À partir de :",
+    "priceButton": "Prix",
+    "dateButton": "Date",
     "apply": "Filtrer",
     "reset": "Réinitialiser",
     "allPrices": "Tous",
     "free": "Gratuit",
-    "feeBased": "Payant"
+    "feeBased": "Payant",
+    "resetDate": "Réinitialiser"
   },
   "friends": {
     "buttonTitle": "Amis",
@@ -58,9 +75,13 @@
     "addTab": "Ajouter",
     "requestsTab": "Demandes",
     "noFriends": "Aucun ami pour le moment",
-    "remove": "Supprimer"
+    "remove": "Supprimer",
+    "errors": {
+      "sendFailed": "Erreur lors de l'envoi.",
+      "removeFailed": "Erreur lors de la suppression."
+    }
   },
-  "friendsSidebar": {
+  "friendsModal": {
     "notLoggedIn": "Veuillez vous connecter pour accéder à votre liste d'amis.",
     "search": "Rechercher des amis",
     "pendingRequests": "Demandes en attente ({{count}})",
@@ -86,7 +107,8 @@
     }
   },
   "friendsList": {
-    "viewProfile": "Voir profil"
+    "viewProfile": "Voir profil",
+    "noUsersFound": "Aucun utilisateur trouvé."
   },
   "friendsRequests": {
     "noPendingRequests": "Aucune demande d'ami en attente.",
@@ -95,17 +117,25 @@
     "fallbackUser": "Utilisateur #{{id}}",
     "errors": {
       "acceptFailed": "Erreur lors de l'acceptation.",
-      "rejectFailed": "Erreur lors du refus."
+      "rejectFailed": "Erreur lors du refus.",
+      "sendFailed": "Erreur lors de l'envoi de la demande d'ami.",
+      "removeFailed": "Erreur lors de la suppression de l'ami."
     }
+  },
+  "friendsSidebar": {
+    "notLoggedIn": "Vous n'êtes pas connecté."
   },
   "chat": {
     "title": "Chat",
     "connectPrompt": "Connectez-vous pour voir le chat.",
     "loadingMessages": "Chargement des messages...",
-    "errorLoadMessages": "Échec du chargement des messages",
-    "errorSend": "Erreur lors de l'envoi du message",
     "placeholder": "Écrivez votre message...",
-    "send": "Envoyer"
+    "send": "Envoyer",
+    "errors": {
+      "loginRequiredToSend": "Vous devez être connecté pour envoyer un message.",
+      "loadMessages": "Échec du chargement des messages",
+      "sendMessage": "Erreur lors de l'envoi du message"
+    }
   },
   "passwordModal": {
     "title": "Changer le mot de passe",
@@ -180,6 +210,7 @@
   },
   "likeButton": {
     "loginRequired": "Vous devez être connecté pour ajouter un événement à vos favoris",
+    "interested": "{{count}} intéressé",
     "interested_one": "{{count}} intéressé",
     "interested_other": "{{count}} intéressés"
   },
@@ -216,5 +247,12 @@
     "done": "Votre compte a été définitivement supprimé. Redirection…",
     "invalidLink": "Lien de confirmation invalide ou manquant.",
     "error": "Le lien de confirmation est invalide ou expiré. Veuillez refaire une demande de suppression."
+  },
+  "sidebar": {
+    "event": "Événement",
+    "selectEvent": "Sélectionnez un événement.",
+    "close": "Fermer",
+    "collapse": "Réduire la barre latérale",
+    "expand": "Développer la barre latérale"
   }
 }

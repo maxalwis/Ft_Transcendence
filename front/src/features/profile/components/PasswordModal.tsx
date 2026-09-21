@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/auth/useAuth';
-import { changePassword } from '../../api/users';
-import styles from './ProfileModal.module.css';
+import { useAuth } from '../../../context/auth/useAuth';
+import { changePassword } from '../../../api/users';
+import styles from '../ProfileModal.module.css';
 
 interface PasswordModalProps {
   onClose: () => void;
@@ -65,7 +65,7 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
           <h2>{t('passwordModal.title')}</h2>
           <button
             type="button"
-            className="modal-close"
+            className="modal-button modal-close"
             onClick={requestClose}
             aria-label={t('passwordModal.close')}
           >

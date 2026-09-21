@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { MapContainer } from 'react-leaflet';
+import { useState, useRef, useCallback, useMemo } from 'react';
+import { MapContainer, TileLayer } from 'react-leaflet';
 
 // Third-Party Styles
 import 'leaflet/dist/leaflet.css';
@@ -7,15 +7,15 @@ import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
 // Layouts & Feature Components
-import LanguageSelector from '../../../layouts/LanguageSelector';
 import BottomBar from '../../../layouts/BottomBar';
-import Filters from './Filters';
 import SideBar from '../../../layouts/Sidebar';
 import NavBar from '../../../layouts/NavBar';
 
 // Marker & Map Visual Components
-import { MyTileLayer, MapClickHandler, GlassZoomControl } from '../MapControls';
+import { MapClickHandler, GlassZoomControl } from '../MapControls';
 import EventPreview from '../../events/components/EventPreview';
+import EventSidebarContent from '../../events/components/EventSidebarContent';
+import EventResultsSidebar from '../../events/components/EventResultsSidebar';
 import { ClusterLayer } from './ClusterLayer';
 import { AdminPanelLinks } from '../../externalLinks/AdminPanelLinks';
 
@@ -31,22 +31,29 @@ import { useTranslatedEvent } from '../../events/hooks/useTranslatedEvent';
 // Constants & Configuration
 import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
 
+import { EventMapController } from './EventMapController';
+
 // Local Styles
 import '../Map.module.css';
 
-interface MapProps {
-  onOpenAuth: () => void;
-}
+type SidebarState = { type: 'event'; eventId: string } | { type: 'results' } | null;
 
-export default function Map({ onOpenAuth }: MapProps) {
-  const { showError } = useNotification();
+export default function Map() {
+  const { showWarning } = useNotification();
   const { user } = useAuth();
   const { i18n } = useTranslation();
   const lang = i18n.language;
-  const [activeSidebarEventId, setActiveSidebarEventId] = useState<string | null>(null);
-  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
-  // État local des filtres actif avec typage strict
+  const [sidebar, setSidebar] = useState<SidebarState>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [currentResultsPage, setCurrentResultsPage] = useState(1);
+  const [resultsScrollTop, setResultsScrollTop] = useState(0);
+
+  const [hoverPos, setHoverPos] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
   const [filters, setFilters] = useState<{
     city: string;
     startDate: string;
@@ -74,13 +81,17 @@ export default function Map({ onOpenAuth }: MapProps) {
     setActiveEventIndex,
     handlePrevEvent,
     handleNextEvent,
-  } = useMapEvents(showError, filters);
+  } = useMapEvents(showWarning, filters);
+
+  const events = useMemo(() => eventGroups.flatMap((group) => group.events), [eventGroups]);
 
   const { data: translatedHoverEvent, loading: hoverLoading } = useTranslatedEvent(
     currentEvent?.id ?? '',
     lang
   );
+
   const isHoverTranslating = lang !== 'fr' && hoverLoading && !translatedHoverEvent;
+
   const displayedHoverTitle = isHoverTranslating
     ? undefined
     : (translatedHoverEvent?.title ?? currentEvent?.title ?? '');
@@ -98,6 +109,7 @@ export default function Map({ onOpenAuth }: MapProps) {
 
   const handleMouseLeave = useCallback(() => {
     cancelCloseTimeout();
+
     closeTimeoutRef.current = setTimeout(() => {
       setActiveGroupId(null);
       setActiveEventIndex(0);
@@ -105,15 +117,53 @@ export default function Map({ onOpenAuth }: MapProps) {
     }, 150);
   }, [setActiveGroupId, setActiveEventIndex]);
 
+  /*
+   * Open the event detail sidebar.
+   */
   const handleOpenSidebar = useCallback(
     (id: string) => {
       cancelCloseTimeout();
-      setActiveSidebarEventId(id);
+
+      setSidebar({
+        type: 'event',
+        eventId: id,
+      });
+
+      setIsSidebarOpen(true);
       setActiveGroupId(null);
       setHoverPos(null);
     },
     [setActiveGroupId]
   );
+
+  /*
+   * Open the paginated results sidebar.
+   */
+  const handleOpenResults = useCallback(() => {
+    cancelCloseTimeout();
+
+    setSidebar({
+      type: 'results',
+    });
+
+    setIsSidebarOpen(true);
+    setActiveGroupId(null);
+    setHoverPos(null);
+  }, [setActiveGroupId]);
+
+  /*
+   * Called when an event is selected from the results sidebar.
+   * Replace the results sidebar with the selected event details.
+   */
+  const handleResultsEventClick = useCallback((eventId: string) => {
+    setSidebar({
+      type: 'event',
+      eventId,
+    });
+
+    setIsSidebarOpen(true);
+    setHoverPos(null);
+  }, []);
 
   const handleMarkerHover = useCallback(
     (groupId: string) => {
@@ -123,11 +173,19 @@ export default function Map({ onOpenAuth }: MapProps) {
     [setActiveGroupId]
   );
 
-  // Handler mémorisé pour la sélection de catégorie via NavBar
+  /*
+   * Category filter handler.
+   */
   const handleSelectCategory = useCallback((selectedCategory: string) => {
+    setCurrentResultsPage(1);
+    setResultsScrollTop(0);
+
     setFilters((prev) => {
       if (!selectedCategory || selectedCategory.trim() === '') {
-        return { ...prev, category: '' };
+        return {
+          ...prev,
+          category: '',
+        };
       }
 
       const isAlreadyActive =
@@ -142,11 +200,29 @@ export default function Map({ onOpenAuth }: MapProps) {
     });
   }, []);
 
-  // Handler mémorisé pour les filtres modaux
-  const handleApplyFilters = useCallback((newFilters: Partial<typeof filters>) => {
+  /*
+   * Price filter handler.
+   */
+  const handlePriceChange = useCallback((priceType: string) => {
+    setCurrentResultsPage(1);
+    setResultsScrollTop(0);
+
     setFilters((prev) => ({
       ...prev,
-      ...newFilters,
+      priceType,
+    }));
+  }, []);
+
+  /*
+   * Date filter handler.
+   */
+  const handleDateChange = useCallback((startDate: string) => {
+    setCurrentResultsPage(1);
+    setResultsScrollTop(0);
+
+    setFilters((prev) => ({
+      ...prev,
+      startDate,
     }));
   }, []);
 
@@ -156,15 +232,32 @@ export default function Map({ onOpenAuth }: MapProps) {
         center={PARIS_CENTER}
         zoom={DEFAULT_ZOOM}
         minZoom={DEFAULT_ZOOM}
-        scrollWheelZoom={true}
+        scrollWheelZoom
         maxBounds={IDF_BOUNDS}
-        maxBoundsViscosity={1.0}
+        maxBoundsViscosity={1}
         zoomControl={false}
-        style={{ height: '100vh', width: '100vw' }}
+        className="h-full w-full"
       >
-        <MapClickHandler closeSidebar={() => setActiveSidebarEventId(null)} />
-        <MyTileLayer />
+        <EventMapController
+          eventId={sidebar?.type === 'event' ? sidebar.eventId : null}
+          events={events}
+        />
+        <MapClickHandler
+          closeSidebar={() => {
+            setIsSidebarOpen(false);
+            setHoverPos(null);
+          }}
+        />
+
+        <TileLayer
+          attribution='&copy; <a href="https://jawg.io">JawgMaps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="/api/tiles/{z}/{x}/{y}{r}.png"
+          bounds={IDF_BOUNDS}
+          keepBuffer={0}
+        />
+
         <GlassZoomControl />
+
         <AdminPanelLinks />
 
         <MapEventsHandler
@@ -184,6 +277,7 @@ export default function Map({ onOpenAuth }: MapProps) {
         )}
       </MapContainer>
 
+      {/* Event preview shown when hovering a marker group */}
       {currentEvent && activeGroup && hoverPos && (
         <EventPreview
           position={hoverPos}
@@ -207,24 +301,75 @@ export default function Map({ onOpenAuth }: MapProps) {
         />
       )}
 
-      <Filters onApplyFilters={handleApplyFilters} />
+      {/* Navigation and category filters */}
+      <NavBar
+        activeCategory={filters.category}
+        onSelectCategory={handleSelectCategory}
+        onOpenResults={handleOpenResults}
+        priceType={filters.priceType}
+        onPriceChange={handlePriceChange}
+        startDate={filters.startDate}
+        onDateChange={handleDateChange}
+      />
 
-      <NavBar activeCategory={filters.category} onSelectCategory={handleSelectCategory} />
+      <BottomBar />
 
-      {!activeSidebarEventId && <LanguageSelector />}
-      <BottomBar onOpenAuth={onOpenAuth} />
-
-      {activeSidebarEventId && (
+      {/* Sidebar */}
+      {sidebar !== null && (
         <SideBar
-          eventId={activeSidebarEventId}
-          currentUserId={user?.id}
+          isOpen={isSidebarOpen}
+          onToggle={() => setIsSidebarOpen((prev) => !prev)}
           onClose={() => {
-            setActiveSidebarEventId(null);
+            setSidebar(null);
             setHoverPos(null);
           }}
-        />
+        >
+          {/* Results sidebar */}
+          {sidebar.type === 'results' && (
+            <EventResultsSidebar
+              events={events}
+              isLoading={isLoading}
+              currentPage={currentResultsPage}
+              onPageChange={setCurrentResultsPage}
+              onEventClick={handleResultsEventClick}
+              scrollTop={resultsScrollTop}
+              onScrollTopChange={setResultsScrollTop}
+            />
+          )}
+
+          {/* Event details sidebar */}
+          {sidebar.type === 'event' && (
+            <div className="flex min-h-0 flex-1 flex-col">
+              <button
+                type="button"
+                onClick={() => {
+                  setSidebar({ type: 'results' });
+                  setIsSidebarOpen(true);
+                  setHoverPos(null);
+                }}
+                aria-label="Back to results"
+                className="modal-button modal-back"
+              >
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+
+              <div className="min-h-0 flex-1 flex flex-col overflow-y-auto">
+                <EventSidebarContent eventId={sidebar.eventId} currentUserId={user?.id} />
+              </div>
+            </div>
+          )}
+        </SideBar>
       )}
-      {/* )} */}
     </>
   );
 }

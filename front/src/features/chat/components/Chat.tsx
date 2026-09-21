@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from 'react';
-import styles from './chat.module.css';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
 import { fetchEventMessages, sendEventMessage } from '../chatService';
@@ -10,7 +9,6 @@ import { useChatSocket } from '../hooks/useChatSocket';
 
 export type Message = {
   id: number;
-  userId: number;
   content: string;
   userId: number;
   user: { username?: string; email: string };
@@ -26,7 +24,7 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
-  const { showError } = useNotification();
+  const { showWarning } = useNotification();
   const { accessToken } = useAuth();
 
   // Fetch messages on mount or when event changes
@@ -42,8 +40,8 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
           const message =
             err instanceof Error
               ? err.message
-              : t('chat.errorLoadMessages', 'Failed to load messages');
-          showError(message);
+              : t('chat.errors.loadMessages', 'Failed to load messages');
+          showWarning(message);
         }
       })
       .finally(() => {
@@ -53,7 +51,7 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     return () => {
       isMounted = false;
     };
-  }, [eventId, accessToken, showError, t]);
+  }, [eventId, accessToken, showWarning, t]);
 
   // Ajoute le message reçu en temps réel, en évitant les doublons
   // (utile si le message optimiste de handleSendMessage arrive avant l'echo du socket)
@@ -66,7 +64,7 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
   // Handle sending through the backend
   const handleSendMessage = async (text: string) => {
     if (!accessToken) {
-      showError('You must be logged in to send a message.');
+      showWarning(t('chat.errors.loginRequiredToSend', 'You must be logged in to send a message.'));
       return;
     }
     try {
@@ -77,8 +75,8 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     } catch (err: unknown) {
       console.error('Error sending message:', err);
       const errorMessage = err instanceof Error ? err.message : '';
-      showError(
-        `${t('chat.errorSend', 'Error while trying to send the message')}: ${errorMessage}`
+      showWarning(
+        `${t('chat.errors.sendMessage', 'Error while trying to send the message')}: ${errorMessage}`
       );
     }
   };

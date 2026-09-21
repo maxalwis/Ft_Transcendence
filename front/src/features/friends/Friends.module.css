@@ -1,8 +1,16 @@
 /* Modal expansion & collapse animation */
-.sidebarModal {
+.friendsModal {
   transform-origin: bottom left;
   z-index: 10;
-  min-width: 280px; /* Ensures sidebar keeps its proper width */
+  min-width: 280px; /* Ensures friends keeps its proper width */
+}
+
+.friendsModal[data-state='open'] {
+  animation: expandIn 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.friendsModal[data-state='closed'] {
+  animation: collapseOut 200ms ease-in forwards;
 }
 
 .searchBar {
@@ -75,32 +83,46 @@
   color: rgb(185, 28, 28) !important;
 }
 
-.sidebarModal[data-state='open'] {
-  animation: expandIn 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.sidebarModal[data-state='closed'] {
-  animation: collapseOut 200ms ease-in forwards;
-}
-
 @keyframes expandIn {
   from {
     opacity: 0;
-    transform: scale(0.75) translateY(12px);
+    transform: scale(0.75);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1);
   }
 }
 
 @keyframes collapseOut {
   from {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1);
   }
   to {
     opacity: 0;
-    transform: scale(0.75) translateY(12px);
+    transform: scale(0.75);
   }
+}
+
+@media (max-width: 900px) {
+  .friendsModal {
+    position: fixed !important;
+    bottom: 140px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 1000 !important;
+    background: var(--color-taupe-50) !important;
+  }
+}
+
+@media (max-width: 900px) {
+.sidebarModal {
+	position: fixed !important;
+    bottom: 140px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 1000 !important;
+	background: var(--color-taupe-50) !important;
+	}
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { EventItem, EventGroup } from '../../../types/event';
+import { useTranslation } from 'react-i18next';
 
 interface RawEventItem extends Partial<EventItem> {
   latitude: number | string;
@@ -11,7 +12,7 @@ interface RawEventItem extends Partial<EventItem> {
 }
 
 export function useMapEvents(
-  showError: (msg: string) => void,
+  showWarning: (msg: string) => void,
   filters?: {
     city?: string;
     startDate?: string;
@@ -26,6 +27,8 @@ export function useMapEvents(
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
   const [activeEventIndex, setActiveEventIndex] = useState<number>(0);
+
+  const { t } = useTranslation();
 
   // 1. Deconstruct primitive values explicitly to give useEffect stable dependency keys
   const city = filters?.city ?? 'Paris';
@@ -98,8 +101,10 @@ export function useMapEvents(
         setEvents(data);
       } catch (err: unknown) {
         console.error('Failed to fetch map events:', err);
-        showError(
-          err instanceof Error ? err.message : 'An error occurred while loading map events.'
+        showWarning(
+          err instanceof Error
+            ? err.message
+            : t('events.errors.loadFailed', 'An error occurred while loading map events.')
         );
       } finally {
         setIsLoading(false);
@@ -108,7 +113,7 @@ export function useMapEvents(
 
     fetchAllEvents();
     // 2. Pass individual primitive string dependencies to ensure reactivity
-  }, [showError, city, startDate, endDate, priceType, category, minPrice, maxPrice]);
+  }, [showWarning, city, startDate, endDate, priceType, category, minPrice, maxPrice, t]);
 
   const eventGroups = useMemo<EventGroup[]>(() => {
     const groupsMap = new Map<string, EventItem[]>();

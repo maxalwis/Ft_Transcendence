@@ -1,5 +1,10 @@
 {
   "welcome": "Welcome to our site",
+  "nav": {
+    "menu": "Menu",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right"
+  },
   "buttons": {
     "submit": "Submit"
   },
@@ -11,15 +16,24 @@
     "leisure": "Sports & Leisure",
     "others": "Others"
   },
+  "common": {
+    "back": "Back"
+  },
   "events": {
     "defaultCategory": "Event",
     "unknownDate": "Unknown date",
-    "linkLabel": "Link:"
+    "linkLabel": "Link:",
+    "loading": "Loading events...",
+    "noEvents": "No events found",
+    "errors": {
+      "loadFailed": "Error loading the event"
+    }
   },
   "eventDetails": {
     "defaultCategory": "Event",
     "unknownDate": "Unknown date",
     "accessLink": "Event's details",
+    "back": "Back",
     "price": {
       "free": "Free",
       "feeBased": "Paid"
@@ -44,11 +58,14 @@
     "priceCategory": "Price category",
     "selectCategory": "Select category",
     "fromDate": "From :",
+    "priceButton": "Price",
+    "dateButton": "Date",
     "apply": "Apply",
     "reset": "Reset",
     "allPrices": "All",
     "free": "Free",
-    "feeBased": "Fee-based"
+    "feeBased": "Fee-based",
+    "resetDate": "Reset"
   },
   "friends": {
     "buttonTitle": "Friends",
@@ -58,9 +75,13 @@
     "addTab": "Add",
     "requestsTab": "Requests",
     "noFriends": "No friends yet",
-    "remove": "Remove"
+    "remove": "Remove",
+    "errors": {
+      "sendFailed": "Error during sending.",
+      "removeFailed": "Error during removal."
+    }
   },
-  "friendsSidebar": {
+  "friendsModal": {
     "notLoggedIn": "Please log in to access your friends list.",
     "search": "Search Friends",
     "pendingRequests": "Pending Requests ({{count}})",
@@ -86,7 +107,8 @@
     }
   },
   "friendsList": {
-    "viewProfile": "View profile"
+    "viewProfile": "View profile",
+    "noUsersFound": "No users found."
   },
   "friendsRequests": {
     "noPendingRequests": "No pending friend requests.",
@@ -95,17 +117,25 @@
     "fallbackUser": "User #{{id}}",
     "errors": {
       "acceptFailed": "Failed to accept friend request.",
-      "rejectFailed": "Failed to reject friend request."
+      "rejectFailed": "Failed to reject friend request.",
+      "sendFailed": "Error while sending the friend request.",
+      "removeFailed": "Error while removing the friend."
     }
+  },
+  "friendsSidebar": {
+    "notLoggedIn": "You are not logged in."
   },
   "chat": {
     "title": "Chat",
     "connectPrompt": "Connect to view chat.",
     "loadingMessages": "Loading messages...",
-    "errorLoadMessages": "Failed to load messages",
-    "errorSend": "Error while trying to send the message",
     "placeholder": "Type your message...",
-    "send": "Send"
+    "send": "Send",
+    "errors": {
+      "loginRequiredToSend": "You must be logged in to send a message.",
+      "loadMessages": "Failed to load messages",
+      "sendMessage": "Error while trying to send the message"
+    }
   },
   "passwordModal": {
     "title": "Change Password",
@@ -180,6 +210,7 @@
   },
   "likeButton": {
     "loginRequired": "You need to be logged in to add an event to your favorites",
+    "interested": "{{count}} interested",
     "interested_one": "{{count}} interested",
     "interested_other": "{{count}} interested"
   },
@@ -206,7 +237,7 @@
     "termsUserConduct": "You agree not to use the platform to harass, insult, or send disruptive messages via the chat system, nor to attempt to compromise the security of the application's servers and database.",
     "termsSection3Title": "3. Account Responsibility",
     "termsAccountResponsibility": "You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your user account."
-	},
+  },
   "deleteConfirm": {
     "title": "Delete your account",
     "warning": "This is permanent. It removes your profile, messages, and friendships, and cannot be undone.",
@@ -216,5 +247,12 @@
     "done": "Your account has been permanently deleted. Redirecting…",
     "invalidLink": "Invalid or missing confirmation link.",
     "error": "The confirmation link is invalid or expired. Please request deletion again."
+  },
+  "sidebar": {
+    "event": "Event",
+    "selectEvent": "Select an event.",
+    "close": "Close",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar"
   }
 }

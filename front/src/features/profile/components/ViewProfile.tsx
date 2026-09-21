@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { User } from '../../api/friends';
+import type { User } from '../../../api/friends';
 import { useTranslation } from 'react-i18next';
-import { resolveAvatarUrl } from './utils/avatar';
-import styles from './ProfileModal.module.css';
+import { resolveAvatarUrl } from '../utils/avatar';
+import styles from '../ProfileModal.module.css';
 
 interface ViewProfileProps {
   friend: User;
@@ -31,7 +31,12 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
         <div className={styles.modalHeader}>
           <h2>{t('publicProfile.title')}</h2>
 
-          <button type="button" className="modal-close" onClick={requestClose} aria-label="Fermer">
+          <button
+            type="button"
+            className="modal-button modal-close"
+            onClick={requestClose}
+            aria-label="Fermer"
+          >
             <svg
               className="h-4 w-4"
               viewBox="0 0 24 24"

@@ -6,8 +6,9 @@ import type { User } from '../../../api/friends';
 import { searchUsers } from '../../../api/users';
 import type { UserSearchResult } from '../../../api/users';
 import { useAuth } from '../../../context/auth/useAuth';
-import ViewProfile from '../../profile/ViewProfile';
+import ViewProfile from '../../profile/components/ViewProfile';
 import styles from '../Friends.module.css';
+import { useNotification } from '../../../context/notifications/useNotification';
 
 type FriendsListProps = {
   friends: User[];
@@ -24,7 +25,7 @@ export default function FriendsList({
   setInput,
   onDataChanged,
 }: FriendsListProps) {
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const { showWarning } = useNotification();
   const [results, setResults] = useState<UserSearchResult[]>([]);
   const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
   const { accessToken } = useAuth();
@@ -48,10 +49,8 @@ export default function FriendsList({
       try {
         const found = await searchUsers(input, accessToken!);
         setResults(found);
-        setErrorMsg(null);
       } catch {
         setResults([]);
-        setErrorMsg(null);
       }
     }, 300);
 
@@ -59,14 +58,15 @@ export default function FriendsList({
   }, [input, shouldSearch, accessToken]);
 
   const handleAddFriend = async (receiverId: number) => {
-    setErrorMsg(null);
     try {
       await sendFriendRequest(receiverId, accessToken!);
       setInput('');
       setResults([]);
       onDataChanged();
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Error during sending.');
+      showWarning(
+        err instanceof Error ? err.message : t('friends.errors.sendFailed', 'Error during sending.')
+      );
     }
   };
 
@@ -75,7 +75,11 @@ export default function FriendsList({
       await removeFriend(_friendId, accessToken!);
       onDataChanged();
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Error during removal.');
+      showWarning(
+        err instanceof Error
+          ? err.message
+          : t('friends.errors.removeFailed', 'Error during removal.')
+      );
     }
   };
 
@@ -83,7 +87,6 @@ export default function FriendsList({
     <div className="flex flex-col gap-2">
       {action === 'add' && (
         <div className="flex flex-col gap-1">
-          {errorMsg && <p className="text-xs text-red-500 px-2">{errorMsg}</p>}
           {results.map((user) => (
             <div
               key={user.id}
@@ -93,7 +96,7 @@ export default function FriendsList({
               <button
                 type="button"
                 onClick={() => handleAddFriend(user.id)}
-                className="modal-close-inline modal-close-inline-green icon-btn shrink-0 cursor-pointer active:scale-70"
+                className="modal-button modal-close-inline modal-button modal-close-inline-green icon-btn shrink-0 cursor-pointer active:scale-70"
               >
                 <svg
                   className="h-4 w-4"
@@ -110,7 +113,7 @@ export default function FriendsList({
           ))}
           {input.trim() && results.length === 0 && (
             <p className="flex justify-center items-center text-xs text-slate-400 italic px-2">
-              {t('friendsList.noUsersFound', 'Aucun utilisateur trouvé.')}
+              {t('friendsList.noUsersFound', 'No users found.')}
             </p>
           )}
         </div>
@@ -146,7 +149,7 @@ export default function FriendsList({
               <button
                 type="button"
                 onClick={() => handleRemoveFriend(friend.id)}
-                className="modal-close-inline modal-close-inline-red icon-btn shrink-0 cursor-pointer active:scale-70"
+                className="modal-button modal-close-inline modal-button modal-close-inline-red icon-btn shrink-0 cursor-pointer active:scale-70"
               >
                 <svg
                   className="h-4 w-4"

@@ -38,7 +38,7 @@ export default function FriendsSearchBar({ action, input, setInput }: InputProps
           type="button"
           aria-label={t('friendsSearchBar.clearInput')}
           onClick={() => setInput('')}
-          className={`modal-close modal-close-inline-red icon-btn relative! top-auto! right-auto! rounded-full! shrink-0 cursor-pointer active:scale-70 ${styles.searchClearButton}`}
+          className={`modal-button modal-close modal-button modal-close-inline-red icon-btn relative! top-auto! right-auto! rounded-full! shrink-0 cursor-pointer active:scale-70 ${styles.searchClearButton}`}
         >
           <svg
             className="w-4 h-4"

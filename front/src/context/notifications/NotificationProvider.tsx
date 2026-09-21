@@ -5,27 +5,32 @@ import { NotificationContext } from './useNotification';
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [notificationMessage, setNotificationMessage] = useState<string | null>(null);
 
-  const showError = useCallback(
-    (msg?: string) => {
-      setErrorMessage(msg || t('notifications.defaultError', 'Une erreur est survenue'));
+  const showWarning = useCallback(
+    (msg: string) => {
+      setNotificationMessage(msg || t('notifications.defaultError', 'Une erreur est survenue'));
     },
     [t]
   );
 
-  const clearNotification = () => setErrorMessage(null);
+  const clearNotification = useCallback(() => {
+    setNotificationMessage(null);
+  }, []);
 
   return React.createElement(
     NotificationContext.Provider,
-    { value: { showError, clearNotification } },
+    { value: { showWarning, clearNotification } },
     children,
-    errorMessage &&
+    notificationMessage &&
       React.createElement(
         'div',
-        { dir: 'ltr', className: 'fixed top-4 left-14 z-50 pointer-events-auto' },
+        {
+          dir: 'ltr',
+          className: 'fixed top-3 left-3 z-9999 pointer-events-auto',
+        },
         React.createElement(WarningNotification, {
-          message: errorMessage,
+          message: notificationMessage,
           onClose: clearNotification,
         })
       )

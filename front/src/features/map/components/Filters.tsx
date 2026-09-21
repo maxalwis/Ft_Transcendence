@@ -30,7 +30,6 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
 
   const handleApply = () => {
     onApplyFilters?.({
-      city,
       startDate,
       endDate,
       priceType,
@@ -71,7 +70,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
             <button
               type="button"
               aria-label="Close"
-              className="modal-close"
+              className="modal-button modal-close"
               onClick={() => setIsOpen(false)}
             >
               <svg

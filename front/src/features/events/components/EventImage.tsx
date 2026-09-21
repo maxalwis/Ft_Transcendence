@@ -1,3 +1,5 @@
+import styles from '../Event.module.css';
+
 interface EventImageProps {
   src?: string;
   alt: string;
@@ -6,7 +8,7 @@ interface EventImageProps {
 export default function EventImage({ src, alt }: EventImageProps) {
   return (
     <img
-      className="w-full rounded-lg object-cover"
+      className={`${styles['event-details-image']}`}
       src={src || '/event_image.webp'}
       alt={alt}
       referrerPolicy="no-referrer"
