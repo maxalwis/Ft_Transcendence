@@ -3,49 +3,47 @@ import { useTranslation } from 'react-i18next';
 import FriendsList from './FriendsList';
 import FriendsRequests from './FriendRequests';
 import FriendsSearchBar from './FriendsSearchBar';
-import type { FriendAction } from './Friends';
+import FriendsSearchResults from './FriendsSearchResults';
 import type { User, PendingRequest } from '../../../api/friends';
-import styles from '../Friends.module.css';
+import ViewProfile from '../../profile/components/ViewProfile';
 
 interface FriendsContentProps {
-  action: FriendAction;
-  setAction: React.Dispatch<React.SetStateAction<FriendAction>>;
   friends: User[];
   requests: PendingRequest[];
   onDataChanged: () => void;
+  onRemoveFriend: (friendId: number) => Promise<void>;
   isLoggedIn: boolean;
   onBack?: () => void;
 }
 
 export default function FriendsContent({
-  action,
-  setAction,
   friends,
   requests,
   onDataChanged,
+  onRemoveFriend,
   isLoggedIn,
   onBack,
 }: FriendsContentProps) {
   const { t } = useTranslation();
-  const [input, setInput] = useState('');
 
-  const filteredFriends = friends.filter((friend) =>
-    (friend?.username || '').toLowerCase().includes(input.toLowerCase().trim())
-  );
+  const [input, setInput] = useState('');
+  const [showRequests, setShowRequests] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
 
   const handleBack = () => {
     setInput('');
 
-    if (action !== 'menu') {
-      setAction('menu');
-    } else {
-      onBack?.();
+    if (showRequests) {
+      setShowRequests(false);
+      return;
     }
+
+    onBack?.();
   };
 
   if (!isLoggedIn) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+      <div className="flex h-full flex-col items-center justify-center p-4 text-center">
         <p className="text-sm font-medium">{t('friendsModal.notLoggedIn')}</p>
       </div>
     );
@@ -53,15 +51,20 @@ export default function FriendsContent({
 
   return (
     <>
-      {action !== 'menu' && (
+      {showRequests && (
         <button
           type="button"
+<<<<<<< HEAD
           aria-label="Back"
           className="modal-button modal-close left-3 right-auto"
+=======
+          aria-label={t('friendsModal.back', 'Back')}
+          className="modal-close left-3 right-auto"
+>>>>>>> c29598b ([FE] Unified Friends modal into a single menu)
           onClick={handleBack}
         >
           <svg
-            className="w-4 h-4"
+            className="h-4 w-4"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -74,67 +77,47 @@ export default function FriendsContent({
         </button>
       )}
 
-      {/* Main Content Area */}
-      <div
-        className={`flex-1 overflow-y-auto ${!isLoggedIn ? 'pt-8' : action !== 'menu' ? 'pt-12' : 'pt-2'}`}
-      >
-        {!isLoggedIn ? (
-          <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-            <p className="text-sm font-medium">{t('friendsSidebar.notLoggedIn')}</p>
-          </div>
-        ) : action === 'menu' ? (
-          <div className="flex flex-col gap-2 py-2">
-            <button
-              type="button"
-              className={`${styles.menuButton} ${styles.menuButtonBlue}`}
-              onClick={() => setAction('default')}
-            >
-              {t('friendsModal.friendlist')}
-            </button>
+      <div className={`flex-1 overflow-y-auto ${showRequests ? 'pt-12' : 'pt-2'}`}>
+        {showRequests ? (
+          <FriendsRequests requests={requests} onDataChanged={onDataChanged} />
+        ) : input.trim() ? (
+          <FriendsSearchResults
+            input={input}
+            friends={friends}
+            onDataChanged={onDataChanged}
+            onSelectFriend={setSelectedFriend}
+          />
+        ) : (
+          <FriendsList friends={friends} onSelectFriend={setSelectedFriend} />
+        )}
+      </div>
 
+      {!showRequests && (
+        <>
+          {requests.length > 0 && (
             <button
               type="button"
-              className={`${styles.menuButton} ${styles.menuButtonOrange}`}
-              onClick={() => setAction('request')}
+              onClick={() => setShowRequests(true)}
+              className="px-3 py-2 text-center text-xs font-medium text-black/70 transition hover:text-black"
             >
               {t('friendsModal.pendingRequests', {
                 count: requests.length,
               })}
             </button>
+          )}
 
-            <button
-              type="button"
-              className={`${styles.menuButton} ${styles.menuButtonGreen}`}
-              onClick={() => setAction('add')}
-            >
-              {t('friendsModal.add')}
-            </button>
-
-            <button
-              type="button"
-              className={`${styles.menuButton} ${styles.menuButtonRed}`}
-              onClick={() => setAction('remove')}
-            >
-              {t('friendsModal.remove')}
-            </button>
+          <div className="glass-panel">
+            <FriendsSearchBar input={input} setInput={setInput} />
           </div>
-        ) : action === 'request' ? (
-          <FriendsRequests requests={requests} onDataChanged={onDataChanged} />
-        ) : (
-          <FriendsList
-            friends={action === 'add' ? friends : filteredFriends}
-            action={action}
-            input={input}
-            setInput={setInput}
-            onDataChanged={onDataChanged}
-          />
-        )}
-      </div>
+        </>
+      )}
 
-      {action !== 'menu' && (
-        <div className="glass-panel">
-          <FriendsSearchBar action={action} input={input} setInput={setInput} />
-        </div>
+      {selectedFriend && (
+        <ViewProfile
+          friend={selectedFriend}
+          onClose={() => setSelectedFriend(null)}
+          onRemove={onRemoveFriend}
+        />
       )}
     </>
   );

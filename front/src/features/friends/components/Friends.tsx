@@ -3,18 +3,12 @@ import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 import { useTranslation } from 'react-i18next';
 
-import { getFriends, getPendingRequests } from '../../../api/friends';
+import { getFriends, getPendingRequests, removeFriend } from '../../../api/friends';
 import type { User, PendingRequest } from '../../../api/friends';
 import { useSocket } from '../../../context/socket/useSocket';
 
 import FriendsContent from './FriendsContent';
 import FriendsModal from './FriendsModal';
-
-export type FriendAction = 'menu' | 'default' | 'add' | 'remove' | 'request';
-
-export type ActionState = {
-  action: FriendAction;
-};
 
 export type OpenState = {
   isOpen: boolean;
@@ -27,7 +21,6 @@ interface FriendsProps {
 }
 
 export default function Friends({ embedded = false, onBack }: FriendsProps) {
-  const [action, setAction] = useState<FriendAction>('menu');
   const [isOpen, setIsOpen] = useState(false);
   const [friends, setFriends] = useState<User[]>([]);
   const [requests, setRequests] = useState<PendingRequest[]>([]);
@@ -55,8 +48,22 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
     }
   }, [accessToken, showWarning, t]);
 
+  const handleRemoveFriend = async (friendId: number) => {
+    if (!accessToken) return;
+
+    try {
+      await removeFriend(friendId, accessToken);
+      await loadData();
+    } catch (err) {
+      showWarning(
+        err instanceof Error
+          ? err.message
+          : t('friends.errors.removeFailed', 'Error during removal.')
+      );
+    }
+  };
+
   const handleClick = () => {
-    setAction('menu');
     setIsOpen(true);
 
     if (user && accessToken) {
@@ -106,23 +113,21 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
 
       {embedded ? (
         <FriendsContent
-          action={action}
-          setAction={setAction}
           friends={friends}
           requests={requests}
           onDataChanged={loadData}
+          onRemoveFriend={handleRemoveFriend}
           isLoggedIn={!!user}
           onBack={onBack}
         />
       ) : (
         <FriendsModal
-          action={action}
-          setAction={setAction}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           friends={friends}
           requests={requests}
           onDataChanged={loadData}
+          onRemoveFriend={handleRemoveFriend}
           isLoggedIn={!!user}
         />
       )}

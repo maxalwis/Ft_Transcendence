@@ -8,16 +8,30 @@ import styles from '../ProfileModal.module.css';
 interface ViewProfileProps {
   friend: User;
   onClose: () => void;
+  onRemove?: (friendId: number) => void | Promise<void>;
 }
 
-export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
+export default function ViewProfile({ friend, onClose, onRemove }: ViewProfileProps) {
   const { t } = useTranslation();
   const [isClosing, setIsClosing] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const requestClose = () => setIsClosing(true);
 
   const handleAnimationEnd = () => {
     if (isClosing) onClose();
+  };
+
+  const handleRemove = async () => {
+    if (!onRemove || isRemoving) return;
+
+    try {
+      setIsRemoving(true);
+      await onRemove(friend.id);
+      onClose();
+    } finally {
+      setIsRemoving(false);
+    }
   };
 
   return createPortal(
@@ -33,9 +47,9 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
 
           <button
             type="button"
-            className="modal-button modal-close"
+            className="modal-close"
             onClick={requestClose}
-            aria-label="Fermer"
+            aria-label={t('common.close', 'Close')}
           >
             <svg
               className="h-4 w-4"
@@ -63,28 +77,48 @@ export default function ViewProfile({ friend, onClose }: ViewProfileProps) {
               friend.username.charAt(0).toUpperCase()
             )}
           </div>
+
           <h3 className="m-0! text-lg! text-slate-900!">{friend.username}</h3>
 
           <div className="w-full space-y-3 text-sm">
             <div className="flex justify-between gap-4">
               <span className={styles.fieldLabel}>{t('publicProfile.preferredCategory')}</span>
+
               <span className={`text-right ${styles.fieldValue}`}>
                 {friend.preferredCategory
                   ? t(`categories.${friend.preferredCategory.toLowerCase()}`)
                   : t('publicProfile.notProvided')}
               </span>
             </div>
+
             <div className="flex justify-between gap-4">
               <span className={styles.fieldLabel}>{t('publicProfile.preferredLanguage')}</span>
+
               <span className={`text-right ${styles.fieldValue}`}>
                 {friend.preferredLanguage
-                  ? { FR: 'Français', EN: 'English', ES: 'Español', AR: 'العربية' }[
-                      friend.preferredLanguage
-                    ]
+                  ? {
+                      FR: 'Français',
+                      EN: 'English',
+                      ES: 'Español',
+                      AR: 'العربية',
+                    }[friend.preferredLanguage]
                   : t('publicProfile.notProvided')}
               </span>
             </div>
           </div>
+
+          {onRemove && (
+            <button
+              type="button"
+              disabled={isRemoving}
+              onClick={handleRemove}
+              className="modal-button modal-close-inline-red"
+            >
+              {isRemoving
+                ? t('friends.removing', 'Removing...')
+                : t('friends.removeFriend', 'Remove friend')}
+            </button>
+          )}
         </div>
       </div>
     </div>,

@@ -42,7 +42,6 @@ export default function BottomBar() {
     'menu' | 'friends' | 'auth' | 'profileMenu' | 'profile' | 'legal'
   >('menu');
 
-  // BottomBar owns the auth modal state.
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   const openAuth = () => {
@@ -78,20 +77,20 @@ export default function BottomBar() {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 900px)');
 
-    const handleChange = (event: MediaQueryListEvent) => {
-      if (event.matches) {
-        setMobileMenuOpen(false);
-        setMobileView('menu');
-        setIsAuthOpen(false);
+    const handleGlobalClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (!target.closest('button')) {
+        setLegalModalOpen(false);
       }
     };
 
-    mediaQuery.addEventListener('change', handleChange);
+    window.addEventListener('click', handleGlobalClick);
 
     return () => {
-      mediaQuery.removeEventListener('change', handleChange);
+      window.removeEventListener('click', handleGlobalClick);
     };
-  }, []);
+  }, [legalModalOpen]);
 
   return (
     <>
@@ -124,10 +123,17 @@ export default function BottomBar() {
                 }}
               >
                 <div
+<<<<<<< HEAD
                   className="glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
                     glass-panel p-3 max-[900px]:p-6 flex flex-col items-center gap-2.5
+=======
+                  className="
+                    glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
+                    glass-panel p-3 flex flex-col items-center gap-2.5
+>>>>>>> c29598b ([FE] Unified Friends modal into a single menu)
                     shadow-2xl rounded-2xl
-                    w-[calc(100vw-2rem)] max-w-xs"
+                    w-[calc(100vw-2rem)] max-w-xs
+                  "
                   onClick={(e) => e.stopPropagation()}
                 >
                   {mobileView === 'menu' ? (
