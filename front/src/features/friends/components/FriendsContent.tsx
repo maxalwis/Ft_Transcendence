@@ -54,13 +54,8 @@ export default function FriendsContent({
       {showRequests && (
         <button
           type="button"
-<<<<<<< HEAD
-          aria-label="Back"
-          className="modal-button modal-close left-3 right-auto"
-=======
           aria-label={t('friendsModal.back', 'Back')}
           className="modal-close left-3 right-auto"
->>>>>>> c29598b ([FE] Unified Friends modal into a single menu)
           onClick={handleBack}
         >
           <svg

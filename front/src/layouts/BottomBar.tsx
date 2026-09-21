@@ -75,8 +75,6 @@ export default function BottomBar() {
   };
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 900px)');
-
     const handleGlobalClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
@@ -123,14 +121,9 @@ export default function BottomBar() {
                 }}
               >
                 <div
-<<<<<<< HEAD
-                  className="glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
-                    glass-panel p-3 max-[900px]:p-6 flex flex-col items-center gap-2.5
-=======
                   className="
                     glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
                     glass-panel p-3 flex flex-col items-center gap-2.5
->>>>>>> c29598b ([FE] Unified Friends modal into a single menu)
                     shadow-2xl rounded-2xl
                     w-[calc(100vw-2rem)] max-w-xs
                   "

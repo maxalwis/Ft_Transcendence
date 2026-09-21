@@ -1,12 +1,8 @@
 {
-  "welcome": "مرحباً بكم في موقعنا",
   "nav": {
     "menu": "القائمة",
     "scrollLeft": "التمرير لليسار",
     "scrollRight": "التمرير لليمين"
-  },
-  "buttons": {
-    "submit": "إرسال"
   },
   "categories": {
     "all": "الكل",
@@ -17,12 +13,10 @@
     "others": "أخرى"
   },
   "common": {
-    "back": "رجوع"
+    "back": "رجوع",
+    "close": "إغلاق"
   },
   "events": {
-    "defaultCategory": "فعالية",
-    "unknownDate": "تاريخ غير معروف",
-    "linkLabel": "الرابط:",
     "loading": "جارٍ تحميل الفعاليات...",
     "noEvents": "لم يتم العثور على فعاليات",
     "errors": {
@@ -70,12 +64,9 @@
   "friends": {
     "buttonTitle": "الأصدقاء",
     "errorLoading": "خطأ في التحميل.",
-    "sidebarTitle": "أصدقائي",
-    "searchPlaceholder": "بحث...",
-    "addTab": "إضافة",
-    "requestsTab": "الطلبات",
-    "noFriends": "لا يوجد أصدقاء حتى الآن",
-    "remove": "إزالة",
+    "removing": "جارٍ الإزالة...",
+    "removeFriend": "إزالة صديق",
+    "addFriend": "إضافة صديق",
     "errors": {
       "sendFailed": "حدث خطأ أثناء الإرسال.",
       "removeFailed": "حدث خطأ أثناء الإزالة."
@@ -83,32 +74,20 @@
   },
   "friendsModal": {
     "notLoggedIn": "الرجاء تسجيل الدخول للوصول إلى قائمة أصدقائك.",
-    "friendslist": "قائمة الأصدقاء",
     "pendingRequests": "الطلبات المعلقة ({{count}})",
-    "pendingRequests_one": "طلب معلق ({{count}})",
-    "add": "إضافة صديق",
-    "remove": "إزالة صديق"
-  },
-  "friendsButton": {
-    "ariaOpen": "فتح القائمة",
-    "ariaClose": "إغلاق القائمة",
-    "search": "بحث",
-    "pendingRequest": "الطلبات المعلقة",
-    "addFriend": "إضافة صديق",
-    "removeFriend": "إزالة صديق"
+    "back": "رجوع"
   },
   "friendsSearchBar": {
     "clearInput": "مسح البحث",
     "placeholders": {
-      "add": "إضافة صديق...",
-      "remove": "إزالة صديق...",
-      "request": "البحث عن صديق...",
       "default": "البحث عن صديق..."
     }
   },
   "friendsList": {
     "viewProfile": "عرض الملف الشخصي",
-    "noUsersFound": "لم يتم العثور على مستخدمين."
+    "noUsersFound": "لم يتم العثور على مستخدمين.",
+    "noFriends": "لا يوجد أصدقاء حتى الآن.",
+    "searching": "جاري البحث..."
   },
   "friendsRequests": {
     "noPendingRequests": "لا توجد طلبات صداقة معلقة.",
@@ -117,20 +96,14 @@
     "fallbackUser": "مستخدم #{{id}}",
     "errors": {
       "acceptFailed": "حدث خطأ أثناء قبول الطلب.",
-      "rejectFailed": "حدث خطأ أثناء رفض الطلب.",
-      "sendFailed": "حدث خطأ أثناء إرسال طلب الصداقة.",
-      "removeFailed": "حدث خطأ أثناء إزالة الصديق."
+      "rejectFailed": "حدث خطأ أثناء رفض الطلب."
     }
-  },
-  "friendsSidebar": {
-    "notLoggedIn": "أنت غير مسجل الدخول."
   },
   "chat": {
     "title": "الدردشة",
     "connectPrompt": "سجل الدخول لعرض الدردشة.",
     "loadingMessages": "جاري تحميل الرسائل...",
     "placeholder": "اكتب رسالتك...",
-    "send": "إرسال",
     "errors": {
       "loginRequiredToSend": "يجب تسجيل الدخول لإرسال رسالة.",
       "loadMessages": "تعذّر تحميل الرسائل",
@@ -190,11 +163,7 @@
     "preferredCategory": "الفئة المفضلة",
     "changePicture": "تغيير الصورة",
     "cancel": "إلغاء",
-    "save": "حفظ",
-    "privacyTitle": "الخصوصية",
-    "downloadData": "تنزيل بياناتي",
-    "deleteAccount": "حذف حسابي",
-    "deleteEmailSent": "تم إرسال بريد إلكتروني للتأكيد. تحقق من صندوق الوارد لإكمال حذف حسابك."
+    "save": "حفظ"
   },
   "publicProfile": {
     "title": "عرض الملف الشخصي",
@@ -203,14 +172,11 @@
     "notProvided": "غير متوفر"
   },
   "notifications": {
-    "defaultError": "حدث خطأ ما",
-    "defaultSuccess": "تمت العملية بنجاح"
+    "defaultError": "حدث خطأ ما"
   },
   "likeButton": {
     "loginRequired": "يجب تسجيل الدخول لإضافة حدث إلى المفضلة لديك",
-    "interested": "{{count}} مهتم",
-    "interested_one": "{{count}} مهتم",
-    "interested_other": "{{count}} مهتمون"
+    "interested": "{{count}} مهتم"
   },
   "legal": {
     "privacy": "سياسة الخصوصية",

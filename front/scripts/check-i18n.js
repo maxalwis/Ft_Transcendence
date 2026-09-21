@@ -23,7 +23,6 @@ const RED = '\x1b[31m';
 const GREEN = '\x1b[32m';
 const YELLOW = '\x1b[33m';
 const BLUE = '\x1b[34m';
-const MAGENTA = '\x1b[35m';
 const CYAN = '\x1b[36m';
 const GRAY = '\x1b[90m';
 
@@ -110,6 +109,7 @@ function getTranslationKeysFromSource() {
 
   // Dynamic:
   // t(`categories.${code}`)
+  // t(`friends.${status}`)
   const dynamicRegex = /(?:\bi18n\.)?\bt\(\s*`([^`]*)`\s*[,)]/g;
 
   for (const file of files) {
@@ -119,7 +119,10 @@ function getTranslationKeysFromSource() {
     for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
       const line = lines[lineNumber];
 
+      // --------------------------------------------------------
       // Static keys
+      // --------------------------------------------------------
+
       for (const match of line.matchAll(staticRegex)) {
         translations.push({
           key: match[2],
@@ -129,7 +132,10 @@ function getTranslationKeysFromSource() {
         });
       }
 
+      // --------------------------------------------------------
       // Dynamic keys
+      // --------------------------------------------------------
+
       for (const match of line.matchAll(dynamicRegex)) {
         const key = match[1];
 
@@ -161,12 +167,8 @@ const referenceKeys = new Set(getKeys(reference));
 let hasErrors = false;
 
 // ============================================================
-// CHECK 1: Source code → fr.json
+// Find keys used in source code
 // ============================================================
-
-console.log(
-  `\n${WHITE_ON_BLUE}${BOLD} Checking source code against ${REFERENCE_LOCALE}.json ${RESET}\n`
-);
 
 const { translations: sourceTranslations, dynamicTranslations } = getTranslationKeysFromSource();
 
@@ -179,6 +181,14 @@ for (const translation of sourceTranslations) {
 
   usedKeys.get(translation.key).push(translation);
 }
+
+// ============================================================
+// CHECK 1: Source code → fr.json
+// ============================================================
+
+console.log(
+  `\n${WHITE_ON_BLUE}${BOLD} Checking source code against ${REFERENCE_LOCALE}.json ${RESET}\n`
+);
 
 const missingFromReference = [...usedKeys.entries()].filter(([key]) => !referenceKeys.has(key));
 
@@ -200,12 +210,31 @@ if (missingFromReference.length === 0) {
 
     for (const usage of usages) {
       console.log(`      ${GRAY}→ ${usage.file}:${usage.line}${RESET}`);
-
       console.log(`        ${GRAY}${usage.sourceLine}${RESET}`);
     }
 
     console.log('');
   }
+}
+
+// ============================================================
+// CHECK 2: fr.json → Source code
+// ============================================================
+
+const unusedReferenceKeys = [...referenceKeys].filter((key) => !usedKeys.has(key));
+
+if (unusedReferenceKeys.length === 0) {
+  console.log(
+    `${WHITE_ON_GREEN}${BOLD} ✓ All translations in fr.json are used in source code ${RESET}\n`
+  );
+} else {
+  console.log(`${BLACK_ON_YELLOW}${BOLD} Unused translations in fr.json ${RESET}\n`);
+
+  for (const key of unusedReferenceKeys) {
+    console.log(`   ${YELLOW}${key}${RESET}`);
+  }
+
+  console.log('');
 }
 
 // ============================================================
@@ -217,11 +246,19 @@ if (dynamicTranslations.length > 0) {
     `${BLACK_ON_YELLOW}${BOLD} Dynamic translation keys: manual check required ${RESET}\n`
   );
 
+  const seenDynamicKeys = new Set();
+
   for (const translation of dynamicTranslations) {
+    const identifier = `${translation.file}:${translation.line}:${translation.key}`;
+
+    if (seenDynamicKeys.has(identifier)) {
+      continue;
+    }
+
+    seenDynamicKeys.add(identifier);
+
     console.log(`   ${BOLD}${YELLOW}${translation.key}${RESET}`);
-
     console.log(`      ${GRAY}→ ${translation.file}:${translation.line}${RESET}`);
-
     console.log(`        ${GRAY}${translation.sourceLine}${RESET}`);
 
     console.log('');
@@ -229,7 +266,7 @@ if (dynamicTranslations.length > 0) {
 }
 
 // ============================================================
-// CHECK 2: Locale files → fr.json
+// CHECK 3: Locale files → fr.json
 // ============================================================
 
 console.log(
@@ -252,7 +289,6 @@ for (const locale of locales) {
 
   if (missing.length === 0 && extra.length === 0) {
     console.log(`   ${GREEN}✓ All keys match${RESET}\n`);
-
     continue;
   }
 
@@ -269,6 +305,8 @@ for (const locale of locales) {
   }
 
   if (extra.length > 0) {
+    hasErrors = true;
+
     console.log(`   ${BLACK_ON_YELLOW}${BOLD} Keys only in ${locale}.json ${RESET}`);
 
     for (const key of extra) {
