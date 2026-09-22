@@ -50,64 +50,51 @@ export default function FriendsContent({
   }
 
   return (
-  <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-    {/* Back button */}
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      {/* Back button */}
 
-    <div
-      className={`min-h-0 flex-1 overflow-y-auto ${
-        showRequests ? 'pt-12' : 'pt-2'
-      }`}
-    >
-      {showRequests ? (
-        <FriendsRequests
-          requests={requests}
-          onDataChanged={onDataChanged}
-        />
-      ) : input.trim() ? (
-        <FriendsSearchResults
-          input={input}
-          friends={friends}
-          onDataChanged={onDataChanged}
-          onSelectFriend={setSelectedFriend}
-        />
-      ) : (
-        <FriendsList
-          friends={friends}
-          onSelectFriend={setSelectedFriend}
+      <div className={`min-h-0 flex-1 overflow-y-auto ${showRequests ? 'pt-12' : 'pt-2 pb-2'}`}>
+        {showRequests ? (
+          <FriendsRequests requests={requests} onDataChanged={onDataChanged} onBack={handleBack} />
+        ) : input.trim() ? (
+          <FriendsSearchResults
+            input={input}
+            friends={friends}
+            onDataChanged={onDataChanged}
+            onSelectFriend={setSelectedFriend}
+          />
+        ) : (
+          <FriendsList friends={friends} onSelectFriend={setSelectedFriend} />
+        )}
+      </div>
+
+      {!showRequests && (
+        <div className="shrink-0">
+          {requests.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowRequests(true)}
+              className="w-full bg-transparent! border-hidden! py-3!"
+            >
+              {t('friendsModal.pendingRequests', {
+                count: requests.length,
+              })}
+            </button>
+          )}
+
+          <div className="glass-panel shrink-0">
+            <FriendsSearchBar input={input} setInput={setInput} />
+          </div>
+        </div>
+      )}
+
+      {selectedFriend && (
+        <ViewProfile
+          friend={selectedFriend}
+          onClose={() => setSelectedFriend(null)}
+          onRemove={onRemoveFriend}
         />
       )}
     </div>
-
-    {!showRequests && (
-      <div className="shrink-0">
-        {requests.length > 0 && (
-          <button
-            type="button"
-            onClick={() => setShowRequests(true)}
-            className="w-full bg-transparent! border-hidden! py-3!"
-          >
-            {t('friendsModal.pendingRequests', {
-              count: requests.length,
-            })}
-          </button>
-        )}
-
-        <div className="glass-panel shrink-0">
-          <FriendsSearchBar
-            input={input}
-            setInput={setInput}
-          />
-        </div>
-      </div>
-    )}
-
-    {selectedFriend && (
-      <ViewProfile
-        friend={selectedFriend}
-        onClose={() => setSelectedFriend(null)}
-        onRemove={onRemoveFriend}
-      />
-    )}
-  </div>
-);
+  );
 }

@@ -30,14 +30,20 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
   const { user, accessToken } = useAuth();
   const { socket } = useSocket();
 
+  const fetchData = useCallback(async (token: string) => {
+    const [friendsList, pendingList] = await Promise.all([
+      getFriends(token),
+      getPendingRequests(token),
+    ]);
+
+    return { friendsList, pendingList };
+  }, []);
+
   const loadData = useCallback(async () => {
     if (!accessToken) return;
 
     try {
-      const [friendsList, pendingList] = await Promise.all([
-        getFriends(accessToken),
-        getPendingRequests(accessToken),
-      ]);
+      const { friendsList, pendingList } = await fetchData(accessToken);
 
       setFriends(friendsList);
       setRequests(pendingList);
@@ -46,7 +52,7 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
         err instanceof Error ? err.message : t('friends.errorLoading', 'Error loading friends.')
       );
     }
-  }, [accessToken, showWarning, t]);
+  }, [accessToken, fetchData, showWarning, t]);
 
   const handleRemoveFriend = async (friendId: number) => {
     if (!accessToken) return;
@@ -65,10 +71,6 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
 
   const handleClick = () => {
     setIsOpen(true);
-
-    if (user && accessToken) {
-      loadData();
-    }
   };
 
   useEffect(() => {
@@ -99,14 +101,27 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
     };
   }, [socket, loadData]);
 
+  useEffect(() => {
+    if (!accessToken) return;
+
+    const load = async () => {
+      try {
+        const { friendsList, pendingList } = await fetchData(accessToken);
+
+        setFriends(friendsList);
+        setRequests(pendingList);
+      } catch (err) {
+        showWarning(
+          err instanceof Error ? err.message : t('friends.errorLoading', 'Error loading friends.')
+        );
+      }
+    };
+
+    void load();
+  }, [accessToken, fetchData, showWarning, t]);
+
   return (
-    <div
-  className={
-    embedded
-      ? 'flex h-full min-h-0 w-full flex-col overflow-hidden'
-      : 'relative'
-  }
->
+    <div className={embedded ? 'flex h-full min-h-0 w-full flex-col overflow-hidden' : 'relative'}>
       {!embedded && (
         <button
           type="button"

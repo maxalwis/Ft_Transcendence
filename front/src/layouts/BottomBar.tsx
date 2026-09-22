@@ -7,15 +7,21 @@ import EditProfileContent from '../features/profile/components/EditProfileConten
 import LegalContent from '../features/legal/LegalContent';
 import LegalModal from '../features/legal/LegalModal';
 
-function LegalButtons({ onOpenLegal }: { onOpenLegal: (tab: 'privacy' | 'terms') => void }) {
+function LegalButtons({
+  onOpenLegal,
+  mobileMenuOpen,
+}: {
+  onOpenLegal: (tab: 'privacy' | 'terms') => void;
+  mobileMenuOpen: boolean;
+}) {
   const { t } = useTranslation();
 
   return (
-    <>
+    <div className={`flex gap-2 ${mobileMenuOpen ? 'w-full' : ''}`}>
       <button
         type="button"
         onClick={() => onOpenLegal('privacy')}
-        className="glass-panel px-3 py-1.5 text-sm whitespace-nowrap"
+        className={mobileMenuOpen ? 'menuButton' : 'bottomBarButton glass-panel'}
       >
         {t('legal.privacyButton')}
       </button>
@@ -23,11 +29,11 @@ function LegalButtons({ onOpenLegal }: { onOpenLegal: (tab: 'privacy' | 'terms')
       <button
         type="button"
         onClick={() => onOpenLegal('terms')}
-        className="glass-panel px-3 py-1.5 text-sm whitespace-nowrap"
+        className={mobileMenuOpen ? 'menuButton' : 'bottomBarButton glass-panel'}
       >
         {t('legal.termsButton')}
       </button>
-    </>
+    </div>
   );
 }
 
@@ -88,7 +94,25 @@ export default function BottomBar() {
     return () => {
       window.removeEventListener('click', handleGlobalClick);
     };
-  }, [legalModalOpen]);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 900) {
+        setMobileMenuOpen(false);
+        setMobileView('menu');
+        setIsAuthOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <>
@@ -103,9 +127,7 @@ export default function BottomBar() {
             <LoginButton onOpenAuth={openAuth} />
           </div>
 
-          <div className="pointer-events-auto flex items-center gap-4">
-            <LegalButtons onOpenLegal={openLegalModal} />
-          </div>
+          <LegalButtons onOpenLegal={openLegalModal} mobileMenuOpen={mobileMenuOpen} />
         </div>
 
         {/* Mobile Version */}
@@ -123,33 +145,30 @@ export default function BottomBar() {
                 <div
                   className="
                     glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
-                    glass-panel p-3 flex flex-col items-center gap-2.5
+                    glass-panel p-5 flex flex-col items-center gap-2.5
                     shadow-2xl rounded-2xl
-                    w-[calc(100vw-2rem)] max-w-xs max-h-[50vh]
+                    min-w-xs max-w-md
+                    max-h-[70vh]
                   "
                   onClick={(e) => e.stopPropagation()}
                 >
                   {mobileView === 'menu' ? (
                     <>
-                      <button
-                        type="button"
-                        className="glass-panel flex items-center justify-center whitespace-nowrap"
-                        onClick={() => setMobileView('friends')}
-                      >
-                        {t('friends.buttonTitle', 'Friends')}
-                      </button>
-
-                      <div className="w-full h-[1px] bg-white/10" />
-
                       <LoginButton
                         onOpenAuth={openMobileAuth}
                         embedded
                         onOpenProfile={() => setMobileView('profileMenu')}
                       />
 
-                      <div className="w-full h-[1px] bg-white/10" />
+                      <button
+                        type="button"
+                        className="menuButton"
+                        onClick={() => setMobileView('friends')}
+                      >
+                        {t('friends.buttonTitle', 'Friends')}
+                      </button>
 
-                      <LegalButtons onOpenLegal={openLegalModal} />
+                      <LegalButtons onOpenLegal={openLegalModal} mobileMenuOpen={mobileMenuOpen} />
                     </>
                   ) : mobileView === 'friends' ? (
                     <Friends embedded onBack={() => setMobileView('menu')} />
@@ -181,7 +200,7 @@ export default function BottomBar() {
                 setMobileView('menu');
                 setIsAuthOpen(false);
               }}
-              className="glass-panel px-4 py-2 font-semibold text-sm flex items-center gap-2 shadow-lg"
+              className="glass-panel px-4 py-2 font-semibold flex items-center gap-2"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

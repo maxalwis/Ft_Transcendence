@@ -5,15 +5,22 @@ import { LanguageIcon, FlagFR, FlagGB, FlagES, FlagSA } from './FlagIcons';
 
 interface LanguageSelectorProps {
   embedded?: boolean;
+  onWidthChange?: (width: number) => void;
 }
 
-export default function LanguageSelector({ embedded = false }: LanguageSelectorProps) {
+export default function LanguageSelector({
+  embedded = false,
+  onWidthChange,
+}: LanguageSelectorProps) {
+  const languages = [
+    { code: 'fr', title: 'Français', Flag: FlagFR },
+    { code: 'en', title: 'English', Flag: FlagGB },
+    { code: 'es', title: 'Español', Flag: FlagES },
+    { code: 'ar', title: 'العربية', Flag: FlagSA },
+  ] as const;
   const { i18n } = useTranslation();
-
   const currentLang = i18n.language;
-
   const [isOpen, setIsOpen] = useState(false);
-
   const selectorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,12 +41,26 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
     };
   }, [embedded, isOpen]);
 
-  const languages = [
-    { code: 'fr', title: 'Français', Flag: FlagFR },
-    { code: 'en', title: 'English', Flag: FlagGB },
-    { code: 'es', title: 'Español', Flag: FlagES },
-    { code: 'ar', title: 'العربية', Flag: FlagSA },
-  ] as const;
+  useEffect(() => {
+    if (!embedded || !selectorRef.current || !onWidthChange) {
+      return;
+    }
+
+    const element = selectorRef.current;
+
+    const updateWidth = () => {
+      onWidthChange(element.getBoundingClientRect().width);
+    };
+
+    updateWidth();
+
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [embedded, onWidthChange, isOpen]);
 
   const content = embedded ? (
     <div

@@ -35,6 +35,11 @@ prisma-studio: check-env
 	podman compose --profile prisma-studio up -d
 	podman compose logs -f
 
+tools: check-env
+	podman compose --profile tools build
+	podman compose --profile tools up -d
+	podman compose logs -f
+
 clean:
 	podman compose down -v
 

@@ -4,6 +4,7 @@ import type { User } from '../../../api/friends';
 import { useTranslation } from 'react-i18next';
 import { resolveAvatarUrl } from '../utils/avatar';
 import styles from '../ProfileModal.module.css';
+import { closeBtn } from '../../../types/icons';
 
 interface ViewProfileProps {
   friend: User;
@@ -39,29 +40,19 @@ export default function ViewProfile({ friend, onClose, onRemove }: ViewProfilePr
       <div
         data-state={isClosing ? 'closed' : 'open'}
         onAnimationEnd={handleAnimationEnd}
-        className={styles.modalContent}
+        className="glass-modal modalContent"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className={styles.modalHeader}>
+        <div className="modalHeader">
           <h2>{t('publicProfile.title')}</h2>
 
           <button
             type="button"
-            className="modal-buttonmodal-close"
+            className="modal-button modal-close"
             onClick={requestClose}
             aria-label={t('common.close', 'Close')}
           >
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
+            {closeBtn}
           </button>
         </div>
 
@@ -112,7 +103,7 @@ export default function ViewProfile({ friend, onClose, onRemove }: ViewProfilePr
               type="button"
               disabled={isRemoving}
               onClick={handleRemove}
-              className="modal-button modal-close-inline-red"
+              className="modal-button modal-close-inline-red w-full!"
             >
               {isRemoving
                 ? t('friends.removing', 'Removing...')

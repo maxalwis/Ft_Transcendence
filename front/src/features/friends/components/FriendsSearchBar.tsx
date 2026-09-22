@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import styles from '../Friends.module.css';
+import { closeBtn } from '../../../types/icons';
 
 type InputProps = {
   input: string;
@@ -33,17 +34,7 @@ export default function FriendsSearchBar({ input, setInput }: InputProps) {
           onClick={() => setInput('')}
           className={`modal-button modal-close modal-button modal-close-inline-red icon-btn relative! top-auto! right-auto! rounded-full! shrink-0 cursor-pointer active:scale-70 ${styles.searchClearButton}`}
         >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
+          {closeBtn}
         </button>
       )}
     </div>

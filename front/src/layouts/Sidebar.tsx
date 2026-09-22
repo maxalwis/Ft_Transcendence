@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../features/map/Map.module.css';
+import { closeBtn } from '../types/icons';
 
 interface SideBarProps {
   isOpen: boolean;
@@ -41,17 +42,7 @@ export default function SideBar({ isOpen, onToggle, onClose, children, type }: S
             onClick={handleClose}
             className="modal-button modal-close"
           >
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
+            {closeBtn}
           </button>
         </div>
 

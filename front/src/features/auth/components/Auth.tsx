@@ -59,7 +59,7 @@ export default function LoginButton({
       <div className="w-full flex flex-col gap-2">
         <button
           type="button"
-          className="w-full px-4 py-2"
+          className="menuButton"
           onClick={() => {
             onOpenEditProfile?.();
           }}
@@ -67,12 +67,13 @@ export default function LoginButton({
           {t('authBtn.editProfile')}
         </button>
 
-        <button type="button" className="w-full px-4 py-2" onClick={handleLogout}>
+        <button type="button" className="menuButton" onClick={handleLogout}>
           {t('authBtn.logout')}
         </button>
 
         <button
           type="button"
+          className="menuButton"
           onClick={() => {
             onBack?.();
             onCloseMobileMenu?.();
@@ -88,7 +89,7 @@ export default function LoginButton({
     return (
       <div className="relative" ref={menuRef}>
         <button
-          className="h-12 w-12 rounded-full! overflow-hidden p-0! glass-panel flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
+          className="h-12 w-12 rounded-full! overflow-hidden p-0! flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
           aria-label={`Ouvrir le menu de ${user.username ?? 'Profile'}`}
           title={user.username ?? 'Profile'}
           onClick={() => {

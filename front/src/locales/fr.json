@@ -27,7 +27,6 @@
     "defaultCategory": "Événement",
     "unknownDate": "Date inconnue",
     "accessLink": "Détails de l'événement",
-    "back": "Retour",
     "price": {
       "free": "Gratuit",
       "feeBased": "Payant"
@@ -74,8 +73,7 @@
   },
   "friendsModal": {
     "notLoggedIn": "Veuillez vous connecter pour accéder à votre liste d'amis.",
-    "pendingRequests": "Demandes en attente ({{count}})",
-    "back": "Retour"
+    "pendingRequests": "Demandes en attente ({{count}})"
   },
   "friendsSearchBar": {
     "clearInput": "Effacer la recherche",
@@ -86,7 +84,7 @@
   "friendsList": {
     "viewProfile": "Voir profil",
     "noUsersFound": "Aucun utilisateur trouvé.",
-    "noFriends": "Aucun ami pour le moment.",
+    "noFriends": "Commencez à ajouter des amis pour les voir ici !",
     "searching": "Recherche en cours..."
   },
   "friendsRequests": {

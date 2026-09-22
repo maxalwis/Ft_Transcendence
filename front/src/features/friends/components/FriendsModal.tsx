@@ -2,6 +2,7 @@ import type { OpenState } from './Friends';
 import type { User, PendingRequest } from '../../../api/friends';
 import FriendsContent from './FriendsContent';
 import styles from '../Friends.module.css';
+import { closeBtn } from '../../../types/icons';
 
 type FriendsModalProps = OpenState & {
   friends: User[];
@@ -33,17 +34,7 @@ export default function FriendsModal({
           className="modal-button modal-close"
           onClick={() => setIsOpen(false)}
         >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
+          {closeBtn}
         </button>
       </div>
 

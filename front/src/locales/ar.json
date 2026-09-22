@@ -27,7 +27,6 @@
     "defaultCategory": "فعالية",
     "unknownDate": "تاريخ غير معروف",
     "accessLink": "تفاصيل الفعالية",
-    "back": "رجوع",
     "price": {
       "free": "مجاني",
       "feeBased": "مدفوع"
@@ -74,8 +73,7 @@
   },
   "friendsModal": {
     "notLoggedIn": "الرجاء تسجيل الدخول للوصول إلى قائمة أصدقائك.",
-    "pendingRequests": "الطلبات المعلقة ({{count}})",
-    "back": "رجوع"
+    "pendingRequests": "الطلبات المعلقة ({{count}})"
   },
   "friendsSearchBar": {
     "clearInput": "مسح البحث",
@@ -86,7 +84,7 @@
   "friendsList": {
     "viewProfile": "عرض الملف الشخصي",
     "noUsersFound": "لم يتم العثور على مستخدمين.",
-    "noFriends": "لا يوجد أصدقاء حتى الآن.",
+    "noFriends": "ابدأ بإضافة أصدقاء لرؤيتهم هنا !",
     "searching": "جاري البحث..."
   },
   "friendsRequests": {
