@@ -143,7 +143,7 @@ export default function LoginButton({
   }
 
   return (
-    <button className="glass-panel" type="button" onClick={onOpenAuth}>
+    <button className={`${embedded ? 'menuButton' : 'bottomBarButton glass-panel'}`} type="button" onClick={onOpenAuth}>
       {t('authBtn.login')}
     </button>
   );
