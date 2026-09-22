@@ -10,17 +10,29 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   const userId = user?.id;
 
   const socketRef = useRef<Socket | null>(null);
+  const accessTokenRef = useRef(accessToken);
+
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    if (!userId || !accessToken) {
+    accessTokenRef.current = accessToken;
+
+    if (socketRef.current && accessToken) {
+      socketRef.current.auth = {
+        token: accessToken,
+      };
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (!userId || !accessTokenRef.current) {
       return;
     }
 
     const newSocket = io(SOCKET_URL, {
       auth: {
-        token: accessToken,
+        token: accessTokenRef.current,
       },
       withCredentials: true,
     });
@@ -48,19 +60,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     };
   }, [userId]);
 
-  useEffect(() => {
-    if (!socketRef.current || !accessToken) {
-      return;
-    }
-
-    socketRef.current.auth = {
-      token: accessToken,
-    };
-  }, [accessToken]);
-
   return (
-    <SocketContext.Provider value={{ socket, isConnected }}>
-      {children}
-    </SocketContext.Provider>
+    <SocketContext.Provider value={{ socket, isConnected }}>{children}</SocketContext.Provider>
   );
 }
