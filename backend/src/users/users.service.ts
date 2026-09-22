@@ -154,7 +154,7 @@ export class UsersService {
 
     const isValid = await bcrypt.compare(currentPassword, user.password);
     if (!isValid) {
-      throw new ForbiddenException('Current password is incorrect');
+      throw new UnauthorizedException('Current password is incorrect');
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
