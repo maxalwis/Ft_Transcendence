@@ -83,7 +83,7 @@
   },
   "friendsModal": {
     "notLoggedIn": "Veuillez vous connecter pour accéder à votre liste d'amis.",
-    "search": "Rechercher des amis",
+    "friendlist": "Liste d'amis",
     "pendingRequests": "Demandes en attente ({{count}})",
     "pendingRequests_one": "Demande en attente ({{count}})",
     "add": "Ajouter un ami",

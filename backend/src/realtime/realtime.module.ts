@@ -4,9 +4,10 @@ import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
 import { MessagesModule } from '../messages/messages.module';
 import { RealtimeEmitterModule } from './realtime-emitter.module';
+import { EventsModule } from '../events/events.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, MessagesModule, RealtimeEmitterModule],
+  imports: [AuthModule, UsersModule, MessagesModule, RealtimeEmitterModule, EventsModule],
   providers: [RealtimeGateway],
   exports: [RealtimeEmitterModule],
 })

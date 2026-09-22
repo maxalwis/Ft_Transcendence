@@ -83,7 +83,7 @@
   },
   "friendsModal": {
     "notLoggedIn": "Please log in to access your friends list.",
-    "search": "Search Friends",
+    "friendlist": "Friends list",
     "pendingRequests": "Pending Requests ({{count}})",
     "pendingRequests_one": "Pending Request ({{count}})",
     "add": "Add Friend",

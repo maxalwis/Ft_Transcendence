@@ -65,7 +65,7 @@ export class UsersService {
       where: {
         username: {
           contains: query,
-          mode: 'insensitive', // recherche insensible à la casse
+          mode: 'insensitive',
         },
         ...(excludeUserId && { id: { not: excludeUserId } }),
       },

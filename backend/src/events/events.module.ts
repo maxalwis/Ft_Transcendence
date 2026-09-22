@@ -7,5 +7,6 @@ import { TranslationsModule } from '../translations/translations.module';
   imports: [TranslationsModule],
   controllers: [EventsController],
   providers: [EventsService],
+  exports: [EventsService],
 })
 export class EventsModule {}

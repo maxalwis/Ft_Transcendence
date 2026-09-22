@@ -27,4 +27,8 @@ export class RealtimeEmitterService {
       this.server?.sockets.sockets.get(socketId)?.disconnect(true);
     }
   }
+
+  emitToUser(userId: number, event: string, payload: unknown) {
+    this.server?.to(`user:${userId}`).emit(event, payload);
+  }
 }
