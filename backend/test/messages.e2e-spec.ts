@@ -107,18 +107,14 @@ describe('Messages concurrency (e2e)', () => {
 
     expect(
       messages.some(
-        (message) =>
-          message.userId === userAId &&
-          message.content === 'Message from user A',
-      ),
+        (message) => message.userId === userAId && message.content === 'Message from user A'
+      )
     ).toBe(true);
 
     expect(
       messages.some(
-        (message) =>
-          message.userId === userBId &&
-          message.content === 'Message from user B',
-      ),
+        (message) => message.userId === userBId && message.content === 'Message from user B'
+      )
     ).toBe(true);
   });
 

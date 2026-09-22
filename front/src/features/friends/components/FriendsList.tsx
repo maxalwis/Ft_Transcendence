@@ -33,24 +33,24 @@ export default function FriendsList({
 
   // Reset results synchronously during render when input or action isn't valid for search
   const shouldSearch = action === 'add' && Boolean(input.trim());
-  
+
   useEffect(() => {
-  if (!shouldSearch) {
-    setResults([]);
-    return;
-  }
-
-  const timeout = setTimeout(async () => {
-    try {
-      const found = await searchUsers(input, accessToken!);
-      setResults(found);
-    } catch {
+    if (!shouldSearch) {
       setResults([]);
+      return;
     }
-  }, 300);
 
-  return () => clearTimeout(timeout);
-}, [input, shouldSearch, accessToken]);
+    const timeout = setTimeout(async () => {
+      try {
+        const found = await searchUsers(input, accessToken!);
+        setResults(found);
+      } catch {
+        setResults([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [input, shouldSearch, accessToken]);
 
   const handleAddFriend = async (receiverId: number) => {
     try {

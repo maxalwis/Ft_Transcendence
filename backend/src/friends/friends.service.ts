@@ -158,7 +158,7 @@ export class FriendsService {
     });
 
     if (result.count === 0) {
-      throw new NotFoundException("This friendship does not exist");
+      throw new NotFoundException('This friendship does not exist');
     }
 
     this.emitter.emitToUser(userId, 'friend:updated', {
