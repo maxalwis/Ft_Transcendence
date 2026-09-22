@@ -162,6 +162,8 @@ export class UsersService {
       where: { id: userId },
       data: { password: hashedPassword },
     });
+
+    return { message: 'Password changed successfully' };
   }
 
   async setStatusIfExists(id: number, status: UserStatus): Promise<User | null> {
