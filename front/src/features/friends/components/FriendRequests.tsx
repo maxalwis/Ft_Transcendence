@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { PendingRequest } from '../../../api/friends';
 import { acceptFriendRequest, rejectFriendRequest } from '../../../api/friends';
-import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 
 type FriendsRequestsProps = {
@@ -13,11 +12,10 @@ type FriendsRequestsProps = {
 export default function FriendsRequests({ requests, onDataChanged, onBack }: FriendsRequestsProps) {
   const { t } = useTranslation();
   const { showWarning } = useNotification();
-  const { accessToken } = useAuth();
 
   const handleAccept = async (senderId: number) => {
     try {
-      await acceptFriendRequest(senderId, accessToken!);
+      await acceptFriendRequest(senderId);
       onDataChanged();
     } catch (err) {
       showWarning(err instanceof Error ? err.message : t('friendsRequests.errors.acceptFailed'));
@@ -26,7 +24,7 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
 
   const handleReject = async (senderId: number) => {
     try {
-      await rejectFriendRequest(senderId, accessToken!);
+      await rejectFriendRequest(senderId);
       onDataChanged();
     } catch (err) {
       showWarning(err instanceof Error ? err.message : t('friendsRequests.errors.rejectFailed'));

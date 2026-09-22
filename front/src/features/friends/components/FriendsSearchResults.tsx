@@ -69,7 +69,7 @@ export default function FriendsSearchResults({
     try {
       setSendingRequest(userId);
 
-      await sendFriendRequest(userId, accessToken);
+      await sendFriendRequest(userId);
 
       onDataChanged();
     } catch (err) {

@@ -30,11 +30,8 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
   const { user, accessToken } = useAuth();
   const { socket } = useSocket();
 
-  const fetchData = useCallback(async (token: string) => {
-    const [friendsList, pendingList] = await Promise.all([
-      getFriends(token),
-      getPendingRequests(token),
-    ]);
+  const fetchData = useCallback(async () => {
+    const [friendsList, pendingList] = await Promise.all([getFriends(), getPendingRequests()]);
 
     return { friendsList, pendingList };
   }, []);
@@ -43,7 +40,7 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
     if (!accessToken) return;
 
     try {
-      const { friendsList, pendingList } = await fetchData(accessToken);
+      const { friendsList, pendingList } = await fetchData();
 
       setFriends(friendsList);
       setRequests(pendingList);
@@ -58,7 +55,7 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
     if (!accessToken) return;
 
     try {
-      await removeFriend(friendId, accessToken);
+      await removeFriend(friendId);
       await loadData();
     } catch (err) {
       showWarning(
@@ -106,7 +103,7 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
 
     const load = async () => {
       try {
-        const { friendsList, pendingList } = await fetchData(accessToken);
+        const { friendsList, pendingList } = await fetchData();
 
         setFriends(friendsList);
         setRequests(pendingList);

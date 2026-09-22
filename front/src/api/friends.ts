@@ -1,5 +1,6 @@
-const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-const API_URL = `${baseUrl}/friends`;
+import { request } from './api';
+
+const API_URL = '/friends';
 
 export interface User {
   id: number;
@@ -19,82 +20,77 @@ export interface PendingRequest {
   createdAt?: string;
 }
 
-export async function getFriends(accessToken: string): Promise<User[]> {
-  const res = await fetch(API_URL, {
-    credentials: 'include',
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  if (!res.ok) throw new Error('Erreur de récupération des amis');
+export async function getFriends(): Promise<User[]> {
+  const res = await request(API_URL);
+
+  if (!res.ok) {
+    throw new Error('Erreur de récupération des amis');
+  }
+
   return res.json();
 }
 
-export async function getPendingRequests(accessToken: string): Promise<PendingRequest[]> {
-  const res = await fetch(`${API_URL}/pending`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    credentials: 'include',
-  });
-  if (!res.ok) throw new Error('Erreur lors de la récupération des demandes');
+export async function getPendingRequests(): Promise<PendingRequest[]> {
+  const res = await request(`${API_URL}/pending`);
+
+  if (!res.ok) {
+    throw new Error('Erreur lors de la récupération des demandes');
+  }
+
   return res.json();
 }
 
-export async function sendFriendRequest(receiverId: number, accessToken: string) {
-  const res = await fetch(`${API_URL}/request/${receiverId}`, {
+export async function sendFriendRequest(receiverId: number) {
+  const res = await request(`${API_URL}/request/${receiverId}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    credentials: 'include',
   });
+
   if (!res.ok) {
     const errorData = await res.json().catch(() => null);
     throw new Error(errorData?.message || "Erreur lors de l'envoi");
   }
+
   return res.json();
 }
 
-export async function acceptFriendRequest(senderId: number, accessToken: string) {
-  const res = await fetch(`${API_URL}/accept/${senderId}`, {
+export async function acceptFriendRequest(senderId: number) {
+  const res = await request(`${API_URL}/accept/${senderId}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    credentials: 'include',
   });
-  if (!res.ok) throw new Error("Impossible d'accepter la demande");
+
+  if (!res.ok) {
+    throw new Error("Impossible d'accepter la demande");
+  }
+
   return res.json();
 }
 
-export async function rejectFriendRequest(senderId: number, accessToken: string) {
-  const res = await fetch(`${API_URL}/reject/${senderId}`, {
+export async function rejectFriendRequest(senderId: number) {
+  const res = await request(`${API_URL}/reject/${senderId}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    credentials: 'include',
   });
+
   if (!res.ok) {
     const errorData = await res.json().catch(() => null);
+
     const message = Array.isArray(errorData?.message)
       ? errorData.message.join(', ')
       : errorData?.message;
+
     throw new Error(message || `Impossible de refuser la demande (${res.status})`);
   }
+
   return res.json();
 }
 
-export async function removeFriend(friendId: number, accessToken: string) {
-  const res = await fetch(`${API_URL}/${friendId}`, {
+export async function removeFriend(friendId: number) {
+  const res = await request(`${API_URL}/${friendId}`, {
     method: 'DELETE',
-    headers: { Authorization: `Bearer ${accessToken}` },
-    credentials: 'include',
   });
-  if (!res.ok) throw new Error('Impossible de supprimer cet ami');
+
+  if (!res.ok) {
+    throw new Error('Impossible de supprimer cet ami');
+  }
+
   return res.json();
 }
