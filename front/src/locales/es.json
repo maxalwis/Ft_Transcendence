@@ -1,12 +1,8 @@
 {
-  "welcome": "Bienvenido a nuestro sitio",
   "nav": {
     "menu": "Menú",
     "scrollLeft": "Desplazar a la izquierda",
     "scrollRight": "Desplazar a la derecha"
-  },
-  "buttons": {
-    "submit": "Enviar"
   },
   "categories": {
     "all": "Todo",
@@ -17,12 +13,10 @@
     "others": "Otros"
   },
   "common": {
-    "back": "Volver"
+    "back": "Volver",
+    "close": "Cerrar"
   },
   "events": {
-    "defaultCategory": "Evento",
-    "unknownDate": "Fecha desconocida",
-    "linkLabel": "Enlace:",
     "loading": "Cargando eventos...",
     "noEvents": "No se encontraron eventos",
     "errors": {
@@ -33,7 +27,6 @@
     "defaultCategory": "Evento",
     "unknownDate": "Fecha desconocida",
     "accessLink": "Detalles del evento",
-    "back": "Volver",
     "price": {
       "free": "Gratis",
       "feeBased": "De pago"
@@ -70,12 +63,9 @@
   "friends": {
     "buttonTitle": "Amigos",
     "errorLoading": "Error de carga.",
-    "sidebarTitle": "Mis amigos",
-    "searchPlaceholder": "Buscar...",
-    "addTab": "Añadir",
-    "requestsTab": "Solicitudes",
-    "noFriends": "No hay amigos aún",
-    "remove": "Eliminar",
+    "removing": "Eliminando...",
+    "removeFriend": "Eliminar amigo",
+    "addFriend": "Agregar amigo",
     "errors": {
       "sendFailed": "Error al enviar.",
       "removeFailed": "Error al eliminar."
@@ -83,32 +73,19 @@
   },
   "friendsModal": {
     "notLoggedIn": "Por favor, inicia sesión para ver tu lista de amigos.",
-    "friendlist": "Lista de amigos",
-    "pendingRequests": "Solicitudes pendientes ({{count}})",
-    "pendingRequests_one": "Solicitud pendiente ({{count}})",
-    "add": "Añadir amigo",
-    "remove": "Eliminar amigo"
-  },
-  "friendsButton": {
-    "ariaOpen": "Abrir menú",
-    "ariaClose": "Cerrar menú",
-    "search": "Buscar",
-    "pendingRequest": "Solicitudes pendientes",
-    "addFriend": "Añadir un amigo",
-    "removeFriend": "Eliminar un amigo"
+    "pendingRequests": "Solicitudes pendientes ({{count}})"
   },
   "friendsSearchBar": {
     "clearInput": "Borrar texto",
     "placeholders": {
-      "add": "Añadir un amigo...",
-      "remove": "Eliminar un amigo...",
-      "request": "Buscar un amigo...",
       "default": "Buscar un amigo..."
     }
   },
   "friendsList": {
     "viewProfile": "Ver perfil",
-    "noUsersFound": "No se encontraron usuarios."
+    "noUsersFound": "No se encontraron usuarios.",
+    "noFriends": "Comienza a agregar amigos para verlos aquí !",
+    "searching": "Buscando..."
   },
   "friendsRequests": {
     "noPendingRequests": "No hay solicitudes de amistad pendientes.",
@@ -117,20 +94,14 @@
     "fallbackUser": "Usuario #{{id}}",
     "errors": {
       "acceptFailed": "Error al aceptar la solicitud.",
-      "rejectFailed": "Error al rechazar la solicitud.",
-      "sendFailed": "Error al enviar la solicitud de amistad.",
-      "removeFailed": "Error al eliminar al amigo."
+      "rejectFailed": "Error al rechazar la solicitud."
     }
-  },
-  "friendsSidebar": {
-    "notLoggedIn": "No has iniciado sesión."
   },
   "chat": {
     "title": "Chat",
     "connectPrompt": "Conéctate para ver el chat.",
     "loadingMessages": "Cargando mensajes...",
     "placeholder": "Escribe tu mensaje...",
-    "send": "Enviar",
     "errors": {
       "loginRequiredToSend": "Debes iniciar sesión para enviar un mensaje.",
       "loadMessages": "Error al cargar los mensajes",
@@ -190,11 +161,7 @@
     "preferredCategory": "Categoría preferida",
     "changePicture": "Cambiar foto",
     "cancel": "Cancelar",
-    "save": "Guardar",
-    "privacyTitle": "Privacidad",
-    "downloadData": "Descargar mis datos",
-    "deleteAccount": "Eliminar mi cuenta",
-    "deleteEmailSent": "Se ha enviado un correo de confirmación. Revisa tu bandeja de entrada para finalizar la eliminación."
+    "save": "Guardar"
   },
   "publicProfile": {
     "title": "Ver perfil",
@@ -203,14 +170,11 @@
     "notProvided": "No especificado"
   },
   "notifications": {
-    "defaultError": "Se ha producido un error",
-    "defaultSuccess": "Operación exitosa"
+    "defaultError": "Se ha producido un error"
   },
   "likeButton": {
     "loginRequired": "Debes iniciar sesión para añadir un evento a tus favoritos",
-    "interested": "{{count}} interesado",
-    "interested_one": "{{count}} interesado",
-    "interested_other": "{{count}} interesados"
+    "interested": "{{count}} interesado"
   },
   "legal": {
     "privacy": "Política de Privacidad",

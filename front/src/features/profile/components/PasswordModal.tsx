@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from '../ProfileModal.module.css';
+import { closeBtn } from '../../../types/icons';
 
 interface PasswordModalProps {
   onClose: () => void;
@@ -41,14 +41,14 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
   };
 
   return (
-    <div className="glass-modal-overlay" style={{ zIndex: 1100 }} onClick={requestClose}>
+    <div className="glass-modal-overlay" onClick={requestClose}>
       <div
         data-state={isClosing ? 'closed' : 'open'}
         onAnimationEnd={handleAnimationEnd}
-        className={styles.modalContent}
+        className="glass-modal modalContent"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={styles.modalHeader}>
+        <div className="modalHeader">
           <h2>{t('passwordModal.title')}</h2>
           <button
             type="button"
@@ -56,21 +56,11 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
             onClick={requestClose}
             aria-label={t('passwordModal.close')}
           >
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
+            {closeBtn}
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.modalForm}>
+        <form onSubmit={handleSubmit} className="modalForm">
           <label>
             {t('passwordModal.newPassword')}
             <input
@@ -91,13 +81,13 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
             />
           </label>
 
-          {passwordError && <p className={styles.modalError}>{passwordError}</p>}
+          {passwordError && <p className="modalError">{passwordError}</p>}
 
-          <div className={styles.modalActions}>
-            <button type="button" className={styles.btnSecondary} onClick={requestClose}>
+          <div className="modalActions">
+            <button type="button" className="btnSecondary" onClick={requestClose}>
               {t('passwordModal.cancel')}
             </button>
-            <button type="submit" className={styles.btnPrimary} disabled={isChangingPassword}>
+            <button type="submit" className="btnPrimary" disabled={isChangingPassword}>
               {isChangingPassword ? t('passwordModal.loading') : t('passwordModal.changePassword')}
             </button>
           </div>

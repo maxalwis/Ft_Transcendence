@@ -39,6 +39,7 @@ export default function NavBar({
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [languageSelectorWidth, setLanguageSelectorWidth] = useState(0);
 
   const updateScrollState = useCallback(() => {
     const el = categoriesScrollRef.current;
@@ -133,14 +134,19 @@ export default function NavBar({
       dir="ltr"
       className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-14 md:px-6 pointer-events-none"
     >
-      <LanguageSelector embedded />
+      <LanguageSelector embedded onWidthChange={setLanguageSelectorWidth} />
 
-      <div className="w-full flex items-center justify-center md:justify-between pr-4">
-        {/* Left spacer, keeps navbar in the middle */}
-        <div className="w-45 hidden md:block" />
+      <div
+        className="w-full grid items-center py-4"
+        style={{
+          gridTemplateColumns: `45px minmax(0, 1fr) ${Math.max(languageSelectorWidth, 45)}px`,
+        }}
+      >
+        {/* Left spacer */}
+        <div />
 
         {/* Category Navigation */}
-        <div className="relative z-10 flex items-center max-w-full py-4">
+        <div className="relative z-10 flex items-center justify-center min-w-0">
           {canScrollLeft && (
             <button
               type="button"
@@ -227,7 +233,7 @@ export default function NavBar({
         </div>
 
         {/* Right spacer */}
-        <div className="w-45 hidden md:block" />
+        <div className="w-45 hidden md:block shrink-0" />
       </div>
 
       {/* Price and date button */}

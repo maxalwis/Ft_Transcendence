@@ -7,15 +7,21 @@ import EditProfileContent from '../features/profile/components/EditProfileConten
 import LegalContent from '../features/legal/LegalContent';
 import LegalModal from '../features/legal/LegalModal';
 
-function LegalButtons({ onOpenLegal }: { onOpenLegal: (tab: 'privacy' | 'terms') => void }) {
+function LegalButtons({
+  onOpenLegal,
+  mobileMenuOpen,
+}: {
+  onOpenLegal: (tab: 'privacy' | 'terms') => void;
+  mobileMenuOpen: boolean;
+}) {
   const { t } = useTranslation();
 
   return (
-    <>
+    <div className={`flex gap-2 ${mobileMenuOpen ? 'w-full' : ''}`}>
       <button
         type="button"
         onClick={() => onOpenLegal('privacy')}
-        className="glass-panel px-3 py-1.5 text-sm whitespace-nowrap"
+        className={mobileMenuOpen ? 'menuButton' : 'bottomBarButton glass-panel'}
       >
         {t('legal.privacyButton')}
       </button>
@@ -23,11 +29,11 @@ function LegalButtons({ onOpenLegal }: { onOpenLegal: (tab: 'privacy' | 'terms')
       <button
         type="button"
         onClick={() => onOpenLegal('terms')}
-        className="glass-panel px-3 py-1.5 text-sm whitespace-nowrap"
+        className={mobileMenuOpen ? 'menuButton' : 'bottomBarButton glass-panel'}
       >
         {t('legal.termsButton')}
       </button>
-    </>
+    </div>
   );
 }
 
@@ -42,7 +48,6 @@ export default function BottomBar() {
     'menu' | 'friends' | 'auth' | 'profileMenu' | 'profile' | 'legal'
   >('menu');
 
-  // BottomBar owns the auth modal state.
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   const openAuth = () => {
@@ -76,20 +81,36 @@ export default function BottomBar() {
   };
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 900px)');
+    const handleGlobalClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
 
-    const handleChange = (event: MediaQueryListEvent) => {
-      if (event.matches) {
+      if (!target.closest('button')) {
+        setLegalModalOpen(false);
+      }
+    };
+
+    window.addEventListener('click', handleGlobalClick);
+
+    return () => {
+      window.removeEventListener('click', handleGlobalClick);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 900) {
         setMobileMenuOpen(false);
         setMobileView('menu');
         setIsAuthOpen(false);
       }
     };
 
-    mediaQuery.addEventListener('change', handleChange);
+    window.addEventListener('resize', handleResize);
+
+    handleResize();
 
     return () => {
-      mediaQuery.removeEventListener('change', handleChange);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -106,9 +127,7 @@ export default function BottomBar() {
             <LoginButton onOpenAuth={openAuth} />
           </div>
 
-          <div className="pointer-events-auto flex items-center gap-4">
-            <LegalButtons onOpenLegal={openLegalModal} />
-          </div>
+          <LegalButtons onOpenLegal={openLegalModal} mobileMenuOpen={mobileMenuOpen} />
         </div>
 
         {/* Mobile Version */}
@@ -124,33 +143,32 @@ export default function BottomBar() {
                 }}
               >
                 <div
-                  className="glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
-                    glass-panel p-3 max-[900px]:p-6 flex flex-col items-center gap-2.5
+                  className="
+                    glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
+                    glass-panel p-5 flex flex-col items-center gap-2.5
                     shadow-2xl rounded-2xl
-                    w-[calc(100vw-2rem)] max-w-xs"
+                    min-w-xs max-w-md
+                    max-h-[70vh]
+                  "
                   onClick={(e) => e.stopPropagation()}
                 >
                   {mobileView === 'menu' ? (
                     <>
-                      <button
-                        type="button"
-                        className="glass-panel flex items-center justify-center whitespace-nowrap"
-                        onClick={() => setMobileView('friends')}
-                      >
-                        {t('friends.buttonTitle', 'Friends')}
-                      </button>
-
-                      <div className="w-full h-[1px] bg-white/10" />
-
                       <LoginButton
                         onOpenAuth={openMobileAuth}
                         embedded
                         onOpenProfile={() => setMobileView('profileMenu')}
                       />
 
-                      <div className="w-full h-[1px] bg-white/10" />
+                      <button
+                        type="button"
+                        className="menuButton"
+                        onClick={() => setMobileView('friends')}
+                      >
+                        {t('friends.buttonTitle', 'Friends')}
+                      </button>
 
-                      <LegalButtons onOpenLegal={openLegalModal} />
+                      <LegalButtons onOpenLegal={openLegalModal} mobileMenuOpen={mobileMenuOpen} />
                     </>
                   ) : mobileView === 'friends' ? (
                     <Friends embedded onBack={() => setMobileView('menu')} />
@@ -182,7 +200,7 @@ export default function BottomBar() {
                 setMobileView('menu');
                 setIsAuthOpen(false);
               }}
-              className="glass-panel px-4 py-2 font-semibold text-sm flex items-center gap-2 shadow-lg"
+              className="glass-panel px-4 py-2 font-semibold flex items-center gap-2"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

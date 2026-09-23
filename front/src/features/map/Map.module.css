@@ -169,6 +169,7 @@
 .sidebarModal {
   transform-origin: bottom right;
   z-index: 1000 !important;
+  padding: calc(var(--spacing) * 5);
 }
 
 .sidebarModal[data-state='open'] {
@@ -177,6 +178,10 @@
 
 .sidebarModal[data-state='closed'] {
   animation: sidebarCollapseOut 200ms ease-in forwards;
+}
+
+.sidebarModal[data-sidebar-type='event'] {
+  padding-top: calc(var(--spacing) * 13) !important;
 }
 
 @keyframes centerPopIn {
@@ -234,9 +239,7 @@
     height: 60vh;
     margin: 0 auto;
     z-index: 1000;
-
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-
     transform-origin: bottom center;
   }
 
