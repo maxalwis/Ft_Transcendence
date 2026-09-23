@@ -14,8 +14,10 @@ export interface AuthContextType {
   user: User | null;
   accessToken: string | null;
   isLoading: boolean;
-  setAuth: (user: User, token: string) => void;
+  justLoggedIn: boolean;
+  setAuth: (user: User, token: string, options?: { isNewLogin?: boolean }) => void;
   updateUser: (user: Partial<User>) => void;
+  clearJustLoggedIn: () => void;
   logout: () => void;
 }
 

@@ -6,11 +6,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
 
-  const setAuth = (user: User, token: string) => {
+  const setAuth = (user: User, token: string, options?: { isNewLogin?: boolean }) => {
     setUser(user);
     setAccessToken(token);
     setApiAccessToken(token);
+    if (options?.isNewLogin) {
+      setJustLoggedIn(true);
+    }
   };
 
   const updateUser = (partialUser: Partial<User>) => {
@@ -18,6 +22,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!currentUser) return currentUser;
       return { ...currentUser, ...partialUser };
     });
+  };
+
+  const clearJustLoggedIn = () => {
+    setJustLoggedIn(false);
   };
 
   const logout = () => {
@@ -54,7 +62,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, accessToken, isLoading, setAuth, updateUser, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        accessToken,
+        isLoading,
+        justLoggedIn,
+        setAuth,
+        updateUser,
+        clearJustLoggedIn,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

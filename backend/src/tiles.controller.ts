@@ -11,7 +11,7 @@ export class TilesController {
     @Param('z') z: string,
     @Param('x') x: string,
     @Param('y') y: string,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     const tile = await this.tilesService.getTile(z, x, y);
 
