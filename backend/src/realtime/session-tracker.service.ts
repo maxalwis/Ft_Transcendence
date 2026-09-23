@@ -30,4 +30,10 @@ export class SessionTrackerService {
   getOnlineUserIds(): number[] {
     return [...this.onlineUsers.keys()];
   }
+
+  // Copie défensive : le caller va typiquement déconnecter ces sockets,
+  // ce qui déclenche removeSession() et muterait le Set en cours d'itération.
+  getSocketIds(userId: number): string[] {
+    return [...(this.onlineUsers.get(userId) ?? [])];
+  }
 }

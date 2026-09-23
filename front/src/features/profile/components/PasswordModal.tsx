@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../../context/auth/useAuth';
+import { changePassword } from '../../../api/users';
 import { closeBtn } from '../../../types/icons';
 
 interface PasswordModalProps {
@@ -8,6 +10,8 @@ interface PasswordModalProps {
 
 export default function PasswordModal({ onClose }: PasswordModalProps) {
   const { t } = useTranslation();
+  const { accessToken } = useAuth();
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState<string | null>(null);
@@ -29,12 +33,21 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
       return;
     }
 
+    if (!accessToken) {
+      setPasswordError(t('passwordModal.serverError'));
+      return;
+    }
+
     setIsChangingPassword(true);
 
     try {
+      await changePassword(currentPassword, newPassword, accessToken);
       requestClose();
+      setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
+    } catch (err) {
+      setPasswordError(err instanceof Error ? err.message : t('passwordModal.serverError'));
     } finally {
       setIsChangingPassword(false);
     }
@@ -61,6 +74,17 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="modalForm">
+          <label>
+            {t('passwordModal.currentPassword')}
+            <input
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder={t('passwordModal.currentPasswordPlaceholder')}
+              autoComplete="current-password"
+            />
+          </label>
+
           <label>
             {t('passwordModal.newPassword')}
             <input

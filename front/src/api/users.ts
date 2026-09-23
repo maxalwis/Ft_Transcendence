@@ -23,3 +23,24 @@ export async function searchUsers(
   if (!res.ok) throw new Error('Erreur lors de la recherche');
   return res.json();
 }
+
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string,
+  accessToken: string
+): Promise<void> {
+  const res = await fetch(`${API_URL}/password`, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => null);
+    throw new Error(error?.message ?? 'Password change failed');
+  }
+}

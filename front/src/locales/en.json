@@ -111,6 +111,8 @@
   "passwordModal": {
     "title": "Change Password",
     "close": "Close",
+    "currentPassword": "Current Password",
+    "currentPasswordPlaceholder": "Current Password",
     "newPassword": "New Password",
     "newPasswordPlaceholder": "New password",
     "confirmPassword": "Confirm New Password",

@@ -97,7 +97,20 @@ model User {
   sentFriendships     Friendship[] @relation("SentFriendships")
   receivedFriendships Friendship[] @relation("ReceivedFriendships")
   eventInterests      EventInterest[]
+  refreshTokens       RefreshToken[]
   @@unique([provider, providerId])
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  tokenHash String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Friendship {

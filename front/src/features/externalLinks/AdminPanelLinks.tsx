@@ -13,7 +13,7 @@ interface DashboardLink {
 const dashboards: DashboardLink[] = [
   {
     name: 'Prisma Studio',
-    url: 'http://localhost:5555',
+    url: 'https://localhost:8444',
     icon: (
       <svg
         className="w-5 h-5"
@@ -34,7 +34,7 @@ const dashboards: DashboardLink[] = [
   },
   {
     name: 'Elasticsearch',
-    url: 'http://localhost:5601',
+    url: 'https://localhost:8445',
     icon: (
       <svg
         className="w-5 h-5"
