@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import L from 'leaflet';
 import { useMap } from 'react-leaflet';
+import Button from '../../components/ui/Button';
 
 interface DashboardLink {
   name: string;
@@ -125,7 +126,7 @@ const DropdownMenu: React.FC = () => {
           >
             <div className="flex flex-col gap-2">
               {dashboards.map((tool) => (
-                <button
+                <Button variant="ghost"
                   key={tool.name}
                   type="button"
                   onClick={(e) => {
@@ -144,7 +145,7 @@ const DropdownMenu: React.FC = () => {
                   <span className="text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
                     ↗
                   </span>
-                </button>
+                </Button>
               ))}
             </div>
           </div>,

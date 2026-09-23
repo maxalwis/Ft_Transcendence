@@ -115,7 +115,7 @@ export const createGroupMarkerIcon = (
                 font-size: 11px;
                 height: 20px;
                 min-width: 20px;
-                border-radius: 10px;
+                border-radius: var(--radius-md);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -236,7 +236,7 @@ export const createClusterIcon = (cluster: L.MarkerCluster, isHovered: boolean =
                 position: relative;
                 z-index: 200;
                 font-family: system-ui, -apple-system, sans-serif;
-                font-weight: 700;
+                font-weight: var(--font-weight-bold);
                 font-size: ${fontSize}px;
                 color: ${botColor};
                 line-height: 1;

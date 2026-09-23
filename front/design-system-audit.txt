@@ -1,0 +1,698 @@
+
+> ft_transcendence@1.0.0 audit:design
+> node scripts/audit-design-system.cjs
+
+
+DESIGN SYSTEM AUDIT V2
+======================
+
+Files scanned: 88
+CSS files: 11
+TS/TSX/JS files: 77
+
+======================================================================
+EXISTING DESIGN TOKENS
+======================================================================
+--color-background = var(--color-blue-glass-bg) | defined: src/styles/variables.css | used: 0×
+--color-blue-dark = rgba(0, 20, 120, 0.5) | defined: src/styles/variables.css | used: 16×
+--color-blue-glass-bg = rgb(245, 246, 255) | defined: src/styles/variables.css | used: 2×
+--color-error = #dc2626 | defined: src/styles/variables.css | used: 0×
+--color-orange-border = rgba(255, 103, 18, 0.3) | defined: src/styles/variables.css | used: 16×
+--color-orange-hover = rgba(255, 103, 18, 0.15) | defined: src/styles/variables.css | used: 14×
+--color-orange-primary = rgba(255, 103, 18, 1) | defined: src/styles/variables.css | used: 18×
+--color-orange-secondary = rgba(255, 103, 18, 0.8) | defined: src/styles/variables.css | used: 3×
+--color-primary = var(--color-orange-primary) | defined: src/styles/variables.css | used: 0×
+--color-primary-hover = var(--color-orange-hover) | defined: src/styles/variables.css | used: 0×
+--color-success = #16a34a | defined: src/styles/variables.css | used: 0×
+--color-surface = var(--glass-bg) | defined: src/styles/variables.css | used: 0×
+--color-text = var(--color-text-dark) | defined: src/styles/variables.css | used: 0×
+--color-text-dark = rgb(31, 31, 31) | defined: src/styles/variables.css | used: 12×
+--color-text-inverse = var(--color-text-light) | defined: src/styles/variables.css | used: 0×
+--color-text-light = rgb(255, 255, 255) | defined: src/styles/variables.css | used: 4×
+--color-warning-bg = rgba(255, 248, 225, 0.7) | defined: src/styles/variables.css | used: 1×
+--color-warning-border = rgba(245, 158, 11, 0.35) | defined: src/styles/variables.css | used: 1×
+--color-warning-hover = rgba(245, 158, 11, 0.15) | defined: src/styles/variables.css | used: 1×
+--color-warning-text = #451a03 | defined: src/styles/variables.css | used: 1×
+--font-main = Roboto, Arial, sans-serif | defined: src/styles/variables.css | used: 9×
+--font-size-2xl = 1.75rem | defined: src/styles/variables.css | used: 1×
+--font-size-base = 16px | defined: src/styles/variables.css | used: 4×
+--font-size-lg =  | defined: src/styles/variables.css | used: 1×
+--font-size-sm = 0.875rem | defined: src/styles/variables.css | used: 11×
+--font-size-xl = 1.5rem | defined: src/styles/variables.css | used: 0×
+--font-size-xs = 0.75rem | defined: src/styles/variables.css | used: 4×
+--font-weight-bold = 700 | defined: src/styles/variables.css | used: 2×
+--font-weight-medium = 500 | defined: src/styles/variables.css | used: 6×
+--font-weight-semibold = 600 | defined: src/styles/variables.css | used: 10×
+--glass-bg = rgba(255, 255, 255, 0.75) | defined: src/styles/variables.css | used: 15×
+--glass-bg-whitened = rgba(255, 255, 255, 0.9) | defined: src/styles/variables.css | used: 1×
+--glass-blur = blur(5px) | defined: src/styles/variables.css | used: 30×
+--glass-border = rgba(255, 255, 255, 0.25) | defined: src/styles/variables.css | used: 13×
+--glass-shadow = rgba(0, 0, 0, 0.1) 0px 4px 30px | defined: src/styles/variables.css | used: 6×
+--line-height-normal = 1.5 | defined: src/styles/variables.css | used: 3×
+--line-height-relaxed = 1.6 | defined: src/styles/variables.css | used: 0×
+--line-height-tight = 1.2 | defined: src/styles/variables.css | used: 3×
+--radius-full = 9999px | defined: src/styles/variables.css | used: 6×
+--radius-lg = 16px | defined: src/styles/variables.css | used: 14×
+--radius-md = 12px | defined: src/styles/variables.css | used: 4×
+--radius-sm = 8px | defined: src/styles/variables.css | used: 7×
+--shadow-md = 0 4px 12px rgba(0, 0, 0, 0.1) | defined: src/styles/variables.css | used: 1×
+--shadow-sm = 0 2px 6px rgba(0, 0, 0, 0.1) | defined: src/styles/variables.css | used: 0×
+--space-1 = 0.25rem | defined: src/styles/variables.css | used: 4×
+--space-2 = 0.5rem | defined: src/styles/variables.css | used: 14×
+--space-3 = 0.75rem | defined: src/styles/variables.css | used: 12×
+--space-4 = 1rem | defined: src/styles/variables.css | used: 20×
+--space-6 = 1.5rem | defined: src/styles/variables.css | used: 8×
+--space-8 = 2rem | defined: src/styles/variables.css | used: 0×
+
+======================================================================
+TOKEN REFERENCES
+======================================================================
+--color-background → 0 usage(s)
+--color-blue-dark → 16 usage(s)
+--color-blue-glass-bg → 2 usage(s)
+--color-error → 0 usage(s)
+--color-orange-border → 16 usage(s)
+--color-orange-hover → 14 usage(s)
+--color-orange-primary → 18 usage(s)
+--color-orange-secondary → 3 usage(s)
+--color-primary → 0 usage(s)
+--color-primary-hover → 0 usage(s)
+--color-success → 0 usage(s)
+--color-surface → 0 usage(s)
+--color-text → 0 usage(s)
+--color-text-dark → 12 usage(s)
+--color-text-inverse → 0 usage(s)
+--color-text-light → 4 usage(s)
+--color-warning-bg → 1 usage(s)
+--color-warning-border → 1 usage(s)
+--color-warning-hover → 1 usage(s)
+--color-warning-text → 1 usage(s)
+--font-main → 9 usage(s)
+--font-size-2xl → 1 usage(s)
+--font-size-base → 4 usage(s)
+--font-size-lg → 1 usage(s)
+--font-size-sm → 11 usage(s)
+--font-size-xl → 0 usage(s)
+--font-size-xs → 4 usage(s)
+--font-weight-bold → 2 usage(s)
+--font-weight-medium → 6 usage(s)
+--font-weight-semibold → 10 usage(s)
+--glass-bg → 15 usage(s)
+--glass-bg-whitened → 1 usage(s)
+--glass-blur → 30 usage(s)
+--glass-border → 13 usage(s)
+--glass-shadow → 6 usage(s)
+--line-height-normal → 3 usage(s)
+--line-height-relaxed → 0 usage(s)
+--line-height-tight → 3 usage(s)
+--radius-full → 6 usage(s)
+--radius-lg → 14 usage(s)
+--radius-md → 4 usage(s)
+--radius-sm → 7 usage(s)
+--shadow-md → 1 usage(s)
+--shadow-sm → 0 usage(s)
+--space-1 → 4 usage(s)
+--space-2 → 14 usage(s)
+--space-3 → 12 usage(s)
+--space-4 → 20 usage(s)
+--space-6 → 8 usage(s)
+--space-8 → 0 usage(s)
+
+Unused tokens:
+  --color-background
+  --color-error
+  --color-primary
+  --color-primary-hover
+  --color-success
+  --color-surface
+  --color-text
+  --color-text-inverse
+  --font-size-xl
+  --line-height-relaxed
+  --shadow-sm
+  --space-8
+
+======================================================================
+COLORS
+======================================================================
+
+#FFFFFF × 10
+  src/features/map/components/CustomIcons.tsx:15
+  src/features/map/components/CustomIcons.tsx:20
+  src/features/map/components/CustomIcons.tsx:38
+  src/features/map/components/CustomIcons.tsx:40
+  src/features/map/components/CustomIcons.tsx:112
+  src/features/map/components/CustomIcons.tsx:124
+  src/features/map/components/CustomIcons.tsx:232
+  src/layouts/FlagIcons.tsx:227
+  src/layouts/FlagIcons.tsx:238
+  src/layouts/FlagIcons.tsx:240
+
+#dc2626 × 7
+  src/features/gdpr/DeleteConfirm.module.css:26
+  src/features/gdpr/DeleteConfirm.module.css:28
+  src/features/gdpr/DeleteConfirm.module.css:56
+  src/features/profile/ProfileModal.module.css:88
+  src/features/profile/ProfileModal.module.css:89
+  src/styles/global.css:637
+  src/styles/variables.css:74
+
+#A41517 × 5
+  src/layouts/FlagIcons.tsx:180
+  src/layouts/FlagIcons.tsx:187
+  src/layouts/FlagIcons.tsx:189
+  src/layouts/FlagIcons.tsx:190
+  src/layouts/FlagIcons.tsx:193
+
+rgba(232, 122, 38, 0.724) × 4
+  src/features/events/Event.module.css:196
+  src/features/map/Map.module.css:300
+  src/styles/global.css:170
+  src/styles/global.css:211
+
+#f06901 × 4
+  src/features/events/Event.module.css:198
+  src/features/map/Map.module.css:302
+  src/styles/global.css:172
+  src/styles/global.css:213
+
+#4B22D4 × 4
+  src/features/map/components/CustomIcons.tsx:10
+  src/features/map/components/CustomIcons.tsx:22
+  src/features/map/components/CustomIcons.tsx:151
+  src/features/map/components/CustomIcons.tsx:158
+
+#3100B6 × 4
+  src/features/map/components/CustomIcons.tsx:11
+  src/features/map/components/CustomIcons.tsx:17
+  src/features/map/components/CustomIcons.tsx:152
+  src/features/map/components/CustomIcons.tsx:159
+
+#DB1F35 × 4
+  src/layouts/FlagIcons.tsx:103
+  src/layouts/FlagIcons.tsx:109
+  src/layouts/FlagIcons.tsx:115
+  src/layouts/FlagIcons.tsx:121
+
+rgba(0, 20, 120, 0.5) × 3
+  src/features/externalLinks/AdminPanelLinks.module.css:22
+  src/features/externalLinks/AdminPanelLinks.module.css:23
+  src/styles/variables.css:8
+
+#006C35 × 3
+  src/layouts/FlagIcons.tsx:210
+  src/layouts/FlagIcons.tsx:224
+  src/layouts/FlagIcons.tsx:232
+
+rgba(0, 0, 0, 0.1) × 3
+  src/styles/variables.css:23
+  src/styles/variables.css:60
+  src/styles/variables.css:61
+
+rgb(239 68 68 / 28%) × 2
+  src/features/events/Event.module.css:51
+  src/features/events/Event.module.css:88
+
+rgb(239 68 68 / 25%) × 2
+  src/features/events/Event.module.css:53
+  src/features/events/Event.module.css:89
+
+#5f6368 × 2
+  src/features/events/Event.module.css:141
+  src/features/events/Event.module.css:151
+
+#e2e8f0 × 2
+  src/features/events/Event.module.css:224
+  src/features/events/Event.module.css:248
+
+#160 × 2
+  src/features/events/components/EventDetails.tsx:33
+  src/features/events/components/EventResultCard.tsx:17
+
+rgba(255, 103, 18, 0.15) × 2
+  src/features/externalLinks/AdminPanelLinks.module.css:18
+  src/styles/variables.css:6
+
+#b91c1c × 2
+  src/features/gdpr/DeleteConfirm.module.css:38
+  src/features/gdpr/DeleteConfirm.module.css:39
+
+#1F0075 × 2
+  src/features/map/components/CustomIcons.tsx:12
+  src/features/map/components/CustomIcons.tsx:160
+
+#F0F0F0 × 2
+  src/layouts/FlagIcons.tsx:34
+  src/layouts/FlagIcons.tsx:67
+
+#DD172C × 2
+  src/layouts/FlagIcons.tsx:163
+  src/layouts/FlagIcons.tsx:165
+
+rgb(21, 128, 61) × 2
+  src/styles/global.css:219
+  src/styles/global.css:225
+
+rgb(185, 28, 28) × 2
+  src/styles/global.css:231
+  src/styles/global.css:237
+
+rgba(0,0,0,0.1) × 1
+  src/context/notifications/WarningNotification.tsx:43
+
+rgba(255,248,225,0.7) × 1
+  src/context/notifications/WarningNotification.tsx:43
+
+rgba(245,158,11,0.35) × 1
+  src/context/notifications/WarningNotification.tsx:43
+
+#cbd5e1 × 1
+  src/features/events/Event.module.css:41
+
+rgb(239 68 68 / 65%) × 1
+  src/features/events/Event.module.css:52
+
+#f87171 × 1
+  src/features/events/Event.module.css:54
+
+#ff4000 × 1
+  src/features/events/Event.module.css:67
+
+hsl(12, 87%, 50%) × 1
+  src/features/events/Event.module.css:72
+
+#cf2b3c × 1
+  src/features/events/Event.module.css:73
+
+#1f1f1f × 1
+  src/features/events/Event.module.css:132
+
+rgba(0, 0, 0, 0.684) × 1
+  src/features/events/Event.module.css:213
+
+#fff × 1
+  src/features/events/Event.module.css:214
+
+rgba(255, 255, 255, 1) × 1
+  src/features/events/Event.module.css:229
+
+#22c55e × 1
+  src/features/events/Event.module.css:239
+
+#ef4444 × 1
+  src/features/events/Event.module.css:243
+
+rgba(250, 250, 250, 0) × 1
+  src/features/events/Event.module.css:303
+
+rgba(250, 250, 250, 0.75) × 1
+  src/features/events/Event.module.css:304
+
+rgba(250, 250, 250, 1) × 1
+  src/features/events/Event.module.css:305
+
+rgba(0,0,0,0.8) × 1
+  src/features/events/components/EventPreview.tsx:203
+
+rgba(255,255,255,0.2) × 1
+  src/features/events/components/EventPreview.tsx:270
+
+#333 × 1
+  src/features/gdpr/DeleteConfirm.module.css:22
+
+#888 × 1
+  src/features/gdpr/DeleteConfirm.module.css:49
+
+rgba(255, 103, 18, 0) × 1
+  src/features/map/Map.module.css:14
+
+#8099FF × 1
+  src/features/map/components/CustomIcons.tsx:16
+
+#80A0FF × 1
+  src/features/map/components/CustomIcons.tsx:21
+
+rgba(0, 0, 0, 0.2) × 1
+  src/features/map/components/CustomIcons.tsx:38
+
+#25008B × 1
+  src/features/map/components/CustomIcons.tsx:39
+
+#FF6507 × 1
+  src/features/map/components/CustomIcons.tsx:111
+
+rgba(0, 0, 0, 0.35) × 1
+  src/features/map/components/CustomIcons.tsx:123
+
+#9C82F7 × 1
+  src/features/map/components/CustomIcons.tsx:141
+
+#7B56EC × 1
+  src/features/map/components/CustomIcons.tsx:142
+
+#5A2EE1 × 1
+  src/features/map/components/CustomIcons.tsx:143
+
+#6D46E6 × 1
+  src/features/map/components/CustomIcons.tsx:150
+
+rgba(0,0,0,0.25) × 1
+  src/features/map/components/CustomIcons.tsx:223
+
+rgba(233, 8, 8, 0.288) × 1
+  src/features/profile/ProfileModal.module.css:93
+
+#F44653 × 1
+  src/layouts/FlagIcons.tsx:44
+
+#EE2A39 × 1
+  src/layouts/FlagIcons.tsx:45
+
+#1035BB × 1
+  src/layouts/FlagIcons.tsx:55
+
+#042396 × 1
+  src/layouts/FlagIcons.tsx:56
+
+#0A17A7 × 1
+  src/layouts/FlagIcons.tsx:94
+
+#E6273E × 1
+  src/layouts/FlagIcons.tsx:129
+
+#FFD133 × 1
+  src/layouts/FlagIcons.tsx:170
+
+#FFEDB1 × 1
+  src/layouts/FlagIcons.tsx:176
+
+rgba(22, 163, 74, 0.35) × 1
+  src/styles/global.css:217
+
+rgba(22, 163, 74, 0.12) × 1
+  src/styles/global.css:218
+
+rgba(22, 163, 74, 0.7) × 1
+  src/styles/global.css:223
+
+rgba(22, 163, 74, 0.2) × 1
+  src/styles/global.css:224
+
+rgba(214, 42, 42, 0.497) × 1
+  src/styles/global.css:229
+
+rgba(220, 38, 38, 0.12) × 1
+  src/styles/global.css:230
+
+rgba(220, 38, 38, 0.7) × 1
+  src/styles/global.css:235
+
+rgba(220, 38, 38, 0.2) × 1
+  src/styles/global.css:236
+
+rgba(0, 0, 0, 0.25) × 1
+  src/styles/global.css:300
+
+rgba(0, 0, 0, 0.6) × 1
+  src/styles/global.css:312
+
+rgba(233, 110, 25, 0.9) × 1
+  src/styles/global.css:677
+
+rgba(255, 103, 18, 1) × 1
+  src/styles/variables.css:3
+
+rgba(255, 103, 18, 0.8) × 1
+  src/styles/variables.css:4
+
+rgba(255, 103, 18, 0.3) × 1
+  src/styles/variables.css:5
+
+rgb(245, 246, 255) × 1
+  src/styles/variables.css:9
+
+rgb(31, 31, 31) × 1
+  src/styles/variables.css:10
+
+rgb(255, 255, 255) × 1
+  src/styles/variables.css:11
+
+rgba(255, 248, 225, 0.7) × 1
+  src/styles/variables.css:13
+
+rgba(245, 158, 11, 0.35) × 1
+  src/styles/variables.css:14
+
+#451a03 × 1
+  src/styles/variables.css:15
+
+rgba(245, 158, 11, 0.15) × 1
+  src/styles/variables.css:16
+
+rgba(255, 255, 255, 0.75) × 1
+  src/styles/variables.css:19
+
+rgba(255, 255, 255, 0.9) × 1
+  src/styles/variables.css:20
+
+rgba(255, 255, 255, 0.25) × 1
+  src/styles/variables.css:21
+
+#16a34a × 1
+  src/styles/variables.css:73
+
+======================================================================
+FONT FAMILIES
+======================================================================
+
+system-ui, -apple-system, sans-serif × 2
+  src/features/map/components/CustomIcons.tsx:113
+  src/features/map/components/CustomIcons.tsx:238
+
+monospace × 1
+  src/styles/global.css:262
+
+======================================================================
+FONT SIZES
+======================================================================
+
+0.875rem × 1
+  src/features/chat/Chat.module.css:13
+
+5px × 1
+  src/features/events/Event.module.css:42
+
+16px × 1
+  src/features/events/Event.module.css:133
+
+inherit × 1
+  src/features/events/Event.module.css:156
+
+11px × 1
+  src/features/map/components/CustomIcons.tsx:115
+
+======================================================================
+FONT WEIGHTS
+======================================================================
+
+800 × 1
+  src/features/map/components/CustomIcons.tsx:114
+
+======================================================================
+LINE HEIGHTS
+======================================================================
+
+1.6 × 1
+  src/features/legal/Legal.module.css:24
+
+1 × 1
+  src/features/map/components/CustomIcons.tsx:242
+
+======================================================================
+SPACING
+======================================================================
+
+0 !important × 8
+  src/features/chat/Chat.module.css:77
+  src/features/events/Event.module.css:183
+  src/features/externalLinks/AdminPanelLinks.module.css:26
+  src/features/map/Map.module.css:271
+  src/styles/global.css:144
+  src/styles/global.css:159
+  src/styles/global.css:197
+  src/styles/global.css:366
+
+0 × 7
+  src/features/gdpr/DeleteConfirm.module.css:15
+  src/features/gdpr/DeleteConfirm.module.css:20
+  src/features/gdpr/DeleteConfirm.module.css:55
+  src/features/profile/ProfileModal.module.css:27
+  src/features/profile/ProfileModal.module.css:44
+  src/styles/global.css:606
+  src/styles/global.css:639
+
+0 auto × 2
+  src/features/gdpr/DeleteConfirm.module.css:11
+  src/features/map/Map.module.css:244
+
+4px × 1
+  src/features/events/Event.module.css:40
+
+4px !important × 1
+  src/features/events/Event.module.css:47
+
+10px 10px 0 × 1
+  src/features/events/Event.module.css:115
+
+14px 18px 18px × 1
+  src/features/events/Event.module.css:127
+
+0 0 8px × 1
+  src/features/events/Event.module.css:131
+
+10px × 1
+  src/features/events/Event.module.css:139
+
+2% × 1
+  src/features/events/Event.module.css:140
+
+1px × 1
+  src/features/events/Event.module.css:150
+
+8px × 1
+  src/features/events/Event.module.css:163
+
+2px 8px × 1
+  src/features/events/Event.module.css:211
+
+topAbove × 1
+  src/features/events/components/EventPreview.tsx:124
+
+0 4px × 1
+  src/features/map/components/CustomIcons.tsx:122
+
+0 0 0.6rem × 1
+  src/features/profile/ProfileModal.module.css:76
+
+0.2rem 0.4rem × 1
+  src/styles/global.css:271
+
+6px 0 0 6px × 1
+  src/styles/global.css:384
+
+6px 6px 0 0 × 1
+  src/styles/global.css:520
+
+1.75rem × 1
+  src/styles/global.css:550
+
+0.4rem × 1
+  src/styles/global.css:622
+
+======================================================================
+BORDER RADIUS
+======================================================================
+
+4px × 1
+  src/features/events/Event.module.css:223
+
+0 !important × 1
+  src/features/legal/Legal.module.css:70
+
+50% × 1
+  src/features/map/components/CustomIcons.tsx:196
+
+======================================================================
+BOX SHADOWS
+======================================================================
+
+none !important × 2
+  src/features/events/Event.module.css:84
+  src/features/legal/Legal.module.css:65
+
+0 0 12px rgb(239 68 68 / 25%) × 1
+  src/features/events/Event.module.css:53
+
+0 0 10px rgb(239 68 68 / 25%) !important × 1
+  src/features/events/Event.module.css:89
+
+0 2px 6px rgba(0, 0, 0, 0.35) × 1
+  src/features/map/components/CustomIcons.tsx:123
+
+0 25px 50px -12px rgba(0, 0, 0, 0.25) × 1
+  src/styles/global.css:300
+
+======================================================================
+REPEATED COLORS — TOKEN CANDIDATES
+======================================================================
+#FFFFFF → 10 occurrences
+#dc2626 → 7 occurrences
+#A41517 → 5 occurrences
+rgba(232, 122, 38, 0.724) → 4 occurrences
+#f06901 → 4 occurrences
+#4B22D4 → 4 occurrences
+#3100B6 → 4 occurrences
+#DB1F35 → 4 occurrences
+rgba(0, 20, 120, 0.5) → 3 occurrences
+#006C35 → 3 occurrences
+rgba(0, 0, 0, 0.1) → 3 occurrences
+rgb(239 68 68 / 28%) → 2 occurrences
+rgb(239 68 68 / 25%) → 2 occurrences
+#5f6368 → 2 occurrences
+#e2e8f0 → 2 occurrences
+#160 → 2 occurrences
+rgba(255, 103, 18, 0.15) → 2 occurrences
+#b91c1c → 2 occurrences
+#1F0075 → 2 occurrences
+#F0F0F0 → 2 occurrences
+#DD172C → 2 occurrences
+rgb(21, 128, 61) → 2 occurrences
+rgb(185, 28, 28) → 2 occurrences
+
+======================================================================
+REPEATED FONT SIZES — TOKEN CANDIDATES
+======================================================================
+None.
+
+======================================================================
+REPEATED FONT WEIGHTS — TOKEN CANDIDATES
+======================================================================
+None.
+
+======================================================================
+REPEATED LINE HEIGHTS — TOKEN CANDIDATES
+======================================================================
+None.
+
+======================================================================
+REPEATED SPACING — TOKEN CANDIDATES
+======================================================================
+0 !important → 8 occurrences
+0 → 7 occurrences
+0 auto → 2 occurrences
+
+======================================================================
+REPEATED BORDER RADIUS — TOKEN CANDIDATES
+======================================================================
+None.
+
+======================================================================
+REPEATED BOX SHADOWS — TOKEN CANDIDATES
+======================================================================
+none !important → 2 occurrences
+
+======================================================================
+SUMMARY
+======================================================================
+Design tokens: 50
+Token references: 306
+Colors: 91 unique
+Font families: 2 unique
+Font sizes: 5 unique
+Font weights: 1 unique
+Line heights: 2 unique
+Spacing: 21 unique
+Border radius: 3 unique
+Box shadows: 5 unique
+
+Audit complete.

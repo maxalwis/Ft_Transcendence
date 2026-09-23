@@ -6,6 +6,7 @@ import { searchUsers } from '../../../api/users';
 import { sendFriendRequest } from '../../../api/friends';
 import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
+import Button from '../../../components/ui/Button';
 
 type FriendsSearchResultsProps = {
   input: string;
@@ -133,19 +134,21 @@ export default function FriendsSearchResults({
               </div>
 
               {isFriend ? (
-                <button
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => onSelectFriend(user as User)}
-                  className="shrink-0 text-xs font-medium text-black/70 hover:text-black"
+                  className="shrink-0 !px-2 !py-1 text-xs font-medium text-black/70 hover:text-black"
                 >
                   {t('friendsList.viewProfile', 'View Profile')}
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
+                  variant="icon"
                   type="button"
                   disabled={sendingRequest === user.id}
                   onClick={() => handleAddFriend(user.id)}
-                  className="modal-close-inline modal-close-inline-green icon-btn shrink-0 cursor-pointer active:scale-70 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="modal-close-inline modal-close-inline-green shrink-0 cursor-pointer active:scale-70 disabled:cursor-not-allowed disabled:opacity-50"
                   aria-label={t('friends.addFriend', 'Add friend')}
                 >
                   <svg
@@ -158,7 +161,7 @@ export default function FriendsSearchResults({
                   >
                     <path d="M12 5v14M5 12h14" />
                   </svg>
-                </button>
+                </Button>
               )}
             </div>
           );

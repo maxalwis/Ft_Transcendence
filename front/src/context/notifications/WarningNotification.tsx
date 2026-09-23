@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styles from './NotificationProvider.module.css';
-import { closeBtn } from '../../types/icons';
+import { CloseBtn } from '../../types/icons';
+import Button from '../../components/ui/Button';
 
 interface NotificationProps {
   message: string | null;
@@ -62,14 +63,14 @@ export const WarningNotification = ({ message, onClose, duration = 5000 }: Notif
 
       <span className="text-sm font-medium leading-snug flex-1">{message}</span>
 
-      <button
+      <Button variant="icon"
         type="button"
         onClick={handleDismiss}
         aria-label="Close notification"
         className="modal-button modal-close-inline"
       >
-        {closeBtn}
-      </button>
+        <CloseBtn />
+      </Button>
     </div>
   );
 };

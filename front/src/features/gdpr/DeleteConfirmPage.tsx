@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { confirmAccountDeletion } from '../../api/gdpr';
 import { useAuth } from '../../context/auth/useAuth';
 import styles from './DeleteConfirm.module.css';
+import Button from '../../components/ui/Button';
 
 // Page the deletion email link points to: /account/delete-confirm?token=...
 export function DeleteConfirmPage() {
@@ -51,14 +52,13 @@ export function DeleteConfirmPage() {
       <h1 className={styles.title}>{t('deleteConfirm.title')}</h1>
       <p className={styles.warning}>{t('deleteConfirm.warning')}</p>
 
-      <button
+      <Button variant="danger"
         type="button"
-        className={styles.deleteButton}
         onClick={handleConfirm}
         disabled={status === 'loading'}
       >
         {status === 'loading' ? t('deleteConfirm.deleting') : t('deleteConfirm.confirmButton')}
-      </button>
+      </Button>
 
       {status === 'error' && <p className={styles.error}>{t('deleteConfirm.error')}</p>}
 

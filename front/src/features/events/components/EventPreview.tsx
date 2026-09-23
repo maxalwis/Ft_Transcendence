@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../Event.module.css';
 import LikeButton from './LikeButton';
+import Button from '../../../components/ui/Button';
 
 export interface Friend {
   id: string;
@@ -185,7 +186,7 @@ export default function EventPreview({
           dir="ltr"
           className="absolute top-2 left-2 right-2 flex justify-end items-center z-10 pointer-events-none"
         >
-          <button
+          <Button variant="icon"
             type="button"
             onClick={handleExtendClick}
             title={t('eventPreview.seeDetails')}
@@ -207,7 +208,7 @@ export default function EventPreview({
               <line x1="21" y1="3" x2="14" y2="10" />
               <line x1="3" y1="21" x2="10" y2="14" />
             </svg>
-          </button>
+          </Button>
         </div>
       </div>
 

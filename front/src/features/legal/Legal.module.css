@@ -1,82 +1,82 @@
 .legalContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  color: var(--color-text-dark);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    color: var(--color-text-dark);
 }
 
 .legalContainer h1 {
-  font-size: 1.5rem;
-  margin-bottom: 0.25rem;
+    font-size: var(--space-6);
+    margin-bottom: var(--space-1);
 }
 
 .legalContainer h2 {
-  font-size: 1.125rem;
-  margin-top: 1rem;
-  margin-bottom: 0.25rem;
-  border-bottom: 1px solid var(--glass-border);
-  padding-bottom: 0.25rem;
+    font-size: var(--font-size-lg);
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-1);
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: var(--space-1);
 }
 
 .legalContainer p {
-  color: var(--color-text-dark);
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin-bottom: 0.5rem;
+    color: var(--color-text-dark);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+    margin-bottom: var(--space-2);
 }
 
 /* Custom Scrollbar for Modal Body */
 .scrollableContent {
-  overflow-y: auto;
-  max-height: 60vh;
-  padding-right: 0.5rem;
+    overflow-y: auto;
+    max-height: 60vh;
+    padding-right: var(--space-2);
 }
 
 .scrollableContent::-webkit-scrollbar {
-  width: 6px;
+    width: 6px;
 }
 
 .scrollableContent::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
 
 .scrollableContent::-webkit-scrollbar-thumb {
-  background: var(--color-orange-border);
-  border-radius: var(--radius-sm);
+    background: var(--color-orange-border);
+    border-radius: var(--radius-sm);
 }
 
 .scrollableContent::-webkit-scrollbar-thumb:hover {
-  background: var(--color-orange-primary);
+    background: var(--color-orange-primary);
 }
 
 /* Tab Navigation Styling */
 .tabNav {
-  display: flex;
-  gap: 1rem;
-  border-bottom: 1px solid var(--glass-border);
-  padding-bottom: 0.75rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
+    display: flex;
+    gap: var(--space-4);
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: var(--space-3);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
 }
 
 .tabButton {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0.25rem 0.5rem !important;
-  color: var(--color-blue-dark) !important;
-  font-weight: 600;
-  border-bottom: 2px solid transparent !important;
-  border-radius: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: var(--space-1) var(--space-2) !important;
+    color: var(--color-blue-dark) !important;
+    font-weight: var(--font-weight-semibold);
+    border-bottom: 2px solid transparent !important;
+    border-radius: 0 !important;
 }
 
 .tabButton:hover {
-  color: var(--color-orange-primary) !important;
-  background: transparent !important;
-  transform: none !important;
+    color: var(--color-orange-primary) !important;
+    background: transparent !important;
+    transform: none !important;
 }
 
 .activeTab {
-  color: var(--color-orange-primary) !important;
-  border-bottom-color: var(--color-orange-primary) !important;
+    color: var(--color-orange-primary) !important;
+    border-bottom-color: var(--color-orange-primary) !important;
 }

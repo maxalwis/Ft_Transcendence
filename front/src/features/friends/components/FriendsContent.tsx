@@ -6,6 +6,7 @@ import FriendsSearchBar from './FriendsSearchBar';
 import FriendsSearchResults from './FriendsSearchResults';
 import type { User, PendingRequest } from '../../../api/friends';
 import ViewProfile from '../../profile/components/ViewProfile';
+import Button from '../../../components/ui/Button';
 
 interface FriendsContentProps {
   friends: User[];
@@ -71,7 +72,7 @@ export default function FriendsContent({
       {!showRequests && (
         <div className="shrink-0">
           {requests.length > 0 && (
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => setShowRequests(true)}
               className="w-full bg-transparent! border-hidden! py-3!"
@@ -79,7 +80,7 @@ export default function FriendsContent({
               {t('friendsModal.pendingRequests', {
                 count: requests.length,
               })}
-            </button>
+            </Button>
           )}
 
           <div className="glass-panel shrink-0">

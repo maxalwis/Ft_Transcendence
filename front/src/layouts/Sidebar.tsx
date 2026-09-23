@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../features/map/Map.module.css';
-import { closeBtn } from '../types/icons';
+import { BackBtn, CloseBtn } from '../types/icons';
+import Button from '../components/ui/Button';
 
 interface SideBarProps {
   isOpen: boolean;
@@ -36,20 +37,22 @@ export default function SideBar({ isOpen, onToggle, onClose, children, type }: S
         className={`glass-panel ${styles.sidebarModal} fixed top-15 right-3 bottom-15 w-[20vw] rounded-xl shadow-lg z-1000 flex flex-col`}
       >
         <div className="shrink-0">
-          <button
+          <Button
+            variant="icon"
             type="button"
             aria-label={t('sidebar.close', 'Close')}
             onClick={handleClose}
             className="modal-button modal-close"
           >
-            {closeBtn}
-          </button>
+            <CloseBtn />
+          </Button>
         </div>
 
         {children}
       </div>
 
-      <button
+      <Button
+        variant="icon"
         type="button"
         data-state={sidebarIsOpen ? 'open' : 'closed'}
         aria-label={
@@ -60,17 +63,8 @@ export default function SideBar({ isOpen, onToggle, onClose, children, type }: S
         onClick={onToggle}
         className={styles.sidebarToggle}
       >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          {sidebarIsOpen ? <path d="M15 18l-6-6 6-6" /> : <path d="M9 18l6-6-6-6" />}
-        </svg>
-      </button>
+        <BackBtn className={`h-4 w-4 transition-transform ${sidebarIsOpen ? 'rotate-180' : ''}`} />
+      </Button>
     </>
   );
 }

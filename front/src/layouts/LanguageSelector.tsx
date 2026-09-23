@@ -82,7 +82,7 @@ export default function LanguageSelector({
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="glass-panel cursor-pointer p-2 rounded-full max-[900px]:mb-1"
+        className="glass-panel cursor-pointer p-2 rounded-[50%] max-[900px]:mb-1"
         title="Language"
         aria-label="Language"
         aria-expanded={isOpen}
@@ -109,7 +109,7 @@ export default function LanguageSelector({
                 setIsOpen(false);
               }}
               title={title}
-              className={`glass-panel cursor-pointer p-2 rounded-full ${
+              className={`glass-panel cursor-pointer p-2 rounded-[50%] ${
                 currentLang?.startsWith(code) ? 'isSelected' : ''
               }`}
             >

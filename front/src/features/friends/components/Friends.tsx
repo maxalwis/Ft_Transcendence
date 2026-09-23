@@ -9,6 +9,7 @@ import { useSocket } from '../../../context/socket/useSocket';
 
 import FriendsContent from './FriendsContent';
 import FriendsModal from './FriendsModal';
+import Button from '../../../components/ui/Button';
 
 export type OpenState = {
   isOpen: boolean;
@@ -120,13 +121,14 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
   return (
     <div className={embedded ? 'flex h-full min-h-0 w-full flex-col overflow-hidden' : 'relative'}>
       {!embedded && (
-        <button
+        <Button
+          variant="ghost"
           type="button"
           className="glass-panel flex items-center justify-center whitespace-nowrap"
           onClick={handleClick}
         >
           {t('friends.buttonTitle', 'Friends')}
-        </button>
+        </Button>
       )}
 
       {embedded ? (

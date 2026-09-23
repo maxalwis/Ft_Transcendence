@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import styles from '../Friends.module.css';
-import { closeBtn } from '../../../types/icons';
+import { CloseBtn } from '../../../types/icons';
+import Button from '../../../components/ui/Button';
 
 type InputProps = {
   input: string;
@@ -28,14 +29,14 @@ export default function FriendsSearchBar({ input, setInput }: InputProps) {
       />
 
       {input && (
-        <button
+        <Button variant="icon"
           type="button"
           aria-label={t('friendsSearchBar.clearInput')}
           onClick={() => setInput('')}
-          className={`modal-button modal-close modal-button modal-close-inline-red icon-btn relative! top-auto! right-auto! rounded-full! shrink-0 cursor-pointer active:scale-70 ${styles.searchClearButton}`}
+          className={`modal-button modal-close modal-button modal-close-inline-red relative! top-auto! right-auto! rounded-full! shrink-0 cursor-pointer active:scale-70 ${styles.searchClearButton}`}
         >
-          {closeBtn}
-        </button>
+          <CloseBtn />
+        </Button>
       )}
     </div>
   );

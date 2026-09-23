@@ -3,6 +3,7 @@ import type { EventItem } from '../../../types/event';
 import EventResultCard from './EventResultCard';
 import styles from '../Event.module.css';
 import { useTranslation } from 'react-i18next';
+import Button from '../../../components/ui/Button';
 
 interface EventResultsSidebarProps {
   events: EventItem[];
@@ -195,27 +196,29 @@ export default function EventResultsSidebar({
       </div>
 
       <div dir="ltr" className="flex shrink-0 items-center justify-between">
-        <button
+        <Button
+          variant="icon"
           type="button"
           disabled={currentPage === 1}
           onClick={() => handlePageChange(currentPage - 1)}
           aria-label="Previous page"
         >
           &lt;
-        </button>
+        </Button>
 
         <span>
           {currentPage} / {totalPages}
         </span>
 
-        <button
+        <Button
+          variant="icon"
           type="button"
           disabled={currentPage === totalPages}
           onClick={() => handlePageChange(currentPage + 1)}
           aria-label="Next page"
         >
           &gt;
-        </button>
+        </Button>
       </div>
     </div>
   );

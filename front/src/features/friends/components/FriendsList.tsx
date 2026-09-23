@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { User } from '../../../api/friends';
+import Button from '../../../components/ui/Button';
 
 type FriendsListProps = {
   friends: User[];
@@ -23,11 +24,12 @@ export default function FriendsList({ friends = [], onSelectFriend }: FriendsLis
     <>
       <div className="flex flex-col gap-2">
         {friends.map((friend) => (
-          <button
+          <Button
+            variant="ghost"
             key={friend.id}
             type="button"
             onClick={() => onSelectFriend(friend)}
-            className={`menuButton flex`}
+            className="menuButton flex"
           >
             <div className="relative shrink-0">
               <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-xs font-semibold text-white">
@@ -46,7 +48,7 @@ export default function FriendsList({ friends = [], onSelectFriend }: FriendsLis
             </div>
 
             <span className="min-w-0 flex-1 truncate">{friend.username || 'Inconnu'}</span>
-          </button>
+          </Button>
         ))}
       </div>
     </>

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/useAuth';
 import { useState, useRef, useEffect } from 'react';
 import EditProfile from '../../profile/components/EditProfile.tsx';
+import Button from '../../../components/ui/Button.tsx';
 
 interface LoginButtonProps {
   onOpenAuth: () => void;
@@ -57,7 +58,8 @@ export default function LoginButton({
   if (user && mobileProfileMenu) {
     return (
       <div className="w-full flex flex-col gap-2">
-        <button
+        <Button
+          variant="ghost"
           type="button"
           className="menuButton"
           onClick={() => {
@@ -65,13 +67,14 @@ export default function LoginButton({
           }}
         >
           {t('authBtn.editProfile')}
-        </button>
+        </Button>
 
-        <button type="button" className="menuButton" onClick={handleLogout}>
+        <Button variant="ghost" type="button" className="menuButton" onClick={handleLogout}>
           {t('authBtn.logout')}
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="ghost"
           type="button"
           className="menuButton"
           onClick={() => {
@@ -80,7 +83,7 @@ export default function LoginButton({
           }}
         >
           {t('common.back')}
-        </button>
+        </Button>
       </div>
     );
   }
@@ -88,8 +91,9 @@ export default function LoginButton({
   if (user) {
     return (
       <div className="relative" ref={menuRef}>
-        <button
-          className="h-12 w-12 rounded-full! overflow-hidden p-0! flex items-center justify-center cursor-pointer duration-300 hover:zoom-98"
+        <Button
+          variant="icon"
+          className="h-12! w-12! overflow-hidden! rounded-full!"
           aria-label={`Ouvrir le menu de ${user.username ?? 'Profile'}`}
           title={user.username ?? 'Profile'}
           onClick={() => {
@@ -111,11 +115,12 @@ export default function LoginButton({
           ) : (
             (user.username?.charAt(0).toUpperCase() ?? '?')
           )}
-        </button>
+        </Button>
 
         {isMenuOpen && (
           <div className="absolute bottom-full left-1/2 mb-0.5 -translate-x-1/2 glass-panel flex flex-col min-w-40 z-50">
-            <button
+            <Button
+              variant="ghost"
               className="px-4 py-2 text-left hover:bg-white/10"
               onClick={() => {
                 setIsEditOpen(true);
@@ -123,10 +128,15 @@ export default function LoginButton({
               }}
             >
               {t('authBtn.editProfile')}
-            </button>
-            <button className="px-4 py-2 text-left hover:bg-white/10" onClick={handleLogout}>
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="px-4 py-2 text-left hover:bg-white/10"
+              onClick={handleLogout}
+            >
               {t('authBtn.logout')}
-            </button>
+            </Button>
           </div>
         )}
 
@@ -143,8 +153,13 @@ export default function LoginButton({
   }
 
   return (
-    <button className={`${embedded ? 'menuButton' : 'bottomBarButton glass-panel'}`} type="button" onClick={onOpenAuth}>
+    <Button
+      variant="primary"
+      className={`${embedded ? 'menuButton' : 'bottomBarButton glass-panel'}`}
+      type="button"
+      onClick={onOpenAuth}
+    >
       {t('authBtn.login')}
-    </button>
+    </Button>
   );
 }

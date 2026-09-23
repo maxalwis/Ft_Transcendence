@@ -4,7 +4,8 @@ import type { User } from '../../../api/friends';
 import { useTranslation } from 'react-i18next';
 import { resolveAvatarUrl } from '../utils/avatar';
 import styles from '../ProfileModal.module.css';
-import { closeBtn } from '../../../types/icons';
+import { CloseBtn } from '../../../types/icons';
+import Button from '../../../components/ui/Button';
 
 interface ViewProfileProps {
   friend: User;
@@ -46,14 +47,15 @@ export default function ViewProfile({ friend, onClose, onRemove }: ViewProfilePr
         <div className="modalHeader">
           <h2>{t('publicProfile.title')}</h2>
 
-          <button
+          <Button
+            variant="icon"
             type="button"
             className="modal-button modal-close"
             onClick={requestClose}
             aria-label={t('common.close', 'Close')}
           >
-            {closeBtn}
-          </button>
+            <CloseBtn />
+          </Button>
         </div>
 
         <div className="flex flex-col items-center gap-4">
@@ -99,16 +101,17 @@ export default function ViewProfile({ friend, onClose, onRemove }: ViewProfilePr
           </div>
 
           {onRemove && (
-            <button
+            <Button
+              variant="danger"
               type="button"
               disabled={isRemoving}
               onClick={handleRemove}
-              className="modal-button modal-close-inline-red w-full!"
+              className="w-full!"
             >
               {isRemoving
                 ? t('friends.removing', 'Removing...')
                 : t('friends.removeFriend', 'Remove friend')}
-            </button>
+            </Button>
           )}
         </div>
       </div>

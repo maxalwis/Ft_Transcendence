@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next';
 import type { PendingRequest } from '../../../api/friends';
 import { acceptFriendRequest, rejectFriendRequest } from '../../../api/friends';
 import { useNotification } from '../../../context/notifications/useNotification';
+import Button from '../../../components/ui/Button';
+import { BackBtn } from '../../../types/icons';
 
 type FriendsRequestsProps = {
   requests: PendingRequest[];
@@ -34,58 +36,31 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
   if (!requests || requests.length === 0) {
     return (
       <div className="flex flex-col gap-3 p-2">
-        {' '}
-        <button
+        <Button variant="icon"
           type="button"
           onClick={onBack}
           aria-label="Back to friends"
           className="modal-button modal-back self-start"
         >
-          {' '}
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            {' '}
-            <path d="M15 18l-6-6 6-6" />{' '}
-          </svg>{' '}
-        </button>{' '}
+          <BackBtn />
+        </Button>
         <div className="text-xs text-slate-400 italic text-center">
-          {' '}
-          {t('friendsRequests.noPendingRequests')}{' '}
-        </div>{' '}
+          {t('friendsRequests.noPendingRequests')}
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-2 p-2">
-      {' '}
-      <button
+      <Button variant="icon"
         type="button"
         onClick={onBack}
         aria-label="Back to friends"
         className="modal-button modal-back self-start"
       >
-        {' '}
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          {' '}
-          <path d="M15 18l-6-6 6-6" />{' '}
-        </svg>{' '}
-      </button>
+        <BackBtn />
+      </Button>
       {requests.map((req) => {
         const senderObj = req.sender;
         const targetId = req.senderId || senderObj.id || req.id;
@@ -109,12 +84,12 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
               <span className="truncate">{displayName}</span>
             </div>
             <div className="flex">
-              <button type="button" onClick={() => handleAccept(targetId)} className={`menuButton`}>
+              <Button variant="primary" type="button" onClick={() => handleAccept(targetId)} className={`menuButton`}>
                 {t('friendsRequests.accept')}
-              </button>
-              <button type="button" onClick={() => handleReject(targetId)} className={`menuButton`}>
+              </Button>
+              <Button variant="secondary" type="button" onClick={() => handleReject(targetId)} className={`menuButton`}>
                 {t('friendsRequests.reject')}
-              </button>
+              </Button>
             </div>
           </div>
         );

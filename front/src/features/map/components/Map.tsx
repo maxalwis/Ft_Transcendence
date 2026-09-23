@@ -35,6 +35,8 @@ import { EventMapController } from './EventMapController';
 
 // Local Styles
 import '../Map.module.css';
+import Button from '../../../components/ui/Button';
+import { BackBtn } from '../../../types/icons';
 
 type SidebarState = { type: 'event'; eventId: string } | { type: 'results' } | null;
 
@@ -341,7 +343,7 @@ export default function Map() {
           {/* Event details sidebar */}
           {sidebar.type === 'event' && (
             <div className="flex min-h-0 flex-1 flex-col">
-              <button
+              <Button variant="icon"
                 type="button"
                 onClick={() => {
                   setSidebar({ type: 'results' });
@@ -351,18 +353,8 @@ export default function Map() {
                 aria-label="Back to results"
                 className="modal-button modal-back"
               >
-                <svg
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-              </button>
+                <BackBtn />
+              </Button>
 
               <div className="min-h-0 flex-1 flex flex-col overflow-y-auto">
                 <EventSidebarContent eventId={sidebar.eventId} currentUserId={user?.id} />

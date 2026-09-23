@@ -150,7 +150,7 @@ export default function LikeButton({
         type="button"
         onClick={handleClick}
         disabled={isLoading || !isReady}
-        className={`icon-btn ${styles['like-button']} active:zoom-80! transition-all! ${
+        className={`${styles['like-button']} active:zoom-80! transition-all! ${
           iconOnly ? styles['like-button--icon-only'] : ''
         }`}
         aria-label={`Mark event ${eventId} as interesting`}

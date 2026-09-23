@@ -5,7 +5,8 @@ import { resolveAvatarUrl } from '../utils/avatar';
 import PasswordModal from './PasswordModal';
 import styles from '../ProfileModal.module.css';
 import { useNotification } from '../../../context/notifications/useNotification';
-import { closeBtn } from '../../../types/icons';
+import { CloseBtn } from '../../../types/icons';
+import Button from '../../../components/ui/Button';
 
 interface EditProfileContentProps {
   onClose: () => void;
@@ -105,14 +106,15 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
       <div className="modalHeader">
         <h2>{t('profileSettings.title')}</h2>
 
-        <button
+        <Button
+          variant="icon"
           type="button"
           className="modal-button modal-close"
           onClick={onClose}
           aria-label="Fermer"
         >
-          {closeBtn}
-        </button>
+          <CloseBtn />
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit} className="modalForm">
@@ -184,23 +186,19 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
         </label>
 
         {!isOAuthUser && (
-          <button
-            type="button"
-            className="btnSecondary"
-            onClick={() => setIsPasswordModalOpen(true)}
-          >
+          <Button variant="secondary" type="button" onClick={() => setIsPasswordModalOpen(true)}>
             {t('profileSettings.changePassword')}
-          </button>
+          </Button>
         )}
 
         <div className="modalActions">
-          <button type="button" className="btnSecondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose}>
             {t('profileSettings.cancel')}
-          </button>
+          </Button>
 
-          <button type="submit" className="btnPrimary" disabled={isSaving}>
+          <Button variant="primary" type="submit" disabled={isSaving}>
             {isSaving ? t('profileSettings.saving') : t('profileSettings.save')}
-          </button>
+          </Button>
         </div>
       </form>
 

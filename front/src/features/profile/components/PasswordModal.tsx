@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { closeBtn } from '../../../types/icons';
+import { CloseBtn } from '../../../types/icons';
+import Button from '../../../components/ui/Button';
 
 interface PasswordModalProps {
   onClose: () => void;
@@ -50,14 +51,14 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
       >
         <div className="modalHeader">
           <h2>{t('passwordModal.title')}</h2>
-          <button
+          <Button variant="icon"
             type="button"
             className="modal-button modal-close"
             onClick={requestClose}
             aria-label={t('passwordModal.close')}
           >
-            {closeBtn}
-          </button>
+            <CloseBtn />
+          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="modalForm">
@@ -84,12 +85,12 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
           {passwordError && <p className="modalError">{passwordError}</p>}
 
           <div className="modalActions">
-            <button type="button" className="btnSecondary" onClick={requestClose}>
+            <Button variant="secondary" onClick={requestClose}>
               {t('passwordModal.cancel')}
-            </button>
-            <button type="submit" className="btnPrimary" disabled={isChangingPassword}>
+            </Button>
+            <Button variant="primary" type="submit" disabled={isChangingPassword}>
               {isChangingPassword ? t('passwordModal.loading') : t('passwordModal.changePassword')}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

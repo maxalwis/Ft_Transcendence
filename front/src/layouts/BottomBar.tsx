@@ -6,6 +6,7 @@ import Friends from '../features/friends/components/Friends';
 import EditProfileContent from '../features/profile/components/EditProfileContent';
 import LegalContent from '../features/legal/LegalContent';
 import LegalModal from '../features/legal/LegalModal';
+import Button from '../components/ui/Button';
 
 function LegalButtons({
   onOpenLegal,
@@ -18,21 +19,23 @@ function LegalButtons({
 
   return (
     <div className={`flex gap-2 ${mobileMenuOpen ? 'w-full' : ''}`}>
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => onOpenLegal('privacy')}
         className={mobileMenuOpen ? 'menuButton' : 'bottomBarButton glass-panel'}
       >
         {t('legal.privacyButton')}
-      </button>
+      </Button>
 
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => onOpenLegal('terms')}
         className={mobileMenuOpen ? 'menuButton' : 'bottomBarButton glass-panel'}
       >
         {t('legal.termsButton')}
-      </button>
+      </Button>
     </div>
   );
 }
@@ -160,13 +163,14 @@ export default function BottomBar() {
                         onOpenProfile={() => setMobileView('profileMenu')}
                       />
 
-                      <button
+                      <Button
+                        variant="ghost"
                         type="button"
                         className="menuButton"
                         onClick={() => setMobileView('friends')}
                       >
                         {t('friends.buttonTitle', 'Friends')}
-                      </button>
+                      </Button>
 
                       <LegalButtons onOpenLegal={openLegalModal} mobileMenuOpen={mobileMenuOpen} />
                     </>
@@ -193,7 +197,8 @@ export default function BottomBar() {
             )}
 
             {/* Mobile menu button */}
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={() => {
                 setMobileMenuOpen((prev) => !prev);
@@ -227,7 +232,7 @@ export default function BottomBar() {
               </svg>
 
               {t('nav.menu', 'Menu')}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

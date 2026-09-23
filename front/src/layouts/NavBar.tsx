@@ -4,6 +4,7 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import { fr, enUS, es, ar } from 'date-fns/locale';
 import LanguageSelector from './LanguageSelector';
 import 'react-datepicker/dist/react-datepicker.css';
+import Button from '../components/ui/Button';
 
 registerLocale('fr', fr);
 registerLocale('en', enUS);
@@ -155,7 +156,7 @@ export default function NavBar({
                 scrollCategories('left');
               }}
               aria-label={t('nav.scrollLeft', 'Défiler vers la gauche')}
-              className="glass-icon-filter icon-btn md:hidden absolute left-0 z-20"
+              className="glass-icon-filter  md:hidden absolute left-0 z-20"
             >
               <svg
                 width="16"
@@ -214,7 +215,7 @@ export default function NavBar({
                 scrollCategories('right');
               }}
               aria-label={t('nav.scrollRight', 'Défiler vers la droite')}
-              className="glass-icon-filter icon-btn md:hidden absolute right-0 z-20"
+              className="glass-icon-filter md:hidden absolute right-0 z-20"
             >
               <svg
                 width="16"
@@ -302,7 +303,8 @@ export default function NavBar({
                         maxDate={new Date('2028-12-31')}
                       />
 
-                      <button
+                      <Button
+                        variant="ghost"
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -310,10 +312,10 @@ export default function NavBar({
                           setOpenPopover(null);
                           onOpenResults?.();
                         }}
-                        className="w-full mt-1 px-3 py-1.5 rounded-lg text-sm transition-all"
+                        className="w-full !mt-1 !px-3 !py-1.5 rounded-lg text-sm"
                       >
                         {t('filters.resetDate', 'Réinitialiser')}
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </>
