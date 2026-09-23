@@ -29,7 +29,7 @@ import { useTranslation } from 'react-i18next';
 import { useTranslatedEvent } from '../../events/hooks/useTranslatedEvent';
 
 // Constants & Configuration
-import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../Map.constants';
+import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../../../types/constants';
 
 import { EventMapController } from './EventMapController';
 
@@ -323,6 +323,7 @@ export default function Map() {
             setSidebar(null);
             setHoverPos(null);
           }}
+          type={sidebar.type}
         >
           {/* Results sidebar */}
           {sidebar.type === 'results' && (

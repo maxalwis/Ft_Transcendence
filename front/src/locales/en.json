@@ -1,12 +1,8 @@
 {
-  "welcome": "Welcome to our site",
   "nav": {
     "menu": "Menu",
     "scrollLeft": "Scroll left",
     "scrollRight": "Scroll right"
-  },
-  "buttons": {
-    "submit": "Submit"
   },
   "categories": {
     "all": "All",
@@ -17,12 +13,10 @@
     "others": "Others"
   },
   "common": {
-    "back": "Back"
+    "back": "Back",
+    "close": "Close"
   },
   "events": {
-    "defaultCategory": "Event",
-    "unknownDate": "Unknown date",
-    "linkLabel": "Link:",
     "loading": "Loading events...",
     "noEvents": "No events found",
     "errors": {
@@ -33,7 +27,6 @@
     "defaultCategory": "Event",
     "unknownDate": "Unknown date",
     "accessLink": "Event's details",
-    "back": "Back",
     "price": {
       "free": "Free",
       "feeBased": "Paid"
@@ -70,12 +63,9 @@
   "friends": {
     "buttonTitle": "Friends",
     "errorLoading": "Error loading.",
-    "sidebarTitle": "My Friends",
-    "searchPlaceholder": "Search...",
-    "addTab": "Add",
-    "requestsTab": "Requests",
-    "noFriends": "No friends yet",
-    "remove": "Remove",
+    "removing": "Removing...",
+    "removeFriend": "Remove Friend",
+    "addFriend": "Add Friend",
     "errors": {
       "sendFailed": "Error during sending.",
       "removeFailed": "Error during removal."
@@ -83,32 +73,19 @@
   },
   "friendsModal": {
     "notLoggedIn": "Please log in to access your friends list.",
-    "friendlist": "Friends list",
-    "pendingRequests": "Pending Requests ({{count}})",
-    "pendingRequests_one": "Pending Request ({{count}})",
-    "add": "Add Friend",
-    "remove": "Remove Friend"
-  },
-  "friendsButton": {
-    "ariaOpen": "Open menu",
-    "ariaClose": "Close menu",
-    "search": "Search",
-    "pendingRequest": "Pending Request",
-    "addFriend": "Add a friend",
-    "removeFriend": "Remove a friend"
+    "pendingRequests": "Pending Requests ({{count}})"
   },
   "friendsSearchBar": {
     "clearInput": "Clear search input",
     "placeholders": {
-      "add": "Add a friend...",
-      "remove": "Remove a friend...",
-      "request": "Search a friend...",
       "default": "Search a friend..."
     }
   },
   "friendsList": {
     "viewProfile": "View profile",
-    "noUsersFound": "No users found."
+    "noUsersFound": "No users found.",
+    "noFriends": "Start adding friends to see them here !",
+    "searching": "Searching..."
   },
   "friendsRequests": {
     "noPendingRequests": "No pending friend requests.",
@@ -117,20 +94,14 @@
     "fallbackUser": "User #{{id}}",
     "errors": {
       "acceptFailed": "Failed to accept friend request.",
-      "rejectFailed": "Failed to reject friend request.",
-      "sendFailed": "Error while sending the friend request.",
-      "removeFailed": "Error while removing the friend."
+      "rejectFailed": "Failed to reject friend request."
     }
-  },
-  "friendsSidebar": {
-    "notLoggedIn": "You are not logged in."
   },
   "chat": {
     "title": "Chat",
     "connectPrompt": "Connect to view chat.",
     "loadingMessages": "Loading messages...",
     "placeholder": "Type your message...",
-    "send": "Send",
     "errors": {
       "loginRequiredToSend": "You must be logged in to send a message.",
       "loadMessages": "Failed to load messages",
@@ -192,11 +163,7 @@
     "preferredCategory": "Preferred Category",
     "changePicture": "Change Picture",
     "cancel": "Cancel",
-    "save": "Save",
-    "privacyTitle": "Privacy",
-    "downloadData": "Download my data",
-    "deleteAccount": "Delete my account",
-    "deleteEmailSent": "A confirmation email has been sent. Check your inbox to finish deleting your account."
+    "save": "Save"
   },
   "publicProfile": {
     "title": "View Profile",
@@ -205,14 +172,11 @@
     "notProvided": "Not provided"
   },
   "notifications": {
-    "defaultError": "An error occurred",
-    "defaultSuccess": "Operation successful"
+    "defaultError": "An error occurred"
   },
   "likeButton": {
     "loginRequired": "You need to be logged in to add an event to your favorites",
-    "interested": "{{count}} interested",
-    "interested_one": "{{count}} interested",
-    "interested_other": "{{count}} interested"
+    "interested": "{{count}} interested"
   },
   "legal": {
     "privacy": "Privacy Policy",

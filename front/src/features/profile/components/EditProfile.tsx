@@ -1,7 +1,6 @@
 import { createPortal } from 'react-dom';
 import { useState } from 'react';
 import EditProfileContent from './EditProfileContent';
-import styles from '../ProfileModal.module.css';
 
 interface EditProfileProps {
   onClose: () => void;
@@ -23,7 +22,7 @@ export default function EditProfile({ onClose }: EditProfileProps) {
       <div
         data-state={isClosing ? 'closed' : 'open'}
         onAnimationEnd={handleAnimationEnd}
-        className={styles.modalContent}
+        className="glass-modal modalContent"
         onClick={(e) => e.stopPropagation()}
       >
         <EditProfileContent onClose={requestClose} />

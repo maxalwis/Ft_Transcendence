@@ -10,8 +10,11 @@ export default function LegalModal({ isOpen, onClose, initialTab = 'privacy' }: 
   if (!isOpen) return null;
 
   return (
-    <div className="glass-modal-overlay">
-      <div className="glass-modal max-w-2xl w-full max-h-[85vh] z-[600] glass-animate-in">
+    <div className="glass-modal-overlay" onClick={onClose}>
+      <div
+        className="glass-modal modalContent relative p-6 w-full flex flex-col min-h-0"
+        onClick={(e) => e.stopPropagation()}
+      >
         <LegalContent initialTab={initialTab} onClose={onClose} />
       </div>
     </div>

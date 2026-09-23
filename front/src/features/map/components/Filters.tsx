@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FiltersProps } from '../../../types/map';
 import styles from '../Map.module.css';
 import CustomSelect from './CustomSelect';
+import { closeBtn } from '../../../types/icons';
 
 export default function Filters({ onApplyFilters }: FiltersProps) {
   const { t } = useTranslation();
@@ -73,17 +74,7 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
               className="modal-button modal-close"
               onClick={() => setIsOpen(false)}
             >
-              <svg
-                className="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
+              {closeBtn}
             </button>
 
             <h3 className={`text-lg text-center pb-2 pr-6 ${styles.filterTitle}`}>
