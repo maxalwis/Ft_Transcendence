@@ -6,6 +6,9 @@ services:
       dockerfile: Dockerfile
     container_name: nginx
     restart: unless-stopped
+    environment:
+      - ADMIN_AUTH_USER=${ADMIN_AUTH_USER}
+      - ADMIN_AUTH_PASSWORD=${ADMIN_AUTH_PASSWORD}
     ports:
       - '${HTTPS_PORT:-8443}:443'
       - '${STUDIO_HTTPS_PORT:-8444}:444'
