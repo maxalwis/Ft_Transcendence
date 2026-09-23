@@ -1,15 +1,30 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { User, Prisma, UserStatus } from '../generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateLocalUserDto, CreateOAuthUserDto } from './dto/create-user.dto';
+import { SAFE_USER_SELECT, type SafeUser } from './safe-user-select';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<User[]> {
-    return this.prisma.user.findMany();
+  async findAll(): Promise<SafeUser[]> {
+    return this.prisma.user.findMany({ select: SAFE_USER_SELECT });
+  }
+
+  async findOnePublic(id: number): Promise<SafeUser> {
+    const user = await this.prisma.user.findUnique({ where: { id }, select: SAFE_USER_SELECT });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 
   async findOne(id: number): Promise<User> {
@@ -45,7 +60,7 @@ export class UsersService {
 
   // fonction pour chercher les users à ajouter dans la liste d'amis
   // exclut le user qui fait la recherche de la liste
-  async searchByUsername(query: string, excludeUserId?: number) {
+  async searchByUsername(query: string, excludeUserId?: number): Promise<SafeUser[]> {
     return this.prisma.user.findMany({
       where: {
         username: {
@@ -54,13 +69,8 @@ export class UsersService {
         },
         ...(excludeUserId && { id: { not: excludeUserId } }),
       },
-      select: {
-        id: true,
-        username: true,
-        avatar: true,
-        status: true,
-      },
-      take: 20,
+      take: 20, // renvoie 20 users max
+      select: SAFE_USER_SELECT, // ne renvoie pas toutes les données du user
     });
   }
 
@@ -133,6 +143,27 @@ export class UsersService {
   // disconnect can never throw NotFoundException.
   async setStatus(id: number, status: UserStatus): Promise<void> {
     await this.prisma.user.updateMany({ where: { id }, data: { status } });
+  }
+
+  // met à jour le mot de passe
+  async changePassword(userId: number, currentPassword: string, newPassword: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user?.password) {
+      throw new ForbiddenException('No password set for this account');
+    }
+
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    return { message: 'Password changed successfully' };
   }
 
   async setStatusIfExists(id: number, status: UserStatus): Promise<User | null> {

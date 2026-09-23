@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { EventItem } from '../../../types/event';
 import { useMap } from 'react-leaflet';
-import { DEFAULT_ZOOM } from '../Map.constants';
+import { DEFAULT_ZOOM } from '../../../types/constants';
 
 export function EventMapController({
   eventId,

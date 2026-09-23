@@ -11,13 +11,16 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
-  ForbiddenException,
+  Patch,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+
+const ALLOWED_AVATAR_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
 
 @Controller('users')
 export class UsersController {
@@ -39,10 +42,16 @@ export class UsersController {
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
+    return this.usersService.findOnePublic(id);
   }
 
-  @Put(':id')
+  @Patch('password')
+  @UseGuards(JwtAuthGuard)
+  changePassword(@Req() req: any, @Body() body: { currentPassword: string; newPassword: string }) {
+    return this.usersService.changePassword(req.user.id, body.currentPassword, body.newPassword);
+  }
+
+  @Put('me')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FileInterceptor('avatar', {
@@ -53,10 +62,18 @@ export class UsersController {
           callback(null, `${uniqueSuffix}${extname(file.originalname)}`);
         },
       }),
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5 Mo
+      fileFilter: (req, file, callback) => {
+        const ext = extname(file.originalname).toLowerCase();
+        if (!ALLOWED_AVATAR_EXTENSIONS.includes(ext)) {
+          return callback(new BadRequestException('Invalid file type'), false);
+        }
+        callback(null, true);
+      },
     })
   )
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Req() req: any,
     @Body()
     body: {
       username?: string;
@@ -64,26 +81,17 @@ export class UsersController {
       preferredLanguage?: 'FR' | 'EN' | 'ES' | 'AR';
       preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS';
     },
-    @Req() req: any,
     @UploadedFile() file?: Express.Multer.File
   ) {
-    if (req.user?.id !== id) {
-      throw new ForbiddenException('You can only update your own account');
-    }
-
-    return this.usersService.update(id, {
+    return this.usersService.update(req.user.id, {
       ...body,
       avatar: file ? `/uploads/avatars/${file.filename}` : undefined,
     });
   }
 
-  @Delete(':id')
+  @Delete('me')
   @UseGuards(JwtAuthGuard)
-  remove(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
-    if (req.user?.id !== id) {
-      throw new ForbiddenException('You can only delete your own account');
-    }
-
-    return this.usersService.remove(id);
+  remove(@Req() req: any) {
+    return this.usersService.remove(req.user.id);
   }
 }

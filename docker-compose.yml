@@ -8,6 +8,10 @@ services:
     restart: unless-stopped
     ports:
       - '${HTTPS_PORT:-8443}:443'
+      - '${STUDIO_HTTPS_PORT:-8444}:444'
+      - '${KIBANA_HTTPS_PORT:-8445}:445'
+      - '${MAILPIT_UI_PORT:-8446}:446'
+      - '${ES_HTTPS_PORT:-8447}:447'
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro,z
       - nginx_certs:/etc/nginx/certs
@@ -27,8 +31,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - '${POSTGRES_PORT:-5432}:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -54,8 +56,6 @@ services:
     image: docker.io/library/redis:alpine
     container_name: redis
     restart: unless-stopped
-    ports:
-      - '${REDIS_PORT:-6379}:6379'
     networks:
       - transcendence_network
     healthcheck:
@@ -75,16 +75,14 @@ services:
     env_file:
       - .env
     environment:
-        - MAIL_HOST=${MAIL_HOST:-mailpit}
-        - MAIL_PORT=${MAIL_PORT:-1025}
-        - MAIL_FROM=${MAIL_FROM:-no-reply@transcendence.local}
-        - NODE_ENV=development
-        - PORT=${BACKEND_PORT:-3000}
-        - LIBRETRANSLATE_URL=${LIBRETRANSLATE_URL}
-        - UV_THREADPOOL_SIZE=2
-        - NODE_OPTIONS=--max-old-space-size=2048
-    ports:
-      - '${BACKEND_PORT:-3000}:3000'
+      - MAIL_HOST=${MAIL_HOST:-mailpit}
+      - MAIL_PORT=${MAIL_PORT:-1025}
+      - MAIL_FROM=${MAIL_FROM:-no-reply@transcendence.local}
+      - NODE_ENV=development
+      - PORT=${BACKEND_PORT:-3000}
+      - LIBRETRANSLATE_URL=${LIBRETRANSLATE_URL}
+      - UV_THREADPOOL_SIZE=2
+      - NODE_OPTIONS=--max-old-space-size=2048
     volumes:
       - ./backend:/app:z
       - backend_node_modules:/app/node_modules
@@ -146,8 +144,6 @@ services:
       - NPM_CONFIG_LOGLEVEL=silent
       - UV_THREADPOOL_SIZE=2
       - NODE_OPTIONS=--max-old-space-size=2048
-    ports:
-      - '5173:5173'
     volumes:
       - ./front:/app:z
       - frontend_node_modules:/app/node_modules
@@ -164,8 +160,6 @@ services:
     restart: unless-stopped
     environment:
       - DATABASE_URL=${DATABASE_URL}
-    ports:
-      - '${STUDIO_PORT:-5555}:${STUDIO_PORT:-5555}'
     volumes:
       - ./backend:/app:z
       - backend_node_modules:/app/node_modules
@@ -179,6 +173,7 @@ services:
     command: ['npm', 'run', 'studio']
     profiles:
       - prisma-studio
+      - tools
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
@@ -190,8 +185,6 @@ services:
       - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
       - xpack.security.enabled=false
       - 'logger.level=WARN'
-    ports:
-      - '9200:9200'
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
       - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:z
@@ -212,6 +205,7 @@ services:
       driver: 'json-file'
     profiles:
       - 'elk'
+      - 'tools'
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.11.3
@@ -220,8 +214,6 @@ services:
     volumes:
       - ./logstash/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:z
     command: logstash -f /usr/share/logstash/pipeline/logstash.conf
-    ports:
-      - '5044:5044'
     environment:
       - LS_JAVA_OPTS=-Xms512m -Xmx512m
       - xpack.monitoring.enabled=false
@@ -234,6 +226,7 @@ services:
       driver: 'json-file'
     profiles:
       - 'elk'
+      - 'tools'
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.11.3
@@ -245,8 +238,6 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     volumes:
       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
-    ports:
-      - '5601:5601'
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -262,6 +253,7 @@ services:
       driver: 'json-file'
     profiles:
       - 'elk'
+      - 'tools'
 
   kibana-setup:
     image: docker.io/curlimages/curl:latest
@@ -279,6 +271,7 @@ services:
       driver: 'json-file'
     profiles:
       - 'elk'
+      - 'tools'
 
   libretranslate:
     build:
@@ -287,8 +280,6 @@ services:
     image: localhost/libretranslate:latest
     container_name: libretranslate
     restart: unless-stopped
-    ports:
-      - '5000:5000'
     environment:
       - LT_LOAD_ONLY=fr,en,es,ar
     volumes:
@@ -306,8 +297,6 @@ services:
     image: docker.io/axllent/mailpit:latest
     container_name: mailpit
     restart: unless-stopped
-    ports:
-      - '${MAILPIT_UI_PORT:-8025}:8025'
     networks:
       - transcendence_network
 

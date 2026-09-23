@@ -9,13 +9,28 @@ interface TranslatedEvent {
   category: string;
 }
 
+const normalizeLanguage = (lang: string): 'fr' | 'en' | 'es' | 'ar' => {
+  const language = lang.split('-')[0].toLowerCase();
+
+  switch (language) {
+    case 'fr':
+    case 'en':
+    case 'es':
+    case 'ar':
+      return language;
+    default:
+      return 'fr';
+  }
+};
+
 export function useTranslatedEvent(eventId: string, lang: string) {
   const [data, setData] = useState<TranslatedEvent | null>(null);
   const { showWarning } = useNotification();
   const [fetchingId, setFetchingId] = useState<string | null>(null);
   const { t } = useTranslation();
 
-  const isBypassed = !eventId || lang === 'fr';
+  const apiLang = normalizeLanguage(lang);
+  const isBypassed = !eventId || apiLang === 'fr';
 
   useEffect(() => {
     if (isBypassed) return;
@@ -25,11 +40,19 @@ export function useTranslatedEvent(eventId: string, lang: string) {
 
     const performFetch = async () => {
       setFetchingId(eventId);
+
       try {
-        const res = await fetch(`${baseUrl}/events/${eventId}?lang=${lang}`, {
-          signal: controller.signal,
-        });
-        if (!res.ok) throw new Error(`Error ${res.status}`);
+        const res = await fetch(
+          `${baseUrl}/events/${eventId}?lang=${encodeURIComponent(apiLang)}`,
+          {
+            signal: controller.signal,
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}`);
+        }
+
         const json = await res.json();
         setData(json);
       } catch (err: unknown) {
@@ -52,7 +75,7 @@ export function useTranslatedEvent(eventId: string, lang: string) {
     return () => {
       controller.abort();
     };
-  }, [eventId, lang, isBypassed, showWarning, t]);
+  }, [eventId, apiLang, isBypassed, showWarning, t]);
 
   const isLoading = !isBypassed && fetchingId === eventId;
 

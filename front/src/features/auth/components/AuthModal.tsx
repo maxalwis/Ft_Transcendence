@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/useAuth';
 import { login } from '../../../api/api';
 import { useNotification } from '../../../context/notifications/useNotification';
+import { closeBtn } from '../../../types/icons';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -52,6 +53,11 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
 
       if (!res.ok) throw new Error();
 
+      // Clear the form after successful registration
+      setUsername('');
+      setPassword('');
+      setConfirmPassword('');
+
       setView('login');
     } catch {
       showWarning(t('authModal.errors.registrationError'));
@@ -61,7 +67,9 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
   const content = (
     <div
       className={
-        embedded ? 'relative w-full' : 'glass-modal relative p-8 max-w-md w-full glass-animate-in'
+        embedded
+          ? 'relative w-full glass-animate-in'
+          : 'glass-modal relative p-8 max-w-md w-full glass-animate-in'
       }
     >
       <button
@@ -70,17 +78,7 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
         aria-label={t('authModal.close')}
         className="modal-button modal-close"
       >
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M18 6L6 18M6 6l12 12" />
-        </svg>
+        {closeBtn}
       </button>
 
       {view === 'login' ? (

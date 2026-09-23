@@ -5,15 +5,22 @@ import { LanguageIcon, FlagFR, FlagGB, FlagES, FlagSA } from './FlagIcons';
 
 interface LanguageSelectorProps {
   embedded?: boolean;
+  onWidthChange?: (width: number) => void;
 }
 
-export default function LanguageSelector({ embedded = false }: LanguageSelectorProps) {
+export default function LanguageSelector({
+  embedded = false,
+  onWidthChange,
+}: LanguageSelectorProps) {
+  const languages = [
+    { code: 'fr', title: 'Français', Flag: FlagFR },
+    { code: 'en', title: 'English', Flag: FlagGB },
+    { code: 'es', title: 'Español', Flag: FlagES },
+    { code: 'ar', title: 'العربية', Flag: FlagSA },
+  ] as const;
   const { i18n } = useTranslation();
-
   const currentLang = i18n.language;
-
   const [isOpen, setIsOpen] = useState(false);
-
   const selectorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,20 +41,48 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
     };
   }, [embedded, isOpen]);
 
-  const languages = [
-    { code: 'fr', title: 'Français', Flag: FlagFR },
-    { code: 'en', title: 'English', Flag: FlagGB },
-    { code: 'es', title: 'Español', Flag: FlagES },
-    { code: 'ar', title: 'العربية', Flag: FlagSA },
-  ] as const;
+  useEffect(() => {
+    if (!embedded || !selectorRef.current || !onWidthChange) {
+      return;
+    }
+
+    const element = selectorRef.current;
+
+    const updateWidth = () => {
+      onWidthChange(element.getBoundingClientRect().width);
+    };
+
+    updateWidth();
+
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [embedded, onWidthChange, isOpen]);
 
   const content = embedded ? (
-    // Mobile
-    <div ref={selectorRef} className="fixed top-4 right-4 z-1100 pointer-events-auto">
+    <div
+      ref={selectorRef}
+      className="
+      fixed
+      top-4
+      right-4
+      z-1100
+      pointer-events-auto
+
+      min-[901px]:flex
+      min-[901px]:items-center
+      min-[901px]:gap-2
+      min-[901px]:flex-row-reverse
+    "
+    >
+      {/* Language toggle */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="glass-panel cursor-pointer p-2 rounded-full"
+        className="glass-panel cursor-pointer p-2 rounded-full max-[900px]:mb-1"
         title="Language"
         aria-label="Language"
         aria-expanded={isOpen}
@@ -56,7 +91,15 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 flex flex-col gap-2">
+        <div
+          className="
+          flex
+          flex-col
+          gap-2
+
+          min-[901px]:flex-row
+        "
+        >
           {languages.map(({ code, title, Flag }) => (
             <button
               key={code}
@@ -77,8 +120,24 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
       )}
     </div>
   ) : (
-    // Desktop
-    <div className="fixed top-1/2 -translate-y-1/2 right-4 z-1100 flex flex-col items-center gap-2 pointer-events-auto max-[900px]:top-[19%]">
+    // Desktop / non-embedded
+    <div
+      className="
+      fixed
+      top-1/2
+      -translate-y-1/2
+      right-4
+      z-1100
+      flex
+      flex-row
+      items-center
+      gap-2
+      pointer-events-auto
+
+      max-[900px]:top-[19%]
+      max-[900px]:flex-col
+    "
+    >
       {languages.map(({ code, title, Flag }) => (
         <button
           key={code}

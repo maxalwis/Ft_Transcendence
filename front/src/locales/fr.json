@@ -1,12 +1,8 @@
 {
-  "welcome": "Bienvenue sur notre site",
   "nav": {
     "menu": "Menu",
     "scrollLeft": "Défiler vers la gauche",
     "scrollRight": "Défiler vers la droite"
-  },
-  "buttons": {
-    "submit": "Valider"
   },
   "categories": {
     "all": "Tout",
@@ -17,12 +13,10 @@
     "others": "Autres"
   },
   "common": {
-    "back": "Retour"
+    "back": "Retour",
+    "close": "Fermer"
   },
   "events": {
-    "defaultCategory": "Événement",
-    "unknownDate": "Date inconnue",
-    "linkLabel": "Lien :",
     "loading": "Chargement des événements...",
     "noEvents": "Aucun événement trouvé",
     "errors": {
@@ -33,7 +27,6 @@
     "defaultCategory": "Événement",
     "unknownDate": "Date inconnue",
     "accessLink": "Détails de l'événement",
-    "back": "Retour",
     "price": {
       "free": "Gratuit",
       "feeBased": "Payant"
@@ -70,12 +63,9 @@
   "friends": {
     "buttonTitle": "Amis",
     "errorLoading": "Erreur de chargement.",
-    "sidebarTitle": "Mes amis",
-    "searchPlaceholder": "Rechercher...",
-    "addTab": "Ajouter",
-    "requestsTab": "Demandes",
-    "noFriends": "Aucun ami pour le moment",
-    "remove": "Supprimer",
+    "removing": "Suppression en cours...",
+    "removeFriend": "Supprimer l'ami",
+    "addFriend": "Ajouter un ami",
     "errors": {
       "sendFailed": "Erreur lors de l'envoi.",
       "removeFailed": "Erreur lors de la suppression."
@@ -83,32 +73,19 @@
   },
   "friendsModal": {
     "notLoggedIn": "Veuillez vous connecter pour accéder à votre liste d'amis.",
-    "friendlist": "Liste d'amis",
-    "pendingRequests": "Demandes en attente ({{count}})",
-    "pendingRequests_one": "Demande en attente ({{count}})",
-    "add": "Ajouter un ami",
-    "remove": "Supprimer un ami"
-  },
-  "friendsButton": {
-    "ariaOpen": "Ouvrir le menu",
-    "ariaClose": "Fermer le menu",
-    "search": "Rechercher",
-    "pendingRequest": "Demandes en attente",
-    "addFriend": "Ajouter un ami",
-    "removeFriend": "Supprimer un ami"
+    "pendingRequests": "Demandes en attente ({{count}})"
   },
   "friendsSearchBar": {
     "clearInput": "Effacer la recherche",
     "placeholders": {
-      "add": "Ajouter un ami...",
-      "remove": "Supprimer un ami...",
-      "request": "Rechercher un ami...",
       "default": "Rechercher un ami..."
     }
   },
   "friendsList": {
     "viewProfile": "Voir profil",
-    "noUsersFound": "Aucun utilisateur trouvé."
+    "noUsersFound": "Aucun utilisateur trouvé.",
+    "noFriends": "Commencez à ajouter des amis pour les voir ici !",
+    "searching": "Recherche en cours..."
   },
   "friendsRequests": {
     "noPendingRequests": "Aucune demande d'ami en attente.",
@@ -117,20 +94,14 @@
     "fallbackUser": "Utilisateur #{{id}}",
     "errors": {
       "acceptFailed": "Erreur lors de l'acceptation.",
-      "rejectFailed": "Erreur lors du refus.",
-      "sendFailed": "Erreur lors de l'envoi de la demande d'ami.",
-      "removeFailed": "Erreur lors de la suppression de l'ami."
+      "rejectFailed": "Erreur lors du refus."
     }
-  },
-  "friendsSidebar": {
-    "notLoggedIn": "Vous n'êtes pas connecté."
   },
   "chat": {
     "title": "Chat",
     "connectPrompt": "Connectez-vous pour voir le chat.",
     "loadingMessages": "Chargement des messages...",
     "placeholder": "Écrivez votre message...",
-    "send": "Envoyer",
     "errors": {
       "loginRequiredToSend": "Vous devez être connecté pour envoyer un message.",
       "loadMessages": "Échec du chargement des messages",
@@ -140,6 +111,8 @@
   "passwordModal": {
     "title": "Changer le mot de passe",
     "close": "Fermer",
+    "currentPassword": "Mot de passe actuel",
+    "currentPasswordPlaceholder": "Mot de passe actuel",
     "newPassword": "Nouveau mot de passe",
     "newPasswordPlaceholder": "Nouveau mot de passe",
     "confirmPassword": "Confirmer le nouveau mot de passe",
@@ -190,11 +163,7 @@
     "preferredCategory": "Catégorie préférée",
     "changePicture": "Changer photo",
     "cancel": "Annuler",
-    "save": "Enregistrer",
-    "privacyTitle": "Confidentialité",
-    "downloadData": "Télécharger mes données",
-    "deleteAccount": "Supprimer mon compte",
-    "deleteEmailSent": "Un e-mail de confirmation a été envoyé. Consultez votre boîte de réception pour finaliser la suppression."
+    "save": "Enregistrer"
   },
   "publicProfile": {
     "title": "Voir profil",
@@ -203,14 +172,11 @@
     "notProvided": "Non renseignée"
   },
   "notifications": {
-    "defaultError": "Une erreur est survenue",
-    "defaultSuccess": "Opération réussie"
+    "defaultError": "Une erreur est survenue"
   },
   "likeButton": {
     "loginRequired": "Vous devez être connecté pour ajouter un événement à vos favoris",
-    "interested": "{{count}} intéressé",
-    "interested_one": "{{count}} intéressé",
-    "interested_other": "{{count}} intéressés"
+    "interested": "{{count}} intéressé"
   },
   "legal": {
     "privacy": "Politique de confidentialité",

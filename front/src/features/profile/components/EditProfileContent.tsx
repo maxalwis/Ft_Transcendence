@@ -5,6 +5,7 @@ import { resolveAvatarUrl } from '../utils/avatar';
 import PasswordModal from './PasswordModal';
 import styles from '../ProfileModal.module.css';
 import { useNotification } from '../../../context/notifications/useNotification';
+import { closeBtn } from '../../../types/icons';
 
 interface EditProfileContentProps {
   onClose: () => void;
@@ -72,17 +73,14 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
         formData.append('avatar', avatarFile);
       }
 
-      const res = await fetch(
-        `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/users/${user?.id}`,
-        {
-          method: 'PUT',
-          credentials: 'include',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: formData,
-        }
-      );
+      const res = await fetch(`https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/users/me`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData,
+      });
 
       if (!res.ok) {
         throw new Error('Échec de la mise à jour');
@@ -101,7 +99,7 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
 
   return (
     <>
-      <div className={styles.modalHeader}>
+      <div className="modalHeader">
         <h2>{t('profileSettings.title')}</h2>
 
         <button
@@ -110,21 +108,11 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
           onClick={onClose}
           aria-label="Fermer"
         >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
+          {closeBtn}
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className={styles.modalForm}>
+      <form onSubmit={handleSubmit} className="modalForm">
         <div className={styles.avatarPicker}>
           <button
             type="button"
@@ -195,19 +183,19 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
         {!isOAuthUser && (
           <button
             type="button"
-            className={styles.btnSecondary}
+            className="btnSecondary"
             onClick={() => setIsPasswordModalOpen(true)}
           >
             {t('profileSettings.changePassword')}
           </button>
         )}
 
-        <div className={styles.modalActions}>
-          <button type="button" className={styles.btnSecondary} onClick={onClose}>
+        <div className="modalActions">
+          <button type="button" className="btnSecondary" onClick={onClose}>
             {t('profileSettings.cancel')}
           </button>
 
-          <button type="submit" className={styles.btnPrimary} disabled={isSaving}>
+          <button type="submit" className="btnPrimary" disabled={isSaving}>
             {isSaving ? t('profileSettings.saving') : t('profileSettings.save')}
           </button>
         </div>

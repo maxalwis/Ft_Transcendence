@@ -95,7 +95,7 @@ export default function EventDetails({
         <button
           type="button"
           onClick={onBack}
-          aria-label={t('eventDetails.back')}
+          aria-label={t('common.back')}
           className="mb-3 flex items-center gap-1 text-sm font-medium text-slate-600 transition-colors hover:text-black"
         >
           <svg
@@ -108,7 +108,7 @@ export default function EventDetails({
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
           </svg>
 
-          <span>{t('eventDetails.back')}</span>
+          <span>{t('common.back')}</span>
         </button>
       )}
 
