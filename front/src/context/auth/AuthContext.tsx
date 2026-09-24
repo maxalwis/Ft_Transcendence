@@ -17,7 +17,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-    const setAuth = useCallback((user: User, token: string, options?: { isNewLogin?: boolean }) => {
+  const setAuth = useCallback((user: User, token: string, options?: { isNewLogin?: boolean }) => {
     setUser(user);
     setAccessToken(token);
     setApiAccessToken(token);
