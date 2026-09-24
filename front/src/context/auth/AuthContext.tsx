@@ -6,6 +6,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
 
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -16,10 +17,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const setAuth = useCallback((user: User, token: string) => {
+    const setAuth = useCallback((user: User, token: string, options?: { isNewLogin?: boolean }) => {
     setUser(user);
     setAccessToken(token);
     setApiAccessToken(token);
+    if (options?.isNewLogin) {
+      setJustLoggedIn(true);
+    }
   }, []);
 
   const updateUser = useCallback((partialUser: Partial<User>) => {
@@ -28,6 +32,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { ...currentUser, ...partialUser };
     });
   }, []);
+
+  const clearJustLoggedIn = () => {
+    setJustLoggedIn(false);
+  };
 
   const logout = useCallback(() => {
     clearRefreshTimer();
@@ -115,8 +123,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         accessToken,
         isLoading,
+        justLoggedIn,
         setAuth,
         updateUser,
+        clearJustLoggedIn,
         logout,
       }}
     >

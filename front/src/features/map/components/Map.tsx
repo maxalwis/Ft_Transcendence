@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 
 // Third-Party Styles
@@ -32,7 +32,7 @@ import { useTranslatedEvent } from '../../events/hooks/useTranslatedEvent';
 import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../../../types/constants';
 
 import { EventMapController } from './EventMapController';
-
+import { mapPreferredCategory, mapPreferredLanguage } from '../utils/userPreferences';
 // Local Styles
 import '../Map.module.css';
 
@@ -40,7 +40,7 @@ type SidebarState = { type: 'event'; eventId: string } | { type: 'results' } | n
 
 export default function Map() {
   const { showWarning } = useNotification();
-  const { user } = useAuth();
+  const { user, justLoggedIn, clearJustLoggedIn } = useAuth();
   const { i18n } = useTranslation();
   const lang = i18n.language;
 
@@ -225,6 +225,28 @@ export default function Map() {
       startDate,
     }));
   }, []);
+
+  /*
+   * Apply preferredLanguage / preferredCategory once, right after a real login.
+   * Excludes silent session restores on page refresh (justLoggedIn stays false then).
+   */
+  useEffect(() => {
+    if (!justLoggedIn || !user) return;
+
+    const preferredLanguage = mapPreferredLanguage(user.preferredLanguage);
+    if (preferredLanguage) {
+      i18n.changeLanguage(preferredLanguage);
+    }
+
+    const preferredCategory = mapPreferredCategory(user.preferredCategory);
+    if (preferredCategory) {
+      setCurrentResultsPage(1);
+      setResultsScrollTop(0);
+      setFilters((prev) => ({ ...prev, category: preferredCategory }));
+    }
+
+    clearJustLoggedIn();
+  }, [justLoggedIn, user, i18n, clearJustLoggedIn]);
 
   return (
     <>
