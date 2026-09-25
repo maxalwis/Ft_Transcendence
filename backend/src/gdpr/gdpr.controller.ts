@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common
 import type { Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { GdprService } from './gdpr.service';
+import { ConfirmDeletionDto } from './dto/confirm-deletion.dto';
 
 @Controller('gdpr')
 export class GdprController {
@@ -29,7 +30,7 @@ export class GdprController {
 
   // POST /api/gdpr/delete-confirm -> token-authenticated; performs the deletion
   @Post('delete-confirm')
-  confirm(@Body('token') token: string) {
-    return this.gdpr.confirmDeletion(token);
+  confirm(@Body() body: ConfirmDeletionDto) {
+    return this.gdpr.confirmDeletion(body.token);
   }
 }

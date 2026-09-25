@@ -19,6 +19,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 const ALLOWED_AVATAR_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
 
@@ -47,7 +49,7 @@ export class UsersController {
 
   @Patch('password')
   @UseGuards(JwtAuthGuard)
-  changePassword(@Req() req: any, @Body() body: { currentPassword: string; newPassword: string }) {
+  changePassword(@Req() req: any, @Body() body: ChangePasswordDto) {
     return this.usersService.changePassword(req.user.id, body.currentPassword, body.newPassword);
   }
 
@@ -74,13 +76,7 @@ export class UsersController {
   )
   update(
     @Req() req: any,
-    @Body()
-    body: {
-      username?: string;
-      email?: string;
-      preferredLanguage?: 'FR' | 'EN' | 'ES' | 'AR';
-      preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS';
-    },
+    @Body() body: UpdateUserDto,
     @UploadedFile() file?: Express.Multer.File
   ) {
     return this.usersService.update(req.user.id, {

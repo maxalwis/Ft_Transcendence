@@ -11,6 +11,7 @@ export class CreateLocalUserDto {
   email!: string;
 
   @IsString()
+//  @MinLength(8) -> à décommenter avant la correction
   password!: string;
 }
 
