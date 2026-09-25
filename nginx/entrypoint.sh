@@ -17,5 +17,14 @@ fi
 NAMESERVER=$(awk '/^nameserver/ { print $2; exit }' /etc/resolv.conf)
 echo "resolver ${NAMESERVER} valid=10s;" > /etc/nginx/resolver.conf
 
+# Basic auth for the admin tools (Prisma Studio, Kibana, Elasticsearch) exposed
+# on :444/:445/:447. Regenerated on every start so a password change in .env
+# takes effect on the next `docker compose up`.
+if [ -z "$ADMIN_AUTH_USER" ] || [ -z "$ADMIN_AUTH_PASSWORD" ]; then
+  echo "[nginx] ADMIN_AUTH_USER/ADMIN_AUTH_PASSWORD not set, refusing to start (admin tools would be unprotected)" >&2
+  exit 1
+fi
+echo "${ADMIN_AUTH_USER}:$(openssl passwd -apr1 "$ADMIN_AUTH_PASSWORD")" > /etc/nginx/.htpasswd
+
 # hand off to nginx's own entrypoint (runs /docker-entrypoint.d/* then starts nginx)
 exec /docker-entrypoint.sh nginx -g 'daemon off;'
