@@ -41,6 +41,15 @@ export class IngestionService implements OnModuleInit {
     }
 
     try {
+      const eventCount = await this.prisma.event.count();
+
+      if (eventCount > 0) {
+        this.logger.log(
+          `Database already contains ${eventCount} events. Skipping startup ingestion.`
+        );
+        return;
+      }
+
       const shouldRun = await this.shouldRunIngestionToday();
 
       if (shouldRun) {
