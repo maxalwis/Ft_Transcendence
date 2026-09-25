@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from '../Map.module.css';
+import Button from '../../../components/ui/Button';
 
 export interface SelectOption {
   value: string;
@@ -39,7 +40,8 @@ export default function CustomSelect({
   return (
     <div ref={containerRef} className="relative w-full">
       {/* Trigger Button */}
-      <button
+      <Button
+        variant="icon"
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full flex items-center justify-between ${styles.filterControl} ${styles.filterSelect}`}
@@ -54,7 +56,7 @@ export default function CustomSelect({
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
-      </button>
+      </Button>
 
       {/* White Dropdown Menu */}
       {isOpen && (

@@ -110,7 +110,6 @@
   },
   "passwordModal": {
     "title": "Changer le mot de passe",
-    "close": "Fermer",
     "currentPassword": "Mot de passe actuel",
     "currentPasswordPlaceholder": "Mot de passe actuel",
     "newPassword": "Nouveau mot de passe",
@@ -135,7 +134,6 @@
     "createOne": "En créer un",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "signInLink": "Se connecter",
-    "close": "Fermer",
     "loginWithGoogle": "Se connecter avec Google",
     "loginWith42": "Se connecter avec 42",
     "errors": {
@@ -215,7 +213,6 @@
   "sidebar": {
     "event": "Événement",
     "selectEvent": "Sélectionnez un événement.",
-    "close": "Fermer",
     "collapse": "Réduire la barre latérale",
     "expand": "Développer la barre latérale"
   }

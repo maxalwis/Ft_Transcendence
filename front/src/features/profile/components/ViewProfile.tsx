@@ -4,7 +4,7 @@ import type { User } from '../../../api/friends';
 import { useTranslation } from 'react-i18next';
 import { resolveAvatarUrl } from '../utils/avatar';
 import styles from '../ProfileModal.module.css';
-import { CloseBtn } from '../../../types/icons';
+import { CloseIcon } from '../../../types/icons';
 import Button from '../../../components/ui/Button';
 
 interface ViewProfileProps {
@@ -54,7 +54,7 @@ export default function ViewProfile({ friend, onClose, onRemove }: ViewProfilePr
             onClick={requestClose}
             aria-label={t('common.close', 'Close')}
           >
-            <CloseBtn />
+            <CloseIcon className="h-4 w-4" />
           </Button>
         </div>
 

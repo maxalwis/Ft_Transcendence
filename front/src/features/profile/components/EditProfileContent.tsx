@@ -5,7 +5,7 @@ import { resolveAvatarUrl } from '../utils/avatar';
 import PasswordModal from './PasswordModal';
 import styles from '../ProfileModal.module.css';
 import { useNotification } from '../../../context/notifications/useNotification';
-import { CloseBtn } from '../../../types/icons';
+import { CloseIcon } from '../../../types/icons';
 import Button from '../../../components/ui/Button';
 
 interface EditProfileContentProps {
@@ -110,13 +110,14 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
           onClick={onClose}
           aria-label="Fermer"
         >
-          <CloseBtn />
+          <CloseIcon className="h-4 w-4" />
         </Button>
       </div>
 
       <form onSubmit={handleSubmit} className="modalForm">
         <div className={styles.avatarPicker}>
-          <button
+          <Button
+            variant="icon"
             type="button"
             className={styles.avatarPreview}
             onClick={() => fileInputRef.current?.click()}
@@ -126,8 +127,7 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
             ) : (
               <span>{username.charAt(0).toUpperCase() || '?'}</span>
             )}
-          </button>
-
+          </Button>
           <input
             ref={fileInputRef}
             type="file"
@@ -136,13 +136,14 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
             hidden
           />
 
-          <button
+          <Button
+            variant="primary"
             type="button"
             className={styles.avatarChangeLink}
             onClick={() => fileInputRef.current?.click()}
           >
             {t('profileSettings.changePicture')}
-          </button>
+          </Button>
         </div>
 
         <label>

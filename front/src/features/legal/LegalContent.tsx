@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import PrivacyPolicy from './PrivacyPolicy';
 import TermsOfService from './TermsOfService';
 import styles from './Legal.module.css';
-import { CloseBtn } from '../../types/icons';
+import { CloseIcon } from '../../types/icons';
 import Button from '../../components/ui/Button';
 
 interface LegalContentProps {
@@ -21,28 +21,30 @@ export default function LegalContent({ initialTab = 'privacy', onClose }: LegalC
         variant="icon"
         type="button"
         onClick={onClose}
-        aria-label={t('authModal.close')}
+        aria-label={t('common.close')}
         className="modal-button modal-close"
       >
-        <CloseBtn />
+        <CloseIcon className="h-4 w-4" />
       </Button>
 
       <div className={styles.tabNav}>
-        <button
+        <Button
+          variant="primary"
           type="button"
           className={`${styles.tabButton} ${activeTab === 'privacy' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('privacy')}
         >
           {t('legal.privacy')}
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="primary"
           type="button"
           className={`${styles.tabButton} ${activeTab === 'terms' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('terms')}
         >
           {t('legal.terms')}
-        </button>
+        </Button>
       </div>
 
       <div className={styles.scrollableContent}>

@@ -110,7 +110,6 @@
   },
   "passwordModal": {
     "title": "Cambiar contraseña",
-    "close": "Cerrar",
     "currentPassword": "Contraseña actual",
     "currentPasswordPlaceholder": "Contraseña actual",
     "newPassword": "Nueva contraseña",
@@ -135,7 +134,6 @@
     "createOne": "Crear una",
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
     "signInLink": "Iniciar sesión",
-    "close": "Cerrar",
     "loginWithGoogle": "Iniciar sesión con Google",
     "loginWith42": "Iniciar sesión con 42",
     "errors": {
@@ -215,7 +213,6 @@
   "sidebar": {
     "event": "Evento",
     "selectEvent": "Selecciona un evento.",
-    "close": "Cerrar",
     "collapse": "Colapsar barra lateral",
     "expand": "Expandir barra lateral"
   }

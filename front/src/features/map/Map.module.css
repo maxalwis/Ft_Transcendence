@@ -181,7 +181,7 @@
 }
 
 .sidebarModal[data-sidebar-type='event'] {
-    padding-top: calc(var(--spacing) * 13) !important;
+    padding-top: calc(var(--spacing) * 15) !important;
 }
 
 @keyframes centerPopIn {
@@ -259,7 +259,7 @@
 .sidebarToggle {
     position: fixed;
     top: 50%;
-    right: calc(20vw + var(--space-3));
+    right: var(--space-3);
     z-index: 2000 !important;
 
     display: inline-flex;
@@ -278,7 +278,7 @@
     color: var(--color-orange-primary);
     cursor: pointer;
 
-    transform: translateY(-50%);
+    transform: translateX(-50%);
 
     transition:
         right 250ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -287,16 +287,17 @@
         border-color 0.15s ease;
 }
 
+/* Sidebar OPEN → toggle moves LEFT */
 .sidebarToggle[data-state='open'] {
-    right: calc(20vw + var(--space-3));
+    right: calc(19vw + var(--space-3));
 }
 
+/* Sidebar CLOSED → toggle stays on the RIGHT */
 .sidebarToggle[data-state='closed'] {
     right: var(--space-3);
 }
 
 .sidebarToggle:hover {
-    width: 2rem;
     border-color: rgba(232, 122, 38, 0.724);
     background: var(--color-orange-hover);
     color: #f06901;
@@ -312,9 +313,13 @@
     display: block;
 }
 
+
 @media (max-width: 900px) {
 
-    /* * Sidebar is 90% wide and centered, * so its right edge is 5% from the viewport edge. */
+    /*
+     * OPEN:
+     * Toggle sits at the sidebar edge.
+     */
     .sidebarToggle {
         width: 3rem;
         height: 1.75rem;
@@ -324,35 +329,43 @@
         top: 38.5vh;
         bottom: auto;
 
-        transform: translate(-50%, -50%);
+        transform: translateY(-50%);
+
+        transition:
+        top 250ms cubic-bezier(0.16, 1, 0.3, 1),
+        width 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease;
     }
 
     .sidebarToggle[data-state='open'] {
-        top: 38.5vh;
+        top: 38vh;
+        bottom: auto;
         left: 50%;
         right: auto;
-        transform: translate(-50%, -50%);
+
+        transform: translateY(-50%);
     }
 
+    /*
+     * CLOSED:
+     * Toggle moves DOWN toward the bottom of the screen.
+     */
     .sidebarToggle[data-state='closed'] {
         top: auto;
-        bottom: calc(3.5rem + env(safe-area-inset-bottom));
-        left: 50%;
+        bottom: calc(2.25rem + env(safe-area-inset-bottom));
+        left: 48.15%;
         right: auto;
 
-        transform: translateX(-50%);
+        transform: translateY(-50%);
     }
 
     .sidebarToggle svg {
         transform: rotate(90deg);
     }
 
-    .sidebarToggle:hover {
-        width: 3.25rem;
-    }
-
     .sidebarToggle:active {
-        transform: translate(-50%, -50%) scale(0.9);
+        transform: translateX(-50%) scale(0.9);
     }
 }
 

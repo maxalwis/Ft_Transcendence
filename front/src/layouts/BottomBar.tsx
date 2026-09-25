@@ -7,6 +7,7 @@ import EditProfileContent from '../features/profile/components/EditProfileConten
 import LegalContent from '../features/legal/LegalContent';
 import LegalModal from '../features/legal/LegalModal';
 import Button from '../components/ui/Button';
+import { CloseIcon, MenuIcon } from '../types/icons';
 
 function LegalButtons({
   onOpenLegal,
@@ -157,12 +158,26 @@ export default function BottomBar() {
                 >
                   {mobileView === 'menu' ? (
                     <>
+                      <div className="pt-3">
+                        <Button
+                          variant="icon"
+                          type="button"
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setMobileView('menu');
+                            setIsAuthOpen(false);
+                          }}
+                          aria-label={t('common.close')}
+                          className="modal-button modal-close"
+                        >
+                          <CloseIcon className="h-5 w-5" />
+                        </Button>
+                      </div>
                       <LoginButton
                         onOpenAuth={openMobileAuth}
                         embedded
                         onOpenProfile={() => setMobileView('profileMenu')}
                       />
-
                       <Button
                         variant="ghost"
                         type="button"
@@ -171,7 +186,6 @@ export default function BottomBar() {
                       >
                         {t('friends.buttonTitle', 'Friends')}
                       </Button>
-
                       <LegalButtons onOpenLegal={openLegalModal} mobileMenuOpen={mobileMenuOpen} />
                     </>
                   ) : mobileView === 'friends' ? (
@@ -207,29 +221,7 @@ export default function BottomBar() {
               }}
               className="glass-panel px-4 py-2 font-semibold flex items-center gap-2"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {mobileMenuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16m-7 6h7"
-                  />
-                )}
-              </svg>
+              <MenuIcon open={mobileMenuOpen} className="w-5 h-5" />
 
               {t('nav.menu', 'Menu')}
             </Button>

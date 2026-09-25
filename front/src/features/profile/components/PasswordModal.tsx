@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CloseBtn } from '../../../types/icons';
+import { CloseIcon } from '../../../types/icons';
 import Button from '../../../components/ui/Button';
 import { useAuth } from '../../../context/auth/useAuth';
 import { changePassword } from '../../../api/users';
@@ -64,13 +64,14 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
       >
         <div className="modalHeader">
           <h2>{t('passwordModal.title')}</h2>
-          <Button variant="icon"
+          <Button
+            variant="icon"
             type="button"
             className="modal-button modal-close"
             onClick={requestClose}
-            aria-label={t('passwordModal.close')}
+            aria-label={t('common.close')}
           >
-            <CloseBtn />
+            <CloseIcon className="h-4 w-4" />
           </Button>
         </div>
 

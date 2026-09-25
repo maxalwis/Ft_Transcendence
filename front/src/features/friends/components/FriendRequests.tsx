@@ -3,7 +3,7 @@ import type { PendingRequest } from '../../../api/friends';
 import { acceptFriendRequest, rejectFriendRequest } from '../../../api/friends';
 import { useNotification } from '../../../context/notifications/useNotification';
 import Button from '../../../components/ui/Button';
-import { BackBtn } from '../../../types/icons';
+import { BackIcon } from '../../../types/icons';
 
 type FriendsRequestsProps = {
   requests: PendingRequest[];
@@ -36,13 +36,14 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
   if (!requests || requests.length === 0) {
     return (
       <div className="flex flex-col gap-3 p-2">
-        <Button variant="icon"
+        <Button
+          variant="icon"
           type="button"
           onClick={onBack}
           aria-label="Back to friends"
           className="modal-button modal-back self-start"
         >
-          <BackBtn />
+          <BackIcon className="h-4 w-4"/>
         </Button>
         <div className="text-xs text-slate-400 italic text-center">
           {t('friendsRequests.noPendingRequests')}
@@ -53,13 +54,14 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
 
   return (
     <div className="flex flex-col gap-2 p-2">
-      <Button variant="icon"
+      <Button
+        variant="icon"
         type="button"
         onClick={onBack}
         aria-label="Back to friends"
         className="modal-button modal-back self-start"
       >
-        <BackBtn />
+        <BackIcon className="h-4 w-4"/>
       </Button>
       {requests.map((req) => {
         const senderObj = req.sender;
@@ -84,10 +86,20 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
               <span className="truncate">{displayName}</span>
             </div>
             <div className="flex">
-              <Button variant="primary" type="button" onClick={() => handleAccept(targetId)} className={`menuButton`}>
+              <Button
+                variant="primary"
+                type="button"
+                onClick={() => handleAccept(targetId)}
+                className={`menuButton`}
+              >
                 {t('friendsRequests.accept')}
               </Button>
-              <Button variant="secondary" type="button" onClick={() => handleReject(targetId)} className={`menuButton`}>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={() => handleReject(targetId)}
+                className={`menuButton`}
+              >
                 {t('friendsRequests.reject')}
               </Button>
             </div>

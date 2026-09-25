@@ -110,7 +110,6 @@
   },
   "passwordModal": {
     "title": "Change Password",
-    "close": "Close",
     "currentPassword": "Current Password",
     "currentPasswordPlaceholder": "Current Password",
     "newPassword": "New Password",
@@ -135,7 +134,6 @@
     "createOne": "Create one",
     "alreadyHaveAccount": "Already have an account?",
     "signInLink": "Sign in",
-    "close": "Close",
     "loginWithGoogle": "Log in with Google",
     "loginWith42": "Log in with 42",
     "errors": {
@@ -215,7 +213,6 @@
   "sidebar": {
     "event": "Event",
     "selectEvent": "Select an event.",
-    "close": "Close",
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar"
   }

@@ -3,6 +3,7 @@ import { useAuth } from '../../../context/auth/useAuth';
 import { useState, useRef, useEffect } from 'react';
 import EditProfile from '../../profile/components/EditProfile.tsx';
 import Button from '../../../components/ui/Button.tsx';
+import { BackIcon } from '../../../types/icons.tsx';
 
 interface LoginButtonProps {
   onOpenAuth: () => void;
@@ -57,7 +58,19 @@ export default function LoginButton({
 
   if (user && mobileProfileMenu) {
     return (
-      <div className="w-full flex flex-col gap-2">
+      <div className="w-full flex flex-col gap-2 pt-10">
+        <Button
+          variant="icon"
+          type="button"
+          className="modal-button modal-back"
+          onClick={() => {
+            onBack?.();
+            onCloseMobileMenu?.();
+          }}
+        >
+          <BackIcon className="h-4 w-4" />
+        </Button>
+
         <Button
           variant="ghost"
           type="button"
@@ -71,18 +84,6 @@ export default function LoginButton({
 
         <Button variant="ghost" type="button" className="menuButton" onClick={handleLogout}>
           {t('authBtn.logout')}
-        </Button>
-
-        <Button
-          variant="ghost"
-          type="button"
-          className="menuButton"
-          onClick={() => {
-            onBack?.();
-            onCloseMobileMenu?.();
-          }}
-        >
-          {t('common.back')}
         </Button>
       </div>
     );
@@ -154,7 +155,7 @@ export default function LoginButton({
 
   return (
     <Button
-      variant="primary"
+      variant="ghost"
       className={`${embedded ? 'menuButton' : 'bottomBarButton glass-panel'}`}
       type="button"
       onClick={onOpenAuth}

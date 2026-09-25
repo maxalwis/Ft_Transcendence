@@ -5,6 +5,7 @@ import { fr, enUS, es, ar } from 'date-fns/locale';
 import LanguageSelector from './LanguageSelector';
 import 'react-datepicker/dist/react-datepicker.css';
 import Button from '../components/ui/Button';
+import { ArrowLeftIcon, ArrowRightIcon } from '../types/icons';
 
 registerLocale('fr', fr);
 registerLocale('en', enUS);
@@ -149,7 +150,7 @@ export default function NavBar({
         {/* Category Navigation */}
         <div className="relative z-10 flex items-center justify-center min-w-0">
           {canScrollLeft && (
-            <button
+            <Button variant="icon"
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
@@ -158,19 +159,8 @@ export default function NavBar({
               aria-label={t('nav.scrollLeft', 'Défiler vers la gauche')}
               className="glass-icon-filter  md:hidden absolute left-0 z-20"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </button>
+              <ArrowLeftIcon className="h-4 w-4"/>
+            </Button>
           )}
 
           {/* Actual clipping area */}
@@ -190,7 +180,7 @@ export default function NavBar({
                     : currentCategory === targetCategory;
 
                 return (
-                  <button
+                  <Button variant="ghost"
                     key={cat.value || 'all'}
                     type="button"
                     onClick={(e) => {
@@ -201,14 +191,14 @@ export default function NavBar({
                     className={`glass-filter ${isActive ? 'isSelected' : ''}`}
                   >
                     {cat.label}
-                  </button>
+                  </Button>
                 );
               })}
             </nav>
           </div>
 
           {canScrollRight && (
-            <button
+            <Button variant="icon"
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
@@ -217,19 +207,8 @@ export default function NavBar({
               aria-label={t('nav.scrollRight', 'Défiler vers la droite')}
               className="glass-icon-filter md:hidden absolute right-0 z-20"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </button>
+              <ArrowRightIcon className="h-4 w-4"/>
+            </Button>
           )}
         </div>
 
@@ -246,7 +225,7 @@ export default function NavBar({
 
           return (
             <div key={filter.type} className="relative">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -255,7 +234,7 @@ export default function NavBar({
                 className={`glass-filter ${isOpen || isSelected ? 'isSelected' : ''}`}
               >
                 {filter.label}
-              </button>
+              </Button>
 
               {isOpen && (
                 <>
@@ -265,7 +244,7 @@ export default function NavBar({
                         const isActive = (priceType || '') === opt.value;
 
                         return (
-                          <button
+                          <Button variant="ghost"
                             key={opt.value || 'all-prices'}
                             type="button"
                             onClick={(e) => {
@@ -279,7 +258,7 @@ export default function NavBar({
                             }`}
                           >
                             {opt.label}
-                          </button>
+                          </Button>
                         );
                       })}
                     </div>

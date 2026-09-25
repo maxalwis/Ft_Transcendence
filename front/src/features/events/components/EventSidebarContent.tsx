@@ -6,6 +6,7 @@ import Event from './Event';
 import type { EventItem } from '../../../types/event';
 
 import { useTranslation } from 'react-i18next';
+import Button from '../../../components/ui/Button';
 
 interface EventSidebarContentProps {
   eventId: string;
@@ -45,23 +46,23 @@ export default function EventSidebarContent({ eventId, currentUserId }: EventSid
     <>
       {/* Mobile category switch */}
       <div className="min-[901px]:hidden shrink-0 flex gap-2 mb-2 border-b border-teal-200/20 pb-1">
-        <button
+        <Button
+          variant="ghost"
           type="button"
           onClick={() => setMobileView('event')}
-          className={`flex-1 ${mobileView === 'event'}`}
+          className={`flex-1 ${mobileView === 'event' ? 'isSelected' : ''}`}
         >
           {t('sidebar.event', 'Event')}
-        </button>
-
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           type="button"
           onClick={() => setMobileView('chat')}
-          className={`flex-1 ${mobileView === 'chat'}`}
+          className={`flex-1 ${mobileView === 'chat' ? 'isSelected' : ''}`}
         >
           {t('chat.title', 'Chat')}
-        </button>
+        </Button>
       </div>
-
       {/* Event Details */}
       <div
         className={`
@@ -79,7 +80,6 @@ export default function EventSidebarContent({ eventId, currentUserId }: EventSid
           </div>
         )}
       </div>
-
       {/* Chat */}
       <div
         className={`

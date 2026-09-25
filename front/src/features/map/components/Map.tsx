@@ -35,8 +35,7 @@ import { EventMapController } from './EventMapController';
 import { mapPreferredCategory, mapPreferredLanguage } from '../utils/userPreferences';
 // Local Styles
 import '../Map.module.css';
-import Button from '../../../components/ui/Button';
-import { BackBtn } from '../../../types/icons';
+import ModalLayout from '../../../components/ui/ModalLayout';
 
 type SidebarState = { type: 'event'; eventId: string } | { type: 'results' } | null;
 
@@ -228,6 +227,12 @@ export default function Map() {
     }));
   }, []);
 
+  const handleCloseSidebar = useCallback(() => {
+    setSidebar(null);
+    setIsSidebarOpen(false);
+    setHoverPos(null);
+  }, []);
+
   /*
    * Apply preferredLanguage / preferredCategory once, right after a real login.
    * Excludes silent session restores on page refresh (justLoggedIn stays false then).
@@ -349,39 +354,39 @@ export default function Map() {
           }}
           type={sidebar.type}
         >
-          {/* Results sidebar */}
           {sidebar.type === 'results' && (
-            <EventResultsSidebar
-              events={events}
-              isLoading={isLoading}
-              currentPage={currentResultsPage}
-              onPageChange={setCurrentResultsPage}
-              onEventClick={handleResultsEventClick}
-              scrollTop={resultsScrollTop}
-              onScrollTopChange={setResultsScrollTop}
-            />
+            <ModalLayout
+              onClose={() => {
+                setSidebar(null);
+                setHoverPos(null);
+              }}
+            >
+              <EventResultsSidebar
+                events={events}
+                isLoading={isLoading}
+                currentPage={currentResultsPage}
+                onPageChange={setCurrentResultsPage}
+                onEventClick={handleResultsEventClick}
+                scrollTop={resultsScrollTop}
+                onScrollTopChange={setResultsScrollTop}
+              />
+            </ModalLayout>
           )}
 
-          {/* Event details sidebar */}
           {sidebar.type === 'event' && (
-            <div className="flex min-h-0 flex-1 flex-col">
-              <Button variant="icon"
-                type="button"
-                onClick={() => {
-                  setSidebar({ type: 'results' });
-                  setIsSidebarOpen(true);
-                  setHoverPos(null);
-                }}
-                aria-label="Back to results"
-                className="modal-button modal-back"
-              >
-                <BackBtn />
-              </Button>
-
-              <div className="min-h-0 flex-1 flex flex-col overflow-y-auto">
-                <EventSidebarContent eventId={sidebar.eventId} currentUserId={user?.id} />
-              </div>
-            </div>
+            <ModalLayout
+              onBack={() => {
+                setSidebar({ type: 'results' });
+                setIsSidebarOpen(true);
+                setHoverPos(null);
+              }}
+              onClose={() => {
+                setSidebar(null);
+                setHoverPos(null);
+              }}
+            >
+              <EventSidebarContent eventId={sidebar.eventId} currentUserId={user?.id} />
+            </ModalLayout>
           )}
         </SideBar>
       )}

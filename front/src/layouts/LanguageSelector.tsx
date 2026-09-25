@@ -2,6 +2,7 @@ import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LanguageIcon, FlagFR, FlagGB, FlagES, FlagSA } from './FlagIcons';
+import Button from '../components/ui/Button';
 
 interface LanguageSelectorProps {
   embedded?: boolean;
@@ -79,7 +80,8 @@ export default function LanguageSelector({
     "
     >
       {/* Language toggle */}
-      <button
+      <Button
+        variant="icon"
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         className="glass-panel cursor-pointer p-2 rounded-[50%] max-[900px]:mb-1"
@@ -88,7 +90,7 @@ export default function LanguageSelector({
         aria-expanded={isOpen}
       >
         <LanguageIcon className="w-5 h-5" />
-      </button>
+      </Button>
 
       {isOpen && (
         <div
@@ -101,7 +103,8 @@ export default function LanguageSelector({
         "
         >
           {languages.map(({ code, title, Flag }) => (
-            <button
+            <Button
+              variant="icon"
               key={code}
               type="button"
               onClick={() => {
@@ -114,7 +117,7 @@ export default function LanguageSelector({
               }`}
             >
               <Flag className="w-5 h-5 rounded-sm object-cover" />
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -139,8 +142,9 @@ export default function LanguageSelector({
     "
     >
       {languages.map(({ code, title, Flag }) => (
-        <button
+        <Button
           key={code}
+          variant="icon"
           type="button"
           onClick={() => i18n.changeLanguage(code)}
           title={title}
@@ -149,7 +153,7 @@ export default function LanguageSelector({
           }`}
         >
           <Flag className="w-5 h-5 rounded-sm object-cover shrink-0" />
-        </button>
+        </Button>
       ))}
     </div>
   );

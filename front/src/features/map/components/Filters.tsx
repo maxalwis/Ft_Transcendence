@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FiltersProps } from '../../../types/map';
 import styles from '../Map.module.css';
 import CustomSelect from './CustomSelect';
-import { CloseBtn } from '../../../types/icons';
+import { CloseIcon } from '../../../types/icons';
 import Button from '../../../components/ui/Button';
 
 export default function Filters({ onApplyFilters }: FiltersProps) {
@@ -51,7 +51,8 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
 
   return (
     <>
-      <Button variant="icon"
+      <Button
+        variant="icon"
         type="button"
         aria-label="Open Filters"
         onClick={() => setIsOpen(true)}
@@ -69,13 +70,14 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
             data-state={isOpen ? 'open' : 'closed'}
             className={`${styles.filterModal || styles.sidebarModal || 'filterModal'} glass-panel h-auto w-64 fixed left-3 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 z-50 rounded-xl ${styles.filterPanel}`}
           >
-            <Button variant="icon"
+            <Button
+              variant="icon"
               type="button"
               aria-label="Close"
               className="modal-button modal-close"
               onClick={() => setIsOpen(false)}
             >
-              <CloseBtn />
+              <CloseIcon className="h-4 w-4" />
             </Button>
 
             <h3 className={`text-lg text-center pb-2 pr-6 ${styles.filterTitle}`}>
@@ -122,7 +124,8 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
             </div>
 
             <div dir="ltr" className="flex gap-2 mt-2">
-              <Button variant="primary"
+              <Button
+                variant="primary"
                 type="button"
                 onClick={handleApply}
                 className={`w-1/2 ${styles.filterAction} ${styles.filterActionPrimary}`}

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/useAuth';
 import { login } from '../../../api/api';
 import { useNotification } from '../../../context/notifications/useNotification';
-import { CloseBtn } from '../../../types/icons';
+import { CloseIcon } from '../../../types/icons';
 import Button from '../../../components/ui/Button';
 
 interface AuthModalProps {
@@ -73,15 +73,17 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
           : 'glass-modal relative p-8 max-w-md w-full glass-animate-in'
       }
     >
-      <Button
-        variant="icon"
-        type="button"
-        onClick={onClose}
-        aria-label={t('authModal.close')}
-        className="modal-button modal-close"
-      >
-        <CloseBtn />
-      </Button>
+      <div className="flex min-h-0 flex-1 flex-col">
+        <Button
+          variant="icon"
+          type="button"
+          onClick={onClose}
+          aria-label={t('common.close')}
+          className="modal-button modal-close"
+        >
+          <CloseIcon className="h-5 w-5" />
+        </Button>
+      </div>
       {view === 'login' ? (
         <div>
           <h1 className="font-extrabold text-2xl mb-4 text-center">{t('authModal.loginTitle')}</h1>
@@ -103,11 +105,7 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <Button
-              variant="primary"
-              type="submit"
-              className="mt-2 p-2 rounded-lg font-semibold cursor-pointer"
-            >
+            <Button variant="ghost" type="submit">
               {t('authModal.loginButton')}
             </Button>
           </form>

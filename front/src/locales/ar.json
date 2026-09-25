@@ -110,7 +110,6 @@
   },
   "passwordModal": {
     "title": "تغيير كلمة المرور",
-    "close": "إغلاق",
     "currentPassword": "كلمة المرور الحالية",
     "currentPasswordPlaceholder": "كلمة المرور الحالية",
     "newPassword": "كلمة المرور الجديدة",
@@ -135,7 +134,6 @@
     "createOne": "أنشئ حساباً",
     "alreadyHaveAccount": "لديك حساب بالفعل؟",
     "signInLink": "تسجيل الدخول",
-    "close": "إغلاق",
     "loginWithGoogle": "تسجيل الدخول بواسطة جوجل",
     "loginWith42": "تسجيل الدخول بواسطة 42",
     "errors": {
@@ -215,7 +213,6 @@
   "sidebar": {
     "event": "فعالية",
     "selectEvent": "اختر فعالية.",
-    "close": "إغلاق",
     "collapse": "طي الشريط الجانبي",
     "expand": "توسيع الشريط الجانبي"
   }
