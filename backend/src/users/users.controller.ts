@@ -14,6 +14,7 @@ import {
   Patch,
   BadRequestException,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -36,9 +37,8 @@ export class UsersController {
 
   @Get('search')
   @UseGuards(JwtAuthGuard)
-  searchByUsername(@Query('username') name: string, @Req() req: any) {
-    const currentUserId = req.user?.id;
-    return this.usersService.searchByUsername(name, currentUserId);
+  searchByUsername(@Query('username') name: string, @Req() req: Request) {
+    return this.usersService.searchByUsername(name, req.user?.id);
   }
 
   @Get(':id')
@@ -49,8 +49,8 @@ export class UsersController {
 
   @Patch('password')
   @UseGuards(JwtAuthGuard)
-  changePassword(@Req() req: any, @Body() body: ChangePasswordDto) {
-    return this.usersService.changePassword(req.user.id, body.currentPassword, body.newPassword);
+  changePassword(@Req() req: Request, @Body() body: ChangePasswordDto) {
+    return this.usersService.changePassword(req.user!.id, body.currentPassword, body.newPassword);
   }
 
   @Put('me')
@@ -75,11 +75,11 @@ export class UsersController {
     })
   )
   update(
-    @Req() req: any,
+    @Req() req: Request,
     @Body() body: UpdateUserDto,
     @UploadedFile() file?: Express.Multer.File
   ) {
-    return this.usersService.update(req.user.id, {
+    return this.usersService.update(req.user!.id, {
       ...body,
       avatar: file ? `/uploads/avatars/${file.filename}` : undefined,
     });
@@ -87,7 +87,7 @@ export class UsersController {
 
   @Delete('me')
   @UseGuards(JwtAuthGuard)
-  remove(@Req() req: any) {
-    return this.usersService.remove(req.user.id);
+  remove(@Req() req: Request) {
+    return this.usersService.remove(req.user!.id);
   }
 }
