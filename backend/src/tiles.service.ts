@@ -6,9 +6,7 @@ export class TilesService {
     const token = process.env.JAWG_TOKEN;
 
     if (!token) {
-      throw new InternalServerErrorException(
-        'JAWG_TOKEN is not configured',
-      );
+      throw new InternalServerErrorException('JAWG_TOKEN is not configured');
     }
 
     const url =

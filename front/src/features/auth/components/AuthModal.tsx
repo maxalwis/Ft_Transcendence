@@ -30,7 +30,7 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
 
     try {
       const data = await login(email, password);
-      setAuth(data.user, data.accessToken);
+      setAuth(data.user, data.accessToken, { isNewLogin: true });
       onClose();
     } catch {
       showWarning(t('authModal.errors.invalidCredentials'));

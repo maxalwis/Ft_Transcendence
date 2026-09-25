@@ -13,7 +13,7 @@ export default function OAuthCallbackPage() {
     (async () => {
       try {
         const { accessToken, user } = await refresh();
-        setAuth(user, accessToken);
+        setAuth(user, accessToken, { isNewLogin: true });
         navigate('/', { replace: true });
       } catch {
         navigate('/', { replace: true });

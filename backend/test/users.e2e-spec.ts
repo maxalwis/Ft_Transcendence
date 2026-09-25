@@ -61,7 +61,7 @@ describe('Users authorization (e2e)', () => {
       const updatedUsername = `${userA.username}_updated`;
 
       await agent(app.getHttpServer())
-        .put(`/users/${userAId}`)
+        .put(`/users/me`)
         .set('Authorization', `Bearer ${tokenA}`)
         .send({
           username: updatedUsername,
@@ -75,7 +75,7 @@ describe('Users authorization (e2e)', () => {
       expect(user?.username).toBe(updatedUsername);
     });
 
-    it('prevents a user from updating another user', async () => {
+    it('updating /users/me only affects the authenticated user', async () => {
       const originalUserB = await prisma.user.findUnique({
         where: { id: userBId },
       });
@@ -83,13 +83,12 @@ describe('Users authorization (e2e)', () => {
       expect(originalUserB).not.toBeNull();
 
       await agent(app.getHttpServer())
-        .put(`/users/${userBId}`)
+        .put('/users/me')
         .set('Authorization', `Bearer ${tokenA}`)
         .send({
-          username: 'hacked_username',
-          email: 'hacked@test.local',
+          username: `${userA.username}_renamed`,
         })
-        .expect(403);
+        .expect(200);
 
       const userBAfterAttempt = await prisma.user.findUnique({
         where: { id: userBId },
@@ -99,24 +98,28 @@ describe('Users authorization (e2e)', () => {
       expect(userBAfterAttempt?.email).toBe(originalUserB?.email);
     });
 
-    it('prevents a user from deleting another user', async () => {
-      await agent(app.getHttpServer())
-        .delete(`/users/${userBId}`)
-        .set('Authorization', `Bearer ${tokenA}`)
-        .expect(403);
-
-      const userB = await prisma.user.findUnique({
-        where: { id: userBId },
-      });
-
-      expect(userB).not.toBeNull();
-    });
-
     it('allows the second user to authenticate independently', async () => {
       await agent(app.getHttpServer())
         .get(`/users/${userBId}`)
         .set('Authorization', `Bearer ${tokenB}`)
         .expect(200);
+    });
+
+    it('deleting /users/me only deletes the authenticated user', async () => {
+      await agent(app.getHttpServer())
+        .delete('/users/me')
+        .set('Authorization', `Bearer ${tokenA}`)
+        .expect(200);
+
+      const deletedUserA = await prisma.user.findUnique({
+        where: { id: userAId },
+      });
+      const userB = await prisma.user.findUnique({
+        where: { id: userBId },
+      });
+
+      expect(deletedUserA).toBeNull();
+      expect(userB).not.toBeNull();
     });
   });
 

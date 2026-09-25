@@ -18,12 +18,14 @@ import type { Response, Request } from 'express';
 import { User } from '../generated/prisma/client';
 import { UsersService } from '../users/users.service';
 import { CreateLocalUserDto } from '../users/dto/create-user.dto';
+import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private realtimeEmitter: RealtimeEmitterService
   ) {}
 
   @Post('register')
@@ -89,9 +91,17 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@Res({ passthrough: true }) res: Response) {
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies['refresh_token'];
+    if (refreshToken) {
+      const userId = await this.authService.getUserIdFromRefreshToken(refreshToken);
+      await this.authService.revokeRefreshToken(refreshToken);
+      if (userId) {
+        this.realtimeEmitter.disconnectUser(userId);
+      }
+    }
+
     res.clearCookie('refresh_token', { path: '/' });
-    // invalider le refresh token en DB si stocké (voir login() dans auth.service)
     return { message: 'Logged out successfully' };
   }
 

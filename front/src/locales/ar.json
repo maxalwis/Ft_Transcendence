@@ -111,6 +111,8 @@
   "passwordModal": {
     "title": "تغيير كلمة المرور",
     "close": "إغلاق",
+    "currentPassword": "كلمة المرور الحالية",
+    "currentPasswordPlaceholder": "كلمة المرور الحالية",
     "newPassword": "كلمة المرور الجديدة",
     "newPasswordPlaceholder": "كلمة المرور الجديدة",
     "confirmPassword": "تأكيد كلمة المرور الجديدة",

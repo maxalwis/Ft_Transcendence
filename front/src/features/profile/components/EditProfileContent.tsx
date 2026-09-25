@@ -74,17 +74,14 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
         formData.append('avatar', avatarFile);
       }
 
-      const res = await fetch(
-        `https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/users/${user?.id}`,
-        {
-          method: 'PUT',
-          credentials: 'include',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: formData,
-        }
-      );
+      const res = await fetch(`https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/users/me`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData,
+      });
 
       if (!res.ok) {
         throw new Error('Échec de la mise à jour');

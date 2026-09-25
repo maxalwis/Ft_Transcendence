@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { SAFE_USER_SELECT } from '../users/safe-user-select';
 import { Prisma } from '../generated/prisma/client';
 
 @Injectable()
@@ -17,7 +18,7 @@ export class FriendsService {
 
   async sendFriendRequest(senderId: number, receiverId: number) {
     if (senderId === receiverId) {
-      throw new BadRequestException('Vous ne pouvez pas vous ajouter vous-même.');
+      throw new BadRequestException('You cannot add yourself as a friend');
     }
 
     // 1. Vérifier que le destinataire existe
@@ -25,7 +26,7 @@ export class FriendsService {
       where: { id: receiverId },
     });
     if (!receiver) {
-      throw new NotFoundException('Utilisateur introuvable.');
+      throw new NotFoundException('User not found');
     }
 
     // 2. Vérifier si une demande ou amitié existe déjà
@@ -39,7 +40,7 @@ export class FriendsService {
     });
 
     if (existing) {
-      throw new ConflictException('Une demande ou une amitié existe déjà.');
+      throw new ConflictException('A friend request or friendship already exists');
     }
 
     // 3. Créer la demande en attente
@@ -79,7 +80,7 @@ export class FriendsService {
     });
 
     if (!pendingRequest) {
-      throw new NotFoundException('Aucune demande d’ami en attente trouvée.');
+      throw new NotFoundException('No pending friend request was found');
     }
 
     const friendship = await this.prisma.friendship.update({
@@ -110,7 +111,7 @@ export class FriendsService {
     });
 
     if (!pendingRequest) {
-      throw new NotFoundException('Aucune demande d’ami en attente trouvée.');
+      throw new NotFoundException('No pending friend request was found');
     }
 
     return this.prisma.friendship.delete({
@@ -125,7 +126,7 @@ export class FriendsService {
         status: 'PENDING',
       },
       include: {
-        sender: true,
+        sender: { select: SAFE_USER_SELECT },
       },
     });
   }
@@ -138,7 +139,7 @@ export class FriendsService {
           { receiverId: userId, status: 'ACCEPTED' },
         ],
       },
-      include: { sender: true, receiver: true },
+      include: { sender: { select: SAFE_USER_SELECT }, receiver: { select: SAFE_USER_SELECT } },
     });
 
     // On extrait le "vrai" ami : celui des deux qui n'est pas l'utilisateur courant
@@ -157,7 +158,7 @@ export class FriendsService {
     });
 
     if (result.count === 0) {
-      throw new NotFoundException("Cette amitié n'existe pas.");
+      throw new NotFoundException('This friendship does not exist');
     }
 
     this.emitter.emitToUser(userId, 'friend:updated', {
