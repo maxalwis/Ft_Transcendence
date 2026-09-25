@@ -333,6 +333,31 @@ PostGIS is used for event coordinates and nearby-event queries.
 | Legal pages          | Terms of service and privacy policy            | helsnous, maalwis                  |
 
 ---
+# Modules
+
+The project implements the following selected modules.
+
+| Category         | Module                                  | Points | Implementation                                                      | Contributors                       |
+| ---------------- | --------------------------------------- | -----: | ------------------------------------------------------------------- | ---------------------------------- |
+| Web              | Framework for frontend and backend      |      2 | React/Vite + NestJS                                                 | maalwis, sleroy                    |
+| Web              | User interaction                        |      2 | Friends and real-time messaging                                     | maalwis, sleroy, npagnon, flebrun  |
+| Web              | ORM                                     |      1 | Prisma                                                              | sleroy                             |
+| Web              | Public API                              |      2 | API key, rate limiting and OpenAPI documentation                    | npagnon, sleroy                    |
+| Web              | Custom design system                    |      1 | Reusable React components, shared styling and responsive layouts    | maalwis                            |
+| Web              | WebSockets                              |      2 | Socket.IO backend gateway and frontend integration                  | sleroy, npagnon, flebrun           |
+| Web              | Multiple languages                      |      1 | French, English, Spanish and Arabic                                 | sleroy, helsnous, maalwis, flebrun |
+| Web              | RTL language                            |      1 | Arabic translations and RTL layout                                  | flebrun, maalwis                   |
+| Web              | Advanced search                         |      1 | Category, price and precise-date filtering                          | helsnous, sleroy                   |
+| User management  | Standard user management/authentication |      2 | Accounts, JWT and profile management                                | helsnous, sleroy, maalwis          |
+| User management  | Remote OAuth 2.0                        |      1 | Remote OAuth authentication                                         | sleroy                             |
+| DevOps           | ELK                                     |      2 | Elasticsearch, Logstash and Kibana                                  | flebrun                            |
+| Data & analytics | Data export and import                  |      1 | Personal-data export/deletion and event creation through public API | npagnon                            |
+
+**Total: 19 points**
+
+The table documents the modules implemented by the project; final module validation is determined during the 42 evaluation.
+
+---
 
 # Resources
 
