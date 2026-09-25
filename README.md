@@ -231,6 +231,7 @@ flebrun/elk-stack-implementing
 sleroy/events-schema-api
 maalwis/front-profile
 npagnon/public-api
+helasnoussi/backend-categories
 ```
 
 Pull requests were used to integrate feature branches, review changes, resolve conflicts and combine work from different team members.
