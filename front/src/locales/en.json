@@ -163,7 +163,11 @@
     "preferredCategory": "Preferred Category",
     "changePicture": "Change Picture",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "privacyTitle": "Privacy",
+    "downloadData": "Download my data",
+    "deleteAccount": "Delete my account",
+    "deleteEmailSent": "A confirmation email has been sent. Check your inbox to finish deleting your account."
   },
   "publicProfile": {
     "title": "View Profile",

@@ -163,7 +163,11 @@
     "preferredCategory": "Catégorie préférée",
     "changePicture": "Changer photo",
     "cancel": "Annuler",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "privacyTitle": "Confidentialité",
+    "downloadData": "Télécharger mes données",
+    "deleteAccount": "Supprimer mon compte",
+    "deleteEmailSent": "Un e-mail de confirmation a été envoyé. Consultez votre boîte de réception pour finaliser la suppression."
   },
   "publicProfile": {
     "title": "Voir profil",

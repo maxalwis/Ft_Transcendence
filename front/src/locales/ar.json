@@ -163,7 +163,11 @@
     "preferredCategory": "الفئة المفضلة",
     "changePicture": "تغيير الصورة",
     "cancel": "إلغاء",
-    "save": "حفظ"
+    "save": "حفظ",
+    "privacyTitle": "الخصوصية",
+    "downloadData": "تنزيل بياناتي",
+    "deleteAccount": "حذف حسابي",
+    "deleteEmailSent": "تم إرسال بريد إلكتروني للتأكيد. تحقق من صندوق الوارد لإكمال حذف حسابك."
   },
   "publicProfile": {
     "title": "عرض الملف الشخصي",

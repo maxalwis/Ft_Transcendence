@@ -23,10 +23,11 @@ export class GdprService {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
 
-    const [messages, sent, received] = await Promise.all([
+    const [messages, sent, received, likedEvents] = await Promise.all([
       this.prisma.message.findMany({ where: { userId } }),
       this.prisma.friendship.findMany({ where: { senderId: userId } }),
       this.prisma.friendship.findMany({ where: { receiverId: userId } }),
+      this.prisma.eventInterest.findMany({ where: { userId }, include: { event: true } }),
     ]);
 
     // never export sensitive credentials back to the caller
@@ -45,6 +46,7 @@ export class GdprService {
       profile,
       messages,
       friendships: { sent, received },
+      likedEvents,
     };
   }
 

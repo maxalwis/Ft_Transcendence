@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/useAuth';
 import { resolveAvatarUrl } from '../utils/avatar';
 import PasswordModal from './PasswordModal';
+import { exportMyData, requestAccountDeletion } from '../../../api/gdpr';
 import styles from '../ProfileModal.module.css';
 import { useNotification } from '../../../context/notifications/useNotification';
 import { closeBtn } from '../../../types/icons';
@@ -39,6 +40,7 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
   const [isSaving, setIsSaving] = useState(false);
   const { showWarning } = useNotification();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [privacyMessage, setPrivacyMessage] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isOAuthUser = Boolean(user?.provider && user.provider !== 'local');
@@ -50,6 +52,24 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
     if (file) {
       setAvatarPreview(URL.createObjectURL(file));
     }
+  };
+
+  const handleExportData = async () => {
+    if (!accessToken) return;
+    const data = await exportMyData(accessToken);
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'my-data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDeleteRequest = async () => {
+    if (!accessToken) return;
+    await requestAccountDeletion(accessToken);
+    setPrivacyMessage(t('profileSettings.deleteEmailSent'));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -198,6 +218,23 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
           <button type="submit" className="btnPrimary" disabled={isSaving}>
             {isSaving ? t('profileSettings.saving') : t('profileSettings.save')}
           </button>
+        </div>
+
+        <div className={styles.privacySection}>
+          <h3>{t('profileSettings.privacyTitle')}</h3>
+          <div className={styles.privacyButtons}>
+            <button type="button" className={styles.btnSecondary} onClick={handleExportData}>
+              {t('profileSettings.downloadData')}
+            </button>
+            <button
+              type="button"
+              className={`${styles.btnSecondary} ${styles.btnDanger}`}
+              onClick={handleDeleteRequest}
+            >
+              {t('profileSettings.deleteAccount')}
+            </button>
+          </div>
+          {privacyMessage && <p className={styles.modalError}>{privacyMessage}</p>}
         </div>
       </form>
 
