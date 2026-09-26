@@ -14,6 +14,8 @@ import {
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { GoogleAuthGuard } from './guards/google-oauth.guard';
 import { FortyTwoAuthGuard } from './guards/fortytwo-oauth.guard';
+import { Throttle } from '@nestjs/throttler';
+import { AUTH_THROTTLE } from '../throttler/http-throttler.guard';
 import { OAuthExceptionFilter, OAUTH_CALLBACK_URL } from './filters/oauth-exception.filter';
 import { AuthService } from './auth.service';
 import type { Response, Request } from 'express';
@@ -31,6 +33,7 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @Throttle(AUTH_THROTTLE)
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() body: CreateLocalUserDto, @Res({ passthrough: true }) res: Response) {
     const user = await this.usersService.createLocal(body);
@@ -50,6 +53,7 @@ export class AuthController {
     };
   }
 
+  @Throttle(AUTH_THROTTLE)
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('login')

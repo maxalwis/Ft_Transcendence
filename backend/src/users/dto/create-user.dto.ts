@@ -1,17 +1,16 @@
-import { IsEmail, IsString, IsOptional, MinLength } from 'class-validator';
+import { IsEmail } from 'class-validator';
+import { IsNewPassword, IsUsername } from './validation-rules';
 
 // classe requise pour le ValidationPipe/class-validator valide ce DTO
 // à l'exécution (données venant d'une requête HTTP potentiellement non fiable).
-// Verif plus poussée pour email??
 export class CreateLocalUserDto {
-  @IsString()
+  @IsUsername()
   username!: string;
 
   @IsEmail()
   email!: string;
 
-  @IsString()
-//  @MinLength(8) -> à décommenter avant la correction
+  @IsNewPassword()
   password!: string;
 }
 

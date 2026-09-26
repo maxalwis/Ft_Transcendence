@@ -120,7 +120,10 @@
     "cancel": "Cancelar",
     "changePassword": "Cambiar contraseña",
     "loading": "Cargando...",
-    "mismatchError": "Las contraseñas no coinciden."
+    "mismatchError": "Las contraseñas no coinciden.",
+    "lengthError": "La contraseña debe tener entre 8 y 72 caracteres.",
+    "tooManyAttempts": "Demasiados intentos. Inténtalo de nuevo en un minuto.",
+    "serverError": "Se produjo un error. Inténtalo de nuevo."
   },
   "authModal": {
     "loginTitle": "Iniciar sesión",
@@ -141,7 +144,10 @@
     "errors": {
       "invalidCredentials": "Credenciales inválidas",
       "passwordMismatch": "Las contraseñas no coinciden",
-      "registrationError": "Error al crear la cuenta"
+      "registrationError": "Error al crear la cuenta",
+      "tooManyAttempts": "Demasiados intentos. Inténtalo de nuevo en un minuto.",
+      "invalidUsername": "El nombre de usuario debe tener entre 3 y 20 caracteres: letras, números, _ o -.",
+      "passwordLength": "La contraseña debe tener entre 8 y 72 caracteres."
     }
   },
   "authBtn": {

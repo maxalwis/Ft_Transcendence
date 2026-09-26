@@ -1,10 +1,10 @@
-import { IsString, MinLength } from 'class-validator';
+import { IsString } from 'class-validator';
+import { IsNewPassword } from './validation-rules';
 
 export class ChangePasswordDto {
   @IsString()
   currentPassword!: string;
 
-  @IsString()
-//  @MinLength(8) -> à décommenter avant la correction
+  @IsNewPassword()
   newPassword!: string;
 }

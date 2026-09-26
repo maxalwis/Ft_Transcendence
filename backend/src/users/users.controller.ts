@@ -22,6 +22,8 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { Throttle } from '@nestjs/throttler';
+import { AUTH_THROTTLE } from '../throttler/http-throttler.guard';
 
 const ALLOWED_AVATAR_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
 
@@ -48,6 +50,7 @@ export class UsersController {
   }
 
   @Patch('password')
+  @Throttle(AUTH_THROTTLE)
   @UseGuards(JwtAuthGuard)
   changePassword(@Req() req: Request, @Body() body: ChangePasswordDto) {
     return this.usersService.changePassword(req.user!.id, body.currentPassword, body.newPassword);

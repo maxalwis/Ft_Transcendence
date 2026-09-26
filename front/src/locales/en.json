@@ -120,7 +120,10 @@
     "cancel": "Cancel",
     "changePassword": "Change Password",
     "loading": "Loading...",
-    "mismatchError": "Passwords do not match."
+    "mismatchError": "Passwords do not match.",
+    "lengthError": "Password must be between 8 and 72 characters.",
+    "tooManyAttempts": "Too many attempts. Please try again in a minute.",
+    "serverError": "Something went wrong. Please try again."
   },
   "authModal": {
     "loginTitle": "Sign in",
@@ -141,7 +144,10 @@
     "errors": {
       "invalidCredentials": "Invalid credentials",
       "passwordMismatch": "Non matching passwords",
-      "registrationError": "Error creating account"
+      "registrationError": "Error creating account",
+      "tooManyAttempts": "Too many attempts. Please try again in a minute.",
+      "invalidUsername": "Username must be 3 to 20 characters: letters, digits, _ or -.",
+      "passwordLength": "Password must be between 8 and 72 characters."
     }
   },
   "authBtn": {

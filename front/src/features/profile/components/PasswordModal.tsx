@@ -28,6 +28,12 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
     e.preventDefault();
     setPasswordError(null);
 
+    // mêmes règles que le backend (backend/src/users/dto/validation-rules.ts)
+    if (newPassword.length < 8 || newPassword.length > 72) {
+      setPasswordError(t('passwordModal.lengthError'));
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       setPasswordError(t('passwordModal.mismatchError'));
       return;
@@ -47,6 +53,10 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
       setNewPassword('');
       setConfirmPassword('');
     } catch (err) {
+      if (err instanceof Error && err.message === 'TOO_MANY_ATTEMPTS') {
+        setPasswordError(t('passwordModal.tooManyAttempts'));
+        return;
+      }
       setPasswordError(err instanceof Error ? err.message : t('passwordModal.serverError'));
     } finally {
       setIsChangingPassword(false);

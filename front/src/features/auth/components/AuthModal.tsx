@@ -5,6 +5,10 @@ import { login } from '../../../api/api';
 import { useNotification } from '../../../context/notifications/useNotification';
 import { closeBtn } from '../../../types/icons';
 
+const USERNAME_REGEX = /^[a-zA-Z0-9_-]{3,20}$/;
+const PASSWORD_MIN = 8;
+const PASSWORD_MAX = 72;
+
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -31,13 +35,25 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
       const data = await login(email, password);
       setAuth(data.user, data.accessToken, { isNewLogin: true });
       onClose();
-    } catch {
-      showWarning(t('authModal.errors.invalidCredentials'));
+    } catch (err) {
+      const tooMany = err instanceof Error && err.message === 'TOO_MANY_ATTEMPTS';
+      showWarning(t(tooMany ? 'authModal.errors.tooManyAttempts' : 'authModal.errors.invalidCredentials'));
     }
   };
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // mêmes règles que le backend (backend/src/users/dto/validation-rules.ts)
+    if (!USERNAME_REGEX.test(username)) {
+      showWarning(t('authModal.errors.invalidUsername'));
+      return;
+    }
+
+    if (password.length < PASSWORD_MIN || password.length > PASSWORD_MAX) {
+      showWarning(t('authModal.errors.passwordLength'));
+      return;
+    }
 
     if (password !== confirmPassword) {
       showWarning(t('authModal.errors.passwordMismatch'));
@@ -51,6 +67,10 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
         body: JSON.stringify({ username, email, password }),
       });
 
+      if (res.status === 429) {
+        showWarning(t('authModal.errors.tooManyAttempts'));
+        return;
+      }
       if (!res.ok) throw new Error();
 
       // Clear the form after successful registration

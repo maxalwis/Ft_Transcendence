@@ -62,6 +62,9 @@ async function bootstrap() {
 
   app.enableShutdownHooks();
   app.set('etag', false);
+  // Behind nginx: take the client IP from X-Forwarded-For (1 hop) so rate
+  // limiting counts per client instead of lumping everyone under nginx's IP
+  app.set('trust proxy', 1);
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);

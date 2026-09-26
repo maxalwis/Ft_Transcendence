@@ -103,7 +103,8 @@ export async function login(username: string, password: string) {
   });
 
   if (!res.ok) {
-    throw new Error('Invalid credentials');
+    // 429 = too many attempts (backend rate limit), anything else = bad credentials
+    throw new Error(res.status === 429 ? 'TOO_MANY_ATTEMPTS' : 'INVALID_CREDENTIALS');
   }
 
   const data = await res.json();

@@ -120,7 +120,10 @@
     "cancel": "Annuler",
     "changePassword": "Changer le mot de passe",
     "loading": "Chargement...",
-    "mismatchError": "Les mots de passe ne correspondent pas."
+    "mismatchError": "Les mots de passe ne correspondent pas.",
+    "lengthError": "Le mot de passe doit faire entre 8 et 72 caractères.",
+    "tooManyAttempts": "Trop de tentatives. Réessayez dans une minute.",
+    "serverError": "Une erreur est survenue. Veuillez réessayer."
   },
   "authModal": {
     "loginTitle": "Connexion",
@@ -141,7 +144,10 @@
     "errors": {
       "invalidCredentials": "Identifiants invalides",
       "passwordMismatch": "Les mots de passe ne correspondent pas",
-      "registrationError": "Erreur lors de la création du compte"
+      "registrationError": "Erreur lors de la création du compte",
+      "tooManyAttempts": "Trop de tentatives. Réessayez dans une minute.",
+      "invalidUsername": "Le nom d'utilisateur doit faire 3 à 20 caractères : lettres, chiffres, _ ou -.",
+      "passwordLength": "Le mot de passe doit faire entre 8 et 72 caractères."
     }
   },
   "authBtn": {

@@ -10,6 +10,7 @@ import { User, Prisma, UserStatus } from '../generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateLocalUserDto, CreateOAuthUserDto } from './dto/create-user.dto';
 import { SAFE_USER_SELECT, type SafeUser } from './safe-user-select';
+import { USERNAME_MAX, USERNAME_MIN } from './dto/validation-rules';
 
 @Injectable()
 export class UsersService {
@@ -96,7 +97,18 @@ export class UsersService {
   }
 
   // génère un username pour l'OAuth en cas de username déjà existant (sleroy1, sleroy2 etc)
-  private async generateUniqueUsername(base: string): Promise<string> {
+  private async generateUniqueUsername(rawName: string): Promise<string> {
+    // Le nom vient du provider ("Simon Leroy" chez Google) : on l'adapte aux
+    // règles de IsUsername, sinon l'user ne pourrait plus enregistrer son profil.
+    // On garde 4 caractères de marge pour le suffixe numérique.
+    let base = rawName
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '') // é -> e
+      .replace(/\s+/g, '_')
+      .replace(/[^a-zA-Z0-9_-]/g, '')
+      .slice(0, USERNAME_MAX - 4);
+    if (base.length < USERNAME_MIN) base = `user_${base}`;
+
     let username = base;
     let counter = 1;
 
