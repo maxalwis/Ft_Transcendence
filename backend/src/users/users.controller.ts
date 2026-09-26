@@ -74,20 +74,22 @@ export class UsersController {
       },
     })
   )
-  update(
+  async update(
     @Req() req: Request,
     @Body() body: UpdateUserDto,
     @UploadedFile() file?: Express.Multer.File
   ) {
-    return this.usersService.update(req.user!.id, {
+    const user = await this.usersService.update(req.user!.id, {
       ...body,
       avatar: file ? `/uploads/avatars/${file.filename}` : undefined,
     });
+    return this.usersService.toPublicUser(user);
   }
 
   @Delete('me')
   @UseGuards(JwtAuthGuard)
-  remove(@Req() req: Request) {
-    return this.usersService.remove(req.user!.id);
+  async remove(@Req() req: Request) {
+    const user = await this.usersService.remove(req.user!.id);
+    return this.usersService.toPublicUser(user);
   }
 }

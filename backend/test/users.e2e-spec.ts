@@ -60,13 +60,15 @@ describe('Users authorization (e2e)', () => {
     it('allows a user to update their own account', async () => {
       const updatedUsername = `${userA.username}_updated`;
 
-      await agent(app.getHttpServer())
+      const response = await agent(app.getHttpServer())
         .put(`/users/me`)
         .set('Authorization', `Bearer ${tokenA}`)
         .send({
           username: updatedUsername,
         })
         .expect(200);
+
+      expect(response.body).not.toHaveProperty('password');
 
       const user = await prisma.user.findUnique({
         where: { id: userAId },
@@ -106,10 +108,12 @@ describe('Users authorization (e2e)', () => {
     });
 
     it('deleting /users/me only deletes the authenticated user', async () => {
-      await agent(app.getHttpServer())
+      const response = await agent(app.getHttpServer())
         .delete('/users/me')
         .set('Authorization', `Bearer ${tokenA}`)
         .expect(200);
+
+      expect(response.body).not.toHaveProperty('password');
 
       const deletedUserA = await prisma.user.findUnique({
         where: { id: userAId },
