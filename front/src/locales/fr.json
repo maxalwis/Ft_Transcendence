@@ -213,6 +213,7 @@
   },
   "sidebar": {
     "event": "Événement",
+    "results": "Résultats",
     "selectEvent": "Sélectionnez un événement.",
     "collapse": "Réduire la barre latérale",
     "expand": "Développer la barre latérale"

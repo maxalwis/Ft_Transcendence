@@ -6,12 +6,12 @@ import Button from '../components/ui/Button';
 
 interface LanguageSelectorProps {
   embedded?: boolean;
-  onWidthChange?: (width: number) => void;
+  compact?: boolean;
 }
 
 export default function LanguageSelector({
   embedded = false,
-  onWidthChange,
+  compact = false,
 }: LanguageSelectorProps) {
   const languages = [
     { code: 'fr', title: 'Français', Flag: FlagFR },
@@ -42,42 +42,22 @@ export default function LanguageSelector({
     };
   }, [embedded, isOpen]);
 
-  useEffect(() => {
-    if (!embedded || !selectorRef.current || !onWidthChange) {
-      return;
-    }
-
-    const element = selectorRef.current;
-
-    const updateWidth = () => {
-      onWidthChange(element.getBoundingClientRect().width);
-    };
-
-    updateWidth();
-
-    const observer = new ResizeObserver(updateWidth);
-    observer.observe(element);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [embedded, onWidthChange, isOpen]);
-
   const content = embedded ? (
     <div
       ref={selectorRef}
       className="
-      fixed
-      top-4
-      right-4
-      z-1100
-      pointer-events-auto
+        fixed
+        top-[calc(var(--nav-row2-top)+0.25rem)]
+        right-4
+        z-1100
+        pointer-events-auto
 
-      min-[901px]:flex
-      min-[901px]:items-center
-      min-[901px]:gap-2
-      min-[901px]:flex-row-reverse
-    "
+        min-[901px]:top-4
+        min-[901px]:flex
+        min-[901px]:items-center
+        min-[901px]:gap-2
+        min-[901px]:flex-row-reverse
+      "
     >
       {/* Language toggle */}
       <Button

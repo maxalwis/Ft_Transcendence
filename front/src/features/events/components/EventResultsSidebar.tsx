@@ -49,6 +49,7 @@ export default function EventResultsSidebar({
   const [eventsPerPage, setEventsPerPage] = useState(1);
   const [hasOverflow, setHasOverflow] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [isAtTop, setIsAtTop] = useState(true);
   const listRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const itemsPerPage = isMobile ? 5 : eventsPerPage;
@@ -124,6 +125,7 @@ export default function EventResultsSidebar({
       const isAtBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 1;
 
       setHasOverflow(hasOverflow);
+      setIsAtTop(list.scrollTop <= 0);
       setIsAtBottom(isAtBottom);
     };
 
@@ -179,7 +181,7 @@ export default function EventResultsSidebar({
       <div
         className={`${styles.resultsList} ${
           hasOverflow && !isAtBottom ? styles.hasBottomFade : ''
-        }`}
+        } ${hasOverflow && !isAtTop ? styles.hasTopFade : ''}`}
       >
         <div ref={listRef} className="flex h-full flex-col gap-2 overflow-y-auto">
           {paginatedEvents.map((event) => (

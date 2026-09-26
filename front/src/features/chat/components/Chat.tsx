@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
 import { fetchEventMessages, sendEventMessage } from '../chatService';
@@ -13,6 +13,7 @@ export type Message = {
   userId: number;
   user: { username?: string; email: string };
   createdAt: string;
+  pending?: boolean; // optimistic message not yet confirmed by the server
 };
 
 interface ChatProps {
@@ -25,7 +26,8 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const { showWarning } = useNotification();
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
+  const tempIdRef = useRef(0);
 
   // Fetch messages on mount or when event changes
   useEffect(() => {
@@ -67,12 +69,27 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
       showWarning(t('chat.errors.loginRequiredToSend', 'You must be logged in to send a message.'));
       return;
     }
+    // Affiche le message tout de suite (ids négatifs = temporaires), confirmé à la réponse du serveur
+    const tempId = --tempIdRef.current;
+    const optimistic: Message = {
+      id: tempId,
+      content: text,
+      userId: currentUserId,
+      user: { username: user?.username, email: user?.email ?? '' },
+      createdAt: new Date().toISOString(),
+      pending: true,
+    };
+    setMessages((prev) => [...prev, optimistic]);
+
     try {
-      const newMessage = await sendEventMessage(eventId, text, accessToken);
-      setMessages((prev) =>
-        prev.some((m) => m.id === newMessage.id) ? prev : [...prev, newMessage]
-      );
+      const newMessage: Message = await sendEventMessage(eventId, text, accessToken);
+      // L'echo du socket a pu arriver avant la réponse HTTP : on évite le doublon
+      setMessages((prev) => {
+        const rest = prev.filter((m) => m.id !== tempId);
+        return rest.some((m) => m.id === newMessage.id) ? rest : [...rest, newMessage];
+      });
     } catch (err: unknown) {
+      setMessages((prev) => prev.filter((m) => m.id !== tempId));
       console.error('Error sending message:', err);
       const errorMessage = err instanceof Error ? err.message : '';
       showWarning(

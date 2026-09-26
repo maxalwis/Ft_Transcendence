@@ -57,7 +57,7 @@ export default function MessageInput({ onSend, maxHeight = 160 }: MessageInputPr
       <textarea
         ref={textareaRef}
         rows={1}
-        className="chat-message-input glass-panel w-full resize-none rounded-3xl py-2 pl-4 pr-12 text-sm outline-none border border-gray-700/50 focus:border-gray-500 transition-all shadow-sm leading-relaxed overflow-y-auto text-white"
+        className={`${styles.input} chat-message-input glass-panel w-full resize-none rounded-3xl py-2 pl-4 pr-12 text-sm outline-none border border-gray-700/50 focus:border-gray-500 transition-all shadow-sm leading-relaxed overflow-y-auto text-white`}
         placeholder={t('chat.placeholder')}
         maxLength={150}
         value={input}

@@ -213,6 +213,7 @@
   },
   "sidebar": {
     "event": "Event",
+    "results": "Results",
     "selectEvent": "Select an event.",
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar"

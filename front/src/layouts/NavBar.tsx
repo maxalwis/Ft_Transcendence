@@ -12,6 +12,10 @@ registerLocale('en', enUS);
 registerLocale('es', es);
 registerLocale('ar', ar);
 
+// Room kept on each side of the categories for the language selector (open) and the map controls
+const SIDE_GUTTER_PX = 256;
+const MOBILE_BREAKPOINT_PX = 768;
+
 export type NavBarProps = {
   onSelectCategory?: (category: string) => void;
   activeCategory?: string;
@@ -41,7 +45,41 @@ export default function NavBar({
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  const [languageSelectorWidth, setLanguageSelectorWidth] = useState(0);
+
+  // Compact: mobile, or categories too wide to fit between the side gutters.
+  // Map controls and language selector then move down to the filters row.
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [compact, setCompact] = useState(false);
+
+  const updateCompact = useCallback(() => {
+    const row = rowRef.current;
+    const nav = categoriesScrollRef.current;
+    if (!row || !nav) return;
+
+    const categoriesWidth = nav.scrollWidth + 32; // + px-4 of the clipping wrapper
+    setCompact(
+      window.innerWidth < MOBILE_BREAKPOINT_PX ||
+        categoriesWidth + 2 * SIDE_GUTTER_PX > row.clientWidth
+    );
+  }, []);
+
+  useEffect(() => {
+    updateCompact();
+    const row = rowRef.current;
+    if (!row) return;
+
+    const observer = new ResizeObserver(updateCompact);
+    observer.observe(row);
+    return () => observer.disconnect();
+  }, [updateCompact, i18n.language]);
+
+  // Lets the map stylesheet offset the Leaflet controls
+  useEffect(() => {
+    document.documentElement.dataset.navCompact = String(compact);
+    return () => {
+      delete document.documentElement.dataset.navCompact;
+    };
+  }, [compact]);
 
   const updateScrollState = useCallback(() => {
     const el = categoriesScrollRef.current;
@@ -134,21 +172,18 @@ export default function NavBar({
   return (
     <div
       dir="ltr"
-      className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-14 md:px-6 pointer-events-none"
+      className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-4 pointer-events-none"
     >
-      <LanguageSelector embedded onWidthChange={setLanguageSelectorWidth} />
+      <LanguageSelector embedded compact={compact} />
 
+      {/* Row 1: categories. In compact mode, map controls and language selector share row 2 with the filters */}
       <div
-        className="w-full grid items-center py-4"
-        style={{
-          gridTemplateColumns: `45px minmax(0, 1fr) ${Math.max(languageSelectorWidth, 45)}px`,
-        }}
+        ref={rowRef}
+        className={`w-full flex items-center justify-center ${compact ? 'h-(--nav-row2-top)' : 'py-4'}`}
+        style={compact ? undefined : { paddingInline: SIDE_GUTTER_PX }}
       >
-        {/* Left spacer */}
-        <div />
-
         {/* Category Navigation */}
-        <div className="relative z-10 flex items-center justify-center min-w-0">
+        <div className="relative z-10 flex w-full items-center justify-center min-w-0">
           {canScrollLeft && (
             <Button
               variant="icon"
@@ -214,9 +249,6 @@ export default function NavBar({
             </Button>
           )}
         </div>
-
-        {/* Right spacer */}
-        <div className="w-45 hidden md:block shrink-0" />
       </div>
 
       {/* Price and date button */}

@@ -104,9 +104,9 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
       <form onSubmit={handleSubmit} className="modalForm">
         <div className={styles.avatarPicker}>
           <Button
-            variant="icon"
+            variant="flag"
             type="button"
-            className={styles.avatarPreview}
+            className={`${styles.avatarPreview} w-15! h-15! mb-2`}
             onClick={() => fileInputRef.current?.click()}
           >
             {avatarPreview ? (
@@ -124,7 +124,7 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
           />
 
           <Button
-            variant="primary"
+            variant="ghost"
             type="button"
             className={styles.avatarChangeLink}
             onClick={() => fileInputRef.current?.click()}

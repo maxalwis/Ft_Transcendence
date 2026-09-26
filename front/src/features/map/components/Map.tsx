@@ -41,7 +41,7 @@ type SidebarState = { type: 'event'; eventId: string } | { type: 'results' } | n
 export default function Map() {
   const { showWarning } = useNotification();
   const { user, justLoggedIn, clearJustLoggedIn } = useAuth();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const lang = i18n.language;
 
   const [sidebar, setSidebar] = useState<SidebarState>(null);
@@ -340,6 +340,7 @@ export default function Map() {
       {sidebar !== null && (
         <SideBar
           isOpen={isSidebarOpen}
+          title={sidebar.type === 'results' ? t('sidebar.results') : t('sidebar.event')}
           onToggle={() => setIsSidebarOpen((prev) => !prev)}
           onClose={() => {
             setSidebar(null);

@@ -14,19 +14,7 @@
 }
 
 .avatarPreview {
-  width: 60px;
-  height: 60px;
-  border-radius: var(--radius-full);
-  border: 2px solid var(--color-orange-border);
-  background: var(--glass-bg);
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  font-size: var(--font-size-2xl);
-  color: var(--color-text-dark);
 }
 
 .avatarPreview img {

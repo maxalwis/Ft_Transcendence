@@ -139,7 +139,6 @@
   justify-content: center;
   min-height: var(--space-6);
   margin: 0 var(--space-2) var(--space-3) var(--space-2);
-  padding-inline: 4rem;
 }
 
 /* Sidebar shell already pads all around: no side margin on its header */

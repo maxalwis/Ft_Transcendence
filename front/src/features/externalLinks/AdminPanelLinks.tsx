@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import L from 'leaflet';
 import { useMap } from 'react-leaflet';
-import Button from '../../components/ui/Button';
+import styles from './AdminPanelLinks.module.css';
 
 interface DashboardLink {
   name: string;
@@ -52,26 +51,11 @@ const dashboards: DashboardLink[] = [
 
 const DropdownMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const buttonRef = useRef<HTMLAnchorElement>(null);
-  const [coords, setCoords] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
-
-  const updatePosition = () => {
-    if (buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setCoords({
-        top: rect.top,
-        left: rect.right + 8,
-      });
-    }
-  };
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      const target = event.target as Node;
-      const isButton = buttonRef.current && buttonRef.current.contains(target);
-      const isMenu = document.getElementById('admin-links-dropdown')?.contains(target);
-
-      if (!isButton && !isMenu) {
+      if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -83,19 +67,20 @@ const DropdownMenu: React.FC = () => {
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    updatePosition();
     setIsOpen((prev) => !prev);
   };
 
   return (
-    <>
+    <div ref={rootRef}>
       <a
-        ref={buttonRef}
         href="#"
         onClick={handleClick}
-        className="leaflet-control-btn flex items-center justify-center cursor-pointer transition-transform active:scale-95 no-underline box-border text-center"
+        className={`leaflet-control-btn flex items-center justify-center cursor-pointer no-underline box-border text-center ${
+          isOpen ? '' : styles.toggleClosed
+        }`}
         role="button"
         aria-label="Parameters"
+        aria-expanded={isOpen}
         title="Parameters"
       >
         <svg
@@ -112,47 +97,26 @@ const DropdownMenu: React.FC = () => {
         </svg>
       </a>
 
-      {isOpen &&
-        createPortal(
-          <div
-            id="admin-links-dropdown"
-            style={{
-              position: 'fixed',
-              top: `${coords.top}px`,
-              left: `${coords.left}px`,
-              zIndex: 50,
-            }}
-            className="glass-panel glass-animate-in w-64 p-3 pointer-events-auto"
-          >
-            <div className="flex flex-col gap-2">
-              {dashboards.map((tool) => (
-                <Button
-                  variant="ghost"
-                  key={tool.name}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.open(tool.url, '_blank', 'noopener,noreferrer');
-                    setIsOpen(false);
-                  }}
-                  className="flex items-center gap-3 p-2 rounded-xl bg-white/40 hover:bg-white/80 border border-blue-400/30 hover:border-blue-400/60 transition-all text-start group"
-                >
-                  <div className="p-2 rounded-lg bg-blue-500/10 text-blue-900 group-hover:scale-110 transition-transform">
-                    {tool.icon}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold text-stone-900 truncate">{tool.name}</div>
-                  </div>
-                  <span className="text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                    ↗
-                  </span>
-                </Button>
-              ))}
-            </div>
-          </div>,
-          document.body
-        )}
-    </>
+      <div className={`${styles.drawer} ${isOpen ? styles.drawerOpen : ''}`}>
+        <div className={styles.drawerInner}>
+          {dashboards.map((tool) => (
+            <a
+              key={tool.name}
+              href={tool.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cursor-pointer no-underline"
+              aria-label={tool.name}
+              title={tool.name}
+              tabIndex={isOpen ? 0 : -1}
+              onClick={() => setIsOpen(false)}
+            >
+              {tool.icon}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -184,12 +148,8 @@ export const AdminPanelLinks: React.FC = () => {
         root = createRoot(controlDiv);
         root.render(<DropdownMenu />);
 
-        // Prepend instead of append to place it at the top of the container stack
-        if (topLeftContainer.firstChild) {
-          topLeftContainer.insertBefore(controlDiv, topLeftContainer.firstChild);
-        } else {
-          topLeftContainer.appendChild(controlDiv);
-        }
+        // Append so the zoom control stays above the admin links
+        topLeftContainer.appendChild(controlDiv);
       } else if (attempts < maxAttempts) {
         attempts++;
         animationFrameId = requestAnimationFrame(attachControl);

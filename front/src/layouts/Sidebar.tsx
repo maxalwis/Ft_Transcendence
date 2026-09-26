@@ -10,10 +10,11 @@ interface SideBarProps {
   onToggle: () => void;
   onClose: () => void;
   onBack?: () => void;
+  title?: string;
   children: React.ReactNode;
 }
 
-export default function SideBar({ isOpen, onToggle, onClose, onBack, children }: SideBarProps) {
+export default function SideBar({ isOpen, onToggle, onClose, onBack, title, children }: SideBarProps) {
   const { t } = useTranslation();
   const [isClosing, setIsClosing] = useState(false);
 
@@ -38,6 +39,7 @@ export default function SideBar({ isOpen, onToggle, onClose, onBack, children }:
         variant="sidebar"
         onClose={onClose}
         onBack={onBack}
+        title={title}
         dataState={sidebarIsOpen ? 'open' : 'closed'}
         onAnimationEnd={handleAnimationEnd}
         bodyClassName="flex flex-col"

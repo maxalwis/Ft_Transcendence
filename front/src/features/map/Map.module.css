@@ -8,6 +8,13 @@
   display: none;
 }
 
+/* Compact NavBar: top-left controls (zoom, admin links) start on the second row */
+:global([data-nav-compact='true'] .leaflet-top.leaflet-left) {
+  @media (max-width: 900px) {
+    top: calc(var(--nav-row2-top) - 0.5rem);
+  }
+}
+
 /* Glass container styling for both Zoom and Custom Links */
 :global(.leaflet-control-zoom.leaflet-bar),
 :global(.leaflet-control.leaflet-links) {

@@ -54,6 +54,7 @@
   --space-7: 1.75rem;
   --space-8: 2rem;
   --space-9: 2.5rem;
+  --nav-row2-top: 4rem; /* top of the NavBar second row (filters, admin links, language) */
 
   /* Radius */
   --radius-md: 12px;
