@@ -6,13 +6,9 @@ import Button from '../components/ui/Button';
 
 interface LanguageSelectorProps {
   embedded?: boolean;
-  compact?: boolean;
 }
 
-export default function LanguageSelector({
-  embedded = false,
-  compact = false,
-}: LanguageSelectorProps) {
+export default function LanguageSelector({ embedded = false }: LanguageSelectorProps) {
   const languages = [
     { code: 'fr', title: 'Français', Flag: FlagFR },
     { code: 'en', title: 'English', Flag: FlagGB },

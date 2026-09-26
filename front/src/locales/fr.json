@@ -35,6 +35,7 @@
   "eventPreview": {
     "defaultAlt": "Événement",
     "seeDetails": "Voir les détails",
+    "seeAllEvents": "Voir les {{count}} événements",
     "undefinedDate": "Date non définie",
     "start": "Début",
     "end": "Fin",

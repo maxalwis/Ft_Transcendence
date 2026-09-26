@@ -1,7 +1,4 @@
-import 'leaflet.markercluster';
 import L from 'leaflet';
-
-export const clusterCountCache = new Map<number, number>();
 
 // Shared SVG defs block to prevent SVG element collisions & repetition
 const SHARED_SVG_DEFS = `
@@ -53,7 +50,7 @@ export const createMarkerIcon = (isHovered: boolean = false, isNew: boolean = fa
     iconAnchor: [20, 50],
     html: `
       <div class="${isNew ? 'marker-pop-animation' : ''}" style="width: 100%; height: 100%;">
-        <div style="
+        <div data-marker-body data-hover-scale="1.2" style="
             width: 40px;
             height: 50px;
             transform: ${transform};
@@ -73,11 +70,33 @@ export const createMarkerIcon = (isHovered: boolean = false, isNew: boolean = fa
 /**
  * 2. MULTI-EVENT LOCATION GROUP PIN
  */
+const groupIconCache = new Map<string, L.DivIcon>();
+
+// Icons are immutable, so one instance can be shared by every marker with the same look.
 export const createGroupMarkerIcon = (
   count: number = 1,
   isHovered: boolean = false,
   isNew: boolean = false
 ) => {
+  const cacheKey = `${count}:${isHovered}:${isNew}`;
+  const cached = groupIconCache.get(cacheKey);
+  if (cached) return cached;
+
+  const icon = buildGroupMarkerIcon(count, isHovered, isNew);
+  groupIconCache.set(cacheKey, icon);
+  return icon;
+};
+
+/**
+ * Toggle the hover scale directly on the DOM: no icon rebuild, and the CSS transition still plays.
+ */
+export const setMarkerHovered = (marker: L.Marker, hovered: boolean) => {
+  const body = marker.getElement()?.querySelector<HTMLElement>('[data-marker-body]');
+  if (!body) return;
+  body.style.transform = `scale(${hovered ? (body.dataset.hoverScale ?? '1.2') : '1'})`;
+};
+
+const buildGroupMarkerIcon = (count: number, isHovered: boolean, isNew: boolean): L.DivIcon => {
   if (count <= 1) {
     return createMarkerIcon(isHovered, isNew);
   }
@@ -90,7 +109,7 @@ export const createGroupMarkerIcon = (
     iconAnchor: [20, 50],
     html: `
       <div class="${isNew ? 'marker-pop-animation' : ''}" style="width: 100%; height: 100%; position: relative;">
-        <div style="
+        <div data-marker-body data-hover-scale="1.2" style="
             width: 40px;
             height: 50px;
             transform: ${transform};
@@ -162,26 +181,21 @@ const getClusterConfig = (count: number) => {
 };
 
 /**
- * 3. LEAFLET CLUSTER BADGE
+ * 3. CLUSTER BADGE
+ * `id` only has to be unique among the clusters currently on screen (it namespaces the gradient).
  */
-export const createClusterIcon = (cluster: L.MarkerCluster, isHovered: boolean = false) => {
-  const count = cluster.getChildCount();
-  const clusterId = (cluster as unknown as { _leaflet_id: number })._leaflet_id;
-
-  const prevCount = clusterCountCache.get(clusterId);
-  const isBrandNewCluster = prevCount === undefined;
-  const isCountUpdated = !isBrandNewCluster && prevCount !== count;
-
-  clusterCountCache.set(clusterId, count);
-
+export const createClusterIcon = (
+  count: number,
+  id: string,
+  { isNew = false, isCountUpdated = false }: { isNew?: boolean; isCountUpdated?: boolean } = {}
+) => {
+  const clusterId = id.replace(/[^\w-]/g, '_');
   const { baseSize, ringRadius, topColor, midColor, botColor } = getClusterConfig(count);
 
   const fontSize = count > 999 ? 11 : count > 99 ? 12 : 14;
   const formattedCount = count > 999 ? `${(count / 1000).toFixed(1)}k` : count;
   const gradientId = `clusterGrad_${clusterId}_${count}`;
-  const hoverTransform = isHovered ? 'scale(1.15)' : 'scale(1)';
-
-  const clusterAnimClass = isBrandNewCluster ? 'cluster-pop-animation' : '';
+  const clusterAnimClass = isNew ? 'cluster-pop-animation' : '';
   const counterAnimClass = isCountUpdated ? 'counter-pop-animation' : '';
 
   const outerRing =
@@ -210,7 +224,6 @@ export const createClusterIcon = (cluster: L.MarkerCluster, isHovered: boolean =
         <div style="
             width: ${baseSize}px;
             height: ${baseSize}px;
-            transform: ${hoverTransform};
             transform-origin: center center;
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;

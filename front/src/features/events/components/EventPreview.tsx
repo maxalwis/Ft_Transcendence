@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styles from '../Event.module.css';
 import LikeButton from './LikeButton';
 import Button from '../../../components/ui/Button';
-import { ExpandIcon, CloseIcon, ArrowLeftIcon } from '../../../types/icons';
+import { ArrowLeftIcon, ArrowRightIcon } from '../../../types/icons';
 
 export interface Friend {
   id: string;
@@ -32,6 +32,7 @@ export interface EventDetailsProps {
   onNext?: (e?: React.MouseEvent, maxIndex?: number) => void;
 
   onClick?: () => void;
+  onOpenGroup?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 }
@@ -71,6 +72,7 @@ export default function EventPreview({
   onPrev,
   onNext,
   onClick,
+  onOpenGroup,
   onMouseEnter,
   onMouseLeave,
 }: EventDetailsProps) {
@@ -139,7 +141,8 @@ export default function EventPreview({
 
   const handleExtendClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onClick) onClick();
+    if (totalInGroup > 1 && onOpenGroup) onOpenGroup();
+    else if (onClick) onClick();
   };
 
   const normalizedPrice = priceType?.trim().toLowerCase();
@@ -183,20 +186,6 @@ export default function EventPreview({
             className={styles['events-details-image']}
           />
         )}
-        <div
-          dir="ltr"
-          className="absolute top-2 left-2 right-2 flex justify-end items-center z-10 pointer-events-none"
-        >
-          <Button
-            variant="icon"
-            type="button"
-            onClick={handleExtendClick}
-            title={t('eventPreview.seeDetails')}
-            className="modal-button modal-close pointer-events-auto"
-          >
-            <ExpandIcon className="h-4 w-4" />
-          </Button>
-        </div>
       </div>
 
       {totalInGroup > 1 && (
@@ -226,7 +215,7 @@ export default function EventPreview({
             disabled={currentIndex === totalInGroup - 1}
             className={`${styles['events-details-carousel-button']} disabled:opacity-40`}
           >
-            <CloseIcon className="close h-4 w-4" />
+            <ArrowRightIcon className="close h-4 w-4" />
           </Button>
         </div>
       )}
@@ -255,6 +244,11 @@ export default function EventPreview({
             )}
           </div>
         </div>
+        <Button variant="primary" type="button" onClick={handleExtendClick} className="mt-3 w-full">
+          {totalInGroup > 1 && onOpenGroup
+            ? t('eventPreview.seeAllEvents', { count: totalInGroup })
+            : t('eventPreview.seeDetails')}
+        </Button>
       </div>
     </div>
   );

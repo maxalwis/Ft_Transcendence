@@ -3,8 +3,6 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 
 // Third-Party Styles
 import 'leaflet/dist/leaflet.css';
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
 // Layouts & Feature Components
 import BottomBar from '../../../layouts/BottomBar';
@@ -31,6 +29,7 @@ import { useTranslatedEvent } from '../../events/hooks/useTranslatedEvent';
 // Constants & Configuration
 import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../../../types/constants';
 
+import type { EventItem } from '../../../types/event';
 import { EventMapController } from './EventMapController';
 import { mapPreferredCategory, mapPreferredLanguage } from '../utils/userPreferences';
 // Local Styles
@@ -48,6 +47,8 @@ export default function Map() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentResultsPage, setCurrentResultsPage] = useState(1);
   const [resultsScrollTop, setResultsScrollTop] = useState(0);
+  // When set, the results sidebar only lists the events of the clicked marker group
+  const [groupEvents, setGroupEvents] = useState<EventItem[] | null>(null);
 
   const [hoverPos, setHoverPos] = useState<{
     x: number;
@@ -124,6 +125,7 @@ export default function Map() {
     (id: string) => {
       cancelCloseTimeout();
 
+      setGroupEvents(null);
       setSidebar({
         type: 'event',
         eventId: id,
@@ -142,6 +144,9 @@ export default function Map() {
   const handleOpenResults = useCallback(() => {
     cancelCloseTimeout();
 
+    setGroupEvents(null);
+    setCurrentResultsPage(1);
+    setResultsScrollTop(0);
     setSidebar({
       type: 'results',
     });
@@ -150,6 +155,24 @@ export default function Map() {
     setActiveGroupId(null);
     setHoverPos(null);
   }, [setActiveGroupId]);
+
+  /*
+   * Open the results sidebar restricted to the events of a marker group.
+   */
+  const handleOpenGroup = useCallback(
+    (eventsInGroup: EventItem[]) => {
+      cancelCloseTimeout();
+
+      setGroupEvents(eventsInGroup);
+      setCurrentResultsPage(1);
+      setResultsScrollTop(0);
+      setSidebar({ type: 'results' });
+      setIsSidebarOpen(true);
+      setActiveGroupId(null);
+      setHoverPos(null);
+    },
+    [setActiveGroupId]
+  );
 
   /*
    * Called when an event is selected from the results sidebar.
@@ -240,9 +263,12 @@ export default function Map() {
 
     const preferredCategory = mapPreferredCategory(user.preferredCategory);
     if (preferredCategory) {
+      // One-shot reaction to the login event, guarded by justLoggedIn: no cascading renders.
+      /* eslint-disable react-hooks/set-state-in-effect */
       setCurrentResultsPage(1);
       setResultsScrollTop(0);
       setFilters((prev) => ({ ...prev, category: preferredCategory }));
+      /* eslint-enable react-hooks/set-state-in-effect */
     }
 
     clearJustLoggedIn();
@@ -288,15 +314,14 @@ export default function Map() {
           setHoverPos={setHoverPos}
         />
 
-        {!isLoading && (
-          <ClusterLayer
-            eventGroups={eventGroups}
-            activeGroupId={activeGroupId}
-            onMarkerClick={handleOpenSidebar}
-            onMarkerHover={handleMarkerHover}
-            onMarkerLeave={handleMouseLeave}
-          />
-        )}
+        <ClusterLayer
+          eventGroups={eventGroups}
+          activeGroupId={activeGroupId}
+          onMarkerClick={handleOpenSidebar}
+          onGroupClick={handleOpenGroup}
+          onMarkerHover={handleMarkerHover}
+          onMarkerLeave={handleMouseLeave}
+        />
       </MapContainer>
 
       {/* Event preview shown when hovering a marker group */}
@@ -318,6 +343,7 @@ export default function Map() {
           onPrev={handlePrevEvent}
           onNext={() => handleNextEvent(undefined, activeGroup.events.length - 1)}
           onClick={() => handleOpenSidebar(currentEvent.id)}
+          onOpenGroup={() => handleOpenGroup(activeGroup.events)}
           onMouseEnter={cancelCloseTimeout}
           onMouseLeave={handleMouseLeave}
         />
@@ -358,7 +384,7 @@ export default function Map() {
         >
           {sidebar.type === 'results' && (
             <EventResultsSidebar
-              events={events}
+              events={groupEvents ?? events}
               isLoading={isLoading}
               currentPage={currentResultsPage}
               onPageChange={setCurrentResultsPage}

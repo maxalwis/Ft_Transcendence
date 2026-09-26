@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { EventItem, EventGroup } from '../../../types/event';
 import { useTranslation } from 'react-i18next';
 
@@ -9,6 +9,66 @@ interface RawEventItem extends Partial<EventItem> {
   date_end?: string;
   price_type?: string;
   access_link?: string;
+}
+
+// Same filters => same response: switching back and forth between categories is instant, and a
+// page reload paints the last dataset immediately while a fresh copy is fetched in the background.
+const CACHE_TTL_MS = 60_000;
+const MAX_CACHED_QUERIES = 12;
+const STORAGE_KEY = 'mapEvents:last';
+
+interface CacheEntry {
+  ts: number;
+  text: string;
+  data: EventItem[];
+}
+
+const memoryCache = new Map<string, CacheEntry>();
+
+const normalizeEvents = (rawData: RawEventItem[]): EventItem[] =>
+  rawData.map((event) => ({
+    ...(event as EventItem),
+    latitude: Number(event.latitude),
+    longitude: Number(event.longitude),
+    dateStart: event.dateStart ?? event.date_start ?? '',
+    dateEnd: event.dateEnd ?? event.date_end,
+    priceType: event.priceType ?? event.price_type,
+    accessLink: event.accessLink ?? event.access_link,
+  }));
+
+function readCache(url: string): CacheEntry | null {
+  const cached = memoryCache.get(url);
+  if (cached) return cached;
+
+  try {
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    if (!stored) return null;
+    const parsed = JSON.parse(stored) as { url: string; ts: number; text: string };
+    if (parsed.url !== url) return null;
+    const entry = {
+      ts: parsed.ts,
+      text: parsed.text,
+      data: normalizeEvents(JSON.parse(parsed.text) as RawEventItem[]),
+    };
+    memoryCache.set(url, entry);
+    return entry;
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(url: string, entry: CacheEntry) {
+  memoryCache.delete(url);
+  memoryCache.set(url, entry);
+  if (memoryCache.size > MAX_CACHED_QUERIES) {
+    memoryCache.delete(memoryCache.keys().next().value as string);
+  }
+
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ url, ts: entry.ts, text: entry.text }));
+  } catch {
+    // Quota exceeded or storage unavailable: the in-memory cache is enough.
+  }
 }
 
 export function useMapEvents(
@@ -30,7 +90,15 @@ export function useMapEvents(
 
   const { t } = useTranslation();
 
-  // 1. Deconstruct primitive values explicitly to give useEffect stable dependency keys
+  // showWarning and t change identity on every language switch. The map data doesn't depend on the
+  // language, so they are read through refs instead of being effect dependencies.
+  const showWarningRef = useRef(showWarning);
+  const tRef = useRef(t);
+  useEffect(() => {
+    showWarningRef.current = showWarning;
+    tRef.current = t;
+  });
+
   const city = filters?.city ?? 'Paris';
   const startDate = filters?.startDate ?? '';
   const endDate = filters?.endDate ?? '';
@@ -39,41 +107,47 @@ export function useMapEvents(
   const minPrice = filters?.minPrice ?? '';
   const maxPrice = filters?.maxPrice ?? '';
 
+  const url = useMemo(() => {
+    const params = new URLSearchParams();
+    if (city) params.append('city', city);
+    if (startDate) params.append('from', startDate);
+    if (endDate) params.append('to', endDate);
+    if (priceType) params.append('price', priceType);
+    if (category.trim() !== '') params.append('category', category.trim());
+    if (minPrice !== '') params.append('minPrice', String(minPrice));
+    if (maxPrice !== '') params.append('maxPrice', String(maxPrice));
+
+    const envUrl = import.meta.env?.VITE_API_URL;
+    const queryString = params.toString();
+    const queryPath = queryString ? `?${queryString}` : '';
+
+    if (!envUrl) return `/api/events/map${queryPath}`;
+
+    const cleanBase = envUrl.replace(/\/+$/, '');
+    return cleanBase.endsWith('/api')
+      ? `${cleanBase}/events/map${queryPath}`
+      : `${cleanBase}/api/events/map${queryPath}`;
+  }, [city, startDate, endDate, priceType, category, minPrice, maxPrice]);
+
   useEffect(() => {
-    const fetchAllEvents = async () => {
+    const controller = new AbortController();
+
+    const cached = readCache(url);
+    if (cached) {
+      // Cache hit: show it immediately, before the background revalidation below.
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setEvents(cached.data);
+      setIsLoading(false);
+      /* eslint-enable react-hooks/set-state-in-effect */
+      if (Date.now() - cached.ts < CACHE_TTL_MS) return;
+    } else {
+      // Previous events stay on the map while the new ones load: no blank flash between filters.
+      setIsLoading(true);
+    }
+
+    const fetchEvents = async () => {
       try {
-        setIsLoading(true);
-
-        const params = new URLSearchParams();
-        if (city) params.append('city', city);
-        if (startDate) params.append('from', startDate);
-        if (endDate) params.append('to', endDate);
-        if (priceType) params.append('price', priceType);
-
-        if (category && category.trim() !== '') {
-          params.append('category', category.trim());
-        }
-
-        if (minPrice !== '') params.append('minPrice', String(minPrice));
-        if (maxPrice !== '') params.append('maxPrice', String(maxPrice));
-
-        const envUrl = import.meta.env?.VITE_API_URL;
-        const queryString = params.toString();
-        const queryPath = queryString ? `?${queryString}` : '';
-
-        let url = '';
-        if (envUrl) {
-          const cleanBase = envUrl.replace(/\/+$/, '');
-          url = cleanBase.endsWith('/api')
-            ? `${cleanBase}/events/map${queryPath}`
-            : `${cleanBase}/api/events/map${queryPath}`;
-        } else {
-          url = `/api/events/map${queryPath}`;
-        }
-
-        params.append('_t', Date.now().toString());
-
-        const response = await fetch(url);
+        const response = await fetch(url, { signal: controller.signal });
 
         if (!response.ok) {
           const errorData = (await response.json().catch(() => ({}))) as {
@@ -86,34 +160,37 @@ export function useMapEvents(
           throw new Error(message);
         }
 
-        const rawData: RawEventItem[] = await response.json();
+        const text = await response.text();
 
-        const data: EventItem[] = rawData.map((event) => ({
-          ...(event as EventItem),
-          latitude: Number(event.latitude),
-          longitude: Number(event.longitude),
-          dateStart: event.dateStart ?? event.date_start ?? '',
-          dateEnd: event.dateEnd ?? event.date_end,
-          priceType: event.priceType ?? event.price_type,
-          accessLink: event.accessLink ?? event.access_link,
-        }));
+        if (cached && cached.text === text) {
+          // Unchanged since the cached copy: nothing to re-render.
+          writeCache(url, { ...cached, ts: Date.now() });
+          return;
+        }
 
+        const data = normalizeEvents(JSON.parse(text) as RawEventItem[]);
+        writeCache(url, { ts: Date.now(), text, data });
         setEvents(data);
       } catch (err: unknown) {
+        if (controller.signal.aborted) return;
         console.error('Failed to fetch map events:', err);
-        showWarning(
+        showWarningRef.current(
           err instanceof Error
             ? err.message
-            : t('events.errors.loadFailed', 'An error occurred while loading map events.')
+            : tRef.current(
+                'events.errors.loadFailed',
+                'An error occurred while loading map events.'
+              )
         );
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     };
 
-    fetchAllEvents();
-    // 2. Pass individual primitive string dependencies to ensure reactivity
-  }, [showWarning, city, startDate, endDate, priceType, category, minPrice, maxPrice, t]);
+    fetchEvents();
+
+    return () => controller.abort();
+  }, [url]);
 
   const eventGroups = useMemo<EventGroup[]>(() => {
     const groupsMap = new Map<string, EventItem[]>();

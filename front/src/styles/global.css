@@ -505,6 +505,24 @@ pre {
   animation: glassPopupSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.marker-pop-animation {
+  transform-origin: bottom center;
+  animation: clusterPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.cluster-pop-animation {
+  transform-origin: center center;
+  animation: clusterPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker-pop-animation,
+  .cluster-pop-animation,
+  .counter-pop-animation {
+    animation: none;
+  }
+}
+
 .counter-pop-animation {
   display: inline-block;
   animation: counterPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;

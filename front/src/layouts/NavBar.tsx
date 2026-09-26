@@ -174,7 +174,7 @@ export default function NavBar({
       dir="ltr"
       className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-4 pointer-events-none"
     >
-      <LanguageSelector embedded compact={compact} />
+      <LanguageSelector embedded />
 
       {/* Row 1: categories. In compact mode, map controls and language selector share row 2 with the filters */}
       <div

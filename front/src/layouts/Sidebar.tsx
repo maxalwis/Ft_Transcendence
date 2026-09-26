@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../features/map/Map.module.css';
 import { BackIcon } from '../types/icons';
@@ -14,24 +14,16 @@ interface SideBarProps {
   children: React.ReactNode;
 }
 
-export default function SideBar({ isOpen, onToggle, onClose, onBack, title, children }: SideBarProps) {
+export default function SideBar({
+  isOpen,
+  onToggle,
+  onClose,
+  onBack,
+  title,
+  children,
+}: SideBarProps) {
   const { t } = useTranslation();
-  const [isClosing, setIsClosing] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      setIsClosing(false);
-    }
-  }, [isOpen]);
-
-  const handleAnimationEnd = () => {
-    if (isClosing) {
-      setIsClosing(false);
-      onClose();
-    }
-  };
-
-  const sidebarIsOpen = isOpen && !isClosing;
+  const sidebarIsOpen = isOpen;
 
   return (
     <>
@@ -41,7 +33,6 @@ export default function SideBar({ isOpen, onToggle, onClose, onBack, title, chil
         onBack={onBack}
         title={title}
         dataState={sidebarIsOpen ? 'open' : 'closed'}
-        onAnimationEnd={handleAnimationEnd}
         bodyClassName="flex flex-col"
       >
         {children}
