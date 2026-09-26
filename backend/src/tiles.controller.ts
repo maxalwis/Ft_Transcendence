@@ -1,7 +1,10 @@
 import { Controller, Get, Param, Res } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { TilesService } from './tiles.service';
 
+// nginx caches tiles, so the global throttler would only punish normal map panning.
+@SkipThrottle()
 @Controller('tiles')
 export class TilesController {
   constructor(private readonly tilesService: TilesService) {}
@@ -15,9 +18,9 @@ export class TilesController {
   ) {
     const tile = await this.tilesService.getTile(z, x, y);
 
-    res.setHeader('Content-Type', 'image/png');
-    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.setHeader('Content-Type', tile.contentType);
+    res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
 
-    return res.send(tile);
+    return res.send(tile.data);
   }
 }

@@ -301,7 +301,8 @@ export default function Map() {
           attribution='&copy; <a href="https://jawg.io">JawgMaps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="/api/tiles/{z}/{x}/{y}{r}.png"
           bounds={IDF_BOUNDS}
-          keepBuffer={0}
+          keepBuffer={2}
+          updateWhenIdle={false}
         />
 
         <GlassZoomControl />
