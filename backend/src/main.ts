@@ -46,18 +46,19 @@ async function bootstrap() {
     })
   );
 
-  // OpenAPI docs for the public API (served at /docs; /api/docs behind nginx)
+  // OpenAPI docs for the public API, served at /api/docs.
+  // setGlobalPrefix doesn't apply to Swagger, hence the explicit 'api/' prefix.
+  // No .addServer('/api'): the global prefix is already part of every path.
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Transcendence Public API')
     .setDescription('Public API to query and manage Paris events. Requires an API key.')
     .setVersion('1.0')
-    .addServer('/api')
     .addApiKey({ type: 'apiKey', name: 'X-API-Key', in: 'header' }, 'api-key')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig, {
     include: [PublicApiModule],
   });
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   app.enableShutdownHooks();
   app.set('etag', false);
