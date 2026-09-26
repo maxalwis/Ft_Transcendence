@@ -4,22 +4,21 @@ import { UsersService } from './users.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
+  let usersServiceMock: any;
 
   beforeEach(async () => {
+    usersServiceMock = {
+      findAll: jest.fn(),
+      findOnePublic: jest.fn(),
+      searchByUsername: jest.fn(),
+      changePassword: jest.fn(),
+      update: jest.fn(),
+      remove: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [
-        {
-          provide: UsersService,
-          useValue: {
-            findAll: jest.fn(),
-            findOne: jest.fn(),
-            create: jest.fn(),
-            update: jest.fn(),
-            remove: jest.fn(),
-          },
-        },
-      ],
+      providers: [{ provide: UsersService, useValue: usersServiceMock }],
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
@@ -27,5 +26,59 @@ describe('UsersController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('findOne should delegate to usersService.findOnePublic', async () => {
+    usersServiceMock.findOnePublic.mockResolvedValue({ id: 1, name: 'Alice' });
+
+    const result = await controller.findOne(1);
+
+    expect(usersServiceMock.findOnePublic).toHaveBeenCalledWith(1);
+    expect(result).toEqual({ id: 1, name: 'Alice' });
+  });
+
+  it('searchByUsername should pass the requester id so results can exclude them', async () => {
+    const req = { user: { id: 7 } } as any;
+    usersServiceMock.searchByUsername.mockResolvedValue([]);
+
+    await controller.searchByUsername('ali', req);
+
+    expect(usersServiceMock.searchByUsername).toHaveBeenCalledWith('ali', 7);
+  });
+
+  it('changePassword should use the authenticated user id, not a client-supplied one', async () => {
+    const req = { user: { id: 7 } } as any;
+
+    await controller.changePassword(req, { currentPassword: 'old', newPassword: 'new' } as any);
+
+    expect(usersServiceMock.changePassword).toHaveBeenCalledWith(7, 'old', 'new');
+  });
+
+  it('update should build the avatar path from the uploaded file when present', async () => {
+    const req = { user: { id: 7 } } as any;
+    const file = { filename: 'abc123.png' } as Express.Multer.File;
+
+    await controller.update(req, { name: 'Bob' } as any, file);
+
+    expect(usersServiceMock.update).toHaveBeenCalledWith(7, {
+      name: 'Bob',
+      avatar: '/uploads/avatars/abc123.png',
+    });
+  });
+
+  it('update should leave avatar undefined when no file is uploaded', async () => {
+    const req = { user: { id: 7 } } as any;
+
+    await controller.update(req, { name: 'Bob' } as any, undefined);
+
+    expect(usersServiceMock.update).toHaveBeenCalledWith(7, { name: 'Bob', avatar: undefined });
+  });
+
+  it('remove should delete the authenticated user, not an arbitrary id', async () => {
+    const req = { user: { id: 7 } } as any;
+
+    await controller.remove(req);
+
+    expect(usersServiceMock.remove).toHaveBeenCalledWith(7);
   });
 });

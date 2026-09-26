@@ -18,7 +18,7 @@ import { FriendsModule } from './friends/friends.module';
 import { EventsInterestsModule } from './events-interest/events-interest.module';
 import { RealtimeModule } from './realtime/realtime.module';
 import { TranslationsModule } from './translations/translations.module';
-import { TilesModule } from './tiles.module';
+import { TilesModule } from './tiles/tiles.module';
 
 @Module({
   imports: [
