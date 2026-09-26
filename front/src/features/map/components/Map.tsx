@@ -49,6 +49,9 @@ export default function Map() {
   const [resultsScrollTop, setResultsScrollTop] = useState(0);
   // When set, the results sidebar only lists the events of the clicked marker group
   const [groupEvents, setGroupEvents] = useState<EventItem[] | null>(null);
+  // Event the map is zoomed on. Independent from the sidebar: a marker group click focuses
+  // its first event while only showing the results list.
+  const [focusEventId, setFocusEventId] = useState<string | null>(null);
 
   const [hoverPos, setHoverPos] = useState<{
     x: number;
@@ -126,6 +129,7 @@ export default function Map() {
       cancelCloseTimeout();
 
       setGroupEvents(null);
+      setFocusEventId(id);
       setSidebar({
         type: 'event',
         eventId: id,
@@ -145,6 +149,7 @@ export default function Map() {
     cancelCloseTimeout();
 
     setGroupEvents(null);
+    setFocusEventId(null);
     setCurrentResultsPage(1);
     setResultsScrollTop(0);
     setSidebar({
@@ -164,6 +169,7 @@ export default function Map() {
       cancelCloseTimeout();
 
       setGroupEvents(eventsInGroup);
+      setFocusEventId(eventsInGroup[0]?.id ?? null);
       setCurrentResultsPage(1);
       setResultsScrollTop(0);
       setSidebar({ type: 'results' });
@@ -179,6 +185,7 @@ export default function Map() {
    * Replace the results sidebar with the selected event details.
    */
   const handleResultsEventClick = useCallback((eventId: string) => {
+    setFocusEventId(eventId);
     setSidebar({
       type: 'event',
       eventId,
@@ -286,10 +293,7 @@ export default function Map() {
         zoomControl={false}
         className="h-full w-full"
       >
-        <EventMapController
-          eventId={sidebar?.type === 'event' ? sidebar.eventId : null}
-          events={events}
-        />
+        <EventMapController eventId={focusEventId} events={events} />
         <MapClickHandler
           closeSidebar={() => {
             setIsSidebarOpen(false);
@@ -371,11 +375,14 @@ export default function Map() {
           onToggle={() => setIsSidebarOpen((prev) => !prev)}
           onClose={() => {
             setSidebar(null);
+            setFocusEventId(null);
             setHoverPos(null);
           }}
           onBack={
             sidebar.type === 'event'
               ? () => {
+                  // Keep the map where it is when returning to a marker group's list
+                  if (!groupEvents) setFocusEventId(null);
                   setSidebar({ type: 'results' });
                   setIsSidebarOpen(true);
                   setHoverPos(null);
