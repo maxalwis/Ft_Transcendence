@@ -36,25 +36,25 @@ const defaultIconProps = {
 
 export const ArrowLeftIcon = (props: IconProps) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" {...defaultIconProps} {...props}>
-    <path d="m15 18-6-6 6-6" />
+    <path d="m15 18-6-6 6-6" strokeWidth="2.5" />
   </svg>
 );
 
 export const ArrowRightIcon = (props: IconProps) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" {...defaultIconProps} {...props}>
-    <path d="m9 18 6-6-6-6" />
+    <path d="m9 18 6-6-6-6" strokeWidth="2.5" />
   </svg>
 );
 
 export const ArrowUpIcon = (props: IconProps) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" {...defaultIconProps} {...props}>
-    <path d="m18 15-6-6-6 6" />
+    <path d="m18 15-6-6-6 6" strokeWidth="2.5" />
   </svg>
 );
 
 export const ArrowDownIcon = (props: IconProps) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" {...defaultIconProps} {...props}>
-    <path d="m6 9 6 6 6-6" />
+    <path d="m6 9 6 6 6-6" strokeWidth="2.5" />
   </svg>
 );
 

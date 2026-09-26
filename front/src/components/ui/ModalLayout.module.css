@@ -1,0 +1,241 @@
+/* ==========================================================================
+   ModalLayout: shell (overlay + surface + animation) and header/body layout.
+   A shell is picked with data-variant; glass look comes from the shared
+   glass-modal / glass-panel classes, structure and motion live here.
+   ========================================================================== */
+
+/* Backdrop for dialog-like variants (menu, legal, sheet) */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-top: var(--space-4);
+}
+
+/* ---- menu: centered dialog (auth, profile, password) ---- */
+.shell[data-variant='menu'],
+.shell[data-variant='legal'] {
+  position: relative;
+  width: 90%;
+  max-width: 50vw;
+  max-height: 85vh;
+  overflow: hidden;
+  transform-origin: center;
+}
+
+.shell[data-variant='menu'][data-size='sm'] {
+  max-width: 28rem;
+}
+
+.shell[data-variant='menu'][data-state='open'],
+.shell[data-variant='legal'][data-state='open'] {
+  animation: dialogIn 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.shell[data-variant='menu'][data-state='closed'],
+.shell[data-variant='legal'][data-state='closed'] {
+  animation: dialogOut 200ms ease-in forwards;
+}
+
+/* ---- legal: same dialog, taller for long text ---- */
+.shell[data-variant='legal'] {
+  height: 85vh;
+}
+
+/* ---- sheet: mobile menu, anchored above the bottom bar ---- */
+.shell[data-variant='sheet'] {
+  position: absolute;
+  bottom: calc(var(--spacing) * 14);
+  left: 50%;
+  translate: -50% 0;
+  min-width: 20rem;
+  max-width: 28rem;
+  max-height: 70vh;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* ---- popover: anchored panel, position is given by the caller ---- */
+.shell[data-variant='popover'] {
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+/* ---- sidebar: fixed right panel, bottom sheet on mobile ---- */
+.shell[data-variant='sidebar'] {
+  position: fixed;
+  top: calc(var(--spacing) * 15);
+  right: var(--space-3);
+  bottom: calc(var(--spacing) * 15);
+  z-index: 1000;
+  width: 20vw;
+  padding: calc(var(--spacing) * 5);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  transform-origin: bottom right;
+}
+
+.shell[data-variant='sidebar'][data-state='open'] {
+  animation: sidebarIn 250ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.shell[data-variant='sidebar'][data-state='closed'] {
+  animation: sidebarOut 200ms ease-in forwards;
+}
+
+@media (max-width: 900px) {
+  .shell[data-variant='menu'],
+  .shell[data-variant='legal'] {
+    max-width: 90vw;
+  }
+
+  .shell[data-variant='sidebar'] {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 90%;
+    height: 60vh;
+    margin: 0 auto;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    transform-origin: bottom center;
+  }
+
+  .shell[data-variant='sidebar'][data-state='open'] {
+    animation: sheetUp 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .shell[data-variant='sidebar'][data-state='closed'] {
+    animation: sheetDown 250ms ease-in forwards;
+  }
+}
+
+/* ---- header / body ---- */
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.header {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--space-6);
+  margin: 0 var(--space-2) var(--space-3) var(--space-2);
+  padding-inline: 4rem;
+}
+
+/* Sidebar shell already pads all around: no side margin on its header */
+.content[data-variant='sidebar'] > .header {
+  margin-inline: 0;
+}
+
+.title {
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Shell already pads the sidebar; the others pad their body */
+.content[data-variant='menu'] > .body,
+.content[data-variant='legal'] > .body,
+.content[data-variant='sheet'] > .body {
+  padding: 0 var(--space-6) var(--space-6);
+}
+
+.content[data-variant='popover'] > .body {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+/* ---- motion ---- */
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: scale(0.75) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes dialogOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.75) translateY(12px);
+  }
+}
+
+@keyframes sidebarIn {
+  from {
+    opacity: 0;
+    transform: translateX(10vw);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes sidebarOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(10vw);
+  }
+}
+
+@keyframes sheetUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheetDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}

@@ -7,7 +7,8 @@ import EditProfileContent from '../features/profile/components/EditProfileConten
 import LegalContent from '../features/legal/LegalContent';
 import LegalModal from '../features/legal/LegalModal';
 import Button from '../components/ui/Button';
-import { CloseIcon, MenuIcon } from '../types/icons';
+import ModalLayout, { ModalShell } from '../components/ui/ModalLayout';
+import { MenuIcon } from '../types/icons';
 
 function LegalButtons({
   onOpenLegal,
@@ -79,6 +80,12 @@ export default function BottomBar() {
     setMobileView('auth');
   };
 
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+    setMobileView('menu');
+    setIsAuthOpen(false);
+  };
+
   const closeMobileAuth = () => {
     setIsAuthOpen(false);
     setMobileView('menu');
@@ -138,61 +145,47 @@ export default function BottomBar() {
         <div className="flex items-center justify-center w-full relative pointer-events-auto">
           <div className="mobile-only">
             {mobileMenuOpen && (
-              <div
-                className="glass-modal-overlay"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setMobileView('menu');
-                  setIsAuthOpen(false);
-                }}
-              >
-                <div
-                  className="
-                    glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
-                    glass-panel p-5 flex flex-col items-center gap-2.5
-                    shadow-2xl rounded-2xl
-                    min-w-xs max-w-md
-                    max-h-[70vh]
-                  "
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {mobileView === 'menu' ? (
-                    <>
-                      <div className="pt-3">
-                        <Button
-                          variant="icon"
-                          type="button"
-                          onClick={() => {
-                            setMobileMenuOpen(false);
-                            setMobileView('menu');
-                            setIsAuthOpen(false);
-                          }}
-                          aria-label={t('common.close')}
-                          className="modal-button modal-close"
-                        >
-                          <CloseIcon className="h-5 w-5" />
-                        </Button>
-                      </div>
-                      <LoginButton
-                        onOpenAuth={openMobileAuth}
-                        embedded
-                        onOpenProfile={() => setMobileView('profileMenu')}
-                      />
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        className="menuButton"
-                        onClick={() => setMobileView('friends')}
-                      >
-                        {t('friends.buttonTitle', 'Friends')}
-                      </Button>
-                      <LegalButtons onOpenLegal={openLegalModal} mobileMenuOpen={mobileMenuOpen} />
-                    </>
-                  ) : mobileView === 'friends' ? (
-                    <Friends embedded onBack={() => setMobileView('menu')} />
-                  ) : mobileView === 'auth' ? (
-                    <AuthModal isOpen={isAuthOpen} onClose={closeMobileAuth} embedded />
-                  ) : mobileView === 'profileMenu' ? (
+              <ModalShell variant="sheet" onClose={closeMobileMenu}>
+                {mobileView === 'menu' ? (
+                  <ModalLayout
+                    embedded
+                    variant="sheet"
+                    onClose={closeMobileMenu}
+                    bodyClassName="flex flex-col items-center gap-2.5"
+                  >
+                    <LoginButton
+                      onOpenAuth={openMobileAuth}
+                      embedded
+                      onOpenProfile={() => setMobileView('profileMenu')}
+                    />
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      className="menuButton"
+                      onClick={() => setMobileView('friends')}
+                    >
+                      {t('friends.buttonTitle', 'Friends')}
+                    </Button>
+                    <LegalButtons onOpenLegal={openLegalModal} mobileMenuOpen={mobileMenuOpen} />
+                  </ModalLayout>
+                ) : mobileView === 'friends' ? (
+                  <ModalLayout
+                    embedded
+                    variant="sheet"
+                    onBack={() => setMobileView('menu')}
+                    onClose={closeMobileMenu}
+                  >
+                    <Friends embedded />
+                  </ModalLayout>
+                ) : mobileView === 'auth' ? (
+                  <AuthModal isOpen={isAuthOpen} onClose={closeMobileAuth} embedded />
+                ) : mobileView === 'profileMenu' ? (
+                  <ModalLayout
+                    embedded
+                    variant="sheet"
+                    onBack={() => setMobileView('menu')}
+                    onClose={closeMobileMenu}
+                  >
                     <LoginButton
                       onOpenAuth={openMobileAuth}
                       embedded
@@ -201,13 +194,21 @@ export default function BottomBar() {
                       onBack={() => setMobileView('menu')}
                       onOpenEditProfile={() => setMobileView('profile')}
                     />
-                  ) : mobileView === 'profile' ? (
-                    <EditProfileContent onClose={() => setMobileView('profileMenu')} />
-                  ) : (
-                    <LegalContent initialTab={legalTab} onClose={() => setMobileView('menu')} />
-                  )}
-                </div>
-              </div>
+                  </ModalLayout>
+                ) : mobileView === 'profile' ? (
+                  <EditProfileContent
+                    onClose={() => setMobileView('profileMenu')}
+                    shell={{ embedded: true, variant: 'sheet' }}
+                  />
+                ) : (
+                  <LegalContent
+                    initialTab={legalTab}
+                    onClose={closeMobileMenu}
+                    onBack={() => setMobileView('menu')}
+                    shell={{ embedded: true, variant: 'sheet' }}
+                  />
+                )}
+              </ModalShell>
             )}
 
             {/* Mobile menu button */}

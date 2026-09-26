@@ -119,7 +119,8 @@
     "cancel": "Cancelar",
     "changePassword": "Cambiar contraseña",
     "loading": "Cargando...",
-    "mismatchError": "Las contraseñas no coinciden."
+    "mismatchError": "Las contraseñas no coinciden.",
+    "serverError": "Ocurrió un error al cambiar la contraseña. Por favor, inténtalo de nuevo."
   },
   "authModal": {
     "loginTitle": "Iniciar sesión",

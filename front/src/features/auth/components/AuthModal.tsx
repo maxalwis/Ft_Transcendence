@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/useAuth';
 import { login } from '../../../api/api';
 import { useNotification } from '../../../context/notifications/useNotification';
-import { CloseIcon } from '../../../types/icons';
+import ModalLayout from '../../../components/ui/ModalLayout';
 import Button from '../../../components/ui/Button';
 
 interface AuthModalProps {
@@ -65,29 +65,16 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
     }
   };
 
-  const content = (
-    <div
-      className={
-        embedded
-          ? 'relative w-full glass-animate-in'
-          : 'glass-modal relative p-8 max-w-md w-full glass-animate-in'
-      }
+  return (
+    <ModalLayout
+      onClose={onClose}
+      title={view === 'login' ? t('authModal.loginTitle') : t('authModal.registerTitle')}
+      size="sm"
+      embedded={embedded}
+      variant={embedded ? 'sheet' : 'menu'}
     >
-      <div className="flex min-h-0 flex-1 flex-col">
-        <Button
-          variant="icon"
-          type="button"
-          onClick={onClose}
-          aria-label={t('common.close')}
-          className="modal-button modal-close"
-        >
-          <CloseIcon className="h-5 w-5" />
-        </Button>
-      </div>
       {view === 'login' ? (
         <div>
-          <h1 className="font-extrabold text-2xl mb-4 text-center">{t('authModal.loginTitle')}</h1>
-
           <form className="flex flex-col gap-3" onSubmit={handleLoginSubmit}>
             <input
               className="glass-panel p-2 rounded-lg border-2"
@@ -150,10 +137,6 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
         </div>
       ) : (
         <div>
-          <h1 className="font-extrabold text-2xl mb-4 text-center">
-            {t('authModal.registerTitle')}
-          </h1>
-
           <form className="flex flex-col gap-3" onSubmit={handleRegisterSubmit}>
             <input
               className="glass-panel p-2 rounded-lg border-2"
@@ -210,16 +193,6 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
           </div>
         </div>
       )}
-    </div>
-  );
-
-  if (embedded) {
-    return content;
-  }
-
-  return (
-    <div className="glass-modal-overlay" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()}>{content}</div>
-    </div>
+    </ModalLayout>
   );
 }

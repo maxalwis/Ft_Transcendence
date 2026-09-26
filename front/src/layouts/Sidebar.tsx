@@ -3,22 +3,17 @@ import { useTranslation } from 'react-i18next';
 import styles from '../features/map/Map.module.css';
 import { BackIcon } from '../types/icons';
 import Button from '../components/ui/Button';
+import ModalLayout from '../components/ui/ModalLayout';
 
 interface SideBarProps {
   isOpen: boolean;
   onToggle: () => void;
   onClose: () => void;
+  onBack?: () => void;
   children: React.ReactNode;
-  type?: 'results' | 'event';
 }
 
-export default function SideBar({
-  isOpen,
-  onToggle,
-  onClose,
-  children,
-  type,
-}: SideBarProps) {
+export default function SideBar({ isOpen, onToggle, onClose, onBack, children }: SideBarProps) {
   const { t } = useTranslation();
   const [isClosing, setIsClosing] = useState(false);
 
@@ -27,10 +22,6 @@ export default function SideBar({
       setIsClosing(false);
     }
   }, [isOpen]);
-
-  const handleClose = () => {
-    setIsClosing(true);
-  };
 
   const handleAnimationEnd = () => {
     if (isClosing) {
@@ -43,14 +34,16 @@ export default function SideBar({
 
   return (
     <>
-      <div
-        data-state={sidebarIsOpen ? 'open' : 'closed'}
+      <ModalLayout
+        variant="sidebar"
+        onClose={onClose}
+        onBack={onBack}
+        dataState={sidebarIsOpen ? 'open' : 'closed'}
         onAnimationEnd={handleAnimationEnd}
-        data-sidebar-type={type}
-        className={`glass-panel ${styles.sidebarModal} fixed top-15 right-3 bottom-15 w-[20vw] rounded-xl shadow-lg z-1000 flex flex-col`}
+        bodyClassName="flex flex-col"
       >
         {children}
-      </div>
+      </ModalLayout>
 
       <Button
         variant="icon"
@@ -64,11 +57,7 @@ export default function SideBar({
         onClick={onToggle}
         className={styles.sidebarToggle}
       >
-        <BackIcon
-          className={`h-4 w-4 transition-transform ${
-            sidebarIsOpen ? 'rotate-180' : ''
-          }`}
-        />
+        <BackIcon className={`h-4 w-4 transition-transform ${sidebarIsOpen ? 'rotate-180' : ''}`} />
       </Button>
     </>
   );

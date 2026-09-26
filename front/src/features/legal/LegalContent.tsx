@@ -3,30 +3,27 @@ import { useTranslation } from 'react-i18next';
 import PrivacyPolicy from './PrivacyPolicy';
 import TermsOfService from './TermsOfService';
 import styles from './Legal.module.css';
-import { CloseIcon } from '../../types/icons';
+import ModalLayout, { type ModalShellProps } from '../../components/ui/ModalLayout';
 import Button from '../../components/ui/Button';
 
 interface LegalContentProps {
   initialTab?: 'privacy' | 'terms';
   onClose: () => void;
+  onBack?: () => void;
+  shell?: ModalShellProps;
 }
 
-export default function LegalContent({ initialTab = 'privacy', onClose }: LegalContentProps) {
+export default function LegalContent({
+  initialTab = 'privacy',
+  onClose,
+  onBack,
+  shell,
+}: LegalContentProps) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'privacy' | 'terms'>(initialTab);
 
   return (
-    <>
-      <Button
-        variant="icon"
-        type="button"
-        onClick={onClose}
-        aria-label={t('common.close')}
-        className="modal-button modal-close"
-      >
-        <CloseIcon className="h-4 w-4" />
-      </Button>
-
+    <ModalLayout onClose={onClose} onBack={onBack} variant="legal" {...shell}>
       <div className={styles.tabNav}>
         <Button
           variant="primary"
@@ -50,6 +47,6 @@ export default function LegalContent({ initialTab = 'privacy', onClose }: LegalC
       <div className={styles.scrollableContent}>
         {activeTab === 'privacy' ? <PrivacyPolicy /> : <TermsOfService />}
       </div>
-    </>
+    </ModalLayout>
   );
 }

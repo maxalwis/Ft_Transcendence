@@ -5,11 +5,12 @@ import { resolveAvatarUrl } from '../utils/avatar';
 import PasswordModal from './PasswordModal';
 import styles from '../ProfileModal.module.css';
 import { useNotification } from '../../../context/notifications/useNotification';
-import { CloseIcon } from '../../../types/icons';
+import ModalLayout, { type ModalShellProps } from '../../../components/ui/ModalLayout';
 import Button from '../../../components/ui/Button';
 
 interface EditProfileContentProps {
   onClose: () => void;
+  shell?: ModalShellProps;
 }
 
 const languageOptions = [
@@ -24,7 +25,7 @@ type PreferredLanguage = (typeof languageOptions)[number]['value'];
 const categoryOptions = ['MUSIC', 'CULTURE', 'WORKSHOPS', 'LEISURE', 'OTHERS'] as const;
 type PreferredCategory = (typeof categoryOptions)[number];
 
-export default function EditProfileContent({ onClose }: EditProfileContentProps) {
+export default function EditProfileContent({ onClose, shell }: EditProfileContentProps) {
   const { t } = useTranslation();
   const { user, updateUser, accessToken } = useAuth();
 
@@ -99,21 +100,7 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
   };
 
   return (
-    <>
-      <div className="modalHeader">
-        <h2>{t('profileSettings.title')}</h2>
-
-        <Button
-          variant="icon"
-          type="button"
-          className="modal-button modal-close"
-          onClick={onClose}
-          aria-label="Fermer"
-        >
-          <CloseIcon className="h-4 w-4" />
-        </Button>
-      </div>
-
+    <ModalLayout onClose={onClose} title={t('profileSettings.title')} {...shell}>
       <form onSubmit={handleSubmit} className="modalForm">
         <div className={styles.avatarPicker}>
           <Button
@@ -201,6 +188,6 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
       </form>
 
       {isPasswordModalOpen && <PasswordModal onClose={() => setIsPasswordModalOpen(false)} />}
-    </>
+    </ModalLayout>
   );
 }

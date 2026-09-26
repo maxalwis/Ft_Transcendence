@@ -35,7 +35,6 @@ import { EventMapController } from './EventMapController';
 import { mapPreferredCategory, mapPreferredLanguage } from '../utils/userPreferences';
 // Local Styles
 import '../Map.module.css';
-import ModalLayout from '../../../components/ui/ModalLayout';
 
 type SidebarState = { type: 'event'; eventId: string } | { type: 'results' } | null;
 
@@ -227,12 +226,6 @@ export default function Map() {
     }));
   }, []);
 
-  const handleCloseSidebar = useCallback(() => {
-    setSidebar(null);
-    setIsSidebarOpen(false);
-    setHoverPos(null);
-  }, []);
-
   /*
    * Apply preferredLanguage / preferredCategory once, right after a real login.
    * Excludes silent session restores on page refresh (justLoggedIn stays false then).
@@ -352,41 +345,30 @@ export default function Map() {
             setSidebar(null);
             setHoverPos(null);
           }}
-          type={sidebar.type}
+          onBack={
+            sidebar.type === 'event'
+              ? () => {
+                  setSidebar({ type: 'results' });
+                  setIsSidebarOpen(true);
+                  setHoverPos(null);
+                }
+              : undefined
+          }
         >
           {sidebar.type === 'results' && (
-            <ModalLayout
-              onClose={() => {
-                setSidebar(null);
-                setHoverPos(null);
-              }}
-            >
-              <EventResultsSidebar
-                events={events}
-                isLoading={isLoading}
-                currentPage={currentResultsPage}
-                onPageChange={setCurrentResultsPage}
-                onEventClick={handleResultsEventClick}
-                scrollTop={resultsScrollTop}
-                onScrollTopChange={setResultsScrollTop}
-              />
-            </ModalLayout>
+            <EventResultsSidebar
+              events={events}
+              isLoading={isLoading}
+              currentPage={currentResultsPage}
+              onPageChange={setCurrentResultsPage}
+              onEventClick={handleResultsEventClick}
+              scrollTop={resultsScrollTop}
+              onScrollTopChange={setResultsScrollTop}
+            />
           )}
 
           {sidebar.type === 'event' && (
-            <ModalLayout
-              onBack={() => {
-                setSidebar({ type: 'results' });
-                setIsSidebarOpen(true);
-                setHoverPos(null);
-              }}
-              onClose={() => {
-                setSidebar(null);
-                setHoverPos(null);
-              }}
-            >
-              <EventSidebarContent eventId={sidebar.eventId} currentUserId={user?.id} />
-            </ModalLayout>
+            <EventSidebarContent eventId={sidebar.eventId} currentUserId={user?.id} />
           )}
         </SideBar>
       )}

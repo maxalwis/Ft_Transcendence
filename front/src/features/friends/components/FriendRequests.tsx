@@ -41,9 +41,9 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
           type="button"
           onClick={onBack}
           aria-label="Back to friends"
-          className="modal-button modal-back self-start"
+          className="modal-button self-start"
         >
-          <BackIcon className="h-4 w-4"/>
+          <BackIcon className="h-4 w-4" />
         </Button>
         <div className="text-xs text-slate-400 italic text-center">
           {t('friendsRequests.noPendingRequests')}
@@ -59,9 +59,9 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
         type="button"
         onClick={onBack}
         aria-label="Back to friends"
-        className="modal-button modal-back self-start"
+        className="modal-button self-start"
       >
-        <BackIcon className="h-4 w-4"/>
+        <BackIcon className="h-4 w-4" />
       </Button>
       {requests.map((req) => {
         const senderObj = req.sender;

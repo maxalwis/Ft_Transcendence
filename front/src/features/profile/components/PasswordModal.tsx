@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CloseIcon } from '../../../types/icons';
+import ModalLayout from '../../../components/ui/ModalLayout';
 import Button from '../../../components/ui/Button';
 import { useAuth } from '../../../context/auth/useAuth';
 import { changePassword } from '../../../api/users';
@@ -55,70 +55,56 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
   };
 
   return (
-    <div className="glass-modal-overlay" onClick={requestClose}>
-      <div
-        data-state={isClosing ? 'closed' : 'open'}
-        onAnimationEnd={handleAnimationEnd}
-        className="glass-modal modalContent"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="modalHeader">
-          <h2>{t('passwordModal.title')}</h2>
-          <Button
-            variant="icon"
-            type="button"
-            className="modal-button modal-close"
-            onClick={requestClose}
-            aria-label={t('common.close')}
-          >
-            <CloseIcon className="h-4 w-4" />
+    <ModalLayout
+      portal
+      onClose={requestClose}
+      title={t('passwordModal.title')}
+      dataState={isClosing ? 'closed' : 'open'}
+      onAnimationEnd={handleAnimationEnd}
+    >
+      <form onSubmit={handleSubmit} className="modalForm">
+        <label>
+          {t('passwordModal.currentPassword')}
+          <input
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            placeholder={t('passwordModal.currentPasswordPlaceholder')}
+            autoComplete="current-password"
+          />
+        </label>
+
+        <label>
+          {t('passwordModal.newPassword')}
+          <input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder={t('passwordModal.newPasswordPlaceholder')}
+          />
+        </label>
+
+        <label>
+          {t('passwordModal.confirmPassword')}
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder={t('passwordModal.confirmPasswordPlaceholder')}
+          />
+        </label>
+
+        {passwordError && <p className="modalError">{passwordError}</p>}
+
+        <div className="modalActions">
+          <Button variant="secondary" onClick={requestClose}>
+            {t('passwordModal.cancel')}
+          </Button>
+          <Button variant="primary" type="submit" disabled={isChangingPassword}>
+            {isChangingPassword ? t('passwordModal.loading') : t('passwordModal.changePassword')}
           </Button>
         </div>
-
-        <form onSubmit={handleSubmit} className="modalForm">
-          <label>
-            {t('passwordModal.currentPassword')}
-            <input
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder={t('passwordModal.currentPasswordPlaceholder')}
-              autoComplete="current-password"
-            />
-          </label>
-
-          <label>
-            {t('passwordModal.newPassword')}
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder={t('passwordModal.newPasswordPlaceholder')}
-            />
-          </label>
-
-          <label>
-            {t('passwordModal.confirmPassword')}
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder={t('passwordModal.confirmPasswordPlaceholder')}
-            />
-          </label>
-
-          {passwordError && <p className="modalError">{passwordError}</p>}
-
-          <div className="modalActions">
-            <Button variant="secondary" onClick={requestClose}>
-              {t('passwordModal.cancel')}
-            </Button>
-            <Button variant="primary" type="submit" disabled={isChangingPassword}>
-              {isChangingPassword ? t('passwordModal.loading') : t('passwordModal.changePassword')}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </ModalLayout>
   );
 }

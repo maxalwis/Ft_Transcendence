@@ -119,7 +119,8 @@
     "cancel": "Cancel",
     "changePassword": "Change Password",
     "loading": "Loading...",
-    "mismatchError": "Passwords do not match."
+    "mismatchError": "Passwords do not match.",
+    "serverError": "An error occurred while changing the password. Please try again."
   },
   "authModal": {
     "loginTitle": "Sign in",

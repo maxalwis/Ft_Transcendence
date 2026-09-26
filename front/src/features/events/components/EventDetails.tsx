@@ -141,7 +141,7 @@ export default function EventDetails({
             className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold transition-all duration-200 active:scale-95"
           >
             <span>{t('eventDetails.accessLink')}</span>
-            <ExternalLinkIcon className="h-4 w-4"/>
+            <ExternalLinkIcon className="h-4 w-4" />
           </a>
         </div>
       )}

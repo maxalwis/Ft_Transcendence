@@ -89,8 +89,8 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     );
 
   return (
-    <div className="flex flex-col h-full gap-3 relative">
-      <div className="flex-1 overflow-auto">
+    <div className="flex flex-col flex-1 min-h-0 gap-3 relative">
+      <div className="flex-1 min-h-0 overflow-auto">
         <MessageOutput messages={messages} currentUserId={currentUserId} />
       </div>
       <div className="flex-none">

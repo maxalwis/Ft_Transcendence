@@ -81,10 +81,10 @@ export default function LanguageSelector({
     >
       {/* Language toggle */}
       <Button
-        variant="icon"
+        variant="flag"
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="glass-panel cursor-pointer p-2 rounded-[50%] max-[900px]:mb-1"
+        className="glass-panel max-[900px]:mb-1"
         title="Language"
         aria-label="Language"
         aria-expanded={isOpen}
@@ -104,7 +104,7 @@ export default function LanguageSelector({
         >
           {languages.map(({ code, title, Flag }) => (
             <Button
-              variant="icon"
+              variant="flag"
               key={code}
               type="button"
               onClick={() => {
@@ -112,9 +112,7 @@ export default function LanguageSelector({
                 setIsOpen(false);
               }}
               title={title}
-              className={`glass-panel cursor-pointer p-2 rounded-[50%] ${
-                currentLang?.startsWith(code) ? 'isSelected' : ''
-              }`}
+              className={`glass-panel ${currentLang?.startsWith(code) ? 'isSelected' : ''}`}
             >
               <Flag className="w-5 h-5 rounded-sm object-cover" />
             </Button>

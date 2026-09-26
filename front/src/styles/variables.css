@@ -1,75 +1,78 @@
 :root {
-    /* Colors */
-    --color-orange-primary: rgba(255, 103, 18, 1);
-    --color-orange-secondary: rgba(255, 103, 18, 0.8);
-    --color-orange-border: rgba(255, 103, 18, 0.3);
-    --color-orange-hover: rgba(255, 103, 18, 0.15);
+  /* Colors */
+  --color-orange-primary: rgba(255, 103, 18, 1);
+  --color-orange-secondary: rgba(255, 103, 18, 0.8);
+  --color-orange-border: rgba(255, 103, 18, 0.3);
+  --color-orange-hover: rgba(255, 103, 18, 0.15);
 
-    --color-blue-dark: rgba(0, 20, 120, 0.5);
-    --color-blue-glass-bg: rgb(245, 246, 255);
-    --color-text-dark: rgb(31, 31, 31);
-    --color-text-light: rgb(255, 255, 255);
+  --color-blue-dark: rgba(0, 20, 120, 0.5);
+  --color-blue-glass-bg: rgb(245, 246, 255);
+  --color-text-dark: rgb(31, 31, 31);
+  --color-text-light: rgb(255, 255, 255);
 
-    --color-warning-bg: rgba(255, 248, 225, 0.7);
-    --color-warning-border: rgba(245, 158, 11, 0.35);
-    --color-warning-text: #451a03;
-    --color-warning-hover: rgba(245, 158, 11, 0.15);
+  --color-warning-bg: rgba(255, 248, 225, 0.7);
+  --color-warning-border: rgba(245, 158, 11, 0.35);
+  --color-warning-text: #451a03;
+  --color-warning-hover: rgba(245, 158, 11, 0.15);
 
-    /* glass Presets */
-    --glass-bg: rgba(255, 255, 255, 0.75);
-    --glass-bg-whitened: rgba(255, 255, 255, 0.9);
-    --glass-border: rgba(255, 255, 255, 0.25);
-    --glass-blur: blur(5px);
-    --glass-shadow: rgba(0, 0, 0, 0.1) 0px 4px 30px;
+  /* glass Presets */
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-bg-whitened: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-blur: blur(5px);
+  --glass-shadow: rgba(0, 0, 0, 0.1) 0px 4px 30px;
 
-    /* Typography & Radii */
-    --font-main: Roboto, Arial, sans-serif;
-    --font-size-base: 16px;
-    --radius-sm: 8px;
-    --radius-lg: 16px;
+  /* Typography & Radii */
+  --font-main: Roboto, Arial, sans-serif;
+  --font-size-base: 16px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
 
-    /* Typography */
-    --font-size-xs: 0.75rem;
-    --font-size-sm: 0.875rem;
-    --font-size-base: var(--space-4);
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.5rem;
-    --font-size-2xl: 1.75rem;
+  /* Typography */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: var(--space-4);
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 1.75rem;
 
-    --font-weight-medium: 500;
-    --font-weight-semibold: 600;
-    --font-weight-bold: 700;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 
-    --line-height-tight: 1.2;
-    --line-height-normal: 1.5;
-    --line-height-relaxed: 1.6;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
 
-    /* Spacing */
-    --space-1: 0.25rem;
-    --space-2: 0.5rem;
-    --space-3: 0.75rem;
-    --space-4: 1rem;
-    --space-6: 1.5rem;
-    --space-8: 2rem;
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-9: 2.5rem;
 
-    /* Radius */
-    --radius-md: 12px;
-    --radius-full: 9999px;
+  /* Radius */
+  --radius-md: 12px;
+  --radius-full: 9999px;
 
-    /* Shadows */
-    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* Shadows */
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
 
-    /* Semantic colors */
-    --color-primary: var(--color-orange-primary);
-    --color-primary-hover: var(--color-orange-hover);
+  /* Semantic colors */
+  --color-primary: var(--color-orange-primary);
+  --color-primary-hover: var(--color-orange-hover);
 
-    --color-background: var(--color-blue-glass-bg);
-    --color-surface: var(--glass-bg);
+  --color-background: var(--color-blue-glass-bg);
+  --color-surface: var(--glass-bg);
 
-    --color-text: var(--color-text-dark);
-    --color-text-inverse: var(--color-text-light);
+  --color-text: var(--color-text-dark);
+  --color-text-inverse: var(--color-text-light);
 
-    --color-success: #16a34a;
-    --color-error: #dc2626;
+  --color-success: #16a34a;
+  --color-error: #dc2626;
 }

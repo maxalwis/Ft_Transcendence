@@ -75,7 +75,7 @@ export default function EventSidebarContent({ eventId, currentUserId }: EventSid
         {fetchedEvent ? (
           <Event event={fetchedEvent} />
         ) : (
-          <div className="text-gray-400 text-sm flex items-center justify-center p-4">
+          <div className="flex items-center justify-center p-4">
             {t('sidebar.selectEvent', 'Select an event.')}
           </div>
         )}
@@ -83,10 +83,8 @@ export default function EventSidebarContent({ eventId, currentUserId }: EventSid
       {/* Chat */}
       <div
         className={`
-          flex-1 min-h-0 flex-col pt-2
-          max-[900px]:flex
+          flex flex-1 min-h-0 flex-col pt-2
           ${mobileView === 'event' ? 'max-[900px]:hidden' : ''}
-          min-[901px]:flex
         `}
       >
         {/* Desktop chat title */}

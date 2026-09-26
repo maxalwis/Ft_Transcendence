@@ -52,7 +52,8 @@ export function DeleteConfirmPage() {
       <h1 className={styles.title}>{t('deleteConfirm.title')}</h1>
       <p className={styles.warning}>{t('deleteConfirm.warning')}</p>
 
-      <Button variant="danger"
+      <Button
+        variant="danger"
         type="button"
         onClick={handleConfirm}
         disabled={status === 'loading'}

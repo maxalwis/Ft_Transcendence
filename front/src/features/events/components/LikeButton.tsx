@@ -147,7 +147,7 @@ export default function LikeButton({
   };
 
   return (
-    <div className="inline-flex gap-1.5">
+    <div className="inline-flex gap-1.5 items-center">
       <Button
         variant="icon"
         type="button"

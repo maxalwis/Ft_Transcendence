@@ -201,6 +201,7 @@ export default function EventResultsSidebar({
           type="button"
           disabled={currentPage === 1}
           onClick={() => handlePageChange(currentPage - 1)}
+          className="modal-button orange-surrounded"
           aria-label="Previous page"
         >
           &lt;
@@ -215,6 +216,7 @@ export default function EventResultsSidebar({
           type="button"
           disabled={currentPage === totalPages}
           onClick={() => handlePageChange(currentPage + 1)}
+          className="modal-button orange-surrounded"
           aria-label="Next page"
         >
           &gt;

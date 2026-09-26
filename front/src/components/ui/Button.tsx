@@ -1,11 +1,6 @@
 import type { ButtonHTMLAttributes } from 'react';
 
-type ButtonVariant =
-  | 'primary'
-  | 'secondary'
-  | 'ghost'
-  | 'danger'
-  | 'icon';
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'icon' | 'flag';
 
 type ButtonSize = 'sm' | 'md' | 'lg';
 
@@ -22,10 +17,7 @@ export default function Button({
   ...props
 }: ButtonProps) {
   return (
-    <button
-      className={`ds-button ds-button-${variant} ds-button-${size} ${className}`}
-      {...props}
-    >
+    <button className={`ds-button ds-button-${variant} ds-button-${size} ${className}`} {...props}>
       {children}
     </button>
   );

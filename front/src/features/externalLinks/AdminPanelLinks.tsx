@@ -126,7 +126,8 @@ const DropdownMenu: React.FC = () => {
           >
             <div className="flex flex-col gap-2">
               {dashboards.map((tool) => (
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   key={tool.name}
                   type="button"
                   onClick={(e) => {

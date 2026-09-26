@@ -3,7 +3,6 @@ import { useAuth } from '../../../context/auth/useAuth';
 import { useState, useRef, useEffect } from 'react';
 import EditProfile from '../../profile/components/EditProfile.tsx';
 import Button from '../../../components/ui/Button.tsx';
-import { BackIcon } from '../../../types/icons.tsx';
 
 interface LoginButtonProps {
   onOpenAuth: () => void;
@@ -12,7 +11,6 @@ interface LoginButtonProps {
   onOpenProfile?: () => void;
   onOpenEditProfile?: () => void;
   onBack?: () => void;
-  onCloseMobileMenu?: () => void;
 }
 
 export default function LoginButton({
@@ -22,7 +20,6 @@ export default function LoginButton({
   onOpenProfile,
   onOpenEditProfile,
   onBack,
-  onCloseMobileMenu,
 }: LoginButtonProps) {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
@@ -58,19 +55,7 @@ export default function LoginButton({
 
   if (user && mobileProfileMenu) {
     return (
-      <div className="w-full flex flex-col gap-2 pt-10">
-        <Button
-          variant="icon"
-          type="button"
-          className="modal-button modal-back"
-          onClick={() => {
-            onBack?.();
-            onCloseMobileMenu?.();
-          }}
-        >
-          <BackIcon className="h-4 w-4" />
-        </Button>
-
+      <div className="w-full flex flex-col gap-2">
         <Button
           variant="ghost"
           type="button"
@@ -94,7 +79,7 @@ export default function LoginButton({
       <div className="relative" ref={menuRef}>
         <Button
           variant="icon"
-          className="h-12! w-12! overflow-hidden! rounded-full!"
+          className="orange-surrounded h-12! w-12! overflow-hidden! rounded-full!"
           aria-label={`Ouvrir le menu de ${user.username ?? 'Profile'}`}
           title={user.username ?? 'Profile'}
           onClick={() => {

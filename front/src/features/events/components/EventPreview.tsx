@@ -194,7 +194,7 @@ export default function EventPreview({
             title={t('eventPreview.seeDetails')}
             className="modal-button modal-close pointer-events-auto"
           >
-            <ExpandIcon className="h-4 w-4"/>
+            <ExpandIcon className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -211,7 +211,7 @@ export default function EventPreview({
             disabled={currentIndex === 0}
             className={`${styles['events-details-carousel-button']} disabled:opacity-40`}
           >
-            <ArrowLeftIcon className="h-4 w-4"/>
+            <ArrowLeftIcon className="h-4 w-4" />
           </Button>
           <span className={styles['events-details-carousel-counter']}>
             {currentIndex + 1} / {totalInGroup}
@@ -226,7 +226,7 @@ export default function EventPreview({
             disabled={currentIndex === totalInGroup - 1}
             className={`${styles['events-details-carousel-button']} disabled:opacity-40`}
           >
-            <CloseIcon className="h-4 w-4" />
+            <CloseIcon className="close h-4 w-4" />
           </Button>
         </div>
       )}

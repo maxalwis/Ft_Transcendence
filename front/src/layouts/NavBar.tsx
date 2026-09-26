@@ -150,7 +150,8 @@ export default function NavBar({
         {/* Category Navigation */}
         <div className="relative z-10 flex items-center justify-center min-w-0">
           {canScrollLeft && (
-            <Button variant="icon"
+            <Button
+              variant="icon"
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
@@ -159,7 +160,7 @@ export default function NavBar({
               aria-label={t('nav.scrollLeft', 'Défiler vers la gauche')}
               className="glass-icon-filter  md:hidden absolute left-0 z-20"
             >
-              <ArrowLeftIcon className="h-4 w-4"/>
+              <ArrowLeftIcon className="h-4 w-4" />
             </Button>
           )}
 
@@ -180,7 +181,8 @@ export default function NavBar({
                     : currentCategory === targetCategory;
 
                 return (
-                  <Button variant="ghost"
+                  <Button
+                    variant="ghost"
                     key={cat.value || 'all'}
                     type="button"
                     onClick={(e) => {
@@ -198,7 +200,8 @@ export default function NavBar({
           </div>
 
           {canScrollRight && (
-            <Button variant="icon"
+            <Button
+              variant="icon"
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
@@ -207,7 +210,7 @@ export default function NavBar({
               aria-label={t('nav.scrollRight', 'Défiler vers la droite')}
               className="glass-icon-filter md:hidden absolute right-0 z-20"
             >
-              <ArrowRightIcon className="h-4 w-4"/>
+              <ArrowRightIcon className="h-4 w-4" />
             </Button>
           )}
         </div>
@@ -225,7 +228,8 @@ export default function NavBar({
 
           return (
             <div key={filter.type} className="relative">
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -244,7 +248,8 @@ export default function NavBar({
                         const isActive = (priceType || '') === opt.value;
 
                         return (
-                          <Button variant="ghost"
+                          <Button
+                            variant="ghost"
                             key={opt.value || 'all-prices'}
                             type="button"
                             onClick={(e) => {
