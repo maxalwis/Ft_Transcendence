@@ -4,6 +4,7 @@ import { Prisma } from '../generated/prisma/client';
 import { BoundingBox } from './dto/bounding-box.interface';
 import { NearbyQueryDto } from './dto/map-query.dto';
 import { TranslationsService } from '../translations/translations.service';
+import { CategoryButton, CATEGORY_KEYWORDS } from './category-taxonomy';
 
 @Injectable()
 export class EventsService {
@@ -33,62 +34,27 @@ export class EventsService {
   private getCategoryCondition(category?: string) {
     if (!category || category.trim() === '') return Prisma.empty;
 
-    const cat = category.toLowerCase().trim();
+    const cat = category.toLowerCase().trim() as CategoryButton;
 
-    // Button 1: Musique (Matches Concert, Festival, Spectacle musical)
-    if (cat === 'musique' || cat === 'music') {
-      return Prisma.sql`AND EXISTS (
-      SELECT 1 FROM unnest(category) c
-      WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
-        '%concert%', '%musique%', '%festival%', '%spectacle musical%'
-      ])
-    )`;
-    }
-
-    // Button 2: Culture
-    if (cat === 'culture') {
-      return Prisma.sql`AND EXISTS (
-      SELECT 1 FROM unnest(category) c
-      WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
-        '%théâtre%', '%theatre%', '%expo%', '%danse%', '%art%', '%histoire%', '%littérature%', '%cinéma%', '%cinema%'
-      ])
-    )`;
-    }
-
-    // Button 3: Ateliers & Conférences
-    if (cat === 'ateliers' || cat === 'atelier' || cat === 'conference') {
-      return Prisma.sql`AND EXISTS (
-      SELECT 1 FROM unnest(category) c
-      WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
-        '%atelier%', '%conférence%', '%conference%', '%rencontre%'
-      ])
-    )`;
-    }
-
-    // Button 4: Loisirs & Sports
-    if (cat === 'loisirs' || cat === 'sport') {
-      return Prisma.sql`AND EXISTS (
-      SELECT 1 FROM unnest(category) c
-      WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
-        '%loisirs%', '%sport%', '%balade%', '%nature%', '%santé%', '%sante%', '%enfants%'
-      ])
-    )`;
-    }
-
-    // Button 5: Autres
-    if (cat === 'autres' || cat === 'empty' || cat === 'other') {
+    if (cat === 'autres') {
+      const allPatterns = Object.values(CATEGORY_KEYWORDS)
+        .flat()
+        .map((keyword) => `%${keyword}%`);
       return Prisma.sql`AND (
       cardinality(category) = 0
       OR category IS NULL
       OR NOT EXISTS (
         SELECT 1 FROM unnest(category) c
-        WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[
-          '%concert%', '%musique%', '%festival%', '%spectacle musical%',
-          '%théâtre%', '%theatre%', '%expo%', '%danse%', '%art%', '%histoire%', '%littérature%', '%cinéma%', '%cinema%',
-          '%atelier%', '%conférence%', '%conference%', '%rencontre%',
-          '%loisirs%', '%sport%', '%balade%', '%nature%', '%santé%', '%sante%', '%enfants%'
-        ])
+        WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[${Prisma.join(allPatterns)}])
       )
+    )`;
+    }
+
+    if (cat in CATEGORY_KEYWORDS) {
+      const patterns = CATEGORY_KEYWORDS[cat].map((keyword) => `%${keyword}%`);
+      return Prisma.sql`AND EXISTS (
+      SELECT 1 FROM unnest(category) c
+      WHERE LOWER(TRIM(c)) LIKE ANY (ARRAY[${Prisma.join(patterns)}])
     )`;
     }
 
