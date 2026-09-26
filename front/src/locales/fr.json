@@ -150,7 +150,11 @@
     "editProfile": "Modifier le profil"
   },
   "oauth": {
-    "connecting": "Connexion en cours..."
+    "connecting": "Connexion en cours...",
+    "errors": {
+      "account_exists": "Un compte existe déjà avec cette adresse email. Connectez-vous avec votre mot de passe.",
+      "oauth_failed": "La connexion a échoué. Veuillez réessayer."
+    }
   },
   "profileSettings": {
     "title": "Modifier le profil",

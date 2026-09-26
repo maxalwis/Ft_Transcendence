@@ -5,6 +5,7 @@ import { UsersService } from './users.service';
 describe('UsersController', () => {
   let controller: UsersController;
   let usersServiceMock: any;
+  const dbUser = { id: 7, username: 'bob', password: 'bcrypt-hash' };
 
   beforeEach(async () => {
     usersServiceMock = {
@@ -12,8 +13,9 @@ describe('UsersController', () => {
       findOnePublic: jest.fn(),
       searchByUsername: jest.fn(),
       changePassword: jest.fn(),
-      update: jest.fn(),
-      remove: jest.fn(),
+      update: jest.fn().mockResolvedValue(dbUser),
+      remove: jest.fn().mockResolvedValue(dbUser),
+      toPublicUser: jest.fn(({ password, ...publicUser }) => publicUser),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -74,11 +76,27 @@ describe('UsersController', () => {
     expect(usersServiceMock.update).toHaveBeenCalledWith(7, { name: 'Bob', avatar: undefined });
   });
 
+  it('update should never return the password hash', async () => {
+    const req = { user: { id: 7 } } as any;
+
+    const result = await controller.update(req, {} as any, undefined);
+
+    expect(result).not.toHaveProperty('password');
+  });
+
   it('remove should delete the authenticated user, not an arbitrary id', async () => {
     const req = { user: { id: 7 } } as any;
 
     await controller.remove(req);
 
     expect(usersServiceMock.remove).toHaveBeenCalledWith(7);
+  });
+
+  it('remove should never return the password hash', async () => {
+    const req = { user: { id: 7 } } as any;
+
+    const result = await controller.remove(req);
+
+    expect(result).not.toHaveProperty('password');
   });
 });

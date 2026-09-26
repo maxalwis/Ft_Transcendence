@@ -9,10 +9,12 @@ import {
   Body,
   UnauthorizedException,
   Get,
+  UseFilters,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { GoogleAuthGuard } from './guards/google-oauth.guard';
 import { FortyTwoAuthGuard } from './guards/fortytwo-oauth.guard';
+import { OAuthExceptionFilter, OAUTH_CALLBACK_URL } from './filters/oauth-exception.filter';
 import { AuthService } from './auth.service';
 import type { Response, Request } from 'express';
 import { User } from '../generated/prisma/client';
@@ -113,6 +115,7 @@ export class AuthController {
   }
 
   @Get('google/callback')
+  @UseFilters(OAuthExceptionFilter)
   @UseGuards(GoogleAuthGuard)
   async googleCallback(@Req() req: Request, @Res() res: Response) {
     if (!req.user) {
@@ -129,7 +132,7 @@ export class AuthController {
       path: '/',
     });
 
-    res.redirect('https://localhost:8443/oauth/callback');
+    res.redirect(OAUTH_CALLBACK_URL);
   }
 
   // --- OAuth 42 ---
@@ -140,6 +143,7 @@ export class AuthController {
   }
 
   @Get('42/callback')
+  @UseFilters(OAuthExceptionFilter)
   @UseGuards(FortyTwoAuthGuard)
   async fortyTwoCallback(@Req() req: Request, @Res() res: Response) {
     if (!req.user) {
@@ -156,6 +160,6 @@ export class AuthController {
       path: '/',
     });
 
-    res.redirect('https://localhost:8443/oauth/callback');
+    res.redirect(OAUTH_CALLBACK_URL);
   }
 }

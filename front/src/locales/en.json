@@ -150,7 +150,11 @@
     "editProfile": "Edit Profile"
   },
   "oauth": {
-    "connecting": "Connecting..."
+    "connecting": "Connecting...",
+    "errors": {
+      "account_exists": "An account already exists with this email. Please log in with your password.",
+      "oauth_failed": "Login failed. Please try again."
+    }
   },
   "profileSettings": {
     "title": "Edit Profile",

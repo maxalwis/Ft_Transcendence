@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnauthorizedException } from '@nestjs/common';
+import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -25,6 +25,7 @@ describe('AuthService', () => {
   beforeEach(async () => {
     usersServiceMock = {
       findFromEmailOrNull: jest.fn(),
+      findFromProviderOrNull: jest.fn(),
       toPublicUser: jest.fn((u) => ({ id: u.id, email: u.email })),
       createOAuth: jest.fn(),
       update: jest.fn(),
@@ -104,6 +105,56 @@ describe('AuthService', () => {
 
       expect(result).toEqual({ id: mockUser.id, email: mockUser.email });
       expect(usersServiceMock.toPublicUser).toHaveBeenCalledWith(mockUser);
+    });
+  });
+
+  describe('validateOAuthUser', () => {
+    const profile = {
+      email: 'alice@gmail.com',
+      username: 'alice',
+      provider: 'google',
+      providerId: 'google-123',
+      avatar: 'https://example.com/a.png',
+    };
+
+    it('should log in the account matching (provider, providerId)', async () => {
+      const oauthUser = { id: 7, email: profile.email, avatar: profile.avatar };
+      usersServiceMock.findFromProviderOrNull.mockResolvedValue(oauthUser);
+
+      const result = await service.validateOAuthUser(profile);
+
+      expect(usersServiceMock.findFromProviderOrNull).toHaveBeenCalledWith('google', 'google-123');
+      expect(usersServiceMock.findFromEmailOrNull).not.toHaveBeenCalled();
+      expect(result).toBe(oauthUser);
+    });
+
+    it('should refresh the avatar when the provider sends a new one', async () => {
+      usersServiceMock.findFromProviderOrNull.mockResolvedValue({ id: 7, avatar: 'old.png' });
+      usersServiceMock.update.mockResolvedValue({ id: 7, avatar: profile.avatar });
+
+      await service.validateOAuthUser(profile);
+
+      expect(usersServiceMock.update).toHaveBeenCalledWith(7, { avatar: profile.avatar });
+    });
+
+    it('should never attach an OAuth login to an existing account with the same email', async () => {
+      usersServiceMock.findFromProviderOrNull.mockResolvedValue(null);
+      usersServiceMock.findFromEmailOrNull.mockResolvedValue({ id: 1, email: profile.email });
+
+      await expect(service.validateOAuthUser(profile)).rejects.toThrow(ConflictException);
+      expect(usersServiceMock.createOAuth).not.toHaveBeenCalled();
+    });
+
+    it('should create a new account for an unknown provider identity and email', async () => {
+      const created = { id: 8, email: profile.email };
+      usersServiceMock.findFromProviderOrNull.mockResolvedValue(null);
+      usersServiceMock.findFromEmailOrNull.mockResolvedValue(null);
+      usersServiceMock.createOAuth.mockResolvedValue(created);
+
+      const result = await service.validateOAuthUser(profile);
+
+      expect(usersServiceMock.createOAuth).toHaveBeenCalledWith(profile);
+      expect(result).toBe(created);
     });
   });
 

@@ -58,6 +58,13 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: { username } });
   }
 
+  // identifie un compte OAuth par son identité chez le provider, jamais par l'email
+  async findFromProviderOrNull(provider: string, providerId: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { provider_providerId: { provider, providerId } },
+    });
+  }
+
   // fonction pour chercher les users à ajouter dans la liste d'amis
   // exclut le user qui fait la recherche de la liste
   async searchByUsername(query: string, excludeUserId?: number): Promise<SafeUser[]> {
@@ -111,7 +118,6 @@ export class UsersService {
     id: number,
     data: {
       username?: string;
-      email?: string;
       avatar?: string;
       preferredLanguage?: 'FR' | 'EN' | 'ES' | 'AR';
       preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS';
