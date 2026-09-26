@@ -53,10 +53,10 @@ export default function LanguageSelector({
         pointer-events-auto
 
         min-[901px]:top-4
-        min-[901px]:flex
-        min-[901px]:items-center
-        min-[901px]:gap-2
-        min-[901px]:flex-row-reverse
+        flex
+        items-center
+        gap-2
+        flex-col
       "
     >
       {/* Language toggle */}
@@ -64,7 +64,7 @@ export default function LanguageSelector({
         variant="flag"
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="glass-panel max-[900px]:mb-1"
+        className="glass-panel mb-1"
         title="Language"
         aria-label="Language"
         aria-expanded={isOpen}
@@ -72,16 +72,19 @@ export default function LanguageSelector({
         <LanguageIcon className="w-5 h-5" />
       </Button>
 
-      {isOpen && (
-        <div
-          className="
-          flex
-          flex-col
-          gap-2
-
-          min-[901px]:flex-row
-        "
-        >
+      <div
+        inert={!isOpen}
+        aria-hidden={!isOpen}
+        className={`
+          grid
+          transition-[grid-template-rows,opacity,transform]
+          duration-300
+          ease-out
+          motion-reduce:transition-none
+          ${isOpen ? 'grid-rows-[1fr] opacity-100 translate-y-0' : 'grid-rows-[0fr] opacity-0 -translate-y-2'}
+        `}
+      >
+        <div className="flex gap-2 flex-col overflow-hidden min-h-0">
           {languages.map(({ code, title, Flag }) => (
             <Button
               variant="flag"
@@ -98,7 +101,7 @@ export default function LanguageSelector({
             </Button>
           ))}
         </div>
-      )}
+      </div>
     </div>
   ) : (
     // Desktop / non-embedded
@@ -110,13 +113,12 @@ export default function LanguageSelector({
       right-4
       z-1100
       flex
-      flex-row
       items-center
       gap-2
       pointer-events-auto
 
       max-[900px]:top-[19%]
-      max-[900px]:flex-col
+      flex-col
     "
     >
       {languages.map(({ code, title, Flag }) => (
