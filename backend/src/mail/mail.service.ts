@@ -9,10 +9,15 @@ export class MailService implements OnModuleInit {
 
   onModuleInit(): void {
     this.from = process.env.MAIL_FROM ?? 'no-reply@transcendence.local';
+    const port = Number(process.env.MAIL_PORT ?? 1025);
+    const user = process.env.MAIL_USER;
     this.transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST ?? 'mailpit',
-      port: Number(process.env.MAIL_PORT ?? 1025),
-      secure: false, // Mailpit dev SMTP is plaintext, no TLS
+      port,
+      // Implicit TLS on 465 (Gmail); Mailpit on 1025 is plaintext
+      secure: port === 465,
+      // Mailpit accepts anonymous SMTP; real providers need credentials
+      auth: user ? { user, pass: process.env.MAIL_PASS } : undefined,
     });
   }
 
