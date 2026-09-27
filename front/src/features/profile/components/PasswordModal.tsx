@@ -14,7 +14,7 @@ interface PasswordModalProps {
 export default function PasswordModal({ onClose }: PasswordModalProps) {
   const { t } = useTranslation();
   const { logout } = useAuth();
-  const { showWarning } = useNotification();
+  const { showSuccess } = useNotification();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -49,7 +49,7 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
       await changePassword(currentPassword, newPassword);
       // Le backend a révoqué toutes les sessions, y compris celle-ci :
       // on déconnecte localement et on demande de se reconnecter.
-      showWarning(t('passwordModal.reloginRequired'));
+      showSuccess(t('passwordModal.reloginRequired'));
       onClose();
       logout();
     } catch (err) {

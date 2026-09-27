@@ -72,7 +72,7 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
     if (!accessToken) return;
     try {
       await requestAccountDeletion();
-      showWarning(t('profileSettings.deleteEmailSent'));
+      showSuccess(t('profileSettings.deleteEmailSent'));
     } catch {
       showWarning(t('profileSettings.deleteRequestError'));
     }
