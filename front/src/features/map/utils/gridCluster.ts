@@ -32,6 +32,7 @@ export type ClusterItem =
       lng: number;
       count: number;
       bounds: ClusterBounds;
+      groups: EventGroup[];
     };
 
 export function projectLatLng(lat: number, lng: number) {
@@ -45,6 +46,19 @@ export function projectLatLng(lat: number, lng: number) {
 // Computed once per dataset, not on every pan/zoom.
 export function toClusterPoints(groups: EventGroup[]): ClusterPoint[] {
   return groups.map((group) => ({ group, ...projectLatLng(group.latitude, group.longitude) }));
+}
+
+// Size (in the same normalized [0,1] world units as ClusterPoint) of a grid cell `cellPx` wide
+// at the given zoom. Mirrors the cell math used inside clusterViewport.
+export function cellSizeAt(zoom: number, cellPx: number): number {
+  return cellPx / (TILE_SIZE * 2 ** zoom);
+}
+
+// Widest projected span (x or y) of a bounds box, in the same normalized world units.
+export function projectedSpan(bounds: ClusterBounds): number {
+  const sw = projectLatLng(bounds.south, bounds.west);
+  const ne = projectLatLng(bounds.north, bounds.east);
+  return Math.max(Math.abs(ne.x - sw.x), Math.abs(ne.y - sw.y));
 }
 
 export function getViewRange(bounds: {
@@ -103,6 +117,9 @@ export function clusterViewport(
     let north = -Infinity;
     let west = Infinity;
     let east = -Infinity;
+    // Real number of events behind the cluster, not the number of merged groups: a member group
+    // can itself already bundle several events sharing exact coordinates (see createGroupMarkerIcon).
+    let totalEvents = 0;
 
     for (const { group, x, y } of members) {
       sumLat += group.latitude;
@@ -113,6 +130,7 @@ export function clusterViewport(
       north = Math.max(north, group.latitude);
       west = Math.min(west, group.longitude);
       east = Math.max(east, group.longitude);
+      totalEvents += group.events.length;
     }
 
     const cx = sumX / members.length;
@@ -124,8 +142,9 @@ export function clusterViewport(
       key: `c:${zoom}:${cellKey}`,
       lat: sumLat / members.length,
       lng: sumLng / members.length,
-      count: members.length,
+      count: totalEvents,
       bounds: { south, west, north, east },
+      groups: members.map((member) => member.group),
     });
   }
 

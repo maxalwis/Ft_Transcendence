@@ -4,8 +4,10 @@ import L from 'leaflet';
 import type { EventGroup, EventItem } from '../../../types/event';
 import { createGroupMarkerIcon, createClusterIcon, setMarkerHovered } from './CustomIcons';
 import {
+  cellSizeAt,
   clusterViewport,
   getViewRange,
+  projectedSpan,
   toClusterPoints,
   type ClusterBounds,
   type ClusterItem,
@@ -28,6 +30,7 @@ interface MarkerEntry {
   signature: number;
   group?: EventGroup;
   bounds?: ClusterBounds;
+  clusterGroups?: EventGroup[];
 }
 
 // Former markercluster `maxClusterRadius` values. A marker joins a cluster if it is within this
@@ -96,12 +99,27 @@ export function ClusterLayer({
         signature: item.kind === 'cluster' ? item.count : item.group.events.length,
         group: item.kind === 'point' ? item.group : undefined,
         bounds: item.kind === 'cluster' ? item.bounds : undefined,
+        clusterGroups: item.kind === 'cluster' ? item.groups : undefined,
       };
 
       if (item.kind === 'cluster') {
         marker.on('click', (e) => {
           L.DomEvent.stopPropagation(e.originalEvent);
-          const { south, west, north, east } = entry.bounds!;
+          const bounds = entry.bounds!;
+          const maxZoom = map.getMaxZoom();
+          const minCellSize = cellSizeAt(maxZoom, getCellSize(maxZoom));
+
+          // The members are closer together than the smallest possible grid cell (the one at
+          // the map's deepest zoom): no amount of zooming can ever split them into separate
+          // cells, so open their combined event list instead of fitting bounds into a dead end.
+          if (projectedSpan(bounds) < minCellSize) {
+            const events = entry.clusterGroups?.flatMap((group) => group.events) ?? [];
+            if (events.length) handlersRef.current.onGroupClick(events);
+            return;
+          }
+
+          const { south, west, north, east } = bounds;
+
           map.fitBounds(
             [
               [south, west],
@@ -151,6 +169,7 @@ export function ClusterLayer({
 
         existing.group = item.kind === 'point' ? item.group : existing.group;
         existing.bounds = item.kind === 'cluster' ? item.bounds : existing.bounds;
+        existing.clusterGroups = item.kind === 'cluster' ? item.groups : existing.clusterGroups;
 
         if (existing.signature !== signature) {
           existing.signature = signature;
