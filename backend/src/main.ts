@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import { AppLogger } from './logger/app-logger.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PublicApiModule } from './public-api/public-api.module';
+import { CORS_ORIGIN } from './cors.config';
 
 // A stray promise rejection (e.g. in a socket lifecycle handler) must not
 // crash the whole backend; log it instead of letting the process exit.
@@ -22,17 +23,12 @@ async function bootstrap() {
   app.setGlobalPrefix('api', {
     exclude: [{ path: 'health', method: RequestMethod.GET }],
   });
+  // Sans origine explicite, cors retomberait sur '*' : on préfère ne pas démarrer.
+  if (!CORS_ORIGIN) {
+    throw new Error('FRONTEND_URL must be set (allowed CORS origin)');
+  }
   app.enableCors({
-    origin: (
-      origin: string | undefined,
-      callback: (err: Error | null, allow?: boolean) => void
-    ) => {
-      if (!origin || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Unauthorized by CORS'));
-      }
-    },
+    origin: CORS_ORIGIN,
     credentials: true,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With'],

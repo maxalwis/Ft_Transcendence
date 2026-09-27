@@ -17,9 +17,10 @@ import { RealtimeEmitterService } from './realtime-emitter.service';
 import { EventsService } from '../events/events.service';
 import { User, UserStatus } from '../generated/prisma/browser';
 import { LoggerMiddleware } from '../logger.middleware';
+import { CORS_ORIGIN } from '../cors.config';
 
 @WebSocketGateway({
-  cors: { origin: process.env.FRONTEND_URL, credentials: true },
+  cors: { origin: CORS_ORIGIN, credentials: true },
 })
 export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(RealtimeGateway.name);
