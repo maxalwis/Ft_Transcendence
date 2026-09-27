@@ -5,6 +5,8 @@ import { DEFAULT_ZOOM } from '../../../types/constants';
 
 // When leaving an event, zoom out to DEFAULT_ZOOM + this instead of the full default view
 const ZOOM_OUT_OFFSET = 2;
+// Minimum zoom when focusing a selected event. Never zoomed out below this to reach it.
+const EVENT_FOCUS_ZOOM = 16;
 
 export function EventMapController({
   eventId,
@@ -48,8 +50,11 @@ export function EventMapController({
       return;
     }
 
-    // Map flyTo with a duration of 0.8 seconds to the event's coordinates at zoom level 16
-    map.flyTo([latitude, longitude], 16, {
+    // Fly to the event's coordinates, only zooming in: if the user is already zoomed in further
+    // (e.g. manually separated a tight cluster), selecting one of its events must not zoom back
+    // out and reassemble the cluster underneath them.
+    const targetZoom = Math.max(map.getZoom(), EVENT_FOCUS_ZOOM);
+    map.flyTo([latitude, longitude], targetZoom, {
       duration: 0.8,
     });
   }, [eventId, map]);
