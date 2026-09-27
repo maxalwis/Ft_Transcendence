@@ -162,10 +162,13 @@ describe('Realtime multi-user concurrency (e2e)', () => {
       eventId: string;
     }>(socketB, 'message:new');
 
-    socketA.emit('message:send', {
-      content: 'Realtime message from user A',
-      eventId,
-    });
+    // Messages are sent over REST (validated + rate-limited), then broadcast
+    // to the event room over Socket.IO.
+    await agent(app.getHttpServer())
+      .post(`/events/${eventId}/messages`)
+      .set('Authorization', `Bearer ${tokenA}`)
+      .send({ content: 'Realtime message from user A' })
+      .expect(201);
 
     const message = await messagePromise;
 

@@ -227,7 +227,12 @@
     "done": "Tu cuenta ha sido eliminada permanentemente. Redirigiendo…",
     "invalidLink": "Enlace de confirmación no válido o ausente.",
     "error": "El enlace de confirmación no es válido o ha caducado. Solicita la eliminación de nuevo.",
-    "deletedElsewhere": "Tu cuenta ha sido eliminada."
+    "deletedElsewhere": "Tu cuenta ha sido eliminada.",
+    "mustLogin": "Debes iniciar sesión en esta cuenta para confirmar la eliminación.",
+    "passwordLabel": "Introduce tu contraseña",
+    "passwordRequired": "Por favor, introduce tu contraseña.",
+    "wrongPassword": "Contraseña incorrecta.",
+    "expired": "Este enlace de confirmación ha caducado. Solicita la eliminación de nuevo."
   },
   "sidebar": {
     "event": "Evento",

@@ -56,3 +56,12 @@
   color: #dc2626;
   font-size: 0.9rem;
 }
+
+.passwordInput {
+  width: 100%;
+  max-width: 280px;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border, #ccc);
+  font-size: 0.95rem;
+}

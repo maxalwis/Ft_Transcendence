@@ -64,24 +64,50 @@ describe('UsersService', () => {
     });
   });
 
-  describe('create', () => {
-    it('should create and return a user', async () => {
+  describe('createLocal', () => {
+    const newUser = { username: 'alice', email: 'alice@example.com', password: 'plainPassword' };
+
+    it('should store a bcrypt hash, never the plain password', async () => {
       prismaMock.user.create.mockResolvedValue(mockUser);
 
-      const result = await service.create({ name: 'Alice', email: 'alice@example.com' });
+      const result = await service.createLocal(newUser);
+
       expect(result).toEqual(mockUser);
+      const { data } = prismaMock.user.create.mock.calls[0][0];
+      expect(data.password).not.toBe('plainPassword');
+      expect(await bcrypt.compare('plainPassword', data.password)).toBe(true);
     });
 
-    it('should throw ConflictException if email already exists (P2002)', async () => {
+    it('should throw ConflictException if email or username already exists (P2002)', async () => {
       const prismaError = new Prisma.PrismaClientKnownRequestError('Unique constraint failed', {
         code: 'P2002',
         clientVersion: '7.0.0',
       });
       prismaMock.user.create.mockRejectedValue(prismaError);
 
-      await expect(service.create({ name: 'Alice', email: 'alice@example.com' })).rejects.toThrow(
-        ConflictException
-      );
+      await expect(service.createLocal(newUser)).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('createOAuth', () => {
+    it('should sanitize the provider name and suffix it when already taken', async () => {
+      // "Élodie Martin" -> "Elodie_Martin" is taken, "Elodie_Martin1" is free
+      prismaMock.user.findUnique
+        .mockResolvedValueOnce({ id: 2 })
+        .mockResolvedValueOnce(null);
+      prismaMock.user.create.mockResolvedValue(mockUser);
+
+      await service.createOAuth({
+        username: 'Élodie Martin',
+        email: 'elodie@example.com',
+        provider: 'google',
+        providerId: 'g-123',
+        avatar: '',
+      });
+
+      const { data } = prismaMock.user.create.mock.calls[0][0];
+      expect(data.username).toBe('Elodie_Martin1');
+      expect(data.password).toBeNull();
     });
   });
 

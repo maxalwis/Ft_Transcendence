@@ -227,7 +227,12 @@
     "done": "Your account has been permanently deleted. Redirecting…",
     "invalidLink": "Invalid or missing confirmation link.",
     "error": "The confirmation link is invalid or expired. Please request deletion again.",
-    "deletedElsewhere": "Your account has been deleted."
+    "deletedElsewhere": "Your account has been deleted.",
+    "mustLogin": "You must be logged in to this account to confirm deletion.",
+    "passwordLabel": "Enter your password",
+    "passwordRequired": "Please enter your password.",
+    "wrongPassword": "Incorrect password.",
+    "expired": "This confirmation link has expired. Please request deletion again."
   },
   "sidebar": {
     "event": "Event",

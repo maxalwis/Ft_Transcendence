@@ -3,6 +3,8 @@ import type { Request, Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { GdprService } from './gdpr.service';
 import { ConfirmDeletionDto } from './dto/confirm-deletion.dto';
+import { Throttle } from '@nestjs/throttler';
+import { AUTH_THROTTLE } from '../throttler/http-throttler.guard';
 
 @Controller('gdpr')
 export class GdprController {
@@ -28,9 +30,13 @@ export class GdprController {
     };
   }
 
-  // POST /api/gdpr/delete-confirm -> token-authenticated; performs the deletion
+  // POST /api/gdpr/delete-confirm -> requires being logged in as the target account,
+  // plus the emailed token, plus the password (for password accounts).
+  // The route now checks a password: same brute-force budget as login.
+  @Throttle(AUTH_THROTTLE)
+  @UseGuards(JwtAuthGuard)
   @Post('delete-confirm')
-  confirm(@Body() body: ConfirmDeletionDto) {
-    return this.gdpr.confirmDeletion(body.token);
+  confirm(@Req() req: Request, @Body() dto: ConfirmDeletionDto) {
+    return this.gdpr.confirmDeletion(req.user!.id, dto.token, dto.password);
   }
 }

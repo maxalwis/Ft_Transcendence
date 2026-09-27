@@ -22,13 +22,33 @@ export async function requestAccountDeletion(accessToken: string): Promise<void>
   if (!res.ok) throw new Error('Failed to request account deletion');
 }
 
-// Step 2: confirm with the token from the email link (no session needed).
-export async function confirmAccountDeletion(token: string): Promise<void> {
+// Step 2: confirm from the logged-in account, with the emailed token and
+// (for password accounts) the current password. Throws the HTTP status so the
+// caller can tell a wrong password (401) from other failures.
+export async function confirmAccountDeletion(
+  token: string,
+  password: string | undefined,
+  accessToken: string
+): Promise<void> {
   const res = await fetch(`${API_URL}/delete-confirm`, {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token }),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ token, password }),
   });
-  if (!res.ok) throw new Error('Failed to confirm account deletion');
+  if (!res.ok) {
+    // Prefer the backend's machine-readable code (TOKEN_EXPIRED / WRONG_PASSWORD / ...);
+    // fall back to the HTTP status if there's no JSON body.
+    let code = String(res.status);
+    try {
+      const body = await res.json();
+      if (body?.code) code = body.code;
+    } catch {
+      /* no JSON body */
+    }
+    throw new Error(code);
+  }
 }

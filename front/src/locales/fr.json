@@ -227,7 +227,12 @@
     "done": "Votre compte a été définitivement supprimé. Redirection…",
     "invalidLink": "Lien de confirmation invalide ou manquant.",
     "error": "Le lien de confirmation est invalide ou expiré. Veuillez refaire une demande de suppression.",
-    "deletedElsewhere": "Votre compte a été supprimé."
+    "deletedElsewhere": "Votre compte a été supprimé.",
+    "mustLogin": "Vous devez être connecté à ce compte pour confirmer la suppression.",
+    "passwordLabel": "Entrez votre mot de passe",
+    "passwordRequired": "Veuillez saisir votre mot de passe.",
+    "wrongPassword": "Mot de passe incorrect.",
+    "expired": "Ce lien de confirmation a expiré. Veuillez refaire une demande de suppression."
   },
   "sidebar": {
     "event": "Événement",

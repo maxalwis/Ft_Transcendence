@@ -40,20 +40,11 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
   const [isSaving, setIsSaving] = useState(false);
   const { showWarning } = useNotification();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [privacyMessage, setPrivacyMessage] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isOAuthUser = Boolean(user?.provider && user.provider !== 'local');
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    setAvatarFile(file);
-
-    if (file) {
-      setAvatarPreview(URL.createObjectURL(file));
-    }
-  };
-
+  // GDPR: download all of the user's data as a JSON file
   const handleExportData = async () => {
     if (!accessToken) return;
     const data = await exportMyData(accessToken);
@@ -66,10 +57,20 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
     URL.revokeObjectURL(url);
   };
 
+  // GDPR: ask the backend to email a deletion-confirmation link
   const handleDeleteRequest = async () => {
     if (!accessToken) return;
     await requestAccountDeletion(accessToken);
-    setPrivacyMessage(t('profileSettings.deleteEmailSent'));
+    showWarning(t('profileSettings.deleteEmailSent'));
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    setAvatarFile(file);
+
+    if (file) {
+      setAvatarPreview(URL.createObjectURL(file));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -210,6 +211,22 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
           </button>
         )}
 
+        <div className={styles.privacySection}>
+          <h3>{t('profileSettings.privacyTitle')}</h3>
+          <div className={styles.privacyButtons}>
+            <button type="button" className="btnSecondary" onClick={handleExportData}>
+              {t('profileSettings.downloadData')}
+            </button>
+            <button
+              type="button"
+              className={`btnSecondary ${styles.btnDanger}`}
+              onClick={handleDeleteRequest}
+            >
+              {t('profileSettings.deleteAccount')}
+            </button>
+          </div>
+        </div>
+
         <div className="modalActions">
           <button type="button" className="btnSecondary" onClick={onClose}>
             {t('profileSettings.cancel')}
@@ -218,23 +235,6 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
           <button type="submit" className="btnPrimary" disabled={isSaving}>
             {isSaving ? t('profileSettings.saving') : t('profileSettings.save')}
           </button>
-        </div>
-
-        <div className={styles.privacySection}>
-          <h3>{t('profileSettings.privacyTitle')}</h3>
-          <div className={styles.privacyButtons}>
-            <button type="button" className={styles.btnSecondary} onClick={handleExportData}>
-              {t('profileSettings.downloadData')}
-            </button>
-            <button
-              type="button"
-              className={`${styles.btnSecondary} ${styles.btnDanger}`}
-              onClick={handleDeleteRequest}
-            >
-              {t('profileSettings.deleteAccount')}
-            </button>
-          </div>
-          {privacyMessage && <p className={styles.modalError}>{privacyMessage}</p>}
         </div>
       </form>
 
