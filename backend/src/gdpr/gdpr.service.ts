@@ -2,7 +2,9 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
+  ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -15,6 +17,8 @@ const DELETE_PURPOSE = 'gdpr-account-deletion';
 
 @Injectable()
 export class GdprService {
+  private readonly logger = new Logger(GdprService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
@@ -38,11 +42,16 @@ export class GdprService {
     const { password, ...profile } = user;
 
     if (user.email) {
-      await this.mail.sendMail({
-        to: user.email,
-        subject: 'Your data export',
-        text: 'You requested a copy of your data. It was generated and downloaded from your account.',
-      });
+      try {
+        await this.mail.sendMail({
+          to: user.email,
+          subject: 'Your data export',
+          text: 'You requested a copy of your data. It was generated and downloaded from your account.',
+        });
+      } catch (err) {
+        // The export itself succeeded; a notification email is a courtesy, not the deliverable.
+        this.logger.warn(`Failed to send data export notification to user ${userId}: ${err}`);
+      }
     }
 
     return {
@@ -66,16 +75,22 @@ export class GdprService {
 
     const appUrl = process.env.APP_URL ?? 'https://localhost:8443';
     const confirmUrl = `${appUrl}/account/delete-confirm?token=${token}`;
-    await this.mail.sendMail({
-      to: user.email,
-      subject: 'Confirm your account deletion',
-      text:
-        'You requested to permanently delete your account. This cannot be undone.\n\n' +
-        `To confirm, open this link within 15 minutes:\n\n${confirmUrl}`,
-      html:
-        '<p>You requested to permanently delete your account. This cannot be undone.</p>' +
-        `<p><a href="${confirmUrl}">Confirm account deletion</a> (valid for 15 minutes)</p>`,
-    });
+    try {
+      await this.mail.sendMail({
+        to: user.email,
+        subject: 'Confirm your account deletion',
+        text:
+          'You requested to permanently delete your account. This cannot be undone.\n\n' +
+          `To confirm, open this link within 15 minutes:\n\n${confirmUrl}`,
+        html:
+          '<p>You requested to permanently delete your account. This cannot be undone.</p>' +
+          `<p><a href="${confirmUrl}">Confirm account deletion</a> (valid for 15 minutes)</p>`,
+      });
+    } catch (err) {
+      // Here the email IS the deliverable: without it the user has no way to confirm.
+      this.logger.error(`Failed to send deletion confirmation email to user ${userId}: ${err}`);
+      throw new ServiceUnavailableException('Unable to send confirmation email. Please try again later.');
+    }
   }
 
   /**
@@ -137,11 +152,16 @@ export class GdprService {
     this.emitter.disconnectUser(payload.sub);
 
     if (user.email) {
-      await this.mail.sendMail({
-        to: user.email,
-        subject: 'Your account has been deleted',
-        text: 'Your account and all associated data have been permanently deleted.',
-      });
+      try {
+        await this.mail.sendMail({
+          to: user.email,
+          subject: 'Your account has been deleted',
+          text: 'Your account and all associated data have been permanently deleted.',
+        });
+      } catch (err) {
+        // The account is already deleted at this point; the email is just a notice.
+        this.logger.warn(`Failed to send deletion notice to user ${payload.sub}: ${err}`);
+      }
     }
 
     return { deleted: true, userId: payload.sub };

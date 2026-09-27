@@ -179,7 +179,9 @@
     "privacyTitle": "Privacidad",
     "downloadData": "Descargar mis datos",
     "deleteAccount": "Eliminar mi cuenta",
-    "deleteEmailSent": "Se ha enviado un correo de confirmación. Revisa tu bandeja de entrada para finalizar la eliminación."
+    "deleteEmailSent": "Se ha enviado un correo de confirmación. Revisa tu bandeja de entrada para finalizar la eliminación.",
+    "exportError": "No se pudieron exportar tus datos",
+    "deleteRequestError": "No se pudo enviar el correo de confirmación"
   },
   "publicProfile": {
     "title": "Ver perfil",

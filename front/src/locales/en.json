@@ -179,7 +179,9 @@
     "privacyTitle": "Privacy",
     "downloadData": "Download my data",
     "deleteAccount": "Delete my account",
-    "deleteEmailSent": "A confirmation email has been sent. Check your inbox to finish deleting your account."
+    "deleteEmailSent": "A confirmation email has been sent. Check your inbox to finish deleting your account.",
+    "exportError": "Unable to export your data",
+    "deleteRequestError": "Unable to send the confirmation email"
   },
   "publicProfile": {
     "title": "View Profile",

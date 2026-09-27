@@ -179,7 +179,9 @@
     "privacyTitle": "Confidentialité",
     "downloadData": "Télécharger mes données",
     "deleteAccount": "Supprimer mon compte",
-    "deleteEmailSent": "Un e-mail de confirmation a été envoyé. Consultez votre boîte de réception pour finaliser la suppression."
+    "deleteEmailSent": "Un e-mail de confirmation a été envoyé. Consultez votre boîte de réception pour finaliser la suppression.",
+    "exportError": "Impossible d'exporter vos données",
+    "deleteRequestError": "Impossible d'envoyer l'e-mail de confirmation"
   },
   "publicProfile": {
     "title": "Voir profil",
