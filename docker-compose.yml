@@ -13,7 +13,6 @@ services:
       - '${HTTPS_PORT:-8443}:443'
       - '${STUDIO_HTTPS_PORT:-8444}:444'
       - '${KIBANA_HTTPS_PORT:-8445}:445'
-      - '${MAILPIT_UI_PORT:-8446}:446'
       - '${ES_HTTPS_PORT:-8447}:447'
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro,z
@@ -78,9 +77,6 @@ services:
     env_file:
       - .env
     environment:
-      - MAIL_HOST=${MAIL_HOST:-mailpit}
-      - MAIL_PORT=${MAIL_PORT:-1025}
-      - MAIL_FROM=${MAIL_FROM:-no-reply@transcendence.local}
       - NODE_ENV=development
       - PORT=${BACKEND_PORT:-3000}
       - LIBRETRANSLATE_URL=${LIBRETRANSLATE_URL}
@@ -295,13 +291,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-
-  mailpit:
-    image: docker.io/axllent/mailpit:latest
-    container_name: mailpit
-    restart: unless-stopped
-    networks:
-      - transcendence_network
 
 volumes:
   postgres_data:
