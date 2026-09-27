@@ -4,6 +4,7 @@ import styles from '../Event.module.css';
 import LikeButton from './LikeButton';
 import Button from '../../../components/ui/Button';
 import { ArrowLeftIcon, ArrowRightIcon } from '../../../types/icons';
+import EventImage from './EventImage';
 
 export interface Friend {
   id: string;
@@ -66,7 +67,7 @@ export default function EventPreview({
   dateStart,
   dateEnd,
   interestedUsersCount = 0,
-  imageUrl = '/event_image.webp',
+  imageUrl,
   totalInGroup = 1,
   currentIndex = 0,
   onPrev,
@@ -180,16 +181,12 @@ export default function EventPreview({
     >
       <div className={styles['events-details-image-container']}>
         {imageUrl && (
-          <img
-            src={imageUrl}
-            alt={title || t('eventPreview.defaultAlt')}
-            className={styles['events-details-image']}
-          />
+          <EventImage src={imageUrl} alt={title || t('eventPreview.defaultAlt')} />
         )}
       </div>
 
       {totalInGroup > 1 && (
-        <div dir="ltr" className="flex justify-between items-center px-3 py-1.5">
+        <div dir="ltr" className="flex justify-between items-center px-5 pt-3">
           <Button
             variant="icon"
             type="button"

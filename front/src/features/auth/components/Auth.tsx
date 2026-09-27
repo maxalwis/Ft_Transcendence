@@ -3,6 +3,7 @@ import { useAuth } from '../../../context/auth/useAuth';
 import { useState, useRef, useEffect } from 'react';
 import EditProfile from '../../profile/components/EditProfile.tsx';
 import Button from '../../../components/ui/Button.tsx';
+import Avatar from '../../../components/ui/Avatar.tsx';
 
 interface LoginButtonProps {
   onOpenAuth: () => void;
@@ -91,16 +92,12 @@ export default function LoginButton({
             setIsMenuOpen((prev) => !prev);
           }}
         >
-          {user.avatar ? (
-            <img
-              src={user.avatar}
-              alt="Avatar"
-              referrerPolicy="no-referrer"
-              className="block h-full w-full rounded-full object-cover"
-            />
-          ) : (
-            (user.username?.charAt(0).toUpperCase() ?? '?')
-          )}
+          <Avatar
+            avatar={user.avatar}
+            username={user.username}
+            referrerPolicy="no-referrer"
+            className="block h-full w-full rounded-full object-contain"
+          />
         </Button>
 
         {isMenuOpen && (

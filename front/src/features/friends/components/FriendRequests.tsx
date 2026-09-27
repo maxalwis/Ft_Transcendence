@@ -3,6 +3,7 @@ import type { PendingRequest } from '../../../api/friends';
 import { acceptFriendRequest, rejectFriendRequest } from '../../../api/friends';
 import { useNotification } from '../../../context/notifications/useNotification';
 import Button from '../../../components/ui/Button';
+import Avatar from '../../../components/ui/Avatar';
 import { BackIcon } from '../../../types/icons';
 
 type FriendsRequestsProps = {
@@ -75,12 +76,13 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
         return (
           <div key={req.id} className="flex items-center justify-between gap-1 px-3 py-2">
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-xs font-semibold text-white">
-                {displayPhoto ? (
-                  <img src={displayPhoto} alt="" className="h-full w-full object-cover" />
-                ) : (
-                  displayName.charAt(0).toUpperCase()
-                )}
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full text-xs font-semibold text-white">
+                <Avatar
+                  avatar={displayPhoto}
+                  username={displayName}
+                  alt=""
+                  className="h-full w-full object-contain"
+                />
               </div>
 
               <span className="truncate">{displayName}</span>

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import type { User } from '../../../api/friends';
 import { useTranslation } from 'react-i18next';
-import { resolveAvatarUrl } from '../utils/avatar';
 import styles from '../ProfileModal.module.css';
 import ModalLayout from '../../../components/ui/ModalLayout';
 import Button from '../../../components/ui/Button';
+import Avatar from '../../../components/ui/Avatar';
 
 interface ViewProfileProps {
   friend: User;
@@ -45,15 +45,11 @@ export default function ViewProfile({ friend, onClose, onRemove }: ViewProfilePr
     >
       <div className="flex flex-col items-center gap-4">
         <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-2xl font-semibold text-white">
-          {friend.avatar ? (
-            <img
-              src={resolveAvatarUrl(friend.avatar) ?? undefined}
-              alt="Avatar"
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            friend.username.charAt(0).toUpperCase()
-          )}
+          <Avatar
+            avatar={friend.avatar}
+            username={friend.username}
+            className="h-full w-full object-contain"
+          />
         </div>
 
         <h3 className="m-0! text-lg! text-slate-900!">{friend.username}</h3>

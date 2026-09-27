@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { EventItem } from '../../../types/event';
 import { useTranslatedEvent } from '../hooks/useTranslatedEvent';
 import { PriceIcon } from './PriceIcon';
+import EventImage from './EventImage';
 
 interface EventResultCardProps {
   event: EventItem;
@@ -70,11 +71,7 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
     >
       <div className="flex flex-col">
         <div className="aspect-[16/11] shrink-0 overflow-hidden rounded-lg">
-          <img
-            src={event.coverUrl || '/event_image.webp'}
-            alt={displayedTitle || t('eventPreview.defaultAlt')}
-            className="h-full w-full object-cover"
-          />
+        <EventImage src={event.coverUrl} alt={event.title} />
         </div>
 
         <div className="flex min-h-[76px] flex-col pt-3 leading-tight">

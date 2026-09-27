@@ -10,7 +10,7 @@
 
 /* Compact NavBar: top-left controls (zoom, admin links) start on the second row */
 :global([data-nav-compact='true'] .leaflet-top.leaflet-left) {
-  @media (max-width: 900px) {
+  @media (max-width: 750px) {
     top: calc(var(--nav-row2-top) - 0.5rem);
   }
 }

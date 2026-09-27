@@ -119,7 +119,7 @@ export default function EventDetails({
         {dateEnd ? ` - ${formatDate(dateEnd, currentLocale, unknownDateText)}` : ''}
       </p>
       {translatedPriceType && (
-        <p className="mb-1! text-xs text-slate-200">
+        <p className="mb-1! text-xs truncate">
           {translatedPriceType}
           {isPaid && cleanedPriceDetail ? ` - ${cleanedPriceDetail}` : ''}
         </p>

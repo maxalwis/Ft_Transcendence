@@ -84,7 +84,15 @@ export class UsersService {
   async createOAuth(data: CreateOAuthUserDto): Promise<User> {
     const uniqueUsername = await this.generateUniqueUsername(data.username);
     return this.catchDuplicateError(() =>
-      this.prisma.user.create({ data: { ...data, username: uniqueUsername, password: null } })
+      this.prisma.user.create({
+        data: {
+          ...data,
+          // avatar vide côté provider OAuth -> laisse Prisma appliquer le défaut
+          avatar: data.avatar || undefined,
+          username: uniqueUsername,
+          password: null,
+        },
+      })
     );
   }
 

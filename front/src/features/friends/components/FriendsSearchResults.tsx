@@ -7,6 +7,7 @@ import { sendFriendRequest } from '../../../api/friends';
 import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 import Button from '../../../components/ui/Button';
+import Avatar from '../../../components/ui/Avatar';
 
 type FriendsSearchResultsProps = {
   input: string;
@@ -116,11 +117,12 @@ export default function FriendsSearchResults({
               <div className="flex min-w-0 items-center gap-3">
                 <div className="relative shrink-0">
                   <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-xs font-semibold text-white">
-                    {user.avatar ? (
-                      <img src={user.avatar} alt="" className="h-full w-full object-cover" />
-                    ) : (
-                      user.username?.charAt(0).toUpperCase() || '?'
-                    )}
+                    <Avatar
+                      avatar={user.avatar}
+                      username={user.username}
+                      alt=""
+                      className="h-full w-full object-contain"
+                    />
                   </div>
 
                   <div

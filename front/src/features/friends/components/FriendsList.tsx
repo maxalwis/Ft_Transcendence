@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { User } from '../../../api/friends';
 import Button from '../../../components/ui/Button';
+import Avatar from '../../../components/ui/Avatar';
 
 type FriendsListProps = {
   friends: User[];
@@ -33,11 +34,12 @@ export default function FriendsList({ friends = [], onSelectFriend }: FriendsLis
           >
             <div className="relative shrink-0">
               <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-xs font-semibold text-white">
-                {friend.avatar ? (
-                  <img src={friend.avatar} alt="" className="h-full w-full object-cover" />
-                ) : (
-                  friend.username?.charAt(0).toUpperCase() || '?'
-                )}
+                <Avatar
+                  avatar={friend.avatar}
+                  username={friend.username}
+                  alt=""
+                  className="h-full w-full object-contain"
+                />
               </div>
 
               <div

@@ -37,7 +37,8 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
     user?.preferredCategory ?? ''
   );
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(resolveAvatarUrl(user?.avatar));
+  const [avatarPreview, setAvatarPreview] = useState<string>(resolveAvatarUrl(user?.avatar));
+  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { showWarning } = useNotification();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -51,6 +52,7 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
 
     if (file) {
       setAvatarPreview(URL.createObjectURL(file));
+      setAvatarLoadFailed(false);
     }
   };
 
@@ -109,10 +111,10 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
             className={`${styles.avatarPreview} w-15! h-15! mb-2`}
             onClick={() => fileInputRef.current?.click()}
           >
-            {avatarPreview ? (
-              <img src={avatarPreview} alt="Avatar" />
-            ) : (
+            {avatarLoadFailed ? (
               <span>{username.charAt(0).toUpperCase() || '?'}</span>
+            ) : (
+              <img src={avatarPreview} alt="Avatar" onError={() => setAvatarLoadFailed(true)} />
             )}
           </Button>
           <input
@@ -171,7 +173,7 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
         </label>
 
         {!isOAuthUser && (
-          <Button variant="secondary" type="button" onClick={() => setIsPasswordModalOpen(true)}>
+          <Button variant="ghost" type="button" onClick={() => setIsPasswordModalOpen(true)}>
             {t('profileSettings.changePassword')}
           </Button>
         )}

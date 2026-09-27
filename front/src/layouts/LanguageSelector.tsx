@@ -48,7 +48,7 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
         z-1100
         pointer-events-auto
 
-        min-[901px]:top-4
+        min-[751px]:top-4
         flex
         items-center
         gap-2
@@ -80,7 +80,7 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
           ${isOpen ? 'grid-rows-[1fr] opacity-100 translate-y-0' : 'grid-rows-[0fr] opacity-0 -translate-y-2'}
         `}
       >
-        <div className="flex gap-2 flex-col overflow-hidden min-h-0">
+        <div className="flex gap-2 flex-col min-h-0">
           {languages.map(({ code, title, Flag }) => (
             <Button
               variant="flag"
@@ -113,7 +113,7 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
       gap-2
       pointer-events-auto
 
-      max-[900px]:top-[19%]
+      max-[750px]:top-[19%]
       flex-col
     "
     >
