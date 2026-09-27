@@ -4,7 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import { createHash } from 'crypto';
+import { createHash, randomUUID } from 'crypto';
 import { User } from '../generated/prisma/client';
 
 const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -79,7 +79,10 @@ export class AuthService {
       expiresIn: '15m',
     });
 
-    const refreshToken = await this.jwtService.signAsync(payload, {
+    // Le jti rend chaque refresh token unique : sans lui, deux logins dans la
+    // même seconde (iat identique) produisent le même JWT, donc le même
+    // tokenHash, et la contrainte @unique fait planter la création
+    const refreshToken = await this.jwtService.signAsync({ ...payload, jti: randomUUID() }, {
       secret: this.config.get<string>('JWT_REFRESH_SECRET'),
       expiresIn: '7d',
     });

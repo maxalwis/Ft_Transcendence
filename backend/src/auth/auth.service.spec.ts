@@ -174,6 +174,20 @@ describe('AuthService', () => {
         })
       );
     });
+
+    it('should give each refresh token a unique jti so two logins in the same second do not collide', async () => {
+      jwtServiceMock.signAsync.mockResolvedValue('token');
+      configServiceMock.get.mockReturnValue('refresh-secret');
+
+      await service.login({ id: mockUser.id, email: mockUser.email });
+      await service.login({ id: mockUser.id, email: mockUser.email });
+
+      // appels 1 et 3 : access tokens, appels 2 et 4 : refresh tokens
+      const firstRefreshPayload = jwtServiceMock.signAsync.mock.calls[1][0];
+      const secondRefreshPayload = jwtServiceMock.signAsync.mock.calls[3][0];
+      expect(firstRefreshPayload.jti).toEqual(expect.any(String));
+      expect(firstRefreshPayload.jti).not.toBe(secondRefreshPayload.jti);
+    });
   });
 
   describe('refreshAccessToken', () => {
