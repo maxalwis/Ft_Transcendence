@@ -12,6 +12,7 @@ import {
 import styles from '../Event.module.css';
 import { useTranslation } from 'react-i18next';
 import Button from '../../../components/ui/Button';
+import Badge from '../../../components/ui/Badge';
 import { LikeIcon } from '../../../types/icons';
 
 interface LikeButtonProps {
@@ -162,7 +163,7 @@ export default function LikeButton({
         <LikeIcon liked={isLiked} className="h-4 w-4" />
       </Button>
 
-      {!iconOnly && <span className="text-xs">{t('likeButton.interested', { count })}</span>}
+      {!iconOnly && <Badge variant="primary">{t('likeButton.interested', { count })}</Badge>}
     </div>
   );
 }

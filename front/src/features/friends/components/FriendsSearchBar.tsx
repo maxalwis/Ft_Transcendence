@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import styles from '../Friends.module.css';
 import { CloseIcon } from '../../../types/icons';
 import Button from '../../../components/ui/Button';
+import TextField from '../../../components/ui/TextField';
 
 type InputProps = {
   input: string;
@@ -19,13 +20,14 @@ export default function FriendsSearchBar({ input, setInput }: InputProps) {
     <div
       className={`flex items-center gap-3 rounded-full border border-white/10 bg-white/10 px-3 ${styles.searchBar}`}
     >
-      <input
+      <TextField
         maxLength={30}
         type="text"
         onChange={handleChange}
         value={input}
         placeholder={t('friendsSearchBar.placeholders.default')}
-        className="w-full bg-transparent text-sm text-black outline-none placeholder:text-black"
+        className="!border-0 !bg-transparent !p-0 text-black placeholder:text-black"
+        containerClassName="w-full"
       />
 
       {input && (

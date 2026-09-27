@@ -5,6 +5,7 @@ import { login } from '../../../api/api';
 import { useNotification } from '../../../context/notifications/useNotification';
 import ModalLayout from '../../../components/ui/ModalLayout';
 import Button from '../../../components/ui/Button';
+import TextField from '../../../components/ui/TextField';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -76,16 +77,14 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
       {view === 'login' ? (
         <div>
           <form className="flex flex-col gap-3" onSubmit={handleLoginSubmit}>
-            <input
-              className="glass-panel p-2 rounded-lg border-2"
+            <TextField
               type="email"
               placeholder={t('authModal.email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
 
-            <input
-              className="glass-panel p-2 rounded-lg border-2"
+            <TextField
               type="password"
               placeholder={t('authModal.password')}
               value={password}
@@ -138,32 +137,28 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
       ) : (
         <div>
           <form className="flex flex-col gap-3" onSubmit={handleRegisterSubmit}>
-            <input
-              className="glass-panel p-2 rounded-lg border-2"
+            <TextField
               type="email"
               placeholder={t('authModal.email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
 
-            <input
-              className="glass-panel p-2 rounded-lg border-2"
+            <TextField
               type="text"
               placeholder={t('authModal.username')}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
 
-            <input
-              className="glass-panel p-2 rounded-lg border-2"
+            <TextField
               type="password"
               placeholder={t('authModal.password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <input
-              className="glass-panel p-2 rounded-lg border-2"
+            <TextField
               type="password"
               placeholder={t('authModal.confirmPassword')}
               value={confirmPassword}

@@ -6,6 +6,7 @@ import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 import { useTranslation } from 'react-i18next';
 import { useChatSocket } from '../hooks/useChatSocket';
+import EmptyState from '../../../components/ui/EmptyState';
 
 export type Message = {
   id: number;
@@ -98,12 +99,7 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     }
   };
 
-  if (loading)
-    return (
-      <div className="text-gray-400 flex items-center justify-center text-sm p-4">
-        {t('chat.loadingMessages', 'Loading messages...')}
-      </div>
-    );
+  if (loading) return <EmptyState>{t('chat.loadingMessages', 'Loading messages...')}</EmptyState>;
 
   return (
     <div className="flex flex-col flex-1 min-h-0 gap-3 relative">

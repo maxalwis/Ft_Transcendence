@@ -7,6 +7,8 @@ import styles from '../ProfileModal.module.css';
 import { useNotification } from '../../../context/notifications/useNotification';
 import ModalLayout, { type ModalShellProps } from '../../../components/ui/ModalLayout';
 import Button from '../../../components/ui/Button';
+import TextField from '../../../components/ui/TextField';
+import Select from '../../../components/ui/Select';
 import { updateProfile } from '../../../api/users';
 
 interface EditProfileContentProps {
@@ -41,7 +43,7 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
   const [avatarPreview, setAvatarPreview] = useState<string>(resolveAvatarUrl(user?.avatar));
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { showWarning } = useNotification();
+  const { showWarning, showSuccess } = useNotification();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -70,6 +72,7 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
       });
 
       updateUser(updated);
+      showSuccess(t('profileSettings.saveSuccess'));
       onClose();
     } catch {
       showWarning(t('profileSettings.saveError', 'Unable to save changes.'));
@@ -112,42 +115,34 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
           </Button>
         </div>
 
-        <label>
-          {t('profileSettings.username')}
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-        </label>
+        <TextField
+          label={t('profileSettings.username')}
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
 
-        <label>
-          {t('profileSettings.preferredLanguage')}
-          <select
-            value={preferredLanguage}
-            onChange={(e) => setPreferredLanguage(e.target.value as PreferredLanguage)}
-          >
-            <option value="">{t('profileSettings.choose')}</option>
+        <Select
+          label={t('profileSettings.preferredLanguage')}
+          value={preferredLanguage}
+          onChange={(val) => setPreferredLanguage(val as PreferredLanguage)}
+          placeholder={t('profileSettings.choose')}
+          options={languageOptions.map((opt) => ({
+            value: opt.value,
+            label: opt.label,
+          }))}
+        />
 
-            {languageOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          {t('profileSettings.preferredCategory')}
-          <select
-            value={preferredCategory}
-            onChange={(e) => setPreferredCategory(e.target.value as PreferredCategory)}
-          >
-            <option value="">{t('profileSettings.choose')}</option>
-
-            {categoryOptions.map((code) => (
-              <option key={code} value={code}>
-                {t(`categories.${code.toLowerCase()}`)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <Select
+          label={t('profileSettings.preferredCategory')}
+          value={preferredCategory}
+          onChange={(val) => setPreferredCategory(val as PreferredCategory)}
+          placeholder={t('profileSettings.choose')}
+          options={categoryOptions.map((code) => ({
+            value: code,
+            label: t(`categories.${code.toLowerCase()}`),
+          }))}
+        />
 
         {!isOAuthUser && (
           <Button variant="ghost" type="button" onClick={() => setIsPasswordModalOpen(true)}>

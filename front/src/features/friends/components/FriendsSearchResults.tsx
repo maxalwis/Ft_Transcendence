@@ -8,6 +8,7 @@ import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 import Button from '../../../components/ui/Button';
 import Avatar from '../../../components/ui/Avatar';
+import EmptyState from '../../../components/ui/EmptyState';
 
 type FriendsSearchResultsProps = {
   input: string;
@@ -88,19 +89,11 @@ export default function FriendsSearchResults({
   }
 
   if (loading) {
-    return (
-      <p className="flex items-center justify-center px-4 py-4 text-xs italic text-slate-400">
-        {t('friendsList.searching', 'Searching...')}
-      </p>
-    );
+    return <EmptyState italic>{t('friendsList.searching', 'Searching...')}</EmptyState>;
   }
 
   if (results.length === 0) {
-    return (
-      <p className="flex items-center justify-center px-4 py-4 text-xs italic text-slate-400">
-        {t('friendsList.noUsersFound', 'No users found.')}
-      </p>
-    );
+    return <EmptyState italic>{t('friendsList.noUsersFound', 'No users found.')}</EmptyState>;
   }
 
   return (

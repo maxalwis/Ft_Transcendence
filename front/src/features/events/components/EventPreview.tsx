@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styles from '../Event.module.css';
 import LikeButton from './LikeButton';
 import Button from '../../../components/ui/Button';
+import Chip from '../../../components/ui/Chip';
 import { ArrowLeftIcon, ArrowRightIcon } from '../../../types/icons';
 import EventImage from './EventImage';
 
@@ -135,7 +136,11 @@ export default function EventPreview({
       computedLeft = window.innerWidth - CARD_WIDTH - 30;
     }
 
-    return { topPos: computedTop, leftPos: computedLeft, isFlippedDownward: flipped };
+    return {
+      topPos: computedTop,
+      leftPos: computedLeft,
+      isFlippedDownward: flipped,
+    };
   }, [position.x, position.y, cardHeight]);
 
   if (!hasValidPosition) return null;
@@ -224,7 +229,9 @@ export default function EventPreview({
         ) : (
           <h2 className={`${styles['events-details-title']} line-clamp-2`}>{title}</h2>
         )}
-        <h3 className={`${styles['events-details-category']} text-slate-600!`}>{category}</h3>
+        <div className={styles['events-details-category']}>
+          <Chip>{category}</Chip>
+        </div>
         <div className={styles['events-details-meta']}>
           <span>{formattedPrice}</span>
           <span>

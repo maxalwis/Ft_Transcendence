@@ -123,7 +123,8 @@
     "mismatchError": "Las contraseñas no coinciden.",
     "incorrectPasswordError": "La contraseña actual es incorrecta.",
     "noPasswordSetError": "No hay ninguna contraseña definida para esta cuenta.",
-    "serverError": "Ocurrió un error al cambiar la contraseña. Por favor, inténtalo de nuevo."
+    "serverError": "Ocurrió un error al cambiar la contraseña. Por favor, inténtalo de nuevo.",
+    "changeSuccess": "Contraseña cambiada con éxito."
   },
   "authModal": {
     "loginTitle": "Iniciar sesión",
@@ -161,6 +162,7 @@
     "changePassword": "Cambiar contraseña",
     "saving": "Guardando...",
     "saveError": "No se pudieron guardar los cambios",
+    "saveSuccess": "Perfil actualizado con éxito.",
     "preferredLanguage": "Idioma preferido",
     "preferredCategory": "Categoría preferida",
     "changePicture": "Cambiar foto",

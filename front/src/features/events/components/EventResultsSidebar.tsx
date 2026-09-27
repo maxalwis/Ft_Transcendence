@@ -4,6 +4,7 @@ import EventResultCard from './EventResultCard';
 import styles from '../Event.module.css';
 import { useTranslation } from 'react-i18next';
 import Button from '../../../components/ui/Button';
+import EmptyState from '../../../components/ui/EmptyState';
 
 interface EventResultsSidebarProps {
   events: EventItem[];
@@ -161,19 +162,11 @@ export default function EventResultsSidebar({
   }, [scrollTop]);
 
   if (isLoading) {
-    return (
-      <div className="flex flex-1 items-center justify-center text-gray-400">
-        {t('events.loading')}
-      </div>
-    );
+    return <EmptyState>{t('events.loading')}</EmptyState>;
   }
 
   if (events.length === 0) {
-    return (
-      <div className="flex flex-1 items-center justify-center text-sm text-gray-400">
-        {t('events.noEvents')}
-      </div>
-    );
+    return <EmptyState>{t('events.noEvents')}</EmptyState>;
   }
 
   return (

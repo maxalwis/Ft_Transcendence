@@ -123,7 +123,8 @@
     "mismatchError": "كلمات المرور غير متطابقة.",
     "incorrectPasswordError": "كلمة المرور الحالية غير صحيحة.",
     "noPasswordSetError": "لا توجد كلمة مرور محددة لهذا الحساب.",
-    "serverError": "حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة مرة أخرى."
+    "serverError": "حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة مرة أخرى.",
+    "changeSuccess": "تم تغيير كلمة المرور بنجاح."
   },
   "authModal": {
     "loginTitle": "تسجيل الدخول",
@@ -161,6 +162,7 @@
     "changePassword": "تغيير كلمة المرور",
     "saving": "جاري الحفظ...",
     "saveError": "تعذر حفظ التغييرات",
+    "saveSuccess": "تم تحديث الملف الشخصي بنجاح.",
     "preferredLanguage": "اللغة المفضلة",
     "preferredCategory": "الفئة المفضلة",
     "changePicture": "تغيير الصورة",

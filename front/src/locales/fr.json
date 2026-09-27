@@ -123,7 +123,8 @@
     "mismatchError": "Les mots de passe ne correspondent pas.",
     "incorrectPasswordError": "Le mot de passe actuel est incorrect.",
     "noPasswordSetError": "Aucun mot de passe n'est défini pour ce compte.",
-    "serverError": "Une erreur est survenue lors du changement de mot de passe. Veuillez réessayer."
+    "serverError": "Une erreur est survenue lors du changement de mot de passe. Veuillez réessayer.",
+    "changeSuccess": "Mot de passe changé avec succès."
   },
   "authModal": {
     "loginTitle": "Connexion",
@@ -161,6 +162,7 @@
     "changePassword": "Modifier le mot de passe",
     "saving": "Sauvegarde...",
     "saveError": "Impossible de sauvegarder les modifications",
+    "saveSuccess": "Profil mis à jour avec succès.",
     "preferredLanguage": "Langue préférée",
     "preferredCategory": "Catégorie préférée",
     "changePicture": "Changer photo",

@@ -123,7 +123,8 @@
     "mismatchError": "Passwords do not match.",
     "incorrectPasswordError": "The current password is incorrect.",
     "noPasswordSetError": "No password is set for this account.",
-    "serverError": "An error occurred while changing the password. Please try again."
+    "serverError": "An error occurred while changing the password. Please try again.",
+    "changeSuccess": "Password changed successfully."
   },
   "authModal": {
     "loginTitle": "Sign in",
@@ -161,6 +162,7 @@
     "changePassword": "Change Password",
     "saving": "Saving...",
     "saveError": "Unable to save changes",
+    "saveSuccess": "Profile updated successfully.",
     "preferredLanguage": "Preferred Language",
     "preferredCategory": "Preferred Category",
     "changePicture": "Change Picture",

@@ -7,6 +7,7 @@ import FriendsSearchResults from './FriendsSearchResults';
 import type { User, PendingRequest } from '../../../api/friends';
 import ViewProfile from '../../profile/components/ViewProfile';
 import Button from '../../../components/ui/Button';
+import Card from '../../../components/ui/Card';
 
 interface FriendsContentProps {
   friends: User[];
@@ -82,9 +83,9 @@ export default function FriendsContent({
             </Button>
           )}
 
-          <div className="glass-panel shrink-0">
+          <Card className="shrink-0">
             <FriendsSearchBar input={input} setInput={setInput} />
-          </div>
+          </Card>
         </div>
       )}
 

@@ -1,15 +1,29 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import styles from './NotificationProvider.module.css';
-import { CloseIcon, WarningIcon } from '../../types/icons';
-import Button from '../../components/ui/Button';
+import { useEffect, useState, useCallback } from 'react';
+import { CloseIcon, WarningIcon, CheckIcon, InfoIcon } from '../../types/icons';
+import Button from './Button';
 
-interface NotificationProps {
+export type ToastVariant = 'warning' | 'success' | 'error' | 'info';
+
+interface ToastProps {
   message: string | null;
   onClose: () => void;
   duration?: number;
+  variant?: ToastVariant;
 }
 
-export const WarningNotification = ({ message, onClose, duration = 5000 }: NotificationProps) => {
+const toastIcon: Record<ToastVariant, typeof WarningIcon> = {
+  warning: WarningIcon,
+  error: WarningIcon,
+  success: CheckIcon,
+  info: InfoIcon,
+};
+
+export default function Toast({
+  message,
+  onClose,
+  duration = 5000,
+  variant = 'warning',
+}: ToastProps) {
   const [isExiting, setIsExiting] = useState(false);
   const [prevMessage, setPrevMessage] = useState(message);
 
@@ -19,7 +33,6 @@ export const WarningNotification = ({ message, onClose, duration = 5000 }: Notif
     setIsExiting(false);
   }
 
-  // Wrap dismiss handler in useCallback to satisfy hook dependencies
   const handleDismiss = useCallback(() => {
     setIsExiting(true);
     setTimeout(() => {
@@ -37,13 +50,15 @@ export const WarningNotification = ({ message, onClose, duration = 5000 }: Notif
 
   if (!message) return null;
 
+  const Icon = toastIcon[variant];
+
   return (
     <div
-      className={`${styles.warning} ${isExiting ? styles.toastSlideOut : styles.toastSlideIn} max-w-md`}
+      className={`ds-toast ds-toast-${variant} ${isExiting ? 'ds-toast-slide-out' : 'ds-toast-slide-in'} max-w-md`}
     >
-      <WarningIcon className="h-5 w-5" />
+      <Icon className="h-5 w-5" />
 
-      <span className={styles.message}>{message}</span>
+      <span className="ds-toast-message">{message}</span>
 
       <Button
         variant="icon"
@@ -56,4 +71,4 @@ export const WarningNotification = ({ message, onClose, duration = 5000 }: Notif
       </Button>
     </div>
   );
-};
+}

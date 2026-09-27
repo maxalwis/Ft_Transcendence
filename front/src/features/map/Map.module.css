@@ -68,30 +68,22 @@
 
 .filterTrigger,
 .filterPanel,
-.filterControl,
-.filterAction,
-.filterDropdown {
+.filterAction {
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
 }
 
 .filterTrigger,
 .filterPanel,
-.filterControl,
 .filterAction,
-.filterOption,
-.filterTitle,
-.filterLabel {
+.filterTitle {
   color: var(--color-blue-dark);
   font-family: var(--font-main);
 }
 
 .filterTrigger,
 .filterPanel,
-.filterControl,
-.filterAction,
-.filterDropdown,
-.filterOption {
+.filterAction {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -104,31 +96,6 @@
 .filterTitle {
   font-weight: var(--font-weight-bold);
   border-bottom: 1px solid var(--glass-border);
-}
-
-.filterLabel {
-  font-weight: var(--font-weight-semibold);
-}
-
-.filterControl {
-  min-height: 2rem;
-  border-radius: var(--radius-sm);
-  padding: 0.375rem var(--space-2);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  outline: none;
-}
-
-.filterControl:focus {
-  border-color: var(--color-orange-primary);
-  box-shadow: 0 0 0 2px var(--color-orange-border);
-}
-
-.filterSelect {
-  cursor: pointer;
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease;
 }
 
 .filterAction {
@@ -149,23 +116,8 @@
 }
 
 .filterAction:hover,
-.filterTrigger:hover,
-.filterSelect:hover {
+.filterTrigger:hover {
   border-color: var(--color-orange-border);
-  background: var(--color-orange-hover);
-}
-
-.filterDropdown {
-  color: var(--color-blue-dark);
-}
-
-.filterOption {
-  color: var(--color-blue-dark);
-  font-weight: var(--font-weight-medium);
-}
-
-.filterOptionActive {
-  color: var(--color-orange-primary);
   background: var(--color-orange-hover);
 }
 

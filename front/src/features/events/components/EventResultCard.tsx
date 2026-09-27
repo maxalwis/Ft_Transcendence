@@ -4,6 +4,8 @@ import type { EventItem } from '../../../types/event';
 import { useTranslatedEvent } from '../hooks/useTranslatedEvent';
 import { PriceIcon } from './PriceIcon';
 import EventImage from './EventImage';
+import Card from '../../../components/ui/Card';
+import Chip from '../../../components/ui/Chip';
 
 interface EventResultCardProps {
   event: EventItem;
@@ -65,9 +67,10 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
   };
 
   return (
-    <article
+    <Card
+      variant="article"
       onClick={handleClick}
-      className="glass-article flex cursor-pointer flex-col transition-all"
+      className="flex cursor-pointer flex-col transition-all"
     >
       <div className="flex flex-col">
         <div className="aspect-[16/11] shrink-0 overflow-hidden rounded-lg">
@@ -82,7 +85,7 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
           )}
 
           <div className="mt-auto flex items-center justify-between gap-2">
-            <p className="mb-3! text-xs">{displayedCategory || t('categories.others')}</p>
+            <Chip className="mb-3!">{displayedCategory || t('categories.others')}</Chip>
 
             {isPaid !== undefined && (
               <p className="mb-3!">
@@ -92,6 +95,6 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
           </div>
         </div>
       </div>
-    </article>
+    </Card>
   );
 }
