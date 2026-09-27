@@ -222,7 +222,7 @@ export default function EventPreview({
             style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
           />
         ) : (
-          <h2 className={styles['events-details-title']}>{title}</h2>
+          <h2 className={`${styles['events-details-title']} line-clamp-2`}>{title}</h2>
         )}
         <h3 className={`${styles['events-details-category']} text-slate-600!`}>{category}</h3>
         <div className={styles['events-details-meta']}>
