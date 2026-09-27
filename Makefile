@@ -25,19 +25,21 @@ build: check-env
 down:
 	podman compose down
 
+# ACTIVE_PROFILES tells the nginx container which admin-tool server blocks to
+# enable (see nginx/entrypoint.sh); it must match the --profile flag below.
 elk: check-env
-	podman compose --profile elk build 
-	podman compose --profile elk up -d
+	podman compose --profile elk build
+	ACTIVE_PROFILES=elk podman compose --profile elk up -d
 	podman compose logs -f
 
 prisma-studio: check-env
 	podman compose --profile prisma-studio build
-	podman compose --profile prisma-studio up -d
+	ACTIVE_PROFILES=prisma-studio podman compose --profile prisma-studio up -d
 	podman compose logs -f
 
 tools: check-env
 	podman compose --profile tools build
-	podman compose --profile tools up -d
+	ACTIVE_PROFILES=tools podman compose --profile tools up -d
 	podman compose logs -f
 
 clean:
