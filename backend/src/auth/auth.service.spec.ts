@@ -129,12 +129,25 @@ describe('AuthService', () => {
     });
 
     it('should refresh the avatar when the provider sends a new one', async () => {
-      usersServiceMock.findFromProviderOrNull.mockResolvedValue({ id: 7, avatar: 'old.png' });
+      usersServiceMock.findFromProviderOrNull.mockResolvedValue({
+        id: 7,
+        avatar: 'https://example.com/old.png',
+      });
       usersServiceMock.update.mockResolvedValue({ id: 7, avatar: profile.avatar });
 
       await service.validateOAuthUser(profile);
 
       expect(usersServiceMock.update).toHaveBeenCalledWith(7, { avatar: profile.avatar });
+    });
+
+    it('should keep an avatar uploaded by the user', async () => {
+      const oauthUser = { id: 7, avatar: '/uploads/avatars/123-456.png' };
+      usersServiceMock.findFromProviderOrNull.mockResolvedValue(oauthUser);
+
+      const result = await service.validateOAuthUser(profile);
+
+      expect(usersServiceMock.update).not.toHaveBeenCalled();
+      expect(result).toBe(oauthUser);
     });
 
     it('should never attach an OAuth login to an existing account with the same email', async () => {

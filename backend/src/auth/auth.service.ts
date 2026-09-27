@@ -65,7 +65,10 @@ export class AuthService {
       return this.usersService.createOAuth(profile);
     }
 
-    if (profile.avatar && user.avatar !== profile.avatar) {
+    // On ne synchronise que l'avatar du provider : une photo uploadée par
+    // l'utilisateur (stockée sous /uploads/) ne doit pas être écrasée.
+    const hasUploadedAvatar = user.avatar?.startsWith('/uploads/') ?? false;
+    if (profile.avatar && !hasUploadedAvatar && user.avatar !== profile.avatar) {
       user = await this.usersService.update(user.id, { avatar: profile.avatar });
     }
 
