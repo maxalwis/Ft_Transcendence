@@ -163,7 +163,11 @@
     "preferredCategory": "Catégorie préférée",
     "changePicture": "Changer photo",
     "cancel": "Annuler",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "privacyTitle": "Confidentialité",
+    "downloadData": "Télécharger mes données",
+    "deleteAccount": "Supprimer mon compte",
+    "deleteEmailSent": "Un e-mail de confirmation a été envoyé. Consultez votre boîte de réception pour finaliser la suppression."
   },
   "publicProfile": {
     "title": "Voir profil",
@@ -210,7 +214,12 @@
     "cancel": "Annuler et revenir",
     "done": "Votre compte a été définitivement supprimé. Redirection…",
     "invalidLink": "Lien de confirmation invalide ou manquant.",
-    "error": "Le lien de confirmation est invalide ou expiré. Veuillez refaire une demande de suppression."
+    "error": "Le lien de confirmation est invalide ou expiré. Veuillez refaire une demande de suppression.",
+    "mustLogin": "Vous devez être connecté à ce compte pour confirmer la suppression.",
+    "passwordLabel": "Entrez votre mot de passe",
+    "passwordRequired": "Veuillez saisir votre mot de passe.",
+    "wrongPassword": "Mot de passe incorrect.",
+    "expired": "Ce lien de confirmation a expiré. Veuillez refaire une demande de suppression."
   },
   "sidebar": {
     "event": "Événement",

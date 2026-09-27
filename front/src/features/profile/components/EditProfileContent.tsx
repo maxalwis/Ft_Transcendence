@@ -6,6 +6,7 @@ import PasswordModal from './PasswordModal';
 import styles from '../ProfileModal.module.css';
 import { useNotification } from '../../../context/notifications/useNotification';
 import { closeBtn } from '../../../types/icons';
+import { exportMyData, requestAccountDeletion } from '../../../api/gdpr';
 
 interface EditProfileContentProps {
   onClose: () => void;
@@ -42,6 +43,26 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isOAuthUser = Boolean(user?.provider && user.provider !== 'local');
+
+  // GDPR: download all of the user's data as a JSON file
+  const handleExportData = async () => {
+    if (!accessToken) return;
+    const data = await exportMyData(accessToken);
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'my-data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // GDPR: ask the backend to email a deletion-confirmation link
+  const handleDeleteRequest = async () => {
+    if (!accessToken) return;
+    await requestAccountDeletion(accessToken);
+    showWarning(t('profileSettings.deleteEmailSent'));
+  };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
@@ -189,6 +210,22 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
             {t('profileSettings.changePassword')}
           </button>
         )}
+
+        <div className={styles.privacySection}>
+          <h3>{t('profileSettings.privacyTitle')}</h3>
+          <div className={styles.privacyButtons}>
+            <button type="button" className="btnSecondary" onClick={handleExportData}>
+              {t('profileSettings.downloadData')}
+            </button>
+            <button
+              type="button"
+              className={`btnSecondary ${styles.btnDanger}`}
+              onClick={handleDeleteRequest}
+            >
+              {t('profileSettings.deleteAccount')}
+            </button>
+          </div>
+        </div>
 
         <div className="modalActions">
           <button type="button" className="btnSecondary" onClick={onClose}>

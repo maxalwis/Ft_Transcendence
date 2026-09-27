@@ -1,10 +1,12 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 
@@ -48,7 +50,7 @@ export class GdprService {
     };
   }
 
-  /** Step 1: email a short-lived confirmation token. Nothing is deleted yet. */
+  /** Step 1: email a short-lived confirmation link. Nothing is deleted yet. */
   async requestDeletion(userId: number) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user?.email) throw new NotFoundException('User email not found');
@@ -72,22 +74,55 @@ export class GdprService {
     });
   }
 
-  /** Step 2: verify the token and delete the account (cascade removes messages + friendships). */
-  async confirmDeletion(token: string) {
+  /**
+   * Step 2: delete the account. Requires three proofs:
+   *  - the emailed token (proves control of the account's email),
+   *  - the logged-in session matching the token's target (proves account ownership),
+   *  - the current password for password accounts (defends a left-open session).
+   * OAuth accounts have no password, so session + token is the proof for them.
+   * Failures carry a machine-readable `code` so the frontend can show the right
+   * message (expired link vs wrong password, which otherwise share HTTP 401).
+   */
+  async confirmDeletion(sessionUserId: number, token: string, password?: string) {
     let payload: { sub: number; purpose?: string };
     try {
       payload = await this.jwt.verifyAsync(token, {
         secret: process.env.JWT_SECRET,
       });
-    } catch {
-      throw new UnauthorizedException('Invalid or expired confirmation token');
+    } catch (err) {
+      if (err instanceof Error && err.name === 'TokenExpiredError') {
+        throw new UnauthorizedException({
+          code: 'TOKEN_EXPIRED',
+          message: 'Confirmation link has expired',
+        });
+      }
+      throw new UnauthorizedException({
+        code: 'TOKEN_INVALID',
+        message: 'Invalid confirmation token',
+      });
     }
     if (payload.purpose !== DELETE_PURPOSE) {
       throw new BadRequestException('Wrong token type');
     }
+    if (sessionUserId !== payload.sub) {
+      throw new ForbiddenException('This confirmation link is not for your account');
+    }
 
     const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
     if (!user) throw new NotFoundException('User not found');
+
+    if (user.password) {
+      if (!password) {
+        throw new BadRequestException('Password is required to confirm deletion');
+      }
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid) {
+        throw new UnauthorizedException({
+          code: 'WRONG_PASSWORD',
+          message: 'Incorrect password',
+        });
+      }
+    }
 
     await this.prisma.user.delete({ where: { id: payload.sub } });
 

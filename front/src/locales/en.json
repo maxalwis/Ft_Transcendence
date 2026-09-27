@@ -163,7 +163,11 @@
     "preferredCategory": "Preferred Category",
     "changePicture": "Change Picture",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "privacyTitle": "Privacy",
+    "downloadData": "Download my data",
+    "deleteAccount": "Delete my account",
+    "deleteEmailSent": "A confirmation email has been sent. Check your inbox to finish deleting your account."
   },
   "publicProfile": {
     "title": "View Profile",
@@ -210,7 +214,12 @@
     "cancel": "Cancel and go back",
     "done": "Your account has been permanently deleted. Redirecting…",
     "invalidLink": "Invalid or missing confirmation link.",
-    "error": "The confirmation link is invalid or expired. Please request deletion again."
+    "error": "The confirmation link is invalid or expired. Please request deletion again.",
+    "mustLogin": "You must be logged in to this account to confirm deletion.",
+    "passwordLabel": "Enter your password",
+    "passwordRequired": "Please enter your password.",
+    "wrongPassword": "Incorrect password.",
+    "expired": "This confirmation link has expired. Please request deletion again."
   },
   "sidebar": {
     "event": "Event",
