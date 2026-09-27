@@ -121,6 +121,8 @@
     "changePassword": "تغيير كلمة المرور",
     "loading": "جاري التحميل...",
     "mismatchError": "كلمات المرور غير متطابقة.",
+    "incorrectPasswordError": "كلمة المرور الحالية غير صحيحة.",
+    "noPasswordSetError": "لا توجد كلمة مرور محددة لهذا الحساب.",
     "serverError": "حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة مرة أخرى."
   },
   "authModal": {

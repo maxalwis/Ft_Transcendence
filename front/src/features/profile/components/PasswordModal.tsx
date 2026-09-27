@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ModalLayout from '../../../components/ui/ModalLayout';
 import Button from '../../../components/ui/Button';
-import { changePassword } from '../../../api/users';
+import { changePassword, ChangePasswordError } from '../../../api/users';
 import { useNotification } from '../../../context/notifications/useNotification';
 
 interface PasswordModalProps {
@@ -27,6 +27,11 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (newPassword !== confirmPassword) {
+      showWarning(t('passwordModal.mismatchError'));
+      return;
+    }
+
     setIsChangingPassword(true);
 
     try {
@@ -36,7 +41,13 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
       setNewPassword('');
       setConfirmPassword('');
     } catch (err) {
-      showWarning(err instanceof Error ? err.message : t('passwordModal.serverError' ,'Error changing password'));
+      if (err instanceof ChangePasswordError && err.code === 'INCORRECT_PASSWORD') {
+        showWarning(t('passwordModal.incorrectPasswordError'));
+      } else if (err instanceof ChangePasswordError && err.code === 'NO_PASSWORD_SET') {
+        showWarning(t('passwordModal.noPasswordSetError'));
+      } else {
+        showWarning(t('passwordModal.serverError'));
+      }
     } finally {
       setIsChangingPassword(false);
     }

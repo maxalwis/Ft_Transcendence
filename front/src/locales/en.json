@@ -121,6 +121,8 @@
     "changePassword": "Change Password",
     "loading": "Loading...",
     "mismatchError": "Passwords do not match.",
+    "incorrectPasswordError": "The current password is incorrect.",
+    "noPasswordSetError": "No password is set for this account.",
     "serverError": "An error occurred while changing the password. Please try again."
   },
   "authModal": {

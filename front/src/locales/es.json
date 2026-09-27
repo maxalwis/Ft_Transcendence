@@ -121,6 +121,8 @@
     "changePassword": "Cambiar contraseña",
     "loading": "Cargando...",
     "mismatchError": "Las contraseñas no coinciden.",
+    "incorrectPasswordError": "La contraseña actual es incorrecta.",
+    "noPasswordSetError": "No hay ninguna contraseña definida para esta cuenta.",
     "serverError": "Ocurrió un error al cambiar la contraseña. Por favor, inténtalo de nuevo."
   },
   "authModal": {

@@ -121,6 +121,8 @@
     "changePassword": "Changer le mot de passe",
     "loading": "Chargement...",
     "mismatchError": "Les mots de passe ne correspondent pas.",
+    "incorrectPasswordError": "Le mot de passe actuel est incorrect.",
+    "noPasswordSetError": "Aucun mot de passe n'est défini pour ce compte.",
     "serverError": "Une erreur est survenue lors du changement de mot de passe. Veuillez réessayer."
   },
   "authModal": {

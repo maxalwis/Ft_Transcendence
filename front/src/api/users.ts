@@ -25,6 +25,17 @@ export async function searchUsers(username: string): Promise<UserSearchResult[]>
   return res.json();
 }
 
+export type ChangePasswordErrorCode = 'INCORRECT_PASSWORD' | 'NO_PASSWORD_SET' | 'UNKNOWN';
+
+export class ChangePasswordError extends Error {
+  constructor(
+    message: string,
+    public code: ChangePasswordErrorCode
+  ) {
+    super(message);
+  }
+}
+
 export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
   const res = await request(`${API_URL}/password`, {
     method: 'PATCH',
@@ -33,7 +44,11 @@ export async function changePassword(currentPassword: string, newPassword: strin
 
   if (!res.ok) {
     const error = await res.json().catch(() => null);
-    throw new Error(error?.message ?? 'Password change failed');
+    const message = error?.message ?? 'Password change failed';
+
+    if (res.status === 401) throw new ChangePasswordError(message, 'INCORRECT_PASSWORD');
+    if (res.status === 403) throw new ChangePasswordError(message, 'NO_PASSWORD_SET');
+    throw new ChangePasswordError(message, 'UNKNOWN');
   }
 }
 
