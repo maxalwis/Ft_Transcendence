@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next';
 import { useTranslatedEvent } from '../../events/hooks/useTranslatedEvent';
 
 // Constants & Configuration
-import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../../../types/constants';
+import { PARIS_CENTER, DEFAULT_ZOOM, MAX_ZOOM, IDF_BOUNDS } from '../../../types/constants';
 
 import type { EventItem } from '../../../types/event';
 import { EventMapController } from './EventMapController';
@@ -287,6 +287,7 @@ export default function Map() {
         center={PARIS_CENTER}
         zoom={DEFAULT_ZOOM}
         minZoom={DEFAULT_ZOOM}
+        maxZoom={MAX_ZOOM}
         scrollWheelZoom
         maxBounds={IDF_BOUNDS}
         maxBoundsViscosity={1}
@@ -305,6 +306,7 @@ export default function Map() {
           attribution='&copy; <a href="https://jawg.io">JawgMaps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="/api/tiles/{z}/{x}/{y}{r}.png"
           bounds={IDF_BOUNDS}
+          maxZoom={MAX_ZOOM}
           keepBuffer={2}
           updateWhenIdle={false}
         />
