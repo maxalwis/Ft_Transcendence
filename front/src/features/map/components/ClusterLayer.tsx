@@ -4,10 +4,9 @@ import L from 'leaflet';
 import type { EventGroup, EventItem } from '../../../types/event';
 import { createGroupMarkerIcon, createClusterIcon, setMarkerHovered } from './CustomIcons';
 import {
-  cellSizeAt,
   clusterViewport,
+  getCellSize,
   getViewRange,
-  projectedSpan,
   toClusterPoints,
   type ClusterBounds,
   type ClusterItem,
@@ -19,7 +18,7 @@ interface ClusterLayerProps {
   activeGroupId: string | null;
   onMarkerClick: (id: string) => void;
   onGroupClick: (events: EventItem[]) => void;
-  onMarkerHover: (groupId: string, e: L.LeafletMouseEvent) => void;
+  onMarkerHover: (group: EventGroup, e: L.LeafletMouseEvent) => void;
   onMarkerLeave: () => void;
 }
 
@@ -30,19 +29,7 @@ interface MarkerEntry {
   signature: number;
   group?: EventGroup;
   bounds?: ClusterBounds;
-  clusterGroups?: EventGroup[];
 }
-
-// Former markercluster `maxClusterRadius` values. A marker joins a cluster if it is within this
-// radius of its centre, so a cluster spans up to twice that: the grid cell is the diameter.
-const getClusterRadius = (zoom: number) => {
-  if (zoom <= 13) return 90;
-  if (zoom <= 16) return 70;
-  if (zoom <= 18) return 50;
-  return 40;
-};
-
-const getCellSize = (zoom: number) => getClusterRadius(zoom) * 2;
 
 // Fraction of the viewport also rendered around it, so panning doesn't reveal empty edges.
 const VIEW_PADDING = 0.25;
@@ -99,26 +86,12 @@ export function ClusterLayer({
         signature: item.kind === 'cluster' ? item.count : item.group.events.length,
         group: item.kind === 'point' ? item.group : undefined,
         bounds: item.kind === 'cluster' ? item.bounds : undefined,
-        clusterGroups: item.kind === 'cluster' ? item.groups : undefined,
       };
 
       if (item.kind === 'cluster') {
         marker.on('click', (e) => {
           L.DomEvent.stopPropagation(e.originalEvent);
-          const bounds = entry.bounds!;
-          const maxZoom = map.getMaxZoom();
-          const minCellSize = cellSizeAt(maxZoom, getCellSize(maxZoom));
-
-          // The members are closer together than the smallest possible grid cell (the one at
-          // the map's deepest zoom): no amount of zooming can ever split them into separate
-          // cells, so open their combined event list instead of fitting bounds into a dead end.
-          if (projectedSpan(bounds) < minCellSize) {
-            const events = entry.clusterGroups?.flatMap((group) => group.events) ?? [];
-            if (events.length) handlersRef.current.onGroupClick(events);
-            return;
-          }
-
-          const { south, west, north, east } = bounds;
+          const { south, west, north, east } = entry.bounds!;
 
           map.fitBounds(
             [
@@ -138,7 +111,7 @@ export function ClusterLayer({
           else handlersRef.current.onMarkerClick(events[0].id);
         });
         marker.on('mouseover', (e) => {
-          if (entry.group) handlersRef.current.onMarkerHover(entry.group.id, e);
+          if (entry.group) handlersRef.current.onMarkerHover(entry.group, e);
         });
         marker.on('mouseout', () => handlersRef.current.onMarkerLeave());
       }
@@ -169,7 +142,6 @@ export function ClusterLayer({
 
         existing.group = item.kind === 'point' ? item.group : existing.group;
         existing.bounds = item.kind === 'cluster' ? item.bounds : existing.bounds;
-        existing.clusterGroups = item.kind === 'cluster' ? item.groups : existing.clusterGroups;
 
         if (existing.signature !== signature) {
           existing.signature = signature;

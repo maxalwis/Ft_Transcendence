@@ -5,14 +5,14 @@ import type { EventGroup } from '../../../types/event';
 
 interface MapEventsProps {
   activeGroup: EventGroup | null;
-  setActiveGroupId: (id: string | null) => void;
+  setActiveGroup: (group: EventGroup | null) => void;
   setHoverPos: (pos: { x: number; y: number } | null) => void;
   skipZoomClearRef?: RefObject<boolean>;
 }
 
 export function MapEventsHandler({
   activeGroup,
-  setActiveGroupId,
+  setActiveGroup,
   setHoverPos,
   skipZoomClearRef,
 }: MapEventsProps) {
@@ -46,7 +46,7 @@ export function MapEventsHandler({
       if (skipZoomClearRef?.current) return;
 
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      setActiveGroupId(null);
+      setActiveGroup(null);
       setHoverPos(null);
     };
 
@@ -61,7 +61,7 @@ export function MapEventsHandler({
       map.off('movestart', handleMoveStart);
       map.off('zoomstart', handleZoomStart);
     };
-  }, [map, setActiveGroupId, setHoverPos, skipZoomClearRef]);
+  }, [map, setActiveGroup, setHoverPos, skipZoomClearRef]);
 
   useEffect(() => {
     if (!activeGroup) {

@@ -27,7 +27,7 @@ import { useTranslatedEvent } from '../../events/hooks/useTranslatedEvent';
 // Constants & Configuration
 import { PARIS_CENTER, DEFAULT_ZOOM, MAX_ZOOM, IDF_BOUNDS } from '../../../types/constants';
 
-import type { EventItem } from '../../../types/event';
+import type { EventGroup, EventItem } from '../../../types/event';
 import { EventMapController } from './EventMapController';
 import { mapPreferredCategory, mapPreferredLanguage } from '../utils/userPreferences';
 // Local Styles
@@ -83,7 +83,7 @@ export default function Map() {
     currentEvent,
     activeGroupId,
     activeEventIndex,
-    setActiveGroupId,
+    setActiveGroup,
     setActiveEventIndex,
     handlePrevEvent,
     handleNextEvent,
@@ -118,11 +118,11 @@ export default function Map() {
     cancelCloseTimeout();
 
     closeTimeoutRef.current = setTimeout(() => {
-      setActiveGroupId(null);
+      setActiveGroup(null);
       setActiveEventIndex(0);
       setHoverPos(null);
     }, 150);
-  }, [isPreviewPinned, setActiveGroupId, setActiveEventIndex]);
+  }, [isPreviewPinned, setActiveGroup, setActiveEventIndex]);
 
   /*
    * Open the event detail sidebar.
@@ -139,11 +139,11 @@ export default function Map() {
       });
 
       setIsSidebarOpen(true);
-      setActiveGroupId(null);
+      setActiveGroup(null);
       setHoverPos(null);
       setIsPreviewPinned(false);
     },
-    [setActiveGroupId]
+    [setActiveGroup]
   );
 
   /*
@@ -161,10 +161,10 @@ export default function Map() {
     });
 
     setIsSidebarOpen(true);
-    setActiveGroupId(null);
+    setActiveGroup(null);
     setHoverPos(null);
     setIsPreviewPinned(false);
-  }, [setActiveGroupId]);
+  }, [setActiveGroup]);
 
   /*
    * Open the results sidebar restricted to the events of a marker group.
@@ -179,11 +179,11 @@ export default function Map() {
       setResultsScrollTop(0);
       setSidebar({ type: 'results' });
       setIsSidebarOpen(true);
-      setActiveGroupId(null);
+      setActiveGroup(null);
       setHoverPos(null);
       setIsPreviewPinned(false);
     },
-    [setActiveGroupId]
+    [setActiveGroup]
   );
 
   /*
@@ -204,21 +204,21 @@ export default function Map() {
       const group = eventGroups.find((g) => g.events.some((event) => event.id === eventId));
       if (group) {
         const index = group.events.findIndex((event) => event.id === eventId);
-        setActiveGroupId(group.id);
+        setActiveGroup(group);
         setActiveEventIndex(index >= 0 ? index : 0);
         setIsPreviewPinned(true);
       }
     },
-    [eventGroups, setActiveGroupId, setActiveEventIndex]
+    [eventGroups, setActiveGroup, setActiveEventIndex]
   );
 
   const handleMarkerHover = useCallback(
-    (groupId: string) => {
+    (group: EventGroup) => {
       if (isPreviewPinned) return;
       cancelCloseTimeout();
-      setActiveGroupId(groupId);
+      setActiveGroup(group);
     },
-    [isPreviewPinned, setActiveGroupId]
+    [isPreviewPinned, setActiveGroup]
   );
 
   /*
@@ -339,7 +339,7 @@ export default function Map() {
 
         <MapEventsHandler
           activeGroup={activeGroup}
-          setActiveGroupId={setActiveGroupId}
+          setActiveGroup={setActiveGroup}
           setHoverPos={setHoverPos}
           skipZoomClearRef={skipZoomClearRef}
         />
@@ -401,7 +401,7 @@ export default function Map() {
         onClose={() => {
           setSidebar(null);
           setFocusEventId(null);
-          setActiveGroupId(null);
+          setActiveGroup(null);
           setHoverPos(null);
           setIsPreviewPinned(false);
         }}
@@ -410,7 +410,7 @@ export default function Map() {
           if (!groupEvents) setFocusEventId(null);
           setSidebar({ type: 'results' });
           setIsSidebarOpen(true);
-          setActiveGroupId(null);
+          setActiveGroup(null);
           setHoverPos(null);
           setIsPreviewPinned(false);
         }}

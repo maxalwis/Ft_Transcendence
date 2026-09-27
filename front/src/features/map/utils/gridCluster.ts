@@ -1,7 +1,19 @@
 import type { EventGroup } from '../../../types/event';
+import { MAX_ZOOM } from '../../../types/constants';
 
 // Web Mercator, normalized to [0, 1] on both axes (y grows southwards), like Leaflet's EPSG:3857.
 const TILE_SIZE = 256;
+
+// Former markercluster `maxClusterRadius` values. A marker joins a cluster if it is within this
+// radius of its centre, so a cluster spans up to twice that: the grid cell is the diameter.
+export const getClusterRadius = (zoom: number) => {
+  if (zoom <= 13) return 90;
+  if (zoom <= 16) return 70;
+  if (zoom <= 18) return 50;
+  return 40;
+};
+
+export const getCellSize = (zoom: number) => getClusterRadius(zoom) * 2;
 
 export interface ClusterPoint {
   group: EventGroup;
@@ -32,7 +44,6 @@ export type ClusterItem =
       lng: number;
       count: number;
       bounds: ClusterBounds;
-      groups: EventGroup[];
     };
 
 export function projectLatLng(lat: number, lng: number) {
@@ -60,6 +71,11 @@ export function projectedSpan(bounds: ClusterBounds): number {
   const ne = projectLatLng(bounds.north, bounds.east);
   return Math.max(Math.abs(ne.x - sw.x), Math.abs(ne.y - sw.y));
 }
+
+// Size of the smallest grid cell the map will ever use, at its deepest zoom. Members closer
+// together than this can never land in separate cells no matter how far the user zooms in, so
+// they're merged into a single marker instead of a "cluster" bubble that could never actually split.
+const MIN_CELL_SIZE = cellSizeAt(MAX_ZOOM, getCellSize(MAX_ZOOM));
 
 export function getViewRange(bounds: {
   getNorth(): number;
@@ -137,14 +153,40 @@ export function clusterViewport(
     const cy = sumY / members.length;
     if (cx < view.minX || cx > view.maxX || cy < view.minY || cy > view.maxY) continue;
 
+    const lat = sumLat / members.length;
+    const lng = sumLng / members.length;
+    const bounds = { south, west, north, east };
+
+    // These members are too close together to ever separate, even at the map's deepest zoom:
+    // merge them into one marker (like a single group with several events) instead of a cluster
+    // bubble that would never actually be able to split on zoom or click.
+    if (projectedSpan(bounds) < MIN_CELL_SIZE) {
+      const mergedId = members
+        .map((member) => member.group.id)
+        .sort()
+        .join('+');
+      items.push({
+        kind: 'point',
+        key: `p:merged:${mergedId}`,
+        lat,
+        lng,
+        group: {
+          id: `merged:${mergedId}`,
+          latitude: lat,
+          longitude: lng,
+          events: members.flatMap((member) => member.group.events),
+        },
+      });
+      continue;
+    }
+
     items.push({
       kind: 'cluster',
       key: `c:${zoom}:${cellKey}`,
-      lat: sumLat / members.length,
-      lng: sumLng / members.length,
+      lat,
+      lng,
       count: totalEvents,
-      bounds: { south, west, north, east },
-      groups: members.map((member) => member.group),
+      bounds,
     });
   }
 

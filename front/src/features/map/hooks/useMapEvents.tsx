@@ -85,7 +85,10 @@ export function useMapEvents(
 ) {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
+  // The full group, not just its id: some markers (grid-merged clusters too close to ever split,
+  // see gridCluster.ts) exist only for rendering and aren't in `eventGroups`, so they can't be
+  // re-found by id there.
+  const [activeGroup, setActiveGroup] = useState<EventGroup | null>(null);
   const [activeEventIndex, setActiveEventIndex] = useState<number>(0);
 
   const { t } = useTranslation();
@@ -223,10 +226,7 @@ export function useMapEvents(
     }));
   }, [events]);
 
-  const activeGroup = useMemo(() => {
-    if (!activeGroupId) return null;
-    return eventGroups.find((g) => g.id === activeGroupId) || null;
-  }, [eventGroups, activeGroupId]);
+  const activeGroupId = activeGroup?.id ?? null;
 
   const currentEvent = useMemo(() => {
     if (!activeGroup) return null;
@@ -251,7 +251,7 @@ export function useMapEvents(
     currentEvent,
     activeGroupId,
     activeEventIndex,
-    setActiveGroupId,
+    setActiveGroup,
     setActiveEventIndex,
     handlePrevEvent,
     handleNextEvent,
