@@ -6,7 +6,11 @@ import { GdprController } from './gdpr.controller';
 import { GdprService } from './gdpr.service';
 
 @Module({
-  imports: [PrismaModule, RealtimeEmitterModule, JwtModule.register({ secret: process.env.JWT_SECRET })],
+  imports: [
+    PrismaModule,
+    RealtimeEmitterModule,
+    JwtModule.register({ secret: process.env.JWT_SECRET }),
+  ],
   controllers: [GdprController],
   providers: [GdprService],
 })

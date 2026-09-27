@@ -232,9 +232,7 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException if jwt verification fails', async () => {
       jwtServiceMock.verifyAsync.mockRejectedValue(new Error('invalid signature'));
 
-      await expect(service.refreshAccessToken('bad-token')).rejects.toThrow(
-        UnauthorizedException
-      );
+      await expect(service.refreshAccessToken('bad-token')).rejects.toThrow(UnauthorizedException);
     });
 
     it('should return a new access token when the refresh token is valid', async () => {

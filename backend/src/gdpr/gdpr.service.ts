@@ -89,7 +89,9 @@ export class GdprService {
     } catch (err) {
       // Here the email IS the deliverable: without it the user has no way to confirm.
       this.logger.error(`Failed to send deletion confirmation email to user ${userId}: ${err}`);
-      throw new ServiceUnavailableException('Unable to send confirmation email. Please try again later.');
+      throw new ServiceUnavailableException(
+        'Unable to send confirmation email. Please try again later.'
+      );
     }
   }
 

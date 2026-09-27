@@ -62,10 +62,13 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
     // ouvert indéfiniment après l'expiration du token. On prévient le client
     // (qui se reconnecte avec son token rafraîchi) puis on coupe.
     const msUntilExpiry = client.data.user.exp * 1000 - Date.now();
-    client.data.expiryTimer = setTimeout(() => {
-      client.emit('session:expired');
-      client.disconnect(true);
-    }, Math.max(msUntilExpiry, 0));
+    client.data.expiryTimer = setTimeout(
+      () => {
+        client.emit('session:expired');
+        client.disconnect(true);
+      },
+      Math.max(msUntilExpiry, 0)
+    );
 
     client.join(`user:${userId}`);
 

@@ -92,9 +92,7 @@ describe('UsersService', () => {
   describe('createOAuth', () => {
     it('should sanitize the provider name and suffix it when already taken', async () => {
       // "Élodie Martin" -> "Elodie_Martin" is taken, "Elodie_Martin1" is free
-      prismaMock.user.findUnique
-        .mockResolvedValueOnce({ id: 2 })
-        .mockResolvedValueOnce(null);
+      prismaMock.user.findUnique.mockResolvedValueOnce({ id: 2 }).mockResolvedValueOnce(null);
       prismaMock.user.create.mockResolvedValue(mockUser);
 
       await service.createOAuth({
