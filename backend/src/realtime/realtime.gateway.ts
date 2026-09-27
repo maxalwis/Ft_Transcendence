@@ -8,12 +8,10 @@ import {
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
-import { UsePipes, ValidationPipe, Logger, BadRequestException } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
-import { MessagesService } from '../messages/messages.service';
-import { CreateMessageDto } from '../messages/dto/create-message.dto';
 import { SessionTrackerService } from './session-tracker.service';
 import { RealtimeEmitterService } from './realtime-emitter.service';
 import { EventsService } from '../events/events.service';
@@ -31,7 +29,6 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
     private authService: AuthService,
     private sessionTracker: SessionTrackerService,
     private usersService: UsersService,
-    private messagesService: MessagesService,
     private emitter: RealtimeEmitterService,
     private eventsService: EventsService
   ) {}
@@ -60,6 +57,15 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   async handleConnection(client: Socket) {
     const userId = client.data.user.id;
 
+    // Le JWT n'est vérifié qu'au handshake : sans ce timer, le socket resterait
+    // ouvert indéfiniment après l'expiration du token. On prévient le client
+    // (qui se reconnecte avec son token rafraîchi) puis on coupe.
+    const msUntilExpiry = client.data.user.exp * 1000 - Date.now();
+    client.data.expiryTimer = setTimeout(() => {
+      client.emit('session:expired');
+      client.disconnect(true);
+    }, Math.max(msUntilExpiry, 0));
+
     client.join(`user:${userId}`);
 
     this.sessionTracker.addSession(userId, client.id);
@@ -75,6 +81,8 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   }
 
   async handleDisconnect(client: Socket) {
+    clearTimeout(client.data.expiryTimer);
+
     const userId = client.data.user?.id;
     if (!userId) return;
 
@@ -108,14 +116,5 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   @SubscribeMessage('event:leave')
   handleLeaveEvent(@ConnectedSocket() client: Socket, @MessageBody() eventId: string) {
     client.leave(`event:${eventId}`);
-  }
-
-  @UsePipes(new ValidationPipe())
-  @SubscribeMessage('message:send')
-  async handleMessage(@ConnectedSocket() client: Socket, @MessageBody() dto: CreateMessageDto) {
-    if (!dto.eventId) {
-      throw new BadRequestException('eventId is required');
-    }
-    return this.messagesService.create(client.data.user.id, dto);
   }
 }

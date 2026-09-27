@@ -1,9 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
 import { RealtimeGateway } from './realtime.gateway';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
-import { MessagesService } from '../messages/messages.service';
 import { SessionTrackerService } from './session-tracker.service';
 import { RealtimeEmitterService } from './realtime-emitter.service';
 import { EventsService } from '../events/events.service';
@@ -12,23 +10,25 @@ describe('RealtimeGateway', () => {
   let gateway: RealtimeGateway;
   let authServiceMock: any;
   let usersServiceMock: any;
-  let messagesServiceMock: any;
   let sessionTrackerMock: any;
   let emitterMock: any;
   let eventsServiceMock: any;
 
-  const mockClient = (userId?: number) => ({
+  // exp = maintenant + 15 min, en secondes comme dans un vrai JWT
+  const mockClient = (userId?: number, exp = Math.floor(Date.now() / 1000) + 15 * 60) => ({
     id: 'socket-1',
-    data: userId !== undefined ? { user: { id: userId } } : {},
+    data: userId !== undefined ? { user: { id: userId, exp } } : ({} as any),
     join: jest.fn(),
+    emit: jest.fn(),
     leave: jest.fn(),
     disconnect: jest.fn(),
   });
 
   beforeEach(async () => {
+    // Le gateway arme un timer d'expiration à chaque connexion
+    jest.useFakeTimers();
     authServiceMock = { verifyAccessToken: jest.fn() };
     usersServiceMock = { setStatusIfExists: jest.fn() };
-    messagesServiceMock = { create: jest.fn() };
     sessionTrackerMock = { addSession: jest.fn(), removeSession: jest.fn() };
     emitterMock = { setServer: jest.fn(), emitGlobal: jest.fn() };
     eventsServiceMock = { findOne: jest.fn() };
@@ -38,7 +38,6 @@ describe('RealtimeGateway', () => {
         RealtimeGateway,
         { provide: AuthService, useValue: authServiceMock },
         { provide: UsersService, useValue: usersServiceMock },
-        { provide: MessagesService, useValue: messagesServiceMock },
         { provide: SessionTrackerService, useValue: sessionTrackerMock },
         { provide: RealtimeEmitterService, useValue: emitterMock },
         { provide: EventsService, useValue: eventsServiceMock },
@@ -46,6 +45,10 @@ describe('RealtimeGateway', () => {
     }).compile();
 
     gateway = module.get<RealtimeGateway>(RealtimeGateway);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it('should be defined', () => {
@@ -79,6 +82,34 @@ describe('RealtimeGateway', () => {
     });
   });
 
+  describe('access token expiry', () => {
+    it('should warn the client and disconnect it when its access token expires', async () => {
+      const client = mockClient(1, Math.floor(Date.now() / 1000) + 60);
+      usersServiceMock.setStatusIfExists.mockResolvedValue({ id: 1, status: 'ONLINE' });
+
+      await gateway.handleConnection(client as any);
+
+      jest.advanceTimersByTime(59_000);
+      expect(client.disconnect).not.toHaveBeenCalled();
+
+      jest.advanceTimersByTime(1_000);
+      expect(client.emit).toHaveBeenCalledWith('session:expired');
+      expect(client.disconnect).toHaveBeenCalledWith(true);
+    });
+
+    it('should cancel the expiry timer when the socket disconnects first', async () => {
+      const client = mockClient(1, Math.floor(Date.now() / 1000) + 60);
+      usersServiceMock.setStatusIfExists.mockResolvedValue({ id: 1, status: 'ONLINE' });
+      sessionTrackerMock.removeSession.mockReturnValue(false);
+
+      await gateway.handleConnection(client as any);
+      await gateway.handleDisconnect(client as any);
+      jest.advanceTimersByTime(60_000);
+
+      expect(client.emit).not.toHaveBeenCalledWith('session:expired');
+    });
+  });
+
   describe('handleDisconnect', () => {
     it('should do nothing if the socket never had an authenticated user', async () => {
       const client = mockClient(undefined);
@@ -106,26 +137,6 @@ describe('RealtimeGateway', () => {
 
       expect(usersServiceMock.setStatusIfExists).not.toHaveBeenCalled();
       expect(emitterMock.emitGlobal).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('handleMessage', () => {
-    it('should reject a message with no eventId before hitting the service', async () => {
-      const client = mockClient(1);
-
-      await expect(gateway.handleMessage(client as any, {} as any)).rejects.toThrow(
-        BadRequestException
-      );
-      expect(messagesServiceMock.create).not.toHaveBeenCalled();
-    });
-
-    it('should create the message on behalf of the authenticated socket user', async () => {
-      const client = mockClient(1);
-      const dto = { eventId: 'evt-1', content: 'hi' } as any;
-
-      await gateway.handleMessage(client as any, dto);
-
-      expect(messagesServiceMock.create).toHaveBeenCalledWith(1, dto);
     });
   });
 

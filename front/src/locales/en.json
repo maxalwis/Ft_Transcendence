@@ -105,7 +105,8 @@
     "errors": {
       "loginRequiredToSend": "You must be logged in to send a message.",
       "loadMessages": "Failed to load messages",
-      "sendMessage": "Error while trying to send the message"
+      "sendMessage": "Error while trying to send the message",
+      "tooManyMessages": "You are sending too many messages. Please wait a few seconds."
     }
   },
   "passwordModal": {

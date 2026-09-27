@@ -154,12 +154,14 @@ export class AuthService {
     });
   }
 
-  async verifyAccessToken(token: string): Promise<{ id: number; email: string }> {
+  // exp (en secondes, standard JWT) sert au gateway pour couper le socket
+  // à l'expiration du token.
+  async verifyAccessToken(token: string): Promise<{ id: number; email: string; exp: number }> {
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.config.get<string>('JWT_SECRET'),
       });
-      return { id: payload.sub, email: payload.email };
+      return { id: payload.sub, email: payload.email, exp: payload.exp };
     } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }

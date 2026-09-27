@@ -242,11 +242,15 @@ describe('AuthService', () => {
 
   describe('verifyAccessToken', () => {
     it('should return the decoded payload if the token is valid', async () => {
-      jwtServiceMock.verifyAsync.mockResolvedValue({ sub: mockUser.id, email: mockUser.email });
+      jwtServiceMock.verifyAsync.mockResolvedValue({
+        sub: mockUser.id,
+        email: mockUser.email,
+        exp: 1234567890,
+      });
 
       const result = await service.verifyAccessToken('access-token');
 
-      expect(result).toEqual({ id: mockUser.id, email: mockUser.email });
+      expect(result).toEqual({ id: mockUser.id, email: mockUser.email, exp: 1234567890 });
     });
 
     it('should throw UnauthorizedException if the token is invalid or expired', async () => {

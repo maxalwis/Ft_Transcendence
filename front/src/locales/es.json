@@ -105,7 +105,8 @@
     "errors": {
       "loginRequiredToSend": "Debes iniciar sesión para enviar un mensaje.",
       "loadMessages": "Error al cargar los mensajes",
-      "sendMessage": "Error al enviar el mensaje"
+      "sendMessage": "Error al enviar el mensaje",
+      "tooManyMessages": "Estás enviando demasiados mensajes. Espera unos segundos."
     }
   },
   "passwordModal": {

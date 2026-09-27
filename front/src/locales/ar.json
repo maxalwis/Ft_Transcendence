@@ -105,7 +105,8 @@
     "errors": {
       "loginRequiredToSend": "يجب تسجيل الدخول لإرسال رسالة.",
       "loadMessages": "تعذّر تحميل الرسائل",
-      "sendMessage": "حدث خطأ أثناء إرسال الرسالة"
+      "sendMessage": "حدث خطأ أثناء إرسال الرسالة",
+      "tooManyMessages": "أنت ترسل رسائل كثيرة جدًا. يرجى الانتظار بضع ثوانٍ."
     }
   },
   "passwordModal": {

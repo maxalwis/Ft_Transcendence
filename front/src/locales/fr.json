@@ -105,7 +105,8 @@
     "errors": {
       "loginRequiredToSend": "Vous devez être connecté pour envoyer un message.",
       "loadMessages": "Échec du chargement des messages",
-      "sendMessage": "Erreur lors de l'envoi du message"
+      "sendMessage": "Erreur lors de l'envoi du message",
+      "tooManyMessages": "Vous envoyez trop de messages. Patientez quelques secondes."
     }
   },
   "passwordModal": {
