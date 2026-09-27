@@ -7,14 +7,16 @@ import {
   ParseIntPipe,
   Query,
   Req,
+  Res,
   UseGuards,
   UseInterceptors,
   UploadedFile,
   Patch,
   BadRequestException,
 } from '@nestjs/common';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import { UsersService } from './users.service';
+import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -28,7 +30,10 @@ const ALLOWED_AVATAR_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly realtimeEmitter: RealtimeEmitterService
+  ) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
@@ -51,8 +56,23 @@ export class UsersController {
   @Patch('password')
   @Throttle(AUTH_THROTTLE)
   @UseGuards(JwtAuthGuard)
-  changePassword(@Req() req: Request, @Body() body: ChangePasswordDto) {
-    return this.usersService.changePassword(req.user!.id, body.currentPassword, body.newPassword);
+  async changePassword(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Body() body: ChangePasswordDto
+  ) {
+    const userId = req.user!.id;
+    const result = await this.usersService.changePassword(
+      userId,
+      body.currentPassword,
+      body.newPassword
+    );
+
+    // Les refresh tokens sont révoqués par le service ; on coupe aussi les
+    // sockets, authentifiés par un JWT stateless qui resterait sinon valide.
+    this.realtimeEmitter.disconnectUser(userId);
+    res.clearCookie('refresh_token', { path: '/' });
+    return result;
   }
 
   @Put('me')

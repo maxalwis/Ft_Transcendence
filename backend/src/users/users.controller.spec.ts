@@ -1,10 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
   let usersServiceMock: any;
+  let emitterMock: any;
   const dbUser = { id: 7, username: 'bob', password: 'bcrypt-hash' };
 
   beforeEach(async () => {
@@ -17,9 +19,14 @@ describe('UsersController', () => {
       toPublicUser: jest.fn(({ password, ...publicUser }) => publicUser),
     };
 
+    emitterMock = { disconnectUser: jest.fn() };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [{ provide: UsersService, useValue: usersServiceMock }],
+      providers: [
+        { provide: UsersService, useValue: usersServiceMock },
+        { provide: RealtimeEmitterService, useValue: emitterMock },
+      ],
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
@@ -49,10 +56,40 @@ describe('UsersController', () => {
 
   it('changePassword should use the authenticated user id, not a client-supplied one', async () => {
     const req = { user: { id: 7 } } as any;
+    const res = { clearCookie: jest.fn() } as any;
 
-    await controller.changePassword(req, { currentPassword: 'old', newPassword: 'new' } as any);
+    await controller.changePassword(req, res, {
+      currentPassword: 'old',
+      newPassword: 'new',
+    } as any);
 
     expect(usersServiceMock.changePassword).toHaveBeenCalledWith(7, 'old', 'new');
+  });
+
+  it('changePassword should close the user sockets and clear the refresh cookie', async () => {
+    const req = { user: { id: 7 } } as any;
+    const res = { clearCookie: jest.fn() } as any;
+
+    await controller.changePassword(req, res, {
+      currentPassword: 'old',
+      newPassword: 'new',
+    } as any);
+
+    expect(emitterMock.disconnectUser).toHaveBeenCalledWith(7);
+    expect(res.clearCookie).toHaveBeenCalledWith('refresh_token', { path: '/' });
+  });
+
+  it('changePassword should not log anyone out if the current password is wrong', async () => {
+    const req = { user: { id: 7 } } as any;
+    const res = { clearCookie: jest.fn() } as any;
+    usersServiceMock.changePassword.mockRejectedValue(new Error('Current password is incorrect'));
+
+    await expect(
+      controller.changePassword(req, res, { currentPassword: 'bad', newPassword: 'new' } as any)
+    ).rejects.toThrow();
+
+    expect(emitterMock.disconnectUser).not.toHaveBeenCalled();
+    expect(res.clearCookie).not.toHaveBeenCalled();
   });
 
   it('update should build the avatar path from the uploaded file when present', async () => {

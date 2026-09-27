@@ -123,7 +123,8 @@
     "mismatchError": "Les mots de passe ne correspondent pas.",
     "lengthError": "Le mot de passe doit faire entre 8 et 72 caractères.",
     "tooManyAttempts": "Trop de tentatives. Réessayez dans une minute.",
-    "serverError": "Une erreur est survenue. Veuillez réessayer."
+    "serverError": "Une erreur est survenue. Veuillez réessayer.",
+    "reloginRequired": "Mot de passe modifié. Reconnectez-vous avec votre nouveau mot de passe."
   },
   "authModal": {
     "loginTitle": "Connexion",

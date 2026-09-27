@@ -170,11 +170,20 @@ export class UsersService {
       throw new UnauthorizedException('Current password is incorrect');
     }
 
+    // Changer de mot de passe est la réaction normale à un vol de compte : on
+    // révoque toutes les sessions (y compris la courante) dans la même
+    // transaction, pour qu'un refresh token volé ne survive pas au changement.
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { password: hashedPassword },
-    });
+    await this.prisma.$transaction([
+      this.prisma.user.update({
+        where: { id: userId },
+        data: { password: hashedPassword },
+      }),
+      this.prisma.refreshToken.updateMany({
+        where: { userId, revoked: false },
+        data: { revoked: true },
+      }),
+    ]);
 
     return { message: 'Password changed successfully' };
   }
