@@ -107,23 +107,14 @@ describe('Users authorization (e2e)', () => {
         .expect(200);
     });
 
-    it('deleting /users/me only deletes the authenticated user', async () => {
-      const response = await agent(app.getHttpServer())
+    it('does not expose DELETE /users/me (deletion must go through the GDPR flow)', async () => {
+      await agent(app.getHttpServer())
         .delete('/users/me')
         .set('Authorization', `Bearer ${tokenA}`)
-        .expect(200);
+        .expect(404);
 
-      expect(response.body).not.toHaveProperty('password');
-
-      const deletedUserA = await prisma.user.findUnique({
-        where: { id: userAId },
-      });
-      const userB = await prisma.user.findUnique({
-        where: { id: userBId },
-      });
-
-      expect(deletedUserA).toBeNull();
-      expect(userB).not.toBeNull();
+      const userA = await prisma.user.findUnique({ where: { id: userAId } });
+      expect(userA).not.toBeNull();
     });
   });
 

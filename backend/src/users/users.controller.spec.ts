@@ -14,7 +14,6 @@ describe('UsersController', () => {
       searchByUsername: jest.fn(),
       changePassword: jest.fn(),
       update: jest.fn().mockResolvedValue(dbUser),
-      remove: jest.fn().mockResolvedValue(dbUser),
       toPublicUser: jest.fn(({ password, ...publicUser }) => publicUser),
     };
 
@@ -80,22 +79,6 @@ describe('UsersController', () => {
     const req = { user: { id: 7 } } as any;
 
     const result = await controller.update(req, {} as any, undefined);
-
-    expect(result).not.toHaveProperty('password');
-  });
-
-  it('remove should delete the authenticated user, not an arbitrary id', async () => {
-    const req = { user: { id: 7 } } as any;
-
-    await controller.remove(req);
-
-    expect(usersServiceMock.remove).toHaveBeenCalledWith(7);
-  });
-
-  it('remove should never return the password hash', async () => {
-    const req = { user: { id: 7 } } as any;
-
-    const result = await controller.remove(req);
 
     expect(result).not.toHaveProperty('password');
   });

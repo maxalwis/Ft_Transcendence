@@ -4,7 +4,6 @@ import {
   Body,
   Param,
   Put,
-  Delete,
   ParseIntPipe,
   Query,
   Req,
@@ -86,13 +85,6 @@ export class UsersController {
       ...body,
       avatar: file ? `/uploads/avatars/${file.filename}` : undefined,
     });
-    return this.usersService.toPublicUser(user);
-  }
-
-  @Delete('me')
-  @UseGuards(JwtAuthGuard)
-  async remove(@Req() req: Request) {
-    const user = await this.usersService.remove(req.user!.id);
     return this.usersService.toPublicUser(user);
   }
 }

@@ -79,20 +79,4 @@ describe('UsersService', () => {
       );
     });
   });
-
-  describe('remove', () => {
-    it('should throw NotFoundException if user to delete does not exist', async () => {
-      prismaMock.user.findUnique.mockResolvedValue(null);
-
-      await expect(service.remove(999)).rejects.toThrow(NotFoundException);
-    });
-
-    it('should delete and return user if found', async () => {
-      prismaMock.user.findUnique.mockResolvedValue(mockUser);
-      prismaMock.user.delete.mockResolvedValue(mockUser);
-
-      const result = await service.remove(1);
-      expect(result).toEqual(mockUser);
-    });
-  });
 });

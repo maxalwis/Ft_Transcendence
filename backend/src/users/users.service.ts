@@ -139,11 +139,6 @@ export class UsersService {
     return this.catchDuplicateError(() => this.prisma.user.update({ where: { id }, data }));
   }
 
-  async remove(id: number): Promise<User> {
-    await this.findOne(id); // Lève une NotFoundException si l'ID n'existe pas
-    return this.prisma.user.delete({ where: { id } });
-  }
-
   // Factorise le try/catch P2002 commun à createLocal, createOAuth et update
   private async catchDuplicateError<T>(fn: () => Promise<T>): Promise<T> {
     try {
