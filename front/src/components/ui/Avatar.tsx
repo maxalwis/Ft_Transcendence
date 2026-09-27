@@ -11,7 +11,13 @@ interface AvatarProps {
 
 // Affiche l'avatar (ou l'image par défaut) et se rabat sur l'initiale du username
 // uniquement si même l'image par défaut échoue à charger.
-export default function Avatar({ avatar, username, alt = 'Avatar', className, referrerPolicy }: AvatarProps) {
+export default function Avatar({
+  avatar,
+  username,
+  alt = 'Avatar',
+  className,
+  referrerPolicy,
+}: AvatarProps) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {

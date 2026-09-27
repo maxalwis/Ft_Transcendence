@@ -71,7 +71,7 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
     >
       <div className="flex flex-col">
         <div className="aspect-[16/11] shrink-0 overflow-hidden rounded-lg">
-        <EventImage src={event.coverUrl} alt={event.title} />
+          <EventImage src={event.coverUrl} alt={event.title} />
         </div>
 
         <div className="flex min-h-[76px] flex-col pt-3 leading-tight">

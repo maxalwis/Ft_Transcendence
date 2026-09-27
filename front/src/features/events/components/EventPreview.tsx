@@ -180,9 +180,7 @@ export default function EventPreview({
       }}
     >
       <div className={styles['events-details-image-container']}>
-        {imageUrl && (
-          <EventImage src={imageUrl} alt={title || t('eventPreview.defaultAlt')} />
-        )}
+        {imageUrl && <EventImage src={imageUrl} alt={title || t('eventPreview.defaultAlt')} />}
       </div>
 
       {totalInGroup > 1 && (
