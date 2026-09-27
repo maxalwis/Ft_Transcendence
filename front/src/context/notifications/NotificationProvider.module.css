@@ -24,13 +24,18 @@
 }
 
 .warning {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+
   background: var(--color-warning-bg);
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-shadow);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--color-warning-border);
-  color: var(--color-warning-text);
+  color: var(--color-orange-primary);
   overflow: hidden;
   pointer-events: auto;
   font-family: var(--font-main);
@@ -39,6 +44,13 @@
 
 .warning button:hover {
   background: var(--color-warning-hover);
+}
+
+.message {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
 }
 
 .toastSlideIn {

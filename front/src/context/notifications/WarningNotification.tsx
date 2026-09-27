@@ -39,20 +39,18 @@ export const WarningNotification = ({ message, onClose, duration = 5000 }: Notif
 
   return (
     <div
-      className={`${styles.warning} ${
-        isExiting ? 'toast-slide-out' : 'toast-slide-in'
-      } flex items-center gap-3 px-4 py-3 rounded-2xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[8px] bg-[rgba(255,248,225,0.7)] border border-[rgba(245,158,11,0.35)] text-amber-950 font-sans max-w-md pointer-events-auto transition-all duration-300`}
+      className={`${styles.warning} ${isExiting ? styles.toastSlideOut : styles.toastSlideIn} max-w-md`}
     >
       <WarningIcon className="h-5 w-5" />
 
-      <span className="text-sm font-medium leading-snug flex-1">{message}</span>
+      <span className={styles.message}>{message}</span>
 
       <Button
         variant="icon"
         type="button"
         onClick={handleDismiss}
         aria-label="Close notification"
-        className="modal-button modal-close-inline"
+        className="modal-button modal-close"
       >
         <CloseIcon className="h-4 w-4" />
       </Button>

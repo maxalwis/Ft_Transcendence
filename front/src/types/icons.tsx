@@ -111,16 +111,10 @@ export const SendIcon = (props: IconProps) => (
 /* -------------------------------------------------------------------------- */
 
 export const WarningIcon = (props: IconProps) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" {...props}>
-    <path
-      d="M12 3.5 1.8 20.5c-.5.8.1 1.8 1 1.8h18.4c.9 0 1.5-1 1-1.8L12 3.5Z"
-      fill="currentColor"
-      stroke="none"
-    />
-
-    <path d="M12 9v5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-
-    <circle cx="12" cy="17" r="1" fill="currentColor" stroke="none" />
+  <svg viewBox="0 0 512 512" fill="currentColor" stroke="none" aria-hidden="true" {...props}>
+    <path d="M257.028,384.028c-11.776,0-21.333,9.557-21.333,21.333s9.557,21.333,21.333,21.333s21.333-9.557,21.333-21.333S268.804,384.028,257.028,384.028z" />
+    <path d="M510.775,481.154L276.109,11.82c-7.862-15.724-30.3-15.724-38.162,0L3.28,481.154c-7.092,14.185,3.222,30.874,19.081,30.874h469.333C507.553,512.028,517.868,495.338,510.775,481.154z M56.879,469.361L257.028,69.064l200.149,400.297H56.879z" />
+    <path d="M235.694,192.028v149.333c0,11.782,9.551,21.333,21.333,21.333s21.333-9.551,21.333-21.333V192.028c0-11.782-9.551-21.333-21.333-21.333S235.694,180.245,235.694,192.028z" />
   </svg>
 );
 
