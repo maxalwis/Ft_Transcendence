@@ -226,7 +226,8 @@
     "cancel": "Annuler et revenir",
     "done": "Votre compte a été définitivement supprimé. Redirection…",
     "invalidLink": "Lien de confirmation invalide ou manquant.",
-    "error": "Le lien de confirmation est invalide ou expiré. Veuillez refaire une demande de suppression."
+    "error": "Le lien de confirmation est invalide ou expiré. Veuillez refaire une demande de suppression.",
+    "deletedElsewhere": "Votre compte a été supprimé."
   },
   "sidebar": {
     "event": "Événement",

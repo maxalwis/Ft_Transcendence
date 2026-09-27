@@ -10,12 +10,14 @@ import './styles/global.css';
 import { SocketProvider } from './context/socket/SocketProvider';
 
 import { DeleteConfirmPage } from './features/gdpr/DeleteConfirmPage';
+import { AccountDeletedListener } from './features/gdpr/AccountDeletedListener';
 
 export default function App() {
   return (
     <AuthProvider>
       <SocketProvider>
         <NotificationProvider>
+          <AccountDeletedListener />
           <div className="relative h-screen w-screen overflow-hidden">
             <div className="absolute inset-0 z-0 overflow-hidden">
               <Routes>

@@ -7,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
+import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 
 const DELETE_PURPOSE = 'gdpr-account-deletion';
 
@@ -15,7 +16,8 @@ export class GdprService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
-    private readonly mail: MailService
+    private readonly mail: MailService,
+    private readonly emitter: RealtimeEmitterService
   ) {}
 
   /** Gather everything we store about the user, in a readable shape. */
@@ -92,6 +94,12 @@ export class GdprService {
     if (!user) throw new NotFoundException('User not found');
 
     await this.prisma.user.delete({ where: { id: payload.sub } });
+
+    // La confirmation se fait dans l'onglet ouvert depuis l'email : les autres
+    // onglets de l'utilisateur sont prévenus pour se déconnecter, puis leurs
+    // sockets (authentifiés par un JWT encore valide) sont fermés.
+    this.emitter.emitToUser(payload.sub, 'account:deleted', {});
+    this.emitter.disconnectUser(payload.sub);
 
     if (user.email) {
       await this.mail.sendMail({

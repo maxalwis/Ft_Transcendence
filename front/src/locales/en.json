@@ -226,7 +226,8 @@
     "cancel": "Cancel and go back",
     "done": "Your account has been permanently deleted. Redirecting…",
     "invalidLink": "Invalid or missing confirmation link.",
-    "error": "The confirmation link is invalid or expired. Please request deletion again."
+    "error": "The confirmation link is invalid or expired. Please request deletion again.",
+    "deletedElsewhere": "Your account has been deleted."
   },
   "sidebar": {
     "event": "Event",
