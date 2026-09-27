@@ -53,7 +53,7 @@ export const createMarkerIcon = (isHovered: boolean = false, isNew: boolean = fa
         <div data-marker-body data-hover-scale="1.2" style="
             width: 40px;
             height: 50px;
-            transform: ${transform};
+            transform: ${transform} translateZ(0);
             transform-origin: bottom center;
             transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
@@ -93,7 +93,7 @@ export const createGroupMarkerIcon = (
 export const setMarkerHovered = (marker: L.Marker, hovered: boolean) => {
   const body = marker.getElement()?.querySelector<HTMLElement>('[data-marker-body]');
   if (!body) return;
-  body.style.transform = `scale(${hovered ? (body.dataset.hoverScale ?? '1.2') : '1'})`;
+  body.style.transform = `scale(${hovered ? (body.dataset.hoverScale ?? '1.2') : '1'}) translateZ(0)`;
 };
 
 const buildGroupMarkerIcon = (count: number, isHovered: boolean, isNew: boolean): L.DivIcon => {
@@ -112,7 +112,7 @@ const buildGroupMarkerIcon = (count: number, isHovered: boolean, isNew: boolean)
         <div data-marker-body data-hover-scale="1.2" style="
             width: 40px;
             height: 50px;
-            transform: ${transform};
+            transform: ${transform} translateZ(0);
             transform-origin: bottom center;
             transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
