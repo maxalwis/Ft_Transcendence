@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException, ConflictException } from '@nestjs/common';
+import { NotFoundException, ConflictException, UnauthorizedException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '../generated/prisma/client';
@@ -24,6 +25,10 @@ describe('UsersService', () => {
         update: jest.fn(),
         delete: jest.fn(),
       },
+      refreshToken: {
+        updateMany: jest.fn(),
+      },
+      $transaction: jest.fn((ops: Promise<unknown>[]) => Promise.all(ops)),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -59,40 +64,79 @@ describe('UsersService', () => {
     });
   });
 
-  describe('create', () => {
-    it('should create and return a user', async () => {
+  describe('createLocal', () => {
+    const newUser = { username: 'alice', email: 'alice@example.com', password: 'plainPassword' };
+
+    it('should store a bcrypt hash, never the plain password', async () => {
       prismaMock.user.create.mockResolvedValue(mockUser);
 
-      const result = await service.create({ name: 'Alice', email: 'alice@example.com' });
+      const result = await service.createLocal(newUser);
+
       expect(result).toEqual(mockUser);
+      const { data } = prismaMock.user.create.mock.calls[0][0];
+      expect(data.password).not.toBe('plainPassword');
+      expect(await bcrypt.compare('plainPassword', data.password)).toBe(true);
     });
 
-    it('should throw ConflictException if email already exists (P2002)', async () => {
+    it('should throw ConflictException if email or username already exists (P2002)', async () => {
       const prismaError = new Prisma.PrismaClientKnownRequestError('Unique constraint failed', {
         code: 'P2002',
         clientVersion: '7.0.0',
       });
       prismaMock.user.create.mockRejectedValue(prismaError);
 
-      await expect(service.create({ name: 'Alice', email: 'alice@example.com' })).rejects.toThrow(
-        ConflictException
-      );
+      await expect(service.createLocal(newUser)).rejects.toThrow(ConflictException);
     });
   });
 
-  describe('remove', () => {
-    it('should throw NotFoundException if user to delete does not exist', async () => {
-      prismaMock.user.findUnique.mockResolvedValue(null);
+  describe('createOAuth', () => {
+    it('should sanitize the provider name and suffix it when already taken', async () => {
+      // "Élodie Martin" -> "Elodie_Martin" is taken, "Elodie_Martin1" is free
+      prismaMock.user.findUnique
+        .mockResolvedValueOnce({ id: 2 })
+        .mockResolvedValueOnce(null);
+      prismaMock.user.create.mockResolvedValue(mockUser);
 
-      await expect(service.remove(999)).rejects.toThrow(NotFoundException);
+      await service.createOAuth({
+        username: 'Élodie Martin',
+        email: 'elodie@example.com',
+        provider: 'google',
+        providerId: 'g-123',
+        avatar: '',
+      });
+
+      const { data } = prismaMock.user.create.mock.calls[0][0];
+      expect(data.username).toBe('Elodie_Martin1');
+      expect(data.password).toBeNull();
+    });
+  });
+
+  describe('changePassword', () => {
+    it('should update the password and revoke every refresh token of the user', async () => {
+      const hash = await bcrypt.hash('oldPassword', 4);
+      prismaMock.user.findUnique.mockResolvedValue({ ...mockUser, password: hash });
+
+      await service.changePassword(1, 'oldPassword', 'newPassword');
+
+      expect(prismaMock.$transaction).toHaveBeenCalled();
+      expect(prismaMock.user.update).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: 1 } })
+      );
+      expect(prismaMock.refreshToken.updateMany).toHaveBeenCalledWith({
+        where: { userId: 1, revoked: false },
+        data: { revoked: true },
+      });
     });
 
-    it('should delete and return user if found', async () => {
-      prismaMock.user.findUnique.mockResolvedValue(mockUser);
-      prismaMock.user.delete.mockResolvedValue(mockUser);
+    it('should not revoke anything if the current password is wrong', async () => {
+      const hash = await bcrypt.hash('oldPassword', 4);
+      prismaMock.user.findUnique.mockResolvedValue({ ...mockUser, password: hash });
 
-      const result = await service.remove(1);
-      expect(result).toEqual(mockUser);
+      await expect(service.changePassword(1, 'wrong', 'newPassword')).rejects.toThrow(
+        UnauthorizedException
+      );
+
+      expect(prismaMock.refreshToken.updateMany).not.toHaveBeenCalled();
     });
   });
 });

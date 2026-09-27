@@ -106,7 +106,8 @@
     "errors": {
       "loginRequiredToSend": "Debes iniciar sesión para enviar un mensaje.",
       "loadMessages": "Error al cargar los mensajes",
-      "sendMessage": "Error al enviar el mensaje"
+      "sendMessage": "Error al enviar el mensaje",
+      "tooManyMessages": "Estás enviando demasiados mensajes. Espera unos segundos."
     }
   },
   "passwordModal": {
@@ -124,7 +125,9 @@
     "incorrectPasswordError": "La contraseña actual es incorrecta.",
     "noPasswordSetError": "No hay ninguna contraseña definida para esta cuenta.",
     "serverError": "Ocurrió un error al cambiar la contraseña. Por favor, inténtalo de nuevo.",
-    "changeSuccess": "Contraseña cambiada con éxito."
+    "lengthError": "La contraseña debe tener entre 8 y 72 caracteres.",
+    "tooManyAttempts": "Demasiados intentos. Inténtalo de nuevo en un minuto.",
+    "reloginRequired": "Contraseña cambiada. Vuelve a iniciar sesión con tu nueva contraseña."
   },
   "authModal": {
     "loginTitle": "Iniciar sesión",
@@ -144,7 +147,10 @@
     "errors": {
       "invalidCredentials": "Credenciales inválidas",
       "passwordMismatch": "Las contraseñas no coinciden",
-      "registrationError": "Error al crear la cuenta"
+      "registrationError": "Error al crear la cuenta",
+      "tooManyAttempts": "Demasiados intentos. Inténtalo de nuevo en un minuto.",
+      "invalidUsername": "El nombre de usuario debe tener entre 3 y 20 caracteres: letras, números, _ o -.",
+      "passwordLength": "La contraseña debe tener entre 8 y 72 caracteres."
     }
   },
   "authBtn": {
@@ -153,7 +159,11 @@
     "editProfile": "Editar perfil"
   },
   "oauth": {
-    "connecting": "Conectando..."
+    "connecting": "Conectando...",
+    "errors": {
+      "account_exists": "Ya existe una cuenta con este correo electrónico. Inicia sesión con tu contraseña.",
+      "oauth_failed": "No se pudo iniciar sesión. Inténtalo de nuevo."
+    }
   },
   "profileSettings": {
     "title": "Editar perfil",
@@ -167,7 +177,13 @@
     "preferredCategory": "Categoría preferida",
     "changePicture": "Cambiar foto",
     "cancel": "Cancelar",
-    "save": "Guardar"
+    "save": "Guardar",
+    "privacyTitle": "Privacidad",
+    "downloadData": "Descargar mis datos",
+    "deleteAccount": "Eliminar mi cuenta",
+    "deleteEmailSent": "Se ha enviado un correo de confirmación. Revisa tu bandeja de entrada para finalizar la eliminación.",
+    "exportError": "No se pudieron exportar tus datos",
+    "deleteRequestError": "No se pudo enviar el correo de confirmación"
   },
   "publicProfile": {
     "title": "Ver perfil",
@@ -214,7 +230,13 @@
     "cancel": "Cancelar y volver",
     "done": "Tu cuenta ha sido eliminada permanentemente. Redirigiendo…",
     "invalidLink": "Enlace de confirmación no válido o ausente.",
-    "error": "El enlace de confirmación no es válido o ha caducado. Solicita la eliminación de nuevo."
+    "error": "El enlace de confirmación no es válido o ha caducado. Solicita la eliminación de nuevo.",
+    "deletedElsewhere": "Tu cuenta ha sido eliminada.",
+    "mustLogin": "Debes iniciar sesión en esta cuenta para confirmar la eliminación.",
+    "passwordLabel": "Introduce tu contraseña",
+    "passwordRequired": "Por favor, introduce tu contraseña.",
+    "wrongPassword": "Contraseña incorrecta.",
+    "expired": "Este enlace de confirmación ha caducado. Solicita la eliminación de nuevo."
   },
   "sidebar": {
     "event": "Evento",

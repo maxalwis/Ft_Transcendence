@@ -26,6 +26,7 @@ export async function sendEventMessage(eventId: string, content: string): Promis
   });
 
   if (!res.ok) {
+    if (res.status === 429) throw new Error('TOO_MANY_ATTEMPTS');
     const errorData = await res.json().catch(() => null);
     const message = Array.isArray(errorData?.message)
       ? errorData.message.join(', ')

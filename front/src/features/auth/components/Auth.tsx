@@ -29,6 +29,13 @@ export default function LoginButton({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // Referme les menus à la déconnexion (logout, changement de mot de passe,
+  // session expirée), sinon ils se rouvrent tout seuls à la reconnexion.
+  if (!user && (isEditOpen || isMenuOpen)) {
+    setIsEditOpen(false);
+    setIsMenuOpen(false);
+  }
+
   // ferme le dropdown si on clique en dehors
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

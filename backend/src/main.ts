@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import { AppLogger } from './logger/app-logger.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PublicApiModule } from './public-api/public-api.module';
+import { CORS_ORIGIN } from './cors.config';
 
 // A stray promise rejection (e.g. in a socket lifecycle handler) must not
 // crash the whole backend; log it instead of letting the process exit.
@@ -22,17 +23,12 @@ async function bootstrap() {
   app.setGlobalPrefix('api', {
     exclude: [{ path: 'health', method: RequestMethod.GET }],
   });
+  // Sans origine explicite, cors retomberait sur '*' : on préfère ne pas démarrer.
+  if (!CORS_ORIGIN) {
+    throw new Error('FRONTEND_URL must be set (allowed CORS origin)');
+  }
   app.enableCors({
-    origin: (
-      origin: string | undefined,
-      callback: (err: Error | null, allow?: boolean) => void
-    ) => {
-      if (!origin || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Unauthorized by CORS'));
-      }
-    },
+    origin: CORS_ORIGIN,
     credentials: true,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With'],
@@ -46,21 +42,25 @@ async function bootstrap() {
     })
   );
 
-  // OpenAPI docs for the public API (served at /docs; /api/docs behind nginx)
+  // OpenAPI docs for the public API, served at /api/docs.
+  // setGlobalPrefix doesn't apply to Swagger, hence the explicit 'api/' prefix.
+  // No .addServer('/api'): the global prefix is already part of every path.
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Transcendence Public API')
     .setDescription('Public API to query and manage Paris events. Requires an API key.')
     .setVersion('1.0')
-    .addServer('/api')
     .addApiKey({ type: 'apiKey', name: 'X-API-Key', in: 'header' }, 'api-key')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig, {
     include: [PublicApiModule],
   });
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   app.enableShutdownHooks();
   app.set('etag', false);
+  // Behind nginx: take the client IP from X-Forwarded-For (1 hop) so rate
+  // limiting counts per client instead of lumping everyone under nginx's IP
+  app.set('trust proxy', 1);
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);

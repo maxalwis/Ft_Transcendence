@@ -4,6 +4,7 @@ import ModalLayout from '../../../components/ui/ModalLayout';
 import Button from '../../../components/ui/Button';
 import TextField from '../../../components/ui/TextField';
 import { changePassword, ChangePasswordError } from '../../../api/users';
+import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 
 interface PasswordModalProps {
@@ -12,10 +13,12 @@ interface PasswordModalProps {
 
 export default function PasswordModal({ onClose }: PasswordModalProps) {
   const { t } = useTranslation();
-  const { showWarning, showSuccess } = useNotification();
+  const { logout } = useAuth();
+  const { showWarning } = useNotification();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -27,9 +30,16 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setPasswordError(null);
+
+    // mêmes règles que le backend (backend/src/users/dto/validation-rules.ts)
+    if (newPassword.length < 8 || newPassword.length > 72) {
+      setPasswordError(t('passwordModal.lengthError'));
+      return;
+    }
 
     if (newPassword !== confirmPassword) {
-      showWarning(t('passwordModal.mismatchError'));
+      setPasswordError(t('passwordModal.mismatchError'));
       return;
     }
 
@@ -37,18 +47,20 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
 
     try {
       await changePassword(currentPassword, newPassword);
-      requestClose();
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-      showSuccess(t('passwordModal.changeSuccess'));
+      // Le backend a révoqué toutes les sessions, y compris celle-ci :
+      // on déconnecte localement et on demande de se reconnecter.
+      showWarning(t('passwordModal.reloginRequired'));
+      onClose();
+      logout();
     } catch (err) {
       if (err instanceof ChangePasswordError && err.code === 'INCORRECT_PASSWORD') {
-        showWarning(t('passwordModal.incorrectPasswordError'));
+        setPasswordError(t('passwordModal.incorrectPasswordError'));
       } else if (err instanceof ChangePasswordError && err.code === 'NO_PASSWORD_SET') {
-        showWarning(t('passwordModal.noPasswordSetError'));
+        setPasswordError(t('passwordModal.noPasswordSetError'));
+      } else if (err instanceof Error && err.message === 'TOO_MANY_ATTEMPTS') {
+        setPasswordError(t('passwordModal.tooManyAttempts'));
       } else {
-        showWarning(t('passwordModal.serverError'));
+        setPasswordError(t('passwordModal.serverError'));
       }
     } finally {
       setIsChangingPassword(false);
@@ -87,6 +99,7 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           placeholder={t('passwordModal.confirmPasswordPlaceholder')}
+          error={passwordError ?? undefined}
         />
 
         <div className="modalActions">

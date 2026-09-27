@@ -1,10 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
-import { createHash } from 'crypto';
+import { createHash, randomUUID } from 'crypto';
 import { User } from '../generated/prisma/client';
 
 const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -47,11 +47,28 @@ export class AuthService {
     providerId: string;
     avatar: string;
   }) {
-    let user = await this.usersService.findFromEmailOrNull(profile.email);
+    let user = await this.usersService.findFromProviderOrNull(
+      profile.provider,
+      profile.providerId
+    );
 
     if (!user) {
-      user = await this.usersService.createOAuth(profile);
-    } else if (profile.avatar && user.avatar !== profile.avatar) {
+      // Les emails des comptes locaux ne sont pas vérifiés : n'importe qui peut
+      // s'inscrire avec l'adresse d'un autre. On ne rattache donc jamais un
+      // compte existant par email, sinon la victime qui se connecte en OAuth
+      // atterrirait dans le compte créé par l'attaquant.
+      if (await this.usersService.findFromEmailOrNull(profile.email)) {
+        throw new ConflictException(
+          'An account already exists with this email. Log in with your password instead.'
+        );
+      }
+      return this.usersService.createOAuth(profile);
+    }
+
+    // On ne synchronise que l'avatar du provider : une photo uploadée par
+    // l'utilisateur (stockée sous /uploads/) ne doit pas être écrasée.
+    const hasUploadedAvatar = user.avatar?.startsWith('/uploads/') ?? false;
+    if (profile.avatar && !hasUploadedAvatar && user.avatar !== profile.avatar) {
       user = await this.usersService.update(user.id, { avatar: profile.avatar });
     }
 
@@ -65,7 +82,10 @@ export class AuthService {
       expiresIn: '15m',
     });
 
-    const refreshToken = await this.jwtService.signAsync(payload, {
+    // Le jti rend chaque refresh token unique : sans lui, deux logins dans la
+    // même seconde (iat identique) produisent le même JWT, donc le même
+    // tokenHash, et la contrainte @unique fait planter la création
+    const refreshToken = await this.jwtService.signAsync({ ...payload, jti: randomUUID() }, {
       secret: this.config.get<string>('JWT_REFRESH_SECRET'),
       expiresIn: '7d',
     });
@@ -137,12 +157,14 @@ export class AuthService {
     });
   }
 
-  async verifyAccessToken(token: string): Promise<{ id: number; email: string }> {
+  // exp (en secondes, standard JWT) sert au gateway pour couper le socket
+  // à l'expiration du token.
+  async verifyAccessToken(token: string): Promise<{ id: number; email: string; exp: number }> {
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.config.get<string>('JWT_SECRET'),
       });
-      return { id: payload.sub, email: payload.email };
+      return { id: payload.sub, email: payload.email, exp: payload.exp };
     } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }

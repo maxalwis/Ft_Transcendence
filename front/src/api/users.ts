@@ -43,6 +43,7 @@ export async function changePassword(currentPassword: string, newPassword: strin
   });
 
   if (!res.ok) {
+    if (res.status === 429) throw new Error('TOO_MANY_ATTEMPTS');
     const error = await res.json().catch(() => null);
     const message = error?.message ?? 'Password change failed';
 

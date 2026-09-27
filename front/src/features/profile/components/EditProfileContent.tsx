@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/useAuth';
 import { resolveAvatarUrl } from '../utils/avatar';
 import PasswordModal from './PasswordModal';
+import { exportMyData, requestAccountDeletion } from '../../../api/gdpr';
 import styles from '../ProfileModal.module.css';
 import { useNotification } from '../../../context/notifications/useNotification';
 import ModalLayout, { type ModalShellProps } from '../../../components/ui/ModalLayout';
@@ -48,6 +49,34 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isOAuthUser = Boolean(user?.provider && user.provider !== 'local');
+
+  // GDPR: download all of the user's data as a JSON file
+  const handleExportData = async () => {
+    if (!accessToken) return;
+    try {
+      const data = await exportMyData(accessToken);
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'my-data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      showWarning(t('profileSettings.exportError'));
+    }
+  };
+
+  // GDPR: ask the backend to email a deletion-confirmation link
+  const handleDeleteRequest = async () => {
+    if (!accessToken) return;
+    try {
+      await requestAccountDeletion(accessToken);
+      showWarning(t('profileSettings.deleteEmailSent'));
+    } catch {
+      showWarning(t('profileSettings.deleteRequestError'));
+    }
+  };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
@@ -149,6 +178,22 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
             {t('profileSettings.changePassword')}
           </Button>
         )}
+
+        <div className={styles.privacySection}>
+          <h3>{t('profileSettings.privacyTitle')}</h3>
+          <div className={styles.privacyButtons}>
+            <button type="button" className="btnSecondary" onClick={handleExportData}>
+              {t('profileSettings.downloadData')}
+            </button>
+            <button
+              type="button"
+              className={`btnSecondary ${styles.btnDanger}`}
+              onClick={handleDeleteRequest}
+            >
+              {t('profileSettings.deleteAccount')}
+            </button>
+          </div>
+        </div>
 
         <div className="modalActions">
           <Button variant="secondary" onClick={onClose}>
