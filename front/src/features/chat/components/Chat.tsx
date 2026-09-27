@@ -74,6 +74,10 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
       );
     } catch (err: unknown) {
       console.error('Error sending message:', err);
+      if (err instanceof Error && err.message === 'TOO_MANY_ATTEMPTS') {
+        showWarning(t('chat.errors.tooManyMessages'));
+        return;
+      }
       const errorMessage = err instanceof Error ? err.message : '';
       showWarning(
         `${t('chat.errors.sendMessage', 'Error while trying to send the message')}: ${errorMessage}`

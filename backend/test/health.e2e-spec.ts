@@ -4,7 +4,7 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 
-describe('Ingestion (e2e)', () => {
+describe('Health (e2e)', () => {
   let app: INestApplication;
   const agent = typeof request === 'function' ? request : (request as any).default;
 
@@ -17,9 +17,18 @@ describe('Ingestion (e2e)', () => {
     await app.init();
   }, 30000);
 
-  it('/ingestion/mairie-paris (POST)', () => {
-    return agent(app.getHttpServer()).post('/ingestion/mairie-paris').expect(201);
-  }, 30000); // 30s timeout for real API fetch + DB operations
+  it('GET /health reports the service and its database as up', async () => {
+    const response = await agent(app.getHttpServer()).get('/health').expect(200);
+
+    expect(response.body.status).toBe('ok');
+    expect(response.body.info.database.status).toBe('up');
+  });
+
+  // Ingestion only runs from the daily cron / startup: the old unauthenticated
+  // HTTP trigger let anyone hammer the Paris API and the DB, it must stay gone.
+  it('POST /ingestion/mairie-paris is not exposed', () => {
+    return agent(app.getHttpServer()).post('/ingestion/mairie-paris').expect(404);
+  });
 
   afterAll(async () => {
     if (app) {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/useAuth';
+import { useNotification } from '../../../context/notifications/useNotification';
 import { changePassword } from '../../../api/users';
 import { closeBtn } from '../../../types/icons';
 
@@ -10,7 +11,8 @@ interface PasswordModalProps {
 
 export default function PasswordModal({ onClose }: PasswordModalProps) {
   const { t } = useTranslation();
-  const { accessToken } = useAuth();
+  const { accessToken, logout } = useAuth();
+  const { showWarning } = useNotification();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -28,6 +30,12 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
     e.preventDefault();
     setPasswordError(null);
 
+    // mêmes règles que le backend (backend/src/users/dto/validation-rules.ts)
+    if (newPassword.length < 8 || newPassword.length > 72) {
+      setPasswordError(t('passwordModal.lengthError'));
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       setPasswordError(t('passwordModal.mismatchError'));
       return;
@@ -42,11 +50,16 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
 
     try {
       await changePassword(currentPassword, newPassword, accessToken);
-      requestClose();
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
+      // Le backend a révoqué toutes les sessions, y compris celle-ci :
+      // on déconnecte localement et on demande de se reconnecter.
+      showWarning(t('passwordModal.reloginRequired'));
+      onClose();
+      logout();
     } catch (err) {
+      if (err instanceof Error && err.message === 'TOO_MANY_ATTEMPTS') {
+        setPasswordError(t('passwordModal.tooManyAttempts'));
+        return;
+      }
       setPasswordError(err instanceof Error ? err.message : t('passwordModal.serverError'));
     } finally {
       setIsChangingPassword(false);

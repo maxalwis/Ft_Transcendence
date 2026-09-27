@@ -21,6 +21,7 @@ export async function sendEventMessage(eventId: string, content: string, accessT
     body: JSON.stringify({ content }),
   });
   if (!res.ok) {
+    if (res.status === 429) throw new Error('TOO_MANY_ATTEMPTS');
     const errorData = await res.json().catch(() => null);
     // Extracts NestJS "message" string or array, or falls back to status text
     const message = Array.isArray(errorData?.message)

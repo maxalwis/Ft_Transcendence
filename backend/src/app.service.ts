@@ -1,84 +1,14 @@
-import { Injectable, Logger, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
+import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 
 @Injectable()
-export class AppService implements OnApplicationBootstrap, OnApplicationShutdown {
+export class AppService implements OnApplicationShutdown {
   private readonly logger = new Logger(AppService.name);
-
-  constructor(private readonly prisma: PrismaService) {}
 
   getHello(): string {
     return 'Hello World!';
   }
 
-  async onApplicationBootstrap() {
-    if (process.env.NODE_ENV === 'test') {
-      return;
-    }
-
-    setTimeout(async () => {
-      try {
-        await this.waitForDatabase();
-        await this.checkAndIngestData();
-      } catch (error) {
-        this.logger.error(
-          `Application bootstrap task failed: ${
-            error instanceof Error ? error.message : String(error)
-          }`
-        );
-      }
-    }, 1500);
-  }
-
-  // Safety check to ensure Prisma client is available
-  private async waitForDatabase() {
-    let retries = 5;
-    while (retries > 0) {
-      try {
-        if (this.prisma && this.prisma.user) {
-          return;
-        }
-      } catch (e) {
-        // Ignore until ready
-      }
-      this.logger.warn('Waiting for Prisma client to initialize...');
-      await new Promise((res) => setTimeout(res, 1000));
-      retries--;
-    }
-  }
-
   onApplicationShutdown(signal: string) {
     this.logger.log(`Backend received ${signal} signal: shutting down gracefully...`);
-  }
-
-  private async checkAndIngestData() {
-    try {
-      if (!this.prisma?.event) {
-        this.logger.error('Prisma event model is undefined.');
-        return;
-      }
-
-      const eventCount = await this.prisma.event.count();
-
-      if (eventCount > 0) {
-        this.logger.log(`Database already contains ${eventCount} events. Skipping auto-ingestion.`);
-        return;
-      }
-
-      this.logger.log('Database is empty. Triggering automatic Mairie de Paris ingestion...');
-      const port = process.env.PORT ?? 3000;
-
-      const response = await fetch(`http://127.0.0.1:${port}/ingestion/mairie-paris`, {
-        method: 'POST',
-      });
-
-      if (response.ok) {
-        this.logger.log('Mairie de Paris data ingested successfully!');
-      } else {
-        this.logger.warn(`Ingestion returned status: ${response.status}`);
-      }
-    } catch (error) {
-      this.logger.error(`Failed to check database or trigger ingestion: ${error.message}`);
-    }
   }
 }

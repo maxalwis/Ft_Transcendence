@@ -4,27 +4,36 @@ import {
   Body,
   Param,
   Put,
-  Delete,
   ParseIntPipe,
   Query,
   Req,
+  Res,
   UseGuards,
   UseInterceptors,
   UploadedFile,
   Patch,
   BadRequestException,
 } from '@nestjs/common';
+import type { Request, Response } from 'express';
 import { UsersService } from './users.service';
+import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { Throttle } from '@nestjs/throttler';
+import { AUTH_THROTTLE } from '../throttler/http-throttler.guard';
 
 const ALLOWED_AVATAR_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly realtimeEmitter: RealtimeEmitterService
+  ) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
@@ -34,9 +43,8 @@ export class UsersController {
 
   @Get('search')
   @UseGuards(JwtAuthGuard)
-  searchByUsername(@Query('username') name: string, @Req() req: any) {
-    const currentUserId = req.user?.id;
-    return this.usersService.searchByUsername(name, currentUserId);
+  searchByUsername(@Query('username') name: string, @Req() req: Request) {
+    return this.usersService.searchByUsername(name, req.user?.id);
   }
 
   @Get(':id')
@@ -46,9 +54,25 @@ export class UsersController {
   }
 
   @Patch('password')
+  @Throttle(AUTH_THROTTLE)
   @UseGuards(JwtAuthGuard)
-  changePassword(@Req() req: any, @Body() body: { currentPassword: string; newPassword: string }) {
-    return this.usersService.changePassword(req.user.id, body.currentPassword, body.newPassword);
+  async changePassword(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Body() body: ChangePasswordDto
+  ) {
+    const userId = req.user!.id;
+    const result = await this.usersService.changePassword(
+      userId,
+      body.currentPassword,
+      body.newPassword
+    );
+
+    // Les refresh tokens sont révoqués par le service ; on coupe aussi les
+    // sockets, authentifiés par un JWT stateless qui resterait sinon valide.
+    this.realtimeEmitter.disconnectUser(userId);
+    res.clearCookie('refresh_token', { path: '/' });
+    return result;
   }
 
   @Put('me')
@@ -72,26 +96,15 @@ export class UsersController {
       },
     })
   )
-  update(
-    @Req() req: any,
-    @Body()
-    body: {
-      username?: string;
-      email?: string;
-      preferredLanguage?: 'FR' | 'EN' | 'ES' | 'AR';
-      preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS';
-    },
+  async update(
+    @Req() req: Request,
+    @Body() body: UpdateUserDto,
     @UploadedFile() file?: Express.Multer.File
   ) {
-    return this.usersService.update(req.user.id, {
+    const user = await this.usersService.update(req.user!.id, {
       ...body,
       avatar: file ? `/uploads/avatars/${file.filename}` : undefined,
     });
-  }
-
-  @Delete('me')
-  @UseGuards(JwtAuthGuard)
-  remove(@Req() req: any) {
-    return this.usersService.remove(req.user.id);
+    return this.usersService.toPublicUser(user);
   }
 }

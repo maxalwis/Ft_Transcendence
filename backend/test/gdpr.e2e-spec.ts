@@ -1,14 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import * as bcrypt from 'bcrypt';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { AuthService } from '../src/auth/auth.service';
+import { MailService } from '../src/mail/mail.service';
 
-const MAILPIT_API_URL = process.env.MAILPIT_API_URL ?? 'http://mailpit:8025';
+type SentMail = { to: string; subject: string; text: string; html?: string };
 
 describe('GDPR (e2e)', () => {
   let app: INestApplication;
   let prisma: PrismaService;
+  let authService: AuthService;
 
   const agent = typeof request === 'function' ? request : (request as any).default;
 
@@ -16,92 +20,89 @@ describe('GDPR (e2e)', () => {
 
   const createdUserIds: number[] = [];
 
+  // In-memory mailbox: the real GdprService builds and "sends" the emails,
+  // we capture them here instead of going through SMTP (the container .env
+  // points at a real Gmail account, tests must never send real emails).
+  const sentMails: SentMail[] = [];
+  const fakeMailService = {
+    sendMail: async (options: SentMail) => {
+      sentMails.push(options);
+    },
+  };
+
+  // Users are inserted directly and logged in through the real AuthService:
+  // POST /auth/register is rate-limited (5/min per IP), and registration is
+  // not what this suite tests. The password is still a real bcrypt hash so
+  // the deletion password check runs for real.
   async function registerUser(suffix: string) {
+    const unique = `${suffix}_${timestamp}_${Math.random().toString(36).slice(2)}`;
     const user = {
-      username: `gdpr_e2e_${suffix}_${timestamp}_${Math.random().toString(36).slice(2)}`,
-      email: `gdpr_e2e_${suffix}_${timestamp}_${Math.random().toString(36).slice(2)}@test.local`,
+      username: `gdpr_e2e_${unique}`,
+      email: `gdpr_e2e_${unique}@test.local`,
       password: 'TestPassword123!',
     };
 
-    const response = await agent(app.getHttpServer()).post('/auth/register').send(user).expect(201);
+    const created = await prisma.user.create({
+      data: {
+        username: user.username,
+        email: user.email,
+        password: await bcrypt.hash(user.password, 10),
+      },
+    });
 
-    createdUserIds.push(response.body.user.id);
+    createdUserIds.push(created.id);
+
+    const { accessToken } = await authService.login(created);
 
     return {
       ...user,
-      id: response.body.user.id,
-      accessToken: response.body.accessToken,
+      id: created.id,
+      accessToken,
     };
   }
 
   /**
-   * Mailpit API helper.
-   *
-   * Mailpit normally exposes its HTTP API on port 8025.
+   * Finds the deletion email sent to `email` and extracts the JWT from its
+   * confirmation URL, exactly like a user clicking the link would.
    */
-  async function getMailpitMessages() {
-    const response = await fetch(`${MAILPIT_API_URL}/api/v1/messages`);
+  function getDeletionToken(email: string): string {
+    const mail = sentMails.find(
+      (m) => m.to === email && m.subject === 'Confirm your account deletion'
+    );
 
-    if (!response.ok) {
-      throw new Error(`Mailpit API returned ${response.status}: ${await response.text()}`);
+    if (!mail) {
+      throw new Error(`No deletion confirmation email was sent to ${email}`);
     }
 
-    return response.json();
-  }
+    const match = [mail.text, mail.html]
+      .filter(Boolean)
+      .join('\n')
+      .match(/\/account\/delete-confirm\?token=([A-Za-z0-9._-]+)/);
 
-  /**
-   * Waits until Mailpit receives the deletion email and extracts
-   * the JWT from the confirmation URL.
-   */
-  async function waitForDeletionToken(email: string, timeoutMs = 5000): Promise<string> {
-    const deadline = Date.now() + timeoutMs;
-
-    while (Date.now() < deadline) {
-      const data = await getMailpitMessages();
-
-      const message = data.messages?.find(
-        (m: any) =>
-          m.Subject === 'Confirm your account deletion' &&
-          m.To?.some((to: any) => to.Address === email)
-      );
-
-      if (message) {
-        const detailResponse = await fetch(`${MAILPIT_API_URL}/api/v1/message/${message.ID}`);
-
-        if (detailResponse.ok) {
-          const detail = await detailResponse.json();
-
-          const text = [detail.Text, detail.HTML, detail.text, detail.html]
-            .filter(Boolean)
-            .join('\n');
-
-          const match = text.match(/\/account\/delete-confirm\?token=([A-Za-z0-9._-]+)/);
-
-          if (match) {
-            return match[1];
-          }
-        }
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 200));
+    if (!match) {
+      throw new Error(`Deletion email for ${email} has no confirmation link`);
     }
 
-    throw new Error(`Timed out waiting for deletion confirmation email for ${email}`);
+    return match[1];
   }
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(MailService)
+      .useValue(fakeMailService)
+      .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
 
     prisma = app.get(PrismaService);
+    authService = app.get(AuthService);
   }, 30000);
 
   describe('POST /gdpr/delete-request', () => {
-    it('sends a real deletion confirmation email without deleting the account', async () => {
+    it('sends a deletion confirmation email without deleting the account', async () => {
       const user = await registerUser('delete-request');
 
       await agent(app.getHttpServer())
@@ -115,8 +116,8 @@ describe('GDPR (e2e)', () => {
 
       expect(existingUser).not.toBeNull();
 
-      // Verify that the actual Mailpit email was generated.
-      const deletionToken = await waitForDeletionToken(user.email);
+      // Verify that the confirmation email was sent with a valid link.
+      const deletionToken = getDeletionToken(user.email);
 
       expect(deletionToken).toBeTruthy();
       expect(deletionToken.split('.')).toHaveLength(3);
@@ -133,8 +134,8 @@ describe('GDPR (e2e)', () => {
         .set('Authorization', `Bearer ${user.accessToken}`)
         .expect(201);
 
-      // Step 2: obtain the token from the actual email sent to Mailpit.
-      const deletionToken = await waitForDeletionToken(user.email);
+      // Step 2: obtain the token from the confirmation email.
+      const deletionToken = getDeletionToken(user.email);
 
       // Step 3: confirm deletion through the real API.
       const response = await agent(app.getHttpServer())
@@ -167,7 +168,7 @@ describe('GDPR (e2e)', () => {
         .set('Authorization', `Bearer ${user.accessToken}`)
         .expect(201);
 
-      const deletionToken = await waitForDeletionToken(user.email);
+      const deletionToken = getDeletionToken(user.email);
 
       const response = await agent(app.getHttpServer())
         .post('/gdpr/delete-confirm')
@@ -198,7 +199,7 @@ describe('GDPR (e2e)', () => {
         .set('Authorization', `Bearer ${user.accessToken}`)
         .expect(201);
 
-      const deletionToken = await waitForDeletionToken(user.email);
+      const deletionToken = getDeletionToken(user.email);
 
       await agent(app.getHttpServer())
         .post('/gdpr/delete-confirm')
@@ -249,7 +250,7 @@ describe('GDPR (e2e)', () => {
         .set('Authorization', `Bearer ${userA.accessToken}`)
         .expect(201);
 
-      const deletionTokenForA = await waitForDeletionToken(userA.email);
+      const deletionTokenForA = getDeletionToken(userA.email);
 
       // User B tries to use User A's token.
       const response = await agent(app.getHttpServer())

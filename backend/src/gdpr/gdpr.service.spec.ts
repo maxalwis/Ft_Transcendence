@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { GdprService } from './gdpr.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
+import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 import * as bcrypt from 'bcrypt';
 
 jest.mock('bcrypt', () => ({ compare: jest.fn() }));
@@ -49,6 +50,10 @@ describe('GdprService.confirmDeletion (deletion hardening)', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: JwtService, useValue: jwt },
         { provide: MailService, useValue: mail },
+        {
+          provide: RealtimeEmitterService,
+          useValue: { emitToUser: jest.fn(), disconnectUser: jest.fn() },
+        },
       ],
     }).compile();
 

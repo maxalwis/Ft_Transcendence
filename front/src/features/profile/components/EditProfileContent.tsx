@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/auth/useAuth';
 import { resolveAvatarUrl } from '../utils/avatar';
 import PasswordModal from './PasswordModal';
+import { exportMyData, requestAccountDeletion } from '../../../api/gdpr';
 import styles from '../ProfileModal.module.css';
 import { useNotification } from '../../../context/notifications/useNotification';
 import { closeBtn } from '../../../types/icons';
-import { exportMyData, requestAccountDeletion } from '../../../api/gdpr';
 
 interface EditProfileContentProps {
   onClose: () => void;
@@ -47,21 +47,29 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
   // GDPR: download all of the user's data as a JSON file
   const handleExportData = async () => {
     if (!accessToken) return;
-    const data = await exportMyData(accessToken);
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'my-data.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const data = await exportMyData(accessToken);
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'my-data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      showWarning(t('profileSettings.exportError'));
+    }
   };
 
   // GDPR: ask the backend to email a deletion-confirmation link
   const handleDeleteRequest = async () => {
     if (!accessToken) return;
-    await requestAccountDeletion(accessToken);
-    showWarning(t('profileSettings.deleteEmailSent'));
+    try {
+      await requestAccountDeletion(accessToken);
+      showWarning(t('profileSettings.deleteEmailSent'));
+    } catch {
+      showWarning(t('profileSettings.deleteRequestError'));
+    }
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {

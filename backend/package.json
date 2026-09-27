@@ -118,6 +118,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
+      "^sanitize-html$": "<rootDir>/../test/__mocks__/sanitize-html.ts",
       "^(\\.{1,2}/.*)\\.js$": "$1"
     }
   }

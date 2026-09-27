@@ -5,6 +5,10 @@ import { login } from '../../../api/api';
 import { useNotification } from '../../../context/notifications/useNotification';
 import { closeBtn } from '../../../types/icons';
 
+const USERNAME_REGEX = /^[a-zA-Z0-9_-]{3,20}$/;
+const PASSWORD_MIN = 8;
+const PASSWORD_MAX = 72;
+
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -18,6 +22,8 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  // Empêche un double-clic d'envoyer deux requêtes en parallèle
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { showWarning } = useNotification();
 
   const { setAuth } = useAuth();
@@ -26,24 +32,42 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
+    setIsSubmitting(true);
     try {
       const data = await login(email, password);
       setAuth(data.user, data.accessToken, { isNewLogin: true });
       onClose();
-    } catch {
-      showWarning(t('authModal.errors.invalidCredentials'));
+    } catch (err) {
+      const tooMany = err instanceof Error && err.message === 'TOO_MANY_ATTEMPTS';
+      showWarning(t(tooMany ? 'authModal.errors.tooManyAttempts' : 'authModal.errors.invalidCredentials'));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    // mêmes règles que le backend (backend/src/users/dto/validation-rules.ts)
+    if (!USERNAME_REGEX.test(username)) {
+      showWarning(t('authModal.errors.invalidUsername'));
+      return;
+    }
+
+    if (password.length < PASSWORD_MIN || password.length > PASSWORD_MAX) {
+      showWarning(t('authModal.errors.passwordLength'));
+      return;
+    }
 
     if (password !== confirmPassword) {
       showWarning(t('authModal.errors.passwordMismatch'));
       return;
     }
 
+    setIsSubmitting(true);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
         method: 'POST',
@@ -51,6 +75,10 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
         body: JSON.stringify({ username, email, password }),
       });
 
+      if (res.status === 429) {
+        showWarning(t('authModal.errors.tooManyAttempts'));
+        return;
+      }
       if (!res.ok) throw new Error();
 
       // Clear the form after successful registration
@@ -61,6 +89,8 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
       setView('login');
     } catch {
       showWarning(t('authModal.errors.registrationError'));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -102,7 +132,11 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <button type="submit" className="mt-2 p-2 rounded-lg font-semibold cursor-pointer">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="mt-2 p-2 rounded-lg font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               {t('authModal.loginButton')}
             </button>
           </form>
@@ -183,7 +217,8 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
 
             <button
               type="submit"
-              className="mt-2 p-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold cursor-pointer"
+              disabled={isSubmitting}
+              className="mt-2 p-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('authModal.registerButton')}
             </button>

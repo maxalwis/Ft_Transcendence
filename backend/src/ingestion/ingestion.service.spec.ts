@@ -11,6 +11,9 @@ describe('IngestionService', () => {
       deleteMany: jest.fn().mockResolvedValue({ count: 5 }),
       upsert: jest.fn().mockResolvedValue({ id: 'event-uuid-1' }),
     },
+    systemState: {
+      upsert: jest.fn().mockResolvedValue({}),
+    },
     $executeRaw: jest.fn().mockResolvedValue(1),
   };
 
@@ -49,6 +52,10 @@ describe('IngestionService', () => {
         },
       });
       expect(service.fetchFromMairieParis).toHaveBeenCalled();
+      // The run date is persisted so a restart the same day skips ingestion
+      expect(mockPrismaService.systemState.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({ update: { value: expect.any(String) } })
+      );
     });
   });
 

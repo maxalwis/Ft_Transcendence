@@ -105,7 +105,8 @@
     "errors": {
       "loginRequiredToSend": "You must be logged in to send a message.",
       "loadMessages": "Failed to load messages",
-      "sendMessage": "Error while trying to send the message"
+      "sendMessage": "Error while trying to send the message",
+      "tooManyMessages": "You are sending too many messages. Please wait a few seconds."
     }
   },
   "passwordModal": {
@@ -120,7 +121,11 @@
     "cancel": "Cancel",
     "changePassword": "Change Password",
     "loading": "Loading...",
-    "mismatchError": "Passwords do not match."
+    "mismatchError": "Passwords do not match.",
+    "lengthError": "Password must be between 8 and 72 characters.",
+    "tooManyAttempts": "Too many attempts. Please try again in a minute.",
+    "serverError": "Something went wrong. Please try again.",
+    "reloginRequired": "Password changed. Please log in again with your new password."
   },
   "authModal": {
     "loginTitle": "Sign in",
@@ -141,7 +146,10 @@
     "errors": {
       "invalidCredentials": "Invalid credentials",
       "passwordMismatch": "Non matching passwords",
-      "registrationError": "Error creating account"
+      "registrationError": "Error creating account",
+      "tooManyAttempts": "Too many attempts. Please try again in a minute.",
+      "invalidUsername": "Username must be 3 to 20 characters: letters, digits, _ or -.",
+      "passwordLength": "Password must be between 8 and 72 characters."
     }
   },
   "authBtn": {
@@ -150,7 +158,11 @@
     "editProfile": "Edit Profile"
   },
   "oauth": {
-    "connecting": "Connecting..."
+    "connecting": "Connecting...",
+    "errors": {
+      "account_exists": "An account already exists with this email. Please log in with your password.",
+      "oauth_failed": "Login failed. Please try again."
+    }
   },
   "profileSettings": {
     "title": "Edit Profile",
@@ -167,7 +179,9 @@
     "privacyTitle": "Privacy",
     "downloadData": "Download my data",
     "deleteAccount": "Delete my account",
-    "deleteEmailSent": "A confirmation email has been sent. Check your inbox to finish deleting your account."
+    "deleteEmailSent": "A confirmation email has been sent. Check your inbox to finish deleting your account.",
+    "exportError": "Unable to export your data",
+    "deleteRequestError": "Unable to send the confirmation email"
   },
   "publicProfile": {
     "title": "View Profile",
@@ -215,6 +229,7 @@
     "done": "Your account has been permanently deleted. Redirecting…",
     "invalidLink": "Invalid or missing confirmation link.",
     "error": "The confirmation link is invalid or expired. Please request deletion again.",
+    "deletedElsewhere": "Your account has been deleted.",
     "mustLogin": "You must be logged in to this account to confirm deletion.",
     "passwordLabel": "Enter your password",
     "passwordRequired": "Please enter your password.",

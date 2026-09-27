@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/auth/useAuth';
 import LoginButton from '../features/auth/components/Auth';
 import AuthModal from '../features/auth/components/AuthModal';
 import Friends from '../features/friends/components/Friends';
@@ -49,6 +50,13 @@ export default function BottomBar() {
   >('menu');
 
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const { user } = useAuth();
+
+  // À la déconnexion, on quitte les vues réservées aux utilisateurs connectés
+  // pour ne pas retomber dessus à la reconnexion.
+  if (!user && (mobileView === 'profile' || mobileView === 'profileMenu')) {
+    setMobileView('menu');
+  }
 
   const openAuth = () => {
     setIsAuthOpen(true);

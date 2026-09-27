@@ -105,7 +105,8 @@
     "errors": {
       "loginRequiredToSend": "Vous devez être connecté pour envoyer un message.",
       "loadMessages": "Échec du chargement des messages",
-      "sendMessage": "Erreur lors de l'envoi du message"
+      "sendMessage": "Erreur lors de l'envoi du message",
+      "tooManyMessages": "Vous envoyez trop de messages. Patientez quelques secondes."
     }
   },
   "passwordModal": {
@@ -120,7 +121,11 @@
     "cancel": "Annuler",
     "changePassword": "Changer le mot de passe",
     "loading": "Chargement...",
-    "mismatchError": "Les mots de passe ne correspondent pas."
+    "mismatchError": "Les mots de passe ne correspondent pas.",
+    "lengthError": "Le mot de passe doit faire entre 8 et 72 caractères.",
+    "tooManyAttempts": "Trop de tentatives. Réessayez dans une minute.",
+    "serverError": "Une erreur est survenue. Veuillez réessayer.",
+    "reloginRequired": "Mot de passe modifié. Reconnectez-vous avec votre nouveau mot de passe."
   },
   "authModal": {
     "loginTitle": "Connexion",
@@ -141,7 +146,10 @@
     "errors": {
       "invalidCredentials": "Identifiants invalides",
       "passwordMismatch": "Les mots de passe ne correspondent pas",
-      "registrationError": "Erreur lors de la création du compte"
+      "registrationError": "Erreur lors de la création du compte",
+      "tooManyAttempts": "Trop de tentatives. Réessayez dans une minute.",
+      "invalidUsername": "Le nom d'utilisateur doit faire 3 à 20 caractères : lettres, chiffres, _ ou -.",
+      "passwordLength": "Le mot de passe doit faire entre 8 et 72 caractères."
     }
   },
   "authBtn": {
@@ -150,7 +158,11 @@
     "editProfile": "Modifier le profil"
   },
   "oauth": {
-    "connecting": "Connexion en cours..."
+    "connecting": "Connexion en cours...",
+    "errors": {
+      "account_exists": "Un compte existe déjà avec cette adresse email. Connectez-vous avec votre mot de passe.",
+      "oauth_failed": "La connexion a échoué. Veuillez réessayer."
+    }
   },
   "profileSettings": {
     "title": "Modifier le profil",
@@ -167,7 +179,9 @@
     "privacyTitle": "Confidentialité",
     "downloadData": "Télécharger mes données",
     "deleteAccount": "Supprimer mon compte",
-    "deleteEmailSent": "Un e-mail de confirmation a été envoyé. Consultez votre boîte de réception pour finaliser la suppression."
+    "deleteEmailSent": "Un e-mail de confirmation a été envoyé. Consultez votre boîte de réception pour finaliser la suppression.",
+    "exportError": "Impossible d'exporter vos données",
+    "deleteRequestError": "Impossible d'envoyer l'e-mail de confirmation"
   },
   "publicProfile": {
     "title": "Voir profil",
@@ -215,6 +229,7 @@
     "done": "Votre compte a été définitivement supprimé. Redirection…",
     "invalidLink": "Lien de confirmation invalide ou manquant.",
     "error": "Le lien de confirmation est invalide ou expiré. Veuillez refaire une demande de suppression.",
+    "deletedElsewhere": "Votre compte a été supprimé.",
     "mustLogin": "Vous devez être connecté à ce compte pour confirmer la suppression.",
     "passwordLabel": "Entrez votre mot de passe",
     "passwordRequired": "Veuillez saisir votre mot de passe.",

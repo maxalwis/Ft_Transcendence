@@ -2,6 +2,20 @@ import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { WinstonInstance } from './logger/winston-logger';
 
+// Any key containing one of these words (case-insensitive) is redacted:
+// password, currentPassword, newPassword, token, accessToken, clientSecret...
+const SENSITIVE_KEY = /password|token|secret/i;
+
+// A malformed percent-encoding (ex: %E0%A4%A) makes decodeURIComponent throw.
+// Since this runs in a 'finish' listener, an uncaught throw would kill the process.
+function safeDecodeURIComponent(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
 function sanitize(value: unknown): unknown {
   if (!value || typeof value !== 'object') {
     return value;
@@ -14,7 +28,7 @@ function sanitize(value: unknown): unknown {
   const result: Record<string, unknown> = {};
 
   for (const [key, currentValue] of Object.entries(value)) {
-    if (key === 'password' || key === 'accessToken' || key === 'refreshToken') {
+    if (SENSITIVE_KEY.test(key)) {
       result[key] = '[REDACTED]';
     } else {
       result[key] = sanitize(currentValue);
@@ -61,7 +75,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const invisible = '\x1b[8m';
       const reset = '\x1b[0m';
       const padding = '                                                     ';
-      const decodedUrl = decodeURIComponent(originalUrl);
+      const decodedUrl = safeDecodeURIComponent(originalUrl);
 
       // Parse captured response body if available
       try {

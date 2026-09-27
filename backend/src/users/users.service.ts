@@ -10,6 +10,7 @@ import { User, Prisma, UserStatus } from '../generated/prisma/client';
 import * as bcrypt from 'bcrypt';
 import { CreateLocalUserDto, CreateOAuthUserDto } from './dto/create-user.dto';
 import { SAFE_USER_SELECT, type SafeUser } from './safe-user-select';
+import { USERNAME_MAX, USERNAME_MIN } from './dto/validation-rules';
 
 @Injectable()
 export class UsersService {
@@ -58,6 +59,13 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: { username } });
   }
 
+  // identifie un compte OAuth par son identité chez le provider, jamais par l'email
+  async findFromProviderOrNull(provider: string, providerId: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { provider_providerId: { provider, providerId } },
+    });
+  }
+
   // fonction pour chercher les users à ajouter dans la liste d'amis
   // exclut le user qui fait la recherche de la liste
   async searchByUsername(query: string, excludeUserId?: number): Promise<SafeUser[]> {
@@ -89,7 +97,18 @@ export class UsersService {
   }
 
   // génère un username pour l'OAuth en cas de username déjà existant (sleroy1, sleroy2 etc)
-  private async generateUniqueUsername(base: string): Promise<string> {
+  private async generateUniqueUsername(rawName: string): Promise<string> {
+    // Le nom vient du provider ("Simon Leroy" chez Google) : on l'adapte aux
+    // règles de IsUsername, sinon l'user ne pourrait plus enregistrer son profil.
+    // On garde 4 caractères de marge pour le suffixe numérique.
+    let base = rawName
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '') // é -> e
+      .replace(/\s+/g, '_')
+      .replace(/[^a-zA-Z0-9_-]/g, '')
+      .slice(0, USERNAME_MAX - 4);
+    if (base.length < USERNAME_MIN) base = `user_${base}`;
+
     let username = base;
     let counter = 1;
 
@@ -111,7 +130,6 @@ export class UsersService {
     id: number,
     data: {
       username?: string;
-      email?: string;
       avatar?: string;
       preferredLanguage?: 'FR' | 'EN' | 'ES' | 'AR';
       preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS';
@@ -119,11 +137,6 @@ export class UsersService {
   ): Promise<User> {
     await this.findOne(id); // Lève une NotFoundException si l'ID n'existe pas
     return this.catchDuplicateError(() => this.prisma.user.update({ where: { id }, data }));
-  }
-
-  async remove(id: number): Promise<User> {
-    await this.findOne(id); // Lève une NotFoundException si l'ID n'existe pas
-    return this.prisma.user.delete({ where: { id } });
   }
 
   // Factorise le try/catch P2002 commun à createLocal, createOAuth et update
@@ -157,11 +170,20 @@ export class UsersService {
       throw new UnauthorizedException('Current password is incorrect');
     }
 
+    // Changer de mot de passe est la réaction normale à un vol de compte : on
+    // révoque toutes les sessions (y compris la courante) dans la même
+    // transaction, pour qu'un refresh token volé ne survive pas au changement.
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { password: hashedPassword },
-    });
+    await this.prisma.$transaction([
+      this.prisma.user.update({
+        where: { id: userId },
+        data: { password: hashedPassword },
+      }),
+      this.prisma.refreshToken.updateMany({
+        where: { userId, revoked: false },
+        data: { revoked: true },
+      }),
+    ]);
 
     return { message: 'Password changed successfully' };
   }

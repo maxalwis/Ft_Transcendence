@@ -7,9 +7,9 @@ import {
   ParseIntPipe,
   Req,
   UseGuards,
-  UnauthorizedException,
   Delete,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { FriendsService } from './friends.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
@@ -18,48 +18,33 @@ import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 export class FriendsController {
   constructor(private readonly friendsService: FriendsService) {}
 
-  private getUserIdFromReq(req: any): number {
-    return (
-      req.user?.id ??
-      (() => {
-        throw new UnauthorizedException();
-      })()
-    );
-  }
-
   @Get('pending')
-  getPendingRequests(@Req() req: any) {
-    const currentUserId = this.getUserIdFromReq(req);
-    return this.friendsService.getPendingRequests(currentUserId);
+  getPendingRequests(@Req() req: Request) {
+    return this.friendsService.getPendingRequests(req.user!.id);
   }
 
   @Post('request/:receiverId')
-  sendRequest(@Req() req: any, @Param('receiverId', ParseIntPipe) receiverId: number) {
-    const currentUserId = this.getUserIdFromReq(req);
-    return this.friendsService.sendFriendRequest(currentUserId, receiverId);
+  sendRequest(@Req() req: Request, @Param('receiverId', ParseIntPipe) receiverId: number) {
+    return this.friendsService.sendFriendRequest(req.user!.id, receiverId);
   }
 
   @Patch('accept/:senderId')
-  acceptRequest(@Req() req: any, @Param('senderId', ParseIntPipe) senderId: number) {
-    const currentUserId = this.getUserIdFromReq(req);
-    return this.friendsService.acceptFriendRequest(senderId, currentUserId);
+  acceptRequest(@Req() req: Request, @Param('senderId', ParseIntPipe) senderId: number) {
+    return this.friendsService.acceptFriendRequest(senderId, req.user!.id);
   }
 
   @Patch('reject/:senderId')
-  rejectRequest(@Req() req: any, @Param('senderId', ParseIntPipe) senderId: number) {
-    const currentUserId = this.getUserIdFromReq(req);
-    return this.friendsService.rejectFriendRequest(senderId, currentUserId);
+  rejectRequest(@Req() req: Request, @Param('senderId', ParseIntPipe) senderId: number) {
+    return this.friendsService.rejectFriendRequest(senderId, req.user!.id);
   }
 
   @Get()
-  getFriends(@Req() req: any) {
-    const currentUserId = this.getUserIdFromReq(req);
-    return this.friendsService.getUserFriends(currentUserId);
+  getFriends(@Req() req: Request) {
+    return this.friendsService.getUserFriends(req.user!.id);
   }
 
   @Delete(':friendId')
-  removeFriend(@Req() req: any, @Param('friendId', ParseIntPipe) friendId: number) {
-    const currentUserId = this.getUserIdFromReq(req);
-    return this.friendsService.removeFriend(currentUserId, friendId);
+  removeFriend(@Req() req: Request, @Param('friendId', ParseIntPipe) friendId: number) {
+    return this.friendsService.removeFriend(req.user!.id, friendId);
   }
 }

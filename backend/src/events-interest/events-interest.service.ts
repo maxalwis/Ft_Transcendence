@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { FriendsService } from '../friends/friends.service';
 import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 import { Prisma } from '../generated/prisma/client';
+import { SAFE_USER_SELECT } from '../users/safe-user-select';
 
 @Injectable()
 export class EventsInterestsService {
@@ -86,7 +87,7 @@ export class EventsInterestsService {
       },
       include: {
         user: {
-          select: { id: true, username: true, avatar: true },
+          select: SAFE_USER_SELECT,
         },
       },
     });
