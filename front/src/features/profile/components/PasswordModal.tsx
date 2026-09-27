@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ModalLayout from '../../../components/ui/ModalLayout';
 import Button from '../../../components/ui/Button';
-import { useAuth } from '../../../context/auth/useAuth';
 import { changePassword } from '../../../api/users';
+import { useNotification } from '../../../context/notifications/useNotification';
 
 interface PasswordModalProps {
   onClose: () => void;
@@ -11,11 +11,10 @@ interface PasswordModalProps {
 
 export default function PasswordModal({ onClose }: PasswordModalProps) {
   const { t } = useTranslation();
-  const { accessToken } = useAuth();
+  const { showWarning } = useNotification();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -27,28 +26,17 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setPasswordError(null);
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError(t('passwordModal.mismatchError'));
-      return;
-    }
-
-    if (!accessToken) {
-      setPasswordError(t('passwordModal.serverError'));
-      return;
-    }
 
     setIsChangingPassword(true);
 
     try {
-      await changePassword(currentPassword, newPassword, accessToken);
+      await changePassword(currentPassword, newPassword);
       requestClose();
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
     } catch (err) {
-      setPasswordError(err instanceof Error ? err.message : t('passwordModal.serverError'));
+      showWarning(err instanceof Error ? err.message : t('passwordModal.serverError' ,'Error changing password'));
     } finally {
       setIsChangingPassword(false);
     }
@@ -93,8 +81,6 @@ export default function PasswordModal({ onClose }: PasswordModalProps) {
             placeholder={t('passwordModal.confirmPasswordPlaceholder')}
           />
         </label>
-
-        {passwordError && <p className="modalError">{passwordError}</p>}
 
         <div className="modalActions">
           <Button variant="secondary" onClick={requestClose}>

@@ -1,5 +1,6 @@
-const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-const API_URL = `${baseUrl}/users`;
+import { request } from './api';
+
+const API_URL = '/users';
 
 export interface UserSearchResult {
   id: number;
@@ -8,34 +9,25 @@ export interface UserSearchResult {
   status: 'ONLINE' | 'OFFLINE';
 }
 
-export async function searchUsers(
-  username: string,
-  accessToken: string
-): Promise<UserSearchResult[]> {
+export interface UpdateProfilePayload {
+  username: string;
+  preferredLanguage?: string;
+  preferredCategory?: string;
+  avatar?: File;
+}
+
+export async function searchUsers(username: string): Promise<UserSearchResult[]> {
   if (!username.trim()) return [];
 
-  const res = await fetch(`${API_URL}/search?username=${encodeURIComponent(username)}`, {
-    credentials: 'include',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const res = await request(`${API_URL}/search?username=${encodeURIComponent(username)}`);
+
   if (!res.ok) throw new Error('Erreur lors de la recherche');
   return res.json();
 }
 
-export async function changePassword(
-  currentPassword: string,
-  newPassword: string,
-  accessToken: string
-): Promise<void> {
-  const res = await fetch(`${API_URL}/password`, {
+export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
+  const res = await request(`${API_URL}/password`, {
     method: 'PATCH',
-    credentials: 'include',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify({ currentPassword, newPassword }),
   });
 
@@ -43,4 +35,33 @@ export async function changePassword(
     const error = await res.json().catch(() => null);
     throw new Error(error?.message ?? 'Password change failed');
   }
+}
+
+export async function updateProfile(payload: UpdateProfilePayload) {
+  const formData = new FormData();
+
+  formData.append('username', payload.username);
+
+  if (payload.preferredLanguage) {
+    formData.append('preferredLanguage', payload.preferredLanguage);
+  }
+
+  if (payload.preferredCategory) {
+    formData.append('preferredCategory', payload.preferredCategory);
+  }
+
+  if (payload.avatar) {
+    formData.append('avatar', payload.avatar);
+  }
+
+  const res = await request('/users/me', {
+    method: 'PUT',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    throw new Error('Échec de la mise à jour');
+  }
+
+  return res.json();
 }

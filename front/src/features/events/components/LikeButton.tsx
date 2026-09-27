@@ -76,7 +76,7 @@ export default function LikeButton({
           if (!isCancelled) setIsReady(true);
         });
     } else {
-      getInterestStatus(eventId, accessToken)
+      getInterestStatus(eventId)
         .then(({ isInterested, count: fetchedCount }) => {
           if (!isCancelled) {
             setIsLiked(isInterested);
@@ -130,9 +130,9 @@ export default function LikeButton({
 
     try {
       if (nextIsLiked) {
-        await markInterested(eventId, accessToken);
+        await markInterested(eventId);
       } else {
-        await removeInterest(eventId, accessToken);
+        await removeInterest(eventId);
       }
     } catch {
       const rollbackIsLiked = !nextIsLiked;

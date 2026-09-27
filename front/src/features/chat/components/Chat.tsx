@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
-import { fetchEventMessages, sendEventMessage } from '../chatService';
+import { fetchEventMessages, sendEventMessage } from '../../../api/messages';
 import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ export type Message = {
   id: number;
   content: string;
   userId: number;
-  user: { username?: string; email: string };
+  user: { username?: string; avatar?: string };
   createdAt: string;
   pending?: boolean; // optimistic message not yet confirmed by the server
 };
@@ -33,7 +33,7 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
   useEffect(() => {
     if (!accessToken) return;
     let isMounted = true;
-    fetchEventMessages(eventId, accessToken)
+    fetchEventMessages(eventId)
       .then((data) => {
         if (isMounted) setMessages(data);
       })
@@ -75,14 +75,14 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
       id: tempId,
       content: text,
       userId: currentUserId,
-      user: { username: user?.username, email: user?.email ?? '' },
+      user: { username: user?.username, avatar: user?.avatar ?? undefined },
       createdAt: new Date().toISOString(),
       pending: true,
     };
     setMessages((prev) => [...prev, optimistic]);
 
     try {
-      const newMessage: Message = await sendEventMessage(eventId, text, accessToken);
+      const newMessage: Message = await sendEventMessage(eventId, text);
       // L'echo du socket a pu arriver avant la réponse HTTP : on évite le doublon
       setMessages((prev) => {
         const rest = prev.filter((m) => m.id !== tempId);

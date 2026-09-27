@@ -8,13 +8,15 @@ export function setAccessToken(token: string | null) {
 }
 
 async function request(path: string, options: RequestInit = {}, retry = true): Promise<Response> {
+  const isFormData = options.body instanceof FormData;
+
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
     credentials: 'include',
     headers: {
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       ...options.headers,
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      'Content-Type': 'application/json',
     },
   });
 

@@ -7,6 +7,7 @@ import styles from '../ProfileModal.module.css';
 import { useNotification } from '../../../context/notifications/useNotification';
 import ModalLayout, { type ModalShellProps } from '../../../components/ui/ModalLayout';
 import Button from '../../../components/ui/Button';
+import { updateProfile } from '../../../api/users';
 
 interface EditProfileContentProps {
   onClose: () => void;
@@ -27,7 +28,7 @@ type PreferredCategory = (typeof categoryOptions)[number];
 
 export default function EditProfileContent({ onClose, shell }: EditProfileContentProps) {
   const { t } = useTranslation();
-  const { user, updateUser, accessToken } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const [username, setUsername] = useState(user?.username ?? '');
   const [preferredLanguage, setPreferredLanguage] = useState<PreferredLanguage | ''>(
@@ -61,36 +62,12 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
     setIsSaving(true);
 
     try {
-      const formData = new FormData();
-
-      formData.append('username', username);
-
-      if (preferredLanguage) {
-        formData.append('preferredLanguage', preferredLanguage);
-      }
-
-      if (preferredCategory) {
-        formData.append('preferredCategory', preferredCategory);
-      }
-
-      if (avatarFile) {
-        formData.append('avatar', avatarFile);
-      }
-
-      const res = await fetch(`https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/users/me`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: formData,
+      const updated = await updateProfile({
+        username,
+        preferredLanguage: preferredLanguage || undefined,
+        preferredCategory: preferredCategory || undefined,
+        avatar: avatarFile ?? undefined,
       });
-
-      if (!res.ok) {
-        throw new Error('Échec de la mise à jour');
-      }
-
-      const updated = await res.json();
 
       updateUser(updated);
       onClose();

@@ -43,7 +43,7 @@ export default function FriendsSearchResults({
       try {
         setLoading(true);
 
-        const found = await searchUsers(query, accessToken);
+        const found = await searchUsers(query);
 
         if (!cancelled) {
           setResults(found);
