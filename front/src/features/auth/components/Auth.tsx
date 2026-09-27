@@ -72,7 +72,7 @@ export default function LoginButton({
             onOpenEditProfile?.();
           }}
         >
-          {t('authBtn.editProfile')}
+          {t('authBtn.profile')}
         </Button>
 
         <Button variant="ghost" type="button" className="menuButton" onClick={handleLogout}>
@@ -117,7 +117,7 @@ export default function LoginButton({
                 setIsMenuOpen(false);
               }}
             >
-              {t('authBtn.editProfile')}
+              {t('authBtn.profile')}
             </Button>
 
             <Button

@@ -31,7 +31,7 @@ type PreferredCategory = (typeof categoryOptions)[number];
 
 export default function EditProfileContent({ onClose, shell }: EditProfileContentProps) {
   const { t } = useTranslation();
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, accessToken } = useAuth();
 
   const [username, setUsername] = useState(user?.username ?? '');
   const [preferredLanguage, setPreferredLanguage] = useState<PreferredLanguage | ''>(
@@ -54,7 +54,7 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
   const handleExportData = async () => {
     if (!accessToken) return;
     try {
-      const data = await exportMyData(accessToken);
+      const data = await exportMyData();
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -71,7 +71,7 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
   const handleDeleteRequest = async () => {
     if (!accessToken) return;
     try {
-      await requestAccountDeletion(accessToken);
+      await requestAccountDeletion();
       showWarning(t('profileSettings.deleteEmailSent'));
     } catch {
       showWarning(t('profileSettings.deleteRequestError'));
@@ -179,22 +179,6 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
           </Button>
         )}
 
-        <div className={styles.privacySection}>
-          <h3>{t('profileSettings.privacyTitle')}</h3>
-          <div className={styles.privacyButtons}>
-            <button type="button" className="btnSecondary" onClick={handleExportData}>
-              {t('profileSettings.downloadData')}
-            </button>
-            <button
-              type="button"
-              className={`btnSecondary ${styles.btnDanger}`}
-              onClick={handleDeleteRequest}
-            >
-              {t('profileSettings.deleteAccount')}
-            </button>
-          </div>
-        </div>
-
         <div className="modalActions">
           <Button variant="secondary" onClick={onClose}>
             {t('profileSettings.cancel')}
@@ -203,6 +187,18 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
           <Button variant="primary" type="submit" disabled={isSaving}>
             {isSaving ? t('profileSettings.saving') : t('profileSettings.save')}
           </Button>
+        </div>
+
+        <div className={styles.privacySection}>
+          <h3 className={styles.privacyTitle}>{t('profileSettings.privacyTitle')}</h3>
+          <div className={styles.privacyButtons}>
+            <Button variant="secondary" type="button" onClick={handleExportData}>
+              {t('profileSettings.downloadData')}
+            </Button>
+            <Button variant="danger" type="button" onClick={handleDeleteRequest}>
+              {t('profileSettings.deleteAccount')}
+            </Button>
+          </div>
         </div>
       </form>
 

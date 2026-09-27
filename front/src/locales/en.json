@@ -156,7 +156,7 @@
   "authBtn": {
     "login": "Login",
     "logout": "Logout",
-    "editProfile": "Edit Profile"
+    "profile": "Profile"
   },
   "oauth": {
     "connecting": "Connecting...",

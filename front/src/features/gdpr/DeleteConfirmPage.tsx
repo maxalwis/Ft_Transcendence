@@ -30,6 +30,7 @@ export function DeleteConfirmPage() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
   const [errorKey, setErrorKey] = useState('deleteConfirm.error');
   const [expired, setExpired] = useState(false);
+  const [now] = useState(() => Date.now());
 
   if (!token) {
     return (
@@ -53,7 +54,7 @@ export function DeleteConfirmPage() {
   }
 
   const payload = decodeToken(token);
-  const isExpired = expired || (!!payload?.exp && payload.exp * 1000 < Date.now());
+  const isExpired = expired || (!!payload?.exp && payload.exp * 1000 < now);
 
   // Expired link can never succeed : say so immediately, before asking for anything.
   if (isExpired) {

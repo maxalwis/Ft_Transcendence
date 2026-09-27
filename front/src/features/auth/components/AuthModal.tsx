@@ -43,7 +43,9 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
       onClose();
     } catch (err) {
       const tooMany = err instanceof Error && err.message === 'TOO_MANY_ATTEMPTS';
-      showWarning(t(tooMany ? 'authModal.errors.tooManyAttempts' : 'authModal.errors.invalidCredentials'));
+      showWarning(
+        t(tooMany ? 'authModal.errors.tooManyAttempts' : 'authModal.errors.invalidCredentials')
+      );
     } finally {
       setIsSubmitting(false);
     }
