@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TerminusModule, HealthCheckService } from '@nestjs/terminus';
 import { HealthController } from './health.controller';
 import { PrismaHealthIndicator } from '../prisma/prisma.health';
-import { RedisHealthIndicator } from './redis.health';
 
 describe('HealthController', () => {
   let controller: HealthController;
@@ -14,10 +13,6 @@ describe('HealthController', () => {
       providers: [
         {
           provide: PrismaHealthIndicator,
-          useValue: { isHealthy: jest.fn() },
-        },
-        {
-          provide: RedisHealthIndicator,
           useValue: { isHealthy: jest.fn() },
         },
       ],

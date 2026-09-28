@@ -56,19 +56,6 @@ services:
       - '-c'
       - 'log_line_prefix=[DB]  - %m     '
 
-  redis:
-    image: docker.io/library/redis:alpine
-    container_name: redis
-    restart: unless-stopped
-    networks:
-      - transcendence_network
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
-      interval: 5s
-      timeout: 3s
-      retries: 5
-      start_period: 5s
-
   backend:
     image: localhost/transcendence_backend:latest
     build:
@@ -108,24 +95,6 @@ services:
         '-c',
         'npx prisma generate && npx prisma migrate deploy && exec node -r dotenv/config node_modules/.bin/nest start --watch dotenv_config_path=.env',
       ]
-
-  worker:
-    image: localhost/transcendence_worker:latest
-    build:
-      context: ./worker
-      dockerfile: Dockerfile
-    container_name: worker
-    restart: unless-stopped
-    environment:
-      - REDIS_HOST=${REDIS_HOST:-redis}
-      - REDIS_PORT=${REDIS_PORT:-6379}
-    volumes:
-      - worker_node_modules:/app/node_modules
-    depends_on:
-      redis:
-        condition: service_started
-    networks:
-      - transcendence_network
 
   frontend:
     image: localhost/transcendence_frontend:latest
@@ -336,7 +305,6 @@ services:
 volumes:
   postgres_data:
   backend_node_modules:
-  worker_node_modules:
   frontend_node_modules:
   nginx_certs:
   libretranslate_models:
