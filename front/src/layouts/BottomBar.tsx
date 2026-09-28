@@ -7,6 +7,9 @@ import Friends from '../features/friends/components/Friends';
 import EditProfileContent from '../features/profile/components/EditProfileContent';
 import LegalContent from '../features/legal/LegalContent';
 import LegalModal from '../features/legal/LegalModal';
+import Button from '../components/ui/Button';
+import ModalLayout, { ModalShell } from '../components/ui/ModalLayout';
+import { MenuIcon } from '../types/icons';
 
 function LegalButtons({
   onOpenLegal,
@@ -19,21 +22,23 @@ function LegalButtons({
 
   return (
     <div className={`flex gap-2 ${mobileMenuOpen ? 'w-full' : ''}`}>
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => onOpenLegal('privacy')}
         className={mobileMenuOpen ? 'menuButton' : 'bottomBarButton glass-panel'}
       >
         {t('legal.privacyButton')}
-      </button>
+      </Button>
 
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => onOpenLegal('terms')}
         className={mobileMenuOpen ? 'menuButton' : 'bottomBarButton glass-panel'}
       >
         {t('legal.termsButton')}
-      </button>
+      </Button>
     </div>
   );
 }
@@ -81,6 +86,12 @@ export default function BottomBar() {
     setIsAuthOpen(true);
     setMobileMenuOpen(true);
     setMobileView('auth');
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+    setMobileView('menu');
+    setIsAuthOpen(false);
   };
 
   const closeMobileAuth = () => {
@@ -142,47 +153,47 @@ export default function BottomBar() {
         <div className="flex items-center justify-center w-full relative pointer-events-auto">
           <div className="mobile-only">
             {mobileMenuOpen && (
-              <div
-                className="glass-modal-overlay"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setMobileView('menu');
-                  setIsAuthOpen(false);
-                }}
-              >
-                <div
-                  className="
-                    glass-modal absolute bottom-14 left-1/2 -translate-x-1/2
-                    glass-panel p-5 flex flex-col items-center gap-2.5
-                    shadow-2xl rounded-2xl
-                    min-w-xs max-w-md
-                    max-h-[70vh]
-                  "
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {mobileView === 'menu' ? (
-                    <>
-                      <LoginButton
-                        onOpenAuth={openMobileAuth}
-                        embedded
-                        onOpenProfile={() => setMobileView('profileMenu')}
-                      />
-
-                      <button
-                        type="button"
-                        className="menuButton"
-                        onClick={() => setMobileView('friends')}
-                      >
-                        {t('friends.buttonTitle', 'Friends')}
-                      </button>
-
-                      <LegalButtons onOpenLegal={openLegalModal} mobileMenuOpen={mobileMenuOpen} />
-                    </>
-                  ) : mobileView === 'friends' ? (
-                    <Friends embedded onBack={() => setMobileView('menu')} />
-                  ) : mobileView === 'auth' ? (
-                    <AuthModal isOpen={isAuthOpen} onClose={closeMobileAuth} embedded />
-                  ) : mobileView === 'profileMenu' ? (
+              <ModalShell variant="sheet" onClose={closeMobileMenu}>
+                {mobileView === 'menu' ? (
+                  <ModalLayout
+                    embedded
+                    variant="sheet"
+                    onClose={closeMobileMenu}
+                    bodyClassName="flex flex-col items-center gap-2.5"
+                  >
+                    <LoginButton
+                      onOpenAuth={openMobileAuth}
+                      embedded
+                      onOpenProfile={() => setMobileView('profileMenu')}
+                    />
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      className="menuButton"
+                      onClick={() => setMobileView('friends')}
+                    >
+                      {t('friends.buttonTitle', 'Friends')}
+                    </Button>
+                    <LegalButtons onOpenLegal={openLegalModal} mobileMenuOpen={mobileMenuOpen} />
+                  </ModalLayout>
+                ) : mobileView === 'friends' ? (
+                  <ModalLayout
+                    embedded
+                    variant="sheet"
+                    onBack={() => setMobileView('menu')}
+                    onClose={closeMobileMenu}
+                  >
+                    <Friends embedded />
+                  </ModalLayout>
+                ) : mobileView === 'auth' ? (
+                  <AuthModal isOpen={isAuthOpen} onClose={closeMobileAuth} embedded />
+                ) : mobileView === 'profileMenu' ? (
+                  <ModalLayout
+                    embedded
+                    variant="sheet"
+                    onBack={() => setMobileView('menu')}
+                    onClose={closeMobileMenu}
+                  >
                     <LoginButton
                       onOpenAuth={openMobileAuth}
                       embedded
@@ -191,17 +202,26 @@ export default function BottomBar() {
                       onBack={() => setMobileView('menu')}
                       onOpenEditProfile={() => setMobileView('profile')}
                     />
-                  ) : mobileView === 'profile' ? (
-                    <EditProfileContent onClose={() => setMobileView('profileMenu')} />
-                  ) : (
-                    <LegalContent initialTab={legalTab} onClose={() => setMobileView('menu')} />
-                  )}
-                </div>
-              </div>
+                  </ModalLayout>
+                ) : mobileView === 'profile' ? (
+                  <EditProfileContent
+                    onClose={() => setMobileView('profileMenu')}
+                    shell={{ embedded: true, variant: 'sheet' }}
+                  />
+                ) : (
+                  <LegalContent
+                    initialTab={legalTab}
+                    onClose={closeMobileMenu}
+                    onBack={() => setMobileView('menu')}
+                    shell={{ embedded: true, variant: 'sheet' }}
+                  />
+                )}
+              </ModalShell>
             )}
 
             {/* Mobile menu button */}
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={() => {
                 setMobileMenuOpen((prev) => !prev);
@@ -210,32 +230,10 @@ export default function BottomBar() {
               }}
               className="glass-panel px-4 py-2 font-semibold flex items-center gap-2"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {mobileMenuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16m-7 6h7"
-                  />
-                )}
-              </svg>
+              <MenuIcon open={mobileMenuOpen} className="w-5 h-5" />
 
               {t('nav.menu', 'Menu')}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

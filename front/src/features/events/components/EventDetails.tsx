@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import Button from '../../../components/ui/Button';
+import { BackIcon, ExternalLinkIcon } from '../../../types/icons';
 
 interface EventDetailsProps {
   title?: string;
@@ -92,24 +94,16 @@ export default function EventDetails({
   return (
     <div className="min-w-0 leading-tight">
       {onBack && (
-        <button
+        <Button
+          variant="ghost"
           type="button"
           onClick={onBack}
           aria-label={t('common.back')}
-          className="mb-3 flex items-center gap-1 text-sm font-medium text-slate-600 transition-colors hover:text-black"
+          className="mb-3 flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-black"
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
-          </svg>
-
+          <BackIcon className="h-4 w-4" />
           <span>{t('common.back')}</span>
-        </button>
+        </Button>
       )}
 
       {isTranslating ? (
@@ -125,7 +119,7 @@ export default function EventDetails({
         {dateEnd ? ` - ${formatDate(dateEnd, currentLocale, unknownDateText)}` : ''}
       </p>
       {translatedPriceType && (
-        <p className="mb-1! text-xs text-slate-200">
+        <p className="mb-1! text-xs truncate">
           {translatedPriceType}
           {isPaid && cleanedPriceDetail ? ` - ${cleanedPriceDetail}` : ''}
         </p>
@@ -147,19 +141,7 @@ export default function EventDetails({
             className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold transition-all duration-200 active:scale-95"
           >
             <span>{t('eventDetails.accessLink')}</span>
-            <svg
-              className="h-3.5 w-3.5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-              />
-            </svg>
+            <ExternalLinkIcon className="h-4 w-4" />
           </a>
         </div>
       )}

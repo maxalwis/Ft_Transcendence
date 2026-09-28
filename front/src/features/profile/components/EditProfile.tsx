@@ -1,4 +1,3 @@
-import { createPortal } from 'react-dom';
 import { useState } from 'react';
 import EditProfileContent from './EditProfileContent';
 
@@ -17,17 +16,14 @@ export default function EditProfile({ onClose }: EditProfileProps) {
     }
   };
 
-  return createPortal(
-    <div className="glass-modal-overlay" onClick={requestClose}>
-      <div
-        data-state={isClosing ? 'closed' : 'open'}
-        onAnimationEnd={handleAnimationEnd}
-        className="glass-modal modalContent"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <EditProfileContent onClose={requestClose} />
-      </div>
-    </div>,
-    document.body
+  return (
+    <EditProfileContent
+      onClose={requestClose}
+      shell={{
+        portal: true,
+        dataState: isClosing ? 'closed' : 'open',
+        onAnimationEnd: handleAnimationEnd,
+      }}
+    />
   );
 }

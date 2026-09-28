@@ -1,14 +1,21 @@
 import { useMap } from 'react-leaflet';
 import { useEffect, useRef } from 'react';
+import type { RefObject } from 'react';
 import type { EventGroup } from '../../../types/event';
 
 interface MapEventsProps {
   activeGroup: EventGroup | null;
-  setActiveGroupId: (id: string | null) => void;
+  setActiveGroup: (group: EventGroup | null) => void;
   setHoverPos: (pos: { x: number; y: number } | null) => void;
+  skipZoomClearRef?: RefObject<boolean>;
 }
 
-export function MapEventsHandler({ activeGroup, setActiveGroupId, setHoverPos }: MapEventsProps) {
+export function MapEventsHandler({
+  activeGroup,
+  setActiveGroup,
+  setHoverPos,
+  skipZoomClearRef,
+}: MapEventsProps) {
   const map = useMap();
   const rafRef = useRef<number | null>(null);
   const isDraggingRef = useRef(false);
@@ -33,10 +40,13 @@ export function MapEventsHandler({ activeGroup, setActiveGroupId, setHoverPos }:
       setHoverPos(null);
     };
 
-    // Clear active group on zoom change
+    // Clear active group on zoom change, unless it's a programmatic flight (e.g. focusing an
+    // event selected from the results list) rather than a user-driven zoom.
     const handleZoomStart = () => {
+      if (skipZoomClearRef?.current) return;
+
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      setActiveGroupId(null);
+      setActiveGroup(null);
       setHoverPos(null);
     };
 
@@ -51,7 +61,7 @@ export function MapEventsHandler({ activeGroup, setActiveGroupId, setHoverPos }:
       map.off('movestart', handleMoveStart);
       map.off('zoomstart', handleZoomStart);
     };
-  }, [map, setActiveGroupId, setHoverPos]);
+  }, [map, setActiveGroup, setHoverPos, skipZoomClearRef]);
 
   useEffect(() => {
     if (!activeGroup) {

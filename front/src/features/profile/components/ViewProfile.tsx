@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { createPortal } from 'react-dom';
 import type { User } from '../../../api/friends';
 import { useTranslation } from 'react-i18next';
-import { resolveAvatarUrl } from '../utils/avatar';
 import styles from '../ProfileModal.module.css';
-import { closeBtn } from '../../../types/icons';
+import ModalLayout from '../../../components/ui/ModalLayout';
+import Button from '../../../components/ui/Button';
+import Avatar from '../../../components/ui/Avatar';
 
 interface ViewProfileProps {
   friend: User;
@@ -35,84 +35,66 @@ export default function ViewProfile({ friend, onClose, onRemove }: ViewProfilePr
     }
   };
 
-  return createPortal(
-    <div className="glass-modal-overlay" onClick={requestClose}>
-      <div
-        data-state={isClosing ? 'closed' : 'open'}
-        onAnimationEnd={handleAnimationEnd}
-        className="glass-modal modalContent"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="modalHeader">
-          <h2>{t('publicProfile.title')}</h2>
+  return (
+    <ModalLayout
+      portal
+      onClose={requestClose}
+      title={t('publicProfile.title')}
+      dataState={isClosing ? 'closed' : 'open'}
+      onAnimationEnd={handleAnimationEnd}
+    >
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-2xl font-semibold text-white">
+          <Avatar
+            avatar={friend.avatar}
+            username={friend.username}
+            className="h-full w-full object-contain"
+          />
+        </div>
 
-          <button
+        <h3 className="m-0! text-lg! text-slate-900!">{friend.username}</h3>
+
+        <div className="w-full space-y-3 text-sm">
+          <div className="flex justify-between gap-4">
+            <span className={styles.fieldLabel}>{t('publicProfile.preferredCategory')}</span>
+
+            <span className={`text-right ${styles.fieldValue}`}>
+              {friend.preferredCategory
+                ? t(`categories.${friend.preferredCategory.toLowerCase()}`)
+                : t('publicProfile.notProvided')}
+            </span>
+          </div>
+
+          <div className="flex justify-between gap-4">
+            <span className={styles.fieldLabel}>{t('publicProfile.preferredLanguage')}</span>
+
+            <span className={`text-right ${styles.fieldValue}`}>
+              {friend.preferredLanguage
+                ? {
+                    FR: 'Français',
+                    EN: 'English',
+                    ES: 'Español',
+                    AR: 'العربية',
+                  }[friend.preferredLanguage]
+                : t('publicProfile.notProvided')}
+            </span>
+          </div>
+        </div>
+
+        {onRemove && (
+          <Button
+            variant="danger"
             type="button"
-            className="modal-button modal-close"
-            onClick={requestClose}
-            aria-label={t('common.close', 'Close')}
+            disabled={isRemoving}
+            onClick={handleRemove}
+            className="w-full!"
           >
-            {closeBtn}
-          </button>
-        </div>
-
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-2xl font-semibold text-white">
-            {friend.avatar ? (
-              <img
-                src={resolveAvatarUrl(friend.avatar) ?? undefined}
-                alt="Avatar"
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              friend.username.charAt(0).toUpperCase()
-            )}
-          </div>
-
-          <h3 className="m-0! text-lg! text-slate-900!">{friend.username}</h3>
-
-          <div className="w-full space-y-3 text-sm">
-            <div className="flex justify-between gap-4">
-              <span className={styles.fieldLabel}>{t('publicProfile.preferredCategory')}</span>
-
-              <span className={`text-right ${styles.fieldValue}`}>
-                {friend.preferredCategory
-                  ? t(`categories.${friend.preferredCategory.toLowerCase()}`)
-                  : t('publicProfile.notProvided')}
-              </span>
-            </div>
-
-            <div className="flex justify-between gap-4">
-              <span className={styles.fieldLabel}>{t('publicProfile.preferredLanguage')}</span>
-
-              <span className={`text-right ${styles.fieldValue}`}>
-                {friend.preferredLanguage
-                  ? {
-                      FR: 'Français',
-                      EN: 'English',
-                      ES: 'Español',
-                      AR: 'العربية',
-                    }[friend.preferredLanguage]
-                  : t('publicProfile.notProvided')}
-              </span>
-            </div>
-          </div>
-
-          {onRemove && (
-            <button
-              type="button"
-              disabled={isRemoving}
-              onClick={handleRemove}
-              className="modal-button modal-close-inline-red w-full!"
-            >
-              {isRemoving
-                ? t('friends.removing', 'Removing...')
-                : t('friends.removeFriend', 'Remove friend')}
-            </button>
-          )}
-        </div>
+            {isRemoving
+              ? t('friends.removing', 'Removing...')
+              : t('friends.removeFriend', 'Remove friend')}
+          </Button>
+        )}
       </div>
-    </div>,
-    document.body
+    </ModalLayout>
   );
 }

@@ -61,7 +61,7 @@ describe('UsersController', () => {
     await controller.changePassword(req, res, {
       currentPassword: 'old',
       newPassword: 'new',
-    } as any);
+    });
 
     expect(usersServiceMock.changePassword).toHaveBeenCalledWith(7, 'old', 'new');
   });
@@ -73,7 +73,7 @@ describe('UsersController', () => {
     await controller.changePassword(req, res, {
       currentPassword: 'old',
       newPassword: 'new',
-    } as any);
+    });
 
     expect(emitterMock.disconnectUser).toHaveBeenCalledWith(7);
     expect(res.clearCookie).toHaveBeenCalledWith('refresh_token', { path: '/' });
@@ -115,7 +115,7 @@ describe('UsersController', () => {
   it('update should never return the password hash', async () => {
     const req = { user: { id: 7 } } as any;
 
-    const result = await controller.update(req, {} as any, undefined);
+    const result = await controller.update(req, {}, undefined);
 
     expect(result).not.toHaveProperty('password');
   });

@@ -9,37 +9,25 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
 }
 
 .avatarPreview {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: 2px solid var(--color-orange-border);
-  background: var(--glass-bg);
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  font-size: 1.75rem;
-  color: var(--color-text-dark);
 }
 
 .avatarPreview img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .avatarChangeLink {
   background: none;
   border: none;
   color: var(--color-orange-primary);
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
   cursor: pointer;
   padding: 0;
 }
@@ -59,7 +47,7 @@
 
 .fieldValue {
   color: var(--color-text-dark);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 /* ==========================================================================
@@ -67,28 +55,24 @@
    ========================================================================== */
 
 .privacySection {
-  margin-top: 0.5rem;
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
   border-top: 1px solid var(--glass-border);
   text-align: center;
 }
 
-.privacySection h3 {
-  margin: 0 0 0.6rem;
-  font-size: 0.95rem;
-  font-weight: 500;
+.privacyTitle {
+  margin: 0 0 var(--space-3);
+  color: var(--color-blue-dark);
+  opacity: 0.7;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .privacyButtons {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-}
-
-.btnDanger {
-  color: #dc2626;
-  border-color: #dc2626;
-}
-
-.btnDanger:hover {
-  background: rgba(233, 8, 8, 0.288) !important;
+  gap: var(--space-3);
 }

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { confirmAccountDeletion } from '../../api/gdpr';
 import { useAuth } from '../../context/auth/useAuth';
 import styles from './DeleteConfirm.module.css';
+import Button from '../../components/ui/Button';
 
 // Decode the JWT payload (sub + exp) for DISPLAY LOGIC ONLY. This is not a
 // security check — deletion is authorized server-side by session + token +
@@ -29,6 +30,7 @@ export function DeleteConfirmPage() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
   const [errorKey, setErrorKey] = useState('deleteConfirm.error');
   const [expired, setExpired] = useState(false);
+  const [now] = useState(() => Date.now());
 
   if (!token) {
     return (
@@ -52,7 +54,7 @@ export function DeleteConfirmPage() {
   }
 
   const payload = decodeToken(token);
-  const isExpired = expired || (!!payload?.exp && payload.exp * 1000 < Date.now());
+  const isExpired = expired || (!!payload?.exp && payload.exp * 1000 < now);
 
   // Expired link can never succeed : say so immediately, before asking for anything.
   if (isExpired) {
@@ -92,7 +94,7 @@ export function DeleteConfirmPage() {
     }
     setStatus('loading');
     try {
-      await confirmAccountDeletion(token, isOAuth ? undefined : password, accessToken);
+      await confirmAccountDeletion(token, isOAuth ? undefined : password);
       setStatus('done');
       setTimeout(() => {
         logout();
@@ -128,14 +130,14 @@ export function DeleteConfirmPage() {
         />
       )}
 
-      <button
+      <Button
+        variant="danger"
         type="button"
-        className={styles.deleteButton}
         onClick={handleConfirm}
         disabled={status === 'loading'}
       >
         {status === 'loading' ? t('deleteConfirm.deleting') : t('deleteConfirm.confirmButton')}
-      </button>
+      </Button>
 
       {status === 'error' && <p className={styles.error}>{t(errorKey)}</p>}
 

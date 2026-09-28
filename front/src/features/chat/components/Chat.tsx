@@ -1,18 +1,20 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import MessageInput from './MessageInput';
 import MessageOutput from './MessageOutput';
-import { fetchEventMessages, sendEventMessage } from '../chatService';
+import { fetchEventMessages, sendEventMessage } from '../../../api/messages';
 import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
 import { useTranslation } from 'react-i18next';
 import { useChatSocket } from '../hooks/useChatSocket';
+import EmptyState from '../../../components/ui/EmptyState';
 
 export type Message = {
   id: number;
   content: string;
   userId: number;
-  user: { username?: string; email: string };
+  user: { username?: string; avatar?: string };
   createdAt: string;
+  pending?: boolean; // optimistic message not yet confirmed by the server
 };
 
 interface ChatProps {
@@ -25,13 +27,14 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const { showWarning } = useNotification();
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
+  const tempIdRef = useRef(0);
 
   // Fetch messages on mount or when event changes
   useEffect(() => {
     if (!accessToken) return;
     let isMounted = true;
-    fetchEventMessages(eventId, accessToken)
+    fetchEventMessages(eventId)
       .then((data) => {
         if (isMounted) setMessages(data);
       })
@@ -67,12 +70,27 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
       showWarning(t('chat.errors.loginRequiredToSend', 'You must be logged in to send a message.'));
       return;
     }
+    // Affiche le message tout de suite (ids négatifs = temporaires), confirmé à la réponse du serveur
+    const tempId = --tempIdRef.current;
+    const optimistic: Message = {
+      id: tempId,
+      content: text,
+      userId: currentUserId,
+      user: { username: user?.username, avatar: user?.avatar ?? undefined },
+      createdAt: new Date().toISOString(),
+      pending: true,
+    };
+    setMessages((prev) => [...prev, optimistic]);
+
     try {
-      const newMessage = await sendEventMessage(eventId, text, accessToken);
-      setMessages((prev) =>
-        prev.some((m) => m.id === newMessage.id) ? prev : [...prev, newMessage]
-      );
+      const newMessage: Message = await sendEventMessage(eventId, text);
+      // L'echo du socket a pu arriver avant la réponse HTTP : on évite le doublon
+      setMessages((prev) => {
+        const rest = prev.filter((m) => m.id !== tempId);
+        return rest.some((m) => m.id === newMessage.id) ? rest : [...rest, newMessage];
+      });
     } catch (err: unknown) {
+      setMessages((prev) => prev.filter((m) => m.id !== tempId));
       console.error('Error sending message:', err);
       if (err instanceof Error && err.message === 'TOO_MANY_ATTEMPTS') {
         showWarning(t('chat.errors.tooManyMessages'));
@@ -85,16 +103,11 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
     }
   };
 
-  if (loading)
-    return (
-      <div className="text-gray-400 flex items-center justify-center text-sm p-4">
-        {t('chat.loadingMessages', 'Loading messages...')}
-      </div>
-    );
+  if (loading) return <EmptyState>{t('chat.loadingMessages', 'Loading messages...')}</EmptyState>;
 
   return (
-    <div className="flex flex-col h-full gap-3 relative">
-      <div className="flex-1 overflow-auto">
+    <div className="flex flex-col flex-1 min-h-0 gap-3 relative">
+      <div className="flex-1 min-h-0 overflow-auto">
         <MessageOutput messages={messages} currentUserId={currentUserId} />
       </div>
       <div className="flex-none">

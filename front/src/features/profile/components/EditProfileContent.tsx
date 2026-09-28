@@ -6,10 +6,15 @@ import PasswordModal from './PasswordModal';
 import { exportMyData, requestAccountDeletion } from '../../../api/gdpr';
 import styles from '../ProfileModal.module.css';
 import { useNotification } from '../../../context/notifications/useNotification';
-import { closeBtn } from '../../../types/icons';
+import ModalLayout, { type ModalShellProps } from '../../../components/ui/ModalLayout';
+import Button from '../../../components/ui/Button';
+import TextField from '../../../components/ui/TextField';
+import Select from '../../../components/ui/Select';
+import { updateProfile } from '../../../api/users';
 
 interface EditProfileContentProps {
   onClose: () => void;
+  shell?: ModalShellProps;
 }
 
 const languageOptions = [
@@ -24,7 +29,7 @@ type PreferredLanguage = (typeof languageOptions)[number]['value'];
 const categoryOptions = ['MUSIC', 'CULTURE', 'WORKSHOPS', 'LEISURE', 'OTHERS'] as const;
 type PreferredCategory = (typeof categoryOptions)[number];
 
-export default function EditProfileContent({ onClose }: EditProfileContentProps) {
+export default function EditProfileContent({ onClose, shell }: EditProfileContentProps) {
   const { t } = useTranslation();
   const { user, updateUser, accessToken } = useAuth();
 
@@ -36,9 +41,10 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
     user?.preferredCategory ?? ''
   );
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(resolveAvatarUrl(user?.avatar));
+  const [avatarPreview, setAvatarPreview] = useState<string>(resolveAvatarUrl(user?.avatar));
+  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { showWarning } = useNotification();
+  const { showWarning, showSuccess } = useNotification();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -48,7 +54,7 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
   const handleExportData = async () => {
     if (!accessToken) return;
     try {
-      const data = await exportMyData(accessToken);
+      const data = await exportMyData();
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -65,8 +71,8 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
   const handleDeleteRequest = async () => {
     if (!accessToken) return;
     try {
-      await requestAccountDeletion(accessToken);
-      showWarning(t('profileSettings.deleteEmailSent'));
+      await requestAccountDeletion();
+      showSuccess(t('profileSettings.deleteEmailSent'));
     } catch {
       showWarning(t('profileSettings.deleteRequestError'));
     }
@@ -78,6 +84,7 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
 
     if (file) {
       setAvatarPreview(URL.createObjectURL(file));
+      setAvatarLoadFailed(false);
     }
   };
 
@@ -86,38 +93,15 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
     setIsSaving(true);
 
     try {
-      const formData = new FormData();
-
-      formData.append('username', username);
-
-      if (preferredLanguage) {
-        formData.append('preferredLanguage', preferredLanguage);
-      }
-
-      if (preferredCategory) {
-        formData.append('preferredCategory', preferredCategory);
-      }
-
-      if (avatarFile) {
-        formData.append('avatar', avatarFile);
-      }
-
-      const res = await fetch(`https://localhost:${import.meta.env.VITE_HTTPS_PORT}/api/users/me`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: formData,
+      const updated = await updateProfile({
+        username,
+        preferredLanguage: preferredLanguage || undefined,
+        preferredCategory: preferredCategory || undefined,
+        avatar: avatarFile ?? undefined,
       });
 
-      if (!res.ok) {
-        throw new Error('Échec de la mise à jour');
-      }
-
-      const updated = await res.json();
-
       updateUser(updated);
+      showSuccess(t('profileSettings.saveSuccess'));
       onClose();
     } catch {
       showWarning(t('profileSettings.saveError', 'Unable to save changes.'));
@@ -127,34 +111,21 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
   };
 
   return (
-    <>
-      <div className="modalHeader">
-        <h2>{t('profileSettings.title')}</h2>
-
-        <button
-          type="button"
-          className="modal-button modal-close"
-          onClick={onClose}
-          aria-label="Fermer"
-        >
-          {closeBtn}
-        </button>
-      </div>
-
+    <ModalLayout onClose={onClose} title={t('profileSettings.title')} {...shell}>
       <form onSubmit={handleSubmit} className="modalForm">
         <div className={styles.avatarPicker}>
-          <button
+          <Button
+            variant="flag"
             type="button"
-            className={styles.avatarPreview}
+            className={`${styles.avatarPreview} w-15! h-15! mb-2`}
             onClick={() => fileInputRef.current?.click()}
           >
-            {avatarPreview ? (
-              <img src={avatarPreview} alt="Avatar" />
-            ) : (
+            {avatarLoadFailed ? (
               <span>{username.charAt(0).toUpperCase() || '?'}</span>
+            ) : (
+              <img src={avatarPreview} alt="Avatar" onError={() => setAvatarLoadFailed(true)} />
             )}
-          </button>
-
+          </Button>
           <input
             ref={fileInputRef}
             type="file"
@@ -163,90 +134,75 @@ export default function EditProfileContent({ onClose }: EditProfileContentProps)
             hidden
           />
 
-          <button
+          <Button
+            variant="ghost"
             type="button"
             className={styles.avatarChangeLink}
             onClick={() => fileInputRef.current?.click()}
           >
             {t('profileSettings.changePicture')}
-          </button>
+          </Button>
         </div>
 
-        <label>
-          {t('profileSettings.username')}
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-        </label>
+        <TextField
+          label={t('profileSettings.username')}
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
 
-        <label>
-          {t('profileSettings.preferredLanguage')}
-          <select
-            value={preferredLanguage}
-            onChange={(e) => setPreferredLanguage(e.target.value as PreferredLanguage)}
-          >
-            <option value="">{t('profileSettings.choose')}</option>
+        <Select
+          label={t('profileSettings.preferredLanguage')}
+          value={preferredLanguage}
+          onChange={(val) => setPreferredLanguage(val as PreferredLanguage)}
+          placeholder={t('profileSettings.choose')}
+          options={languageOptions.map((opt) => ({
+            value: opt.value,
+            label: opt.label,
+          }))}
+        />
 
-            {languageOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          {t('profileSettings.preferredCategory')}
-          <select
-            value={preferredCategory}
-            onChange={(e) => setPreferredCategory(e.target.value as PreferredCategory)}
-          >
-            <option value="">{t('profileSettings.choose')}</option>
-
-            {categoryOptions.map((code) => (
-              <option key={code} value={code}>
-                {t(`categories.${code.toLowerCase()}`)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <Select
+          label={t('profileSettings.preferredCategory')}
+          value={preferredCategory}
+          onChange={(val) => setPreferredCategory(val as PreferredCategory)}
+          placeholder={t('profileSettings.choose')}
+          options={categoryOptions.map((code) => ({
+            value: code,
+            label: t(`categories.${code.toLowerCase()}`),
+          }))}
+        />
 
         {!isOAuthUser && (
-          <button
-            type="button"
-            className="btnSecondary"
-            onClick={() => setIsPasswordModalOpen(true)}
-          >
+          <Button variant="ghost" type="button" onClick={() => setIsPasswordModalOpen(true)}>
             {t('profileSettings.changePassword')}
-          </button>
+          </Button>
         )}
 
-        <div className={styles.privacySection}>
-          <h3>{t('profileSettings.privacyTitle')}</h3>
-          <div className={styles.privacyButtons}>
-            <button type="button" className="btnSecondary" onClick={handleExportData}>
-              {t('profileSettings.downloadData')}
-            </button>
-            <button
-              type="button"
-              className={`btnSecondary ${styles.btnDanger}`}
-              onClick={handleDeleteRequest}
-            >
-              {t('profileSettings.deleteAccount')}
-            </button>
-          </div>
+        <div className="modalActions">
+          <Button variant="secondary" onClick={onClose}>
+            {t('profileSettings.cancel')}
+          </Button>
+
+          <Button variant="primary" type="submit" disabled={isSaving}>
+            {isSaving ? t('profileSettings.saving') : t('profileSettings.save')}
+          </Button>
         </div>
 
-        <div className="modalActions">
-          <button type="button" className="btnSecondary" onClick={onClose}>
-            {t('profileSettings.cancel')}
-          </button>
-
-          <button type="submit" className="btnPrimary" disabled={isSaving}>
-            {isSaving ? t('profileSettings.saving') : t('profileSettings.save')}
-          </button>
+        <div className={styles.privacySection}>
+          <h3 className={styles.privacyTitle}>{t('profileSettings.privacyTitle')}</h3>
+          <div className={styles.privacyButtons}>
+            <Button variant="secondary" type="button" onClick={handleExportData}>
+              {t('profileSettings.downloadData')}
+            </Button>
+            <Button variant="danger" type="button" onClick={handleDeleteRequest}>
+              {t('profileSettings.deleteAccount')}
+            </Button>
+          </div>
         </div>
       </form>
 
       {isPasswordModalOpen && <PasswordModal onClose={() => setIsPasswordModalOpen(false)} />}
-    </>
+    </ModalLayout>
   );
 }

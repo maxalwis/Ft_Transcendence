@@ -1,17 +1,17 @@
 .container {
+  position: relative;
   display: flex;
   width: 100%;
   align-items: flex-end;
-  gap: 0.5rem;
 }
 
 .textarea {
   width: 100%;
   resize: none !important;
   border-radius: var(--radius-lg);
-  padding: 0.5rem 1rem;
+  padding: var(--space-2) var(--space-4);
   font-size: 0.875rem;
-  line-height: 1.5;
+  line-height: var(--line-height-normal);
   color: var(--color-text-dark);
   outline: none;
   border: 1px solid var(--glass-border);
@@ -40,7 +40,17 @@
   opacity: 0.6;
 }
 
+.container .input {
+  /* Reserve room for the send button (36px + its inline offset) so text never runs under it */
+  padding-inline-end: calc(36px + var(--space-2) * 1.5);
+}
+
 .buttonWrapper {
+  /* Overlaid inside the textarea; z-index must beat .glass-panel (500) on the textarea */
+  position: absolute;
+  inset-inline-end: var(--space-2);
+  bottom: 10px;
+  z-index: 501;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,16 +58,12 @@
   height: 36px;
   opacity: 1;
   transform: scale(1);
-  overflow: hidden;
-  flex-shrink: 0;
   transition:
-    width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
     opacity 0.25s ease-in-out,
     transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .buttonWrapper.hidden {
-  width: 0px;
   opacity: 0;
   transform: scale(0.6);
   pointer-events: none;
@@ -67,25 +73,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 9999px;
   cursor: pointer;
-  background: var(--color-orange-primary) !important;
-  border: 1px solid var(--color-orange-border) !important;
-  color: var(--color-text-light);
-  padding: 0 !important;
   user-select: none;
-  transition:
-    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-    background 0.2s ease-in-out,
-    border-color 0.2s ease-in-out;
-}
-
-.sendButton:hover {
-  background: var(--color-orange-secondary) !important;
-  border-color: var(--color-orange-primary) !important;
-  transform: scale(0.96);
 }
 
 .sendButton:active {
@@ -93,9 +82,16 @@
 }
 
 .sendIcon {
-  width: 1rem;
-  height: 1rem;
+  width: var(--space-4);
+  height: var(--space-4);
   flex-shrink: 0;
   overflow: visible;
   fill: currentColor;
+  color: var(--color-orange-hover);
+  transition: color 0.2s ease;
+}
+
+.sendIconActive,
+.sendIcon:hover {
+  color: var(--color-orange-primary);
 }

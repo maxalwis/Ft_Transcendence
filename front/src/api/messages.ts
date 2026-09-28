@@ -1,4 +1,4 @@
-const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { request } from './api';
 
 export interface Message {
   id: number;
@@ -13,31 +13,20 @@ export interface Message {
   };
 }
 
-export async function fetchEventMessages(eventId: string, accessToken: string): Promise<Message[]> {
-  const res = await fetch(`${baseUrl}/events/${eventId}/messages`, {
-    credentials: 'include',
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
+export async function fetchEventMessages(eventId: string): Promise<Message[]> {
+  const res = await request(`/events/${eventId}/messages`);
   if (!res.ok) throw new Error('Failed to fetch messages');
   return res.json();
 }
 
-export async function sendEventMessage(
-  eventId: string,
-  content: string,
-  accessToken: string
-): Promise<Message> {
-  const res = await fetch(`${baseUrl}/events/${eventId}/messages`, {
+export async function sendEventMessage(eventId: string, content: string): Promise<Message> {
+  const res = await request(`/events/${eventId}/messages`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    credentials: 'include',
-    body: JSON.stringify({ content }), // plus de userId, le back le déduit du token
+    body: JSON.stringify({ content }),
   });
 
   if (!res.ok) {
+    if (res.status === 429) throw new Error('TOO_MANY_ATTEMPTS');
     const errorData = await res.json().catch(() => null);
     const message = Array.isArray(errorData?.message)
       ? errorData.message.join(', ')

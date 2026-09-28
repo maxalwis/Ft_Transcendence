@@ -6,6 +6,9 @@ import { searchUsers } from '../../../api/users';
 import { sendFriendRequest } from '../../../api/friends';
 import { useAuth } from '../../../context/auth/useAuth';
 import { useNotification } from '../../../context/notifications/useNotification';
+import Button from '../../../components/ui/Button';
+import Avatar from '../../../components/ui/Avatar';
+import EmptyState from '../../../components/ui/EmptyState';
 
 type FriendsSearchResultsProps = {
   input: string;
@@ -41,7 +44,7 @@ export default function FriendsSearchResults({
       try {
         setLoading(true);
 
-        const found = await searchUsers(query, accessToken);
+        const found = await searchUsers(query);
 
         if (!cancelled) {
           setResults(found);
@@ -86,19 +89,11 @@ export default function FriendsSearchResults({
   }
 
   if (loading) {
-    return (
-      <p className="flex items-center justify-center px-4 py-4 text-xs italic text-slate-400">
-        {t('friendsList.searching', 'Searching...')}
-      </p>
-    );
+    return <EmptyState italic>{t('friendsList.searching', 'Searching...')}</EmptyState>;
   }
 
   if (results.length === 0) {
-    return (
-      <p className="flex items-center justify-center px-4 py-4 text-xs italic text-slate-400">
-        {t('friendsList.noUsersFound', 'No users found.')}
-      </p>
-    );
+    return <EmptyState italic>{t('friendsList.noUsersFound', 'No users found.')}</EmptyState>;
   }
 
   return (
@@ -115,11 +110,12 @@ export default function FriendsSearchResults({
               <div className="flex min-w-0 items-center gap-3">
                 <div className="relative shrink-0">
                   <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-slate-600 text-xs font-semibold text-white">
-                    {user.avatar ? (
-                      <img src={user.avatar} alt="" className="h-full w-full object-cover" />
-                    ) : (
-                      user.username?.charAt(0).toUpperCase() || '?'
-                    )}
+                    <Avatar
+                      avatar={user.avatar}
+                      username={user.username}
+                      alt=""
+                      className="h-full w-full object-contain"
+                    />
                   </div>
 
                   <div
@@ -133,19 +129,21 @@ export default function FriendsSearchResults({
               </div>
 
               {isFriend ? (
-                <button
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => onSelectFriend(user as User)}
-                  className="shrink-0 text-xs font-medium text-black/70 hover:text-black"
+                  className="shrink-0 !px-2 !py-1 text-xs font-medium text-black/70 hover:text-black"
                 >
                   {t('friendsList.viewProfile', 'View Profile')}
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
+                  variant="icon"
                   type="button"
                   disabled={sendingRequest === user.id}
                   onClick={() => handleAddFriend(user.id)}
-                  className="modal-close-inline modal-close-inline-green icon-btn shrink-0 cursor-pointer active:scale-70 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="modal-close-inline modal-close-inline-green shrink-0 cursor-pointer active:scale-70 disabled:cursor-not-allowed disabled:opacity-50"
                   aria-label={t('friends.addFriend', 'Add friend')}
                 >
                   <svg
@@ -158,7 +156,7 @@ export default function FriendsSearchResults({
                   >
                     <path d="M12 5v14M5 12h14" />
                   </svg>
-                </button>
+                </Button>
               )}
             </div>
           );

@@ -3,6 +3,8 @@ import type { EventItem } from '../../../types/event';
 import EventResultCard from './EventResultCard';
 import styles from '../Event.module.css';
 import { useTranslation } from 'react-i18next';
+import Button from '../../../components/ui/Button';
+import EmptyState from '../../../components/ui/EmptyState';
 
 interface EventResultsSidebarProps {
   events: EventItem[];
@@ -48,6 +50,7 @@ export default function EventResultsSidebar({
   const [eventsPerPage, setEventsPerPage] = useState(1);
   const [hasOverflow, setHasOverflow] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [isAtTop, setIsAtTop] = useState(true);
   const listRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const itemsPerPage = isMobile ? 5 : eventsPerPage;
@@ -123,6 +126,7 @@ export default function EventResultsSidebar({
       const isAtBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 1;
 
       setHasOverflow(hasOverflow);
+      setIsAtTop(list.scrollTop <= 0);
       setIsAtBottom(isAtBottom);
     };
 
@@ -158,19 +162,11 @@ export default function EventResultsSidebar({
   }, [scrollTop]);
 
   if (isLoading) {
-    return (
-      <div className="flex flex-1 items-center justify-center text-gray-400">
-        {t('events.loading')}
-      </div>
-    );
+    return <EmptyState>{t('events.loading')}</EmptyState>;
   }
 
   if (events.length === 0) {
-    return (
-      <div className="flex flex-1 items-center justify-center text-sm text-gray-400">
-        {t('events.noEvents')}
-      </div>
-    );
+    return <EmptyState>{t('events.noEvents')}</EmptyState>;
   }
 
   return (
@@ -178,7 +174,7 @@ export default function EventResultsSidebar({
       <div
         className={`${styles.resultsList} ${
           hasOverflow && !isAtBottom ? styles.hasBottomFade : ''
-        }`}
+        } ${hasOverflow && !isAtTop ? styles.hasTopFade : ''}`}
       >
         <div ref={listRef} className="flex h-full flex-col gap-2 overflow-y-auto">
           {paginatedEvents.map((event) => (
@@ -195,27 +191,31 @@ export default function EventResultsSidebar({
       </div>
 
       <div dir="ltr" className="flex shrink-0 items-center justify-between">
-        <button
+        <Button
+          variant="icon"
           type="button"
           disabled={currentPage === 1}
           onClick={() => handlePageChange(currentPage - 1)}
+          className="modal-button orange-surrounded"
           aria-label="Previous page"
         >
           &lt;
-        </button>
+        </Button>
 
         <span>
           {currentPage} / {totalPages}
         </span>
 
-        <button
+        <Button
+          variant="icon"
           type="button"
           disabled={currentPage === totalPages}
           onClick={() => handlePageChange(currentPage + 1)}
+          className="modal-button orange-surrounded"
           aria-label="Next page"
         >
           &gt;
-        </button>
+        </Button>
       </div>
     </div>
   );

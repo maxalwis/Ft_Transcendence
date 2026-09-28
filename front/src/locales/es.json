@@ -35,6 +35,7 @@
   "eventPreview": {
     "defaultAlt": "Evento",
     "seeDetails": "Ver detalles",
+    "seeAllEvents": "Ver los {{count}} eventos",
     "undefinedDate": "Fecha no definida",
     "start": "Inicio",
     "end": "Fin",
@@ -111,7 +112,6 @@
   },
   "passwordModal": {
     "title": "Cambiar contraseña",
-    "close": "Cerrar",
     "currentPassword": "Contraseña actual",
     "currentPasswordPlaceholder": "Contraseña actual",
     "newPassword": "Nueva contraseña",
@@ -122,9 +122,11 @@
     "changePassword": "Cambiar contraseña",
     "loading": "Cargando...",
     "mismatchError": "Las contraseñas no coinciden.",
+    "incorrectPasswordError": "La contraseña actual es incorrecta.",
+    "noPasswordSetError": "No hay ninguna contraseña definida para esta cuenta.",
+    "serverError": "Ocurrió un error al cambiar la contraseña. Por favor, inténtalo de nuevo.",
     "lengthError": "La contraseña debe tener entre 8 y 72 caracteres.",
     "tooManyAttempts": "Demasiados intentos. Inténtalo de nuevo en un minuto.",
-    "serverError": "Se produjo un error. Inténtalo de nuevo.",
     "reloginRequired": "Contraseña cambiada. Vuelve a iniciar sesión con tu nueva contraseña."
   },
   "authModal": {
@@ -140,7 +142,6 @@
     "createOne": "Crear una",
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
     "signInLink": "Iniciar sesión",
-    "close": "Cerrar",
     "loginWithGoogle": "Iniciar sesión con Google",
     "loginWith42": "Iniciar sesión con 42",
     "errors": {
@@ -155,7 +156,7 @@
   "authBtn": {
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
-    "editProfile": "Editar perfil"
+    "profile": "Perfil"
   },
   "oauth": {
     "connecting": "Conectando...",
@@ -171,6 +172,7 @@
     "changePassword": "Cambiar contraseña",
     "saving": "Guardando...",
     "saveError": "No se pudieron guardar los cambios",
+    "saveSuccess": "Perfil actualizado con éxito.",
     "preferredLanguage": "Idioma preferido",
     "preferredCategory": "Categoría preferida",
     "changePicture": "Cambiar foto",
@@ -238,8 +240,8 @@
   },
   "sidebar": {
     "event": "Evento",
+    "results": "Resultados",
     "selectEvent": "Selecciona un evento.",
-    "close": "Cerrar",
     "collapse": "Colapsar barra lateral",
     "expand": "Expandir barra lateral"
   }

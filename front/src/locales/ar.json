@@ -35,6 +35,7 @@
   "eventPreview": {
     "defaultAlt": "فعالية",
     "seeDetails": "عرض التفاصيل",
+    "seeAllEvents": "عرض جميع الفعاليات ({{count}})",
     "undefinedDate": "تاريخ غير محدد",
     "start": "البداية",
     "end": "النهاية",
@@ -111,7 +112,6 @@
   },
   "passwordModal": {
     "title": "تغيير كلمة المرور",
-    "close": "إغلاق",
     "currentPassword": "كلمة المرور الحالية",
     "currentPasswordPlaceholder": "كلمة المرور الحالية",
     "newPassword": "كلمة المرور الجديدة",
@@ -122,9 +122,11 @@
     "changePassword": "تغيير كلمة المرور",
     "loading": "جاري التحميل...",
     "mismatchError": "كلمات المرور غير متطابقة.",
+    "incorrectPasswordError": "كلمة المرور الحالية غير صحيحة.",
+    "noPasswordSetError": "لا توجد كلمة مرور محددة لهذا الحساب.",
+    "serverError": "حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة مرة أخرى.",
     "lengthError": "يجب أن تتكون كلمة المرور من 8 إلى 72 حرفًا.",
     "tooManyAttempts": "محاولات كثيرة جدًا. يرجى المحاولة مرة أخرى بعد دقيقة.",
-    "serverError": "حدث خطأ. يرجى المحاولة مرة أخرى.",
     "reloginRequired": "تم تغيير كلمة المرور. يرجى تسجيل الدخول مجددًا بكلمة المرور الجديدة."
   },
   "authModal": {
@@ -140,7 +142,6 @@
     "createOne": "أنشئ حساباً",
     "alreadyHaveAccount": "لديك حساب بالفعل؟",
     "signInLink": "تسجيل الدخول",
-    "close": "إغلاق",
     "loginWithGoogle": "تسجيل الدخول بواسطة جوجل",
     "loginWith42": "تسجيل الدخول بواسطة 42",
     "errors": {
@@ -155,7 +156,7 @@
   "authBtn": {
     "login": "تسجيل الدخول",
     "logout": "تسجيل الخروج",
-    "editProfile": "تعديل الملف الشخصي"
+    "profile": "تعديل الملف الشخصي"
   },
   "oauth": {
     "connecting": "جاري الاتصال...",
@@ -171,6 +172,7 @@
     "changePassword": "تغيير كلمة المرور",
     "saving": "جاري الحفظ...",
     "saveError": "تعذر حفظ التغييرات",
+    "saveSuccess": "تم تحديث الملف الشخصي بنجاح.",
     "preferredLanguage": "اللغة المفضلة",
     "preferredCategory": "الفئة المفضلة",
     "changePicture": "تغيير الصورة",
@@ -238,8 +240,8 @@
   },
   "sidebar": {
     "event": "فعالية",
+    "results": "النتائج",
     "selectEvent": "اختر فعالية.",
-    "close": "إغلاق",
     "collapse": "طي الشريط الجانبي",
     "expand": "توسيع الشريط الجانبي"
   }

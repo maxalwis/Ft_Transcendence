@@ -26,5 +26,19 @@ if [ -z "$ADMIN_AUTH_USER" ] || [ -z "$ADMIN_AUTH_PASSWORD" ]; then
 fi
 echo "${ADMIN_AUTH_USER}:$(openssl passwd -apr1 "$ADMIN_AUTH_PASSWORD")" > /etc/nginx/.htpasswd
 
+# Admin tool server blocks (nginx/available/*.conf) are only wired in when their
+# compose profile is active, via $ACTIVE_PROFILES (space-separated, set on the
+# nginx service in docker-compose.yml). "tools" enables everything.
+mkdir -p /etc/nginx/enabled
+rm -f /etc/nginx/enabled/*.conf
+for profile in $ACTIVE_PROFILES; do
+  case "$profile" in
+    prisma-studio) ln -sf /etc/nginx/available/prisma-studio.conf /etc/nginx/enabled/ ;;
+    elk)           ln -sf /etc/nginx/available/kibana.conf /etc/nginx/enabled/
+                   ln -sf /etc/nginx/available/elasticsearch.conf /etc/nginx/enabled/ ;;
+    tools)         ln -sf /etc/nginx/available/*.conf /etc/nginx/enabled/ ;;
+  esac
+done
+
 # hand off to nginx's own entrypoint (runs /docker-entrypoint.d/* then starts nginx)
 exec /docker-entrypoint.sh nginx -g 'daemon off;'

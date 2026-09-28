@@ -42,3 +42,38 @@
   animation: glassPopupSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   transform-origin: top left;
 }
+
+/* Drawer: the control extends downward with the tool icons (height slide) */
+.drawer {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 0.3s;
+}
+
+.drawerOpen {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition:
+    grid-template-rows 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 0s;
+}
+
+.drawerInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* No separator under the toggle while the drawer is collapsed */
+:global(.leaflet-control.leaflet-links) a.toggleClosed {
+  border-bottom: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer,
+  .drawerOpen {
+    transition: none;
+  }
+}

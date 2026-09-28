@@ -71,7 +71,10 @@ describe('AuthController', () => {
         'refresh',
         expect.objectContaining({ httpOnly: true })
       );
-      expect(result).toEqual({ accessToken: 'access', user: { id: 1, email: 'alice@example.com' } });
+      expect(result).toEqual({
+        accessToken: 'access',
+        user: { id: 1, email: 'alice@example.com' },
+      });
     });
   });
 

@@ -1,55 +1,45 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../features/map/Map.module.css';
-import { closeBtn } from '../types/icons';
+import { BackIcon } from '../types/icons';
+import Button from '../components/ui/Button';
+import ModalLayout from '../components/ui/ModalLayout';
 
 interface SideBarProps {
   isOpen: boolean;
   onToggle: () => void;
   onClose: () => void;
+  onBack?: () => void;
+  title?: string;
   children: React.ReactNode;
-  type?: 'results' | 'event';
 }
 
-export default function SideBar({ isOpen, onToggle, onClose, children, type }: SideBarProps) {
+export default function SideBar({
+  isOpen,
+  onToggle,
+  onClose,
+  onBack,
+  title,
+  children,
+}: SideBarProps) {
   const { t } = useTranslation();
-  const [isClosing, setIsClosing] = useState(false);
-
-  const handleClose = () => {
-    setIsClosing(true);
-  };
-
-  const handleAnimationEnd = () => {
-    if (isClosing) {
-      onClose();
-    }
-  };
-
-  const sidebarIsOpen = isOpen && !isClosing;
+  const sidebarIsOpen = isOpen;
 
   return (
     <>
-      <div
-        data-state={sidebarIsOpen ? 'open' : 'closed'}
-        onAnimationEnd={handleAnimationEnd}
-        data-sidebar-type={type}
-        className={`glass-panel ${styles.sidebarModal} fixed top-15 right-3 bottom-15 w-[20vw] rounded-xl shadow-lg z-1000 flex flex-col`}
+      <ModalLayout
+        variant="sidebar"
+        onClose={onClose}
+        onBack={onBack}
+        title={title}
+        dataState={sidebarIsOpen ? 'open' : 'closed'}
+        bodyClassName="flex flex-col"
       >
-        <div className="shrink-0">
-          <button
-            type="button"
-            aria-label={t('sidebar.close', 'Close')}
-            onClick={handleClose}
-            className="modal-button modal-close"
-          >
-            {closeBtn}
-          </button>
-        </div>
-
         {children}
-      </div>
+      </ModalLayout>
 
-      <button
+      <Button
+        variant="icon"
         type="button"
         data-state={sidebarIsOpen ? 'open' : 'closed'}
         aria-label={
@@ -60,17 +50,8 @@ export default function SideBar({ isOpen, onToggle, onClose, children, type }: S
         onClick={onToggle}
         className={styles.sidebarToggle}
       >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          {sidebarIsOpen ? <path d="M15 18l-6-6 6-6" /> : <path d="M9 18l6-6-6-6" />}
-        </svg>
-      </button>
+        <BackIcon className={`h-4 w-4 transition-transform ${sidebarIsOpen ? 'rotate-180' : ''}`} />
+      </Button>
     </>
   );
 }

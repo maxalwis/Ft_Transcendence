@@ -3,21 +3,17 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 
 // Third-Party Styles
 import 'leaflet/dist/leaflet.css';
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 
 // Layouts & Feature Components
 import BottomBar from '../../../layouts/BottomBar';
-import SideBar from '../../../layouts/Sidebar';
 import NavBar from '../../../layouts/NavBar';
 
 // Marker & Map Visual Components
 import { MapClickHandler, GlassZoomControl } from '../MapControls';
-import EventPreview from '../../events/components/EventPreview';
-import EventSidebarContent from '../../events/components/EventSidebarContent';
-import EventResultsSidebar from '../../events/components/EventResultsSidebar';
 import { ClusterLayer } from './ClusterLayer';
 import { AdminPanelLinks } from '../../externalLinks/AdminPanelLinks';
+import MapHoverPreview from './MapHoverPreview';
+import MapSidebarPanel, { type SidebarState } from './MapSidebarPanel';
 
 // State Management, Hooks & Helpers
 import { useNotification } from '../../../context/notifications/useNotification';
@@ -29,14 +25,13 @@ import { useTranslation } from 'react-i18next';
 import { useTranslatedEvent } from '../../events/hooks/useTranslatedEvent';
 
 // Constants & Configuration
-import { PARIS_CENTER, DEFAULT_ZOOM, IDF_BOUNDS } from '../../../types/constants';
+import { PARIS_CENTER, DEFAULT_ZOOM, MAX_ZOOM, IDF_BOUNDS } from '../../../types/constants';
 
+import type { EventGroup, EventItem } from '../../../types/event';
 import { EventMapController } from './EventMapController';
 import { mapPreferredCategory, mapPreferredLanguage } from '../utils/userPreferences';
 // Local Styles
 import '../Map.module.css';
-
-type SidebarState = { type: 'event'; eventId: string } | { type: 'results' } | null;
 
 export default function Map() {
   const { showWarning } = useNotification();
@@ -48,11 +43,19 @@ export default function Map() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentResultsPage, setCurrentResultsPage] = useState(1);
   const [resultsScrollTop, setResultsScrollTop] = useState(0);
+  // When set, the results sidebar only lists the events of the clicked marker group
+  const [groupEvents, setGroupEvents] = useState<EventItem[] | null>(null);
+  // Event the map is zoomed on. Independent from the sidebar: a marker group click focuses
+  // its first event while only showing the results list.
+  const [focusEventId, setFocusEventId] = useState<string | null>(null);
 
   const [hoverPos, setHoverPos] = useState<{
     x: number;
     y: number;
   } | null>(null);
+  // True once a preview was pinned from the results sidebar (handleResultsEventClick). While
+  // pinned, hovering other markers must not steal the active group / hover position.
+  const [isPreviewPinned, setIsPreviewPinned] = useState(false);
 
   const [filters, setFilters] = useState<{
     city: string;
@@ -69,6 +72,9 @@ export default function Map() {
   });
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Suppresses MapEventsHandler's "clear active group on zoom" while EventMapController is
+  // programmatically flying to a selected event, so the hover-style preview survives that flight.
+  const skipZoomClearRef = useRef(false);
 
   const {
     isLoading,
@@ -77,7 +83,7 @@ export default function Map() {
     currentEvent,
     activeGroupId,
     activeEventIndex,
-    setActiveGroupId,
+    setActiveGroup,
     setActiveEventIndex,
     handlePrevEvent,
     handleNextEvent,
@@ -108,14 +114,15 @@ export default function Map() {
   };
 
   const handleMouseLeave = useCallback(() => {
+    if (isPreviewPinned) return;
     cancelCloseTimeout();
 
     closeTimeoutRef.current = setTimeout(() => {
-      setActiveGroupId(null);
+      setActiveGroup(null);
       setActiveEventIndex(0);
       setHoverPos(null);
     }, 150);
-  }, [setActiveGroupId, setActiveEventIndex]);
+  }, [isPreviewPinned, setActiveGroup, setActiveEventIndex]);
 
   /*
    * Open the event detail sidebar.
@@ -124,16 +131,19 @@ export default function Map() {
     (id: string) => {
       cancelCloseTimeout();
 
+      setGroupEvents(null);
+      setFocusEventId(id);
       setSidebar({
         type: 'event',
         eventId: id,
       });
 
       setIsSidebarOpen(true);
-      setActiveGroupId(null);
+      setActiveGroup(null);
       setHoverPos(null);
+      setIsPreviewPinned(false);
     },
-    [setActiveGroupId]
+    [setActiveGroup]
   );
 
   /*
@@ -142,35 +152,73 @@ export default function Map() {
   const handleOpenResults = useCallback(() => {
     cancelCloseTimeout();
 
+    setGroupEvents(null);
+    setFocusEventId(null);
+    setCurrentResultsPage(1);
+    setResultsScrollTop(0);
     setSidebar({
       type: 'results',
     });
 
     setIsSidebarOpen(true);
-    setActiveGroupId(null);
+    setActiveGroup(null);
     setHoverPos(null);
-  }, [setActiveGroupId]);
+    setIsPreviewPinned(false);
+  }, [setActiveGroup]);
+
+  /*
+   * Open the results sidebar restricted to the events of a marker group.
+   */
+  const handleOpenGroup = useCallback(
+    (eventsInGroup: EventItem[]) => {
+      cancelCloseTimeout();
+
+      setGroupEvents(eventsInGroup);
+      setFocusEventId(eventsInGroup[0]?.id ?? null);
+      setCurrentResultsPage(1);
+      setResultsScrollTop(0);
+      setSidebar({ type: 'results' });
+      setIsSidebarOpen(true);
+      setActiveGroup(null);
+      setHoverPos(null);
+      setIsPreviewPinned(false);
+    },
+    [setActiveGroup]
+  );
 
   /*
    * Called when an event is selected from the results sidebar.
-   * Replace the results sidebar with the selected event details.
+   * Replace the results sidebar with the selected event details, and show its
+   * preview card on the map as if the user were hovering its marker.
    */
-  const handleResultsEventClick = useCallback((eventId: string) => {
-    setSidebar({
-      type: 'event',
-      eventId,
-    });
+  const handleResultsEventClick = useCallback(
+    (eventId: string) => {
+      setFocusEventId(eventId);
+      setSidebar({
+        type: 'event',
+        eventId,
+      });
 
-    setIsSidebarOpen(true);
-    setHoverPos(null);
-  }, []);
+      setIsSidebarOpen(true);
+
+      const group = eventGroups.find((g) => g.events.some((event) => event.id === eventId));
+      if (group) {
+        const index = group.events.findIndex((event) => event.id === eventId);
+        setActiveGroup(group);
+        setActiveEventIndex(index >= 0 ? index : 0);
+        setIsPreviewPinned(true);
+      }
+    },
+    [eventGroups, setActiveGroup, setActiveEventIndex]
+  );
 
   const handleMarkerHover = useCallback(
-    (groupId: string) => {
+    (group: EventGroup) => {
+      if (isPreviewPinned) return;
       cancelCloseTimeout();
-      setActiveGroupId(groupId);
+      setActiveGroup(group);
     },
-    [setActiveGroupId]
+    [isPreviewPinned, setActiveGroup]
   );
 
   /*
@@ -240,9 +288,12 @@ export default function Map() {
 
     const preferredCategory = mapPreferredCategory(user.preferredCategory);
     if (preferredCategory) {
+      // One-shot reaction to the login event, guarded by justLoggedIn: no cascading renders.
+      /* eslint-disable react-hooks/set-state-in-effect */
       setCurrentResultsPage(1);
       setResultsScrollTop(0);
       setFilters((prev) => ({ ...prev, category: preferredCategory }));
+      /* eslint-enable react-hooks/set-state-in-effect */
     }
 
     clearJustLoggedIn();
@@ -254,6 +305,7 @@ export default function Map() {
         center={PARIS_CENTER}
         zoom={DEFAULT_ZOOM}
         minZoom={DEFAULT_ZOOM}
+        maxZoom={MAX_ZOOM}
         scrollWheelZoom
         maxBounds={IDF_BOUNDS}
         maxBoundsViscosity={1}
@@ -261,8 +313,9 @@ export default function Map() {
         className="h-full w-full"
       >
         <EventMapController
-          eventId={sidebar?.type === 'event' ? sidebar.eventId : null}
+          eventId={focusEventId}
           events={events}
+          skipZoomClearRef={skipZoomClearRef}
         />
         <MapClickHandler
           closeSidebar={() => {
@@ -275,7 +328,9 @@ export default function Map() {
           attribution='&copy; <a href="https://jawg.io">JawgMaps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="/api/tiles/{z}/{x}/{y}{r}.png"
           bounds={IDF_BOUNDS}
-          keepBuffer={0}
+          maxZoom={MAX_ZOOM}
+          keepBuffer={2}
+          updateWhenIdle={false}
         />
 
         <GlassZoomControl />
@@ -284,44 +339,37 @@ export default function Map() {
 
         <MapEventsHandler
           activeGroup={activeGroup}
-          setActiveGroupId={setActiveGroupId}
+          setActiveGroup={setActiveGroup}
           setHoverPos={setHoverPos}
+          skipZoomClearRef={skipZoomClearRef}
         />
 
-        {!isLoading && (
-          <ClusterLayer
-            eventGroups={eventGroups}
-            activeGroupId={activeGroupId}
-            onMarkerClick={handleOpenSidebar}
-            onMarkerHover={handleMarkerHover}
-            onMarkerLeave={handleMouseLeave}
-          />
-        )}
+        <ClusterLayer
+          eventGroups={eventGroups}
+          activeGroupId={activeGroupId}
+          onMarkerClick={handleOpenSidebar}
+          onGroupClick={handleOpenGroup}
+          onMarkerHover={handleMarkerHover}
+          onMarkerLeave={handleMouseLeave}
+        />
       </MapContainer>
 
       {/* Event preview shown when hovering a marker group */}
-      {currentEvent && activeGroup && hoverPos && (
-        <EventPreview
-          position={hoverPos}
-          eventId={currentEvent.id}
-          title={displayedHoverTitle}
-          isTranslating={isHoverTranslating}
-          priceType={currentEvent.priceType}
-          dateStart={currentEvent.dateStart}
-          dateEnd={currentEvent.dateEnd}
-          category={displayedHoverCategory || 'Event'}
-          isOpen={true}
-          interestedUsersCount={currentEvent.interestedUsersCount || 0}
-          imageUrl={currentEvent.coverUrl}
-          totalInGroup={activeGroup.events.length}
-          currentIndex={activeEventIndex}
-          onPrev={handlePrevEvent}
-          onNext={() => handleNextEvent(undefined, activeGroup.events.length - 1)}
-          onClick={() => handleOpenSidebar(currentEvent.id)}
-          onMouseEnter={cancelCloseTimeout}
-          onMouseLeave={handleMouseLeave}
-        />
-      )}
+      <MapHoverPreview
+        currentEvent={currentEvent}
+        activeGroup={activeGroup}
+        hoverPos={hoverPos}
+        title={displayedHoverTitle}
+        category={displayedHoverCategory}
+        isTranslating={isHoverTranslating}
+        activeEventIndex={activeEventIndex}
+        onPrev={handlePrevEvent}
+        onNext={() => handleNextEvent(undefined, (activeGroup?.events.length ?? 1) - 1)}
+        onClick={() => currentEvent && handleOpenSidebar(currentEvent.id)}
+        onOpenGroup={() => activeGroup && handleOpenGroup(activeGroup.events)}
+        onMouseEnter={cancelCloseTimeout}
+        onMouseLeave={handleMouseLeave}
+      />
 
       {/* Navigation and category filters */}
       <NavBar
@@ -337,62 +385,36 @@ export default function Map() {
       <BottomBar />
 
       {/* Sidebar */}
-      {sidebar !== null && (
-        <SideBar
-          isOpen={isSidebarOpen}
-          onToggle={() => setIsSidebarOpen((prev) => !prev)}
-          onClose={() => {
-            setSidebar(null);
-            setHoverPos(null);
-          }}
-          type={sidebar.type}
-        >
-          {/* Results sidebar */}
-          {sidebar.type === 'results' && (
-            <EventResultsSidebar
-              events={events}
-              isLoading={isLoading}
-              currentPage={currentResultsPage}
-              onPageChange={setCurrentResultsPage}
-              onEventClick={handleResultsEventClick}
-              scrollTop={resultsScrollTop}
-              onScrollTopChange={setResultsScrollTop}
-            />
-          )}
-
-          {/* Event details sidebar */}
-          {sidebar.type === 'event' && (
-            <div className="flex min-h-0 flex-1 flex-col">
-              <button
-                type="button"
-                onClick={() => {
-                  setSidebar({ type: 'results' });
-                  setIsSidebarOpen(true);
-                  setHoverPos(null);
-                }}
-                aria-label="Back to results"
-                className="modal-button modal-back"
-              >
-                <svg
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-              </button>
-
-              <div className="min-h-0 flex-1 flex flex-col overflow-y-auto">
-                <EventSidebarContent eventId={sidebar.eventId} currentUserId={user?.id} />
-              </div>
-            </div>
-          )}
-        </SideBar>
-      )}
+      <MapSidebarPanel
+        sidebar={sidebar}
+        isOpen={isSidebarOpen}
+        currentUserId={user?.id}
+        events={events}
+        groupEvents={groupEvents}
+        isLoading={isLoading}
+        currentResultsPage={currentResultsPage}
+        onPageChange={setCurrentResultsPage}
+        resultsScrollTop={resultsScrollTop}
+        onResultsScrollTopChange={setResultsScrollTop}
+        onEventClick={handleResultsEventClick}
+        onToggle={() => setIsSidebarOpen((prev) => !prev)}
+        onClose={() => {
+          setSidebar(null);
+          setFocusEventId(null);
+          setActiveGroup(null);
+          setHoverPos(null);
+          setIsPreviewPinned(false);
+        }}
+        onBack={() => {
+          // Keep the map where it is when returning to a marker group's list
+          if (!groupEvents) setFocusEventId(null);
+          setSidebar({ type: 'results' });
+          setIsSidebarOpen(true);
+          setActiveGroup(null);
+          setHoverPos(null);
+          setIsPreviewPinned(false);
+        }}
+      />
     </>
   );
 }

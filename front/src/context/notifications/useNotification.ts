@@ -2,6 +2,7 @@ import { createContext, useContext } from 'react';
 
 export interface NotificationContextType {
   showWarning: (message: string) => void;
+  showSuccess: (message: string) => void;
   clearNotification: () => void;
 }
 

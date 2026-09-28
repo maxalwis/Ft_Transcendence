@@ -11,7 +11,8 @@
     "format": "prettier --write \"**/*.{html,css,js,ts,tsx,json}\"",
     "typecheck": "tsc --noEmit",
     "check:i18n": "node scripts/check-i18n.js",
-    "push-check": "npm run lint && npm run format && npm run typecheck && npm run check:i18n"
+    "push-check": "npm run lint && npm run format && npm run typecheck && npm run check:i18n",
+    "audit:design": "node scripts/audit-design-system.cjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",

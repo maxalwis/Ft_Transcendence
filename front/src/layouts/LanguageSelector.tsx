@@ -2,16 +2,13 @@ import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LanguageIcon, FlagFR, FlagGB, FlagES, FlagSA } from './FlagIcons';
+import Button from '../components/ui/Button';
 
 interface LanguageSelectorProps {
   embedded?: boolean;
-  onWidthChange?: (width: number) => void;
 }
 
-export default function LanguageSelector({
-  embedded = false,
-  onWidthChange,
-}: LanguageSelectorProps) {
+export default function LanguageSelector({ embedded = false }: LanguageSelectorProps) {
   const languages = [
     { code: 'fr', title: 'Français', Flag: FlagFR },
     { code: 'en', title: 'English', Flag: FlagGB },
@@ -41,67 +38,52 @@ export default function LanguageSelector({
     };
   }, [embedded, isOpen]);
 
-  useEffect(() => {
-    if (!embedded || !selectorRef.current || !onWidthChange) {
-      return;
-    }
-
-    const element = selectorRef.current;
-
-    const updateWidth = () => {
-      onWidthChange(element.getBoundingClientRect().width);
-    };
-
-    updateWidth();
-
-    const observer = new ResizeObserver(updateWidth);
-    observer.observe(element);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [embedded, onWidthChange, isOpen]);
-
   const content = embedded ? (
     <div
       ref={selectorRef}
       className="
-      fixed
-      top-4
-      right-4
-      z-1100
-      pointer-events-auto
+        fixed
+        top-[calc(var(--nav-row2-top)+0.25rem)]
+        right-4
+        z-1100
+        pointer-events-auto
 
-      min-[901px]:flex
-      min-[901px]:items-center
-      min-[901px]:gap-2
-      min-[901px]:flex-row-reverse
-    "
+        min-[751px]:top-4
+        flex
+        items-center
+        gap-2
+        flex-col
+      "
     >
       {/* Language toggle */}
-      <button
+      <Button
+        variant="flag"
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="glass-panel cursor-pointer p-2 rounded-full max-[900px]:mb-1"
+        className="glass-panel mb-1"
         title="Language"
         aria-label="Language"
         aria-expanded={isOpen}
       >
         <LanguageIcon className="w-5 h-5" />
-      </button>
+      </Button>
 
-      {isOpen && (
-        <div
-          className="
-          flex
-          flex-col
-          gap-2
-
-          min-[901px]:flex-row
-        "
-        >
+      <div
+        inert={!isOpen}
+        aria-hidden={!isOpen}
+        className={`
+          grid
+          transition-[grid-template-rows,opacity,transform]
+          duration-300
+          ease-out
+          motion-reduce:transition-none
+          ${isOpen ? 'grid-rows-[1fr] opacity-100 translate-y-0' : 'grid-rows-[0fr] opacity-0 -translate-y-2'}
+        `}
+      >
+        <div className="flex gap-2 flex-col min-h-0">
           {languages.map(({ code, title, Flag }) => (
-            <button
+            <Button
+              variant="flag"
               key={code}
               type="button"
               onClick={() => {
@@ -109,15 +91,13 @@ export default function LanguageSelector({
                 setIsOpen(false);
               }}
               title={title}
-              className={`glass-panel cursor-pointer p-2 rounded-full ${
-                currentLang?.startsWith(code) ? 'isSelected' : ''
-              }`}
+              className={`glass-panel ${currentLang?.startsWith(code) ? 'isSelected' : ''}`}
             >
               <Flag className="w-5 h-5 rounded-sm object-cover" />
-            </button>
+            </Button>
           ))}
         </div>
-      )}
+      </div>
     </div>
   ) : (
     // Desktop / non-embedded
@@ -129,18 +109,18 @@ export default function LanguageSelector({
       right-4
       z-1100
       flex
-      flex-row
       items-center
       gap-2
       pointer-events-auto
 
-      max-[900px]:top-[19%]
-      max-[900px]:flex-col
+      max-[750px]:top-[19%]
+      flex-col
     "
     >
       {languages.map(({ code, title, Flag }) => (
-        <button
+        <Button
           key={code}
+          variant="icon"
           type="button"
           onClick={() => i18n.changeLanguage(code)}
           title={title}
@@ -149,7 +129,7 @@ export default function LanguageSelector({
           }`}
         >
           <Flag className="w-5 h-5 rounded-sm object-cover shrink-0" />
-        </button>
+        </Button>
       ))}
     </div>
   );

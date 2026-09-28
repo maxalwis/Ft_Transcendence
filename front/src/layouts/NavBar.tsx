@@ -4,11 +4,17 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import { fr, enUS, es, ar } from 'date-fns/locale';
 import LanguageSelector from './LanguageSelector';
 import 'react-datepicker/dist/react-datepicker.css';
+import Button from '../components/ui/Button';
+import { ArrowLeftIcon, ArrowRightIcon } from '../types/icons';
 
 registerLocale('fr', fr);
 registerLocale('en', enUS);
 registerLocale('es', es);
 registerLocale('ar', ar);
+
+// Room kept on each side of the categories for the language selector (open) and the map controls
+const SIDE_GUTTER_PX = 256;
+const MOBILE_BREAKPOINT_PX = 768;
 
 export type NavBarProps = {
   onSelectCategory?: (category: string) => void;
@@ -39,7 +45,41 @@ export default function NavBar({
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  const [languageSelectorWidth, setLanguageSelectorWidth] = useState(0);
+
+  // Compact: mobile, or categories too wide to fit between the side gutters.
+  // Map controls and language selector then move down to the filters row.
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [compact, setCompact] = useState(false);
+
+  const updateCompact = useCallback(() => {
+    const row = rowRef.current;
+    const nav = categoriesScrollRef.current;
+    if (!row || !nav) return;
+
+    const categoriesWidth = nav.scrollWidth + 32; // + px-4 of the clipping wrapper
+    setCompact(
+      window.innerWidth < MOBILE_BREAKPOINT_PX ||
+        categoriesWidth + 2 * SIDE_GUTTER_PX > row.clientWidth
+    );
+  }, []);
+
+  useEffect(() => {
+    updateCompact();
+    const row = rowRef.current;
+    if (!row) return;
+
+    const observer = new ResizeObserver(updateCompact);
+    observer.observe(row);
+    return () => observer.disconnect();
+  }, [updateCompact, i18n.language]);
+
+  // Lets the map stylesheet offset the Leaflet controls
+  useEffect(() => {
+    document.documentElement.dataset.navCompact = String(compact);
+    return () => {
+      delete document.documentElement.dataset.navCompact;
+    };
+  }, [compact]);
 
   const updateScrollState = useCallback(() => {
     const el = categoriesScrollRef.current;
@@ -132,44 +172,31 @@ export default function NavBar({
   return (
     <div
       dir="ltr"
-      className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-14 md:px-6 pointer-events-none"
+      className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-4 pointer-events-none"
     >
-      <LanguageSelector embedded onWidthChange={setLanguageSelectorWidth} />
+      <LanguageSelector embedded />
 
+      {/* Row 1: categories. In compact mode, map controls and language selector share row 2 with the filters */}
       <div
-        className="w-full grid items-center py-4"
-        style={{
-          gridTemplateColumns: `45px minmax(0, 1fr) ${Math.max(languageSelectorWidth, 45)}px`,
-        }}
+        ref={rowRef}
+        className={`w-full flex items-center justify-center ${compact ? 'h-(--nav-row2-top)' : 'py-4'}`}
+        style={compact ? undefined : { paddingInline: SIDE_GUTTER_PX }}
       >
-        {/* Left spacer */}
-        <div />
-
         {/* Category Navigation */}
-        <div className="relative z-10 flex items-center justify-center min-w-0">
+        <div className="relative z-10 flex w-full items-center justify-center min-w-0">
           {canScrollLeft && (
-            <button
+            <Button
+              variant="icon"
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 scrollCategories('left');
               }}
               aria-label={t('nav.scrollLeft', 'Défiler vers la gauche')}
-              className="glass-icon-filter icon-btn md:hidden absolute left-0 z-20"
+              className="glass-icon-filter  md:hidden absolute left-0 z-20"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </button>
+              <ArrowLeftIcon className="h-4 w-4" />
+            </Button>
           )}
 
           {/* Actual clipping area */}
@@ -189,7 +216,8 @@ export default function NavBar({
                     : currentCategory === targetCategory;
 
                 return (
-                  <button
+                  <Button
+                    variant="ghost"
                     key={cat.value || 'all'}
                     type="button"
                     onClick={(e) => {
@@ -200,40 +228,27 @@ export default function NavBar({
                     className={`glass-filter ${isActive ? 'isSelected' : ''}`}
                   >
                     {cat.label}
-                  </button>
+                  </Button>
                 );
               })}
             </nav>
           </div>
 
           {canScrollRight && (
-            <button
+            <Button
+              variant="icon"
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 scrollCategories('right');
               }}
               aria-label={t('nav.scrollRight', 'Défiler vers la droite')}
-              className="glass-icon-filter icon-btn md:hidden absolute right-0 z-20"
+              className="glass-icon-filter md:hidden absolute right-0 z-20"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </button>
+              <ArrowRightIcon className="h-4 w-4" />
+            </Button>
           )}
         </div>
-
-        {/* Right spacer */}
-        <div className="w-45 hidden md:block shrink-0" />
       </div>
 
       {/* Price and date button */}
@@ -245,7 +260,8 @@ export default function NavBar({
 
           return (
             <div key={filter.type} className="relative">
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -254,7 +270,7 @@ export default function NavBar({
                 className={`glass-filter ${isOpen || isSelected ? 'isSelected' : ''}`}
               >
                 {filter.label}
-              </button>
+              </Button>
 
               {isOpen && (
                 <>
@@ -264,7 +280,8 @@ export default function NavBar({
                         const isActive = (priceType || '') === opt.value;
 
                         return (
-                          <button
+                          <Button
+                            variant="ghost"
                             key={opt.value || 'all-prices'}
                             type="button"
                             onClick={(e) => {
@@ -278,7 +295,7 @@ export default function NavBar({
                             }`}
                           >
                             {opt.label}
-                          </button>
+                          </Button>
                         );
                       })}
                     </div>
@@ -302,7 +319,8 @@ export default function NavBar({
                         maxDate={new Date('2028-12-31')}
                       />
 
-                      <button
+                      <Button
+                        variant="ghost"
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -310,10 +328,10 @@ export default function NavBar({
                           setOpenPopover(null);
                           onOpenResults?.();
                         }}
-                        className="w-full mt-1 px-3 py-1.5 rounded-lg text-sm transition-all"
+                        className="w-full !mt-1 !px-3 !py-1.5 rounded-lg text-sm"
                       >
                         {t('filters.resetDate', 'Réinitialiser')}
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </>

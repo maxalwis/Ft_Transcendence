@@ -2,6 +2,10 @@ import React, { useMemo, useRef, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from '../Event.module.css';
 import LikeButton from './LikeButton';
+import Button from '../../../components/ui/Button';
+import Chip from '../../../components/ui/Chip';
+import { ArrowLeftIcon, ArrowRightIcon } from '../../../types/icons';
+import EventImage from './EventImage';
 
 export interface Friend {
   id: string;
@@ -30,6 +34,7 @@ export interface EventDetailsProps {
   onNext?: (e?: React.MouseEvent, maxIndex?: number) => void;
 
   onClick?: () => void;
+  onOpenGroup?: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 }
@@ -63,12 +68,13 @@ export default function EventPreview({
   dateStart,
   dateEnd,
   interestedUsersCount = 0,
-  imageUrl = '/event_image.webp',
+  imageUrl,
   totalInGroup = 1,
   currentIndex = 0,
   onPrev,
   onNext,
   onClick,
+  onOpenGroup,
   onMouseEnter,
   onMouseLeave,
 }: EventDetailsProps) {
@@ -130,14 +136,19 @@ export default function EventPreview({
       computedLeft = window.innerWidth - CARD_WIDTH - 30;
     }
 
-    return { topPos: computedTop, leftPos: computedLeft, isFlippedDownward: flipped };
+    return {
+      topPos: computedTop,
+      leftPos: computedLeft,
+      isFlippedDownward: flipped,
+    };
   }, [position.x, position.y, cardHeight]);
 
   if (!hasValidPosition) return null;
 
   const handleExtendClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onClick) onClick();
+    if (totalInGroup > 1 && onOpenGroup) onOpenGroup();
+    else if (onClick) onClick();
   };
 
   const normalizedPrice = priceType?.trim().toLowerCase();
@@ -174,46 +185,13 @@ export default function EventPreview({
       }}
     >
       <div className={styles['events-details-image-container']}>
-        {imageUrl && (
-          <img
-            src={imageUrl}
-            alt={title || t('eventPreview.defaultAlt')}
-            className={styles['events-details-image']}
-          />
-        )}
-        <div
-          dir="ltr"
-          className="absolute top-2 left-2 right-2 flex justify-end items-center z-10 pointer-events-none"
-        >
-          <button
-            type="button"
-            onClick={handleExtendClick}
-            title={t('eventPreview.seeDetails')}
-            className="modal-button modal-close pointer-events-auto"
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]"
-            >
-              <polyline points="15 3 21 3 21 9" />
-              <polyline points="9 21 3 21 3 15" />
-              <line x1="21" y1="3" x2="14" y2="10" />
-              <line x1="3" y1="21" x2="10" y2="14" />
-            </svg>
-          </button>
-        </div>
+        {imageUrl && <EventImage src={imageUrl} alt={title || t('eventPreview.defaultAlt')} />}
       </div>
 
       {totalInGroup > 1 && (
-        <div dir="ltr" className="flex justify-between items-center px-3 py-1.5">
-          <button
+        <div dir="ltr" className="flex justify-between items-center px-5 pt-3">
+          <Button
+            variant="icon"
             type="button"
             onClick={(e) => {
               e.stopPropagation();
@@ -222,23 +200,13 @@ export default function EventPreview({
             disabled={currentIndex === 0}
             className={`${styles['events-details-carousel-button']} disabled:opacity-40`}
           >
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </button>
+            <ArrowLeftIcon className="h-4 w-4" />
+          </Button>
           <span className={styles['events-details-carousel-counter']}>
             {currentIndex + 1} / {totalInGroup}
           </span>
-          <button
+          <Button
+            variant="icon"
             type="button"
             onClick={(e) => {
               e.stopPropagation();
@@ -247,19 +215,8 @@ export default function EventPreview({
             disabled={currentIndex === totalInGroup - 1}
             className={`${styles['events-details-carousel-button']} disabled:opacity-40`}
           >
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="m9 18 6-6-6-6" />
-            </svg>
-          </button>
+            <ArrowRightIcon className="close h-4 w-4" />
+          </Button>
         </div>
       )}
 
@@ -270,9 +227,11 @@ export default function EventPreview({
             style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
           />
         ) : (
-          <h2 className={styles['events-details-title']}>{title}</h2>
+          <h2 className={`${styles['events-details-title']} line-clamp-2`}>{title}</h2>
         )}
-        <h3 className={`${styles['events-details-category']} text-slate-600!`}>{category}</h3>
+        <div className={styles['events-details-category']}>
+          <Chip>{category}</Chip>
+        </div>
         <div className={styles['events-details-meta']}>
           <span>{formattedPrice}</span>
           <span>
@@ -287,6 +246,11 @@ export default function EventPreview({
             )}
           </div>
         </div>
+        <Button variant="primary" type="button" onClick={handleExtendClick} className="mt-3 w-full">
+          {totalInGroup > 1 && onOpenGroup
+            ? t('eventPreview.seeAllEvents', { count: totalInGroup })
+            : t('eventPreview.seeDetails')}
+        </Button>
       </div>
     </div>
   );

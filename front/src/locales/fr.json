@@ -35,6 +35,7 @@
   "eventPreview": {
     "defaultAlt": "Événement",
     "seeDetails": "Voir les détails",
+    "seeAllEvents": "Voir les {{count}} événements",
     "undefinedDate": "Date non définie",
     "start": "Début",
     "end": "Fin",
@@ -111,7 +112,6 @@
   },
   "passwordModal": {
     "title": "Changer le mot de passe",
-    "close": "Fermer",
     "currentPassword": "Mot de passe actuel",
     "currentPasswordPlaceholder": "Mot de passe actuel",
     "newPassword": "Nouveau mot de passe",
@@ -122,9 +122,11 @@
     "changePassword": "Changer le mot de passe",
     "loading": "Chargement...",
     "mismatchError": "Les mots de passe ne correspondent pas.",
+    "incorrectPasswordError": "Le mot de passe actuel est incorrect.",
+    "noPasswordSetError": "Aucun mot de passe n'est défini pour ce compte.",
+    "serverError": "Une erreur est survenue lors du changement de mot de passe. Veuillez réessayer.",
     "lengthError": "Le mot de passe doit faire entre 8 et 72 caractères.",
     "tooManyAttempts": "Trop de tentatives. Réessayez dans une minute.",
-    "serverError": "Une erreur est survenue. Veuillez réessayer.",
     "reloginRequired": "Mot de passe modifié. Reconnectez-vous avec votre nouveau mot de passe."
   },
   "authModal": {
@@ -140,7 +142,6 @@
     "createOne": "En créer un",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "signInLink": "Se connecter",
-    "close": "Fermer",
     "loginWithGoogle": "Se connecter avec Google",
     "loginWith42": "Se connecter avec 42",
     "errors": {
@@ -155,7 +156,7 @@
   "authBtn": {
     "login": "Connexion",
     "logout": "Déconnexion",
-    "editProfile": "Modifier le profil"
+    "profile": "Profil"
   },
   "oauth": {
     "connecting": "Connexion en cours...",
@@ -171,6 +172,7 @@
     "changePassword": "Modifier le mot de passe",
     "saving": "Sauvegarde...",
     "saveError": "Impossible de sauvegarder les modifications",
+    "saveSuccess": "Profil mis à jour avec succès.",
     "preferredLanguage": "Langue préférée",
     "preferredCategory": "Catégorie préférée",
     "changePicture": "Changer photo",
@@ -238,8 +240,8 @@
   },
   "sidebar": {
     "event": "Événement",
+    "results": "Résultats",
     "selectEvent": "Sélectionnez un événement.",
-    "close": "Fermer",
     "collapse": "Réduire la barre latérale",
     "expand": "Développer la barre latérale"
   }

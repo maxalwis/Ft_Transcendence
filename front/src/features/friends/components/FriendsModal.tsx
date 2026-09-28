@@ -2,7 +2,7 @@ import type { OpenState } from './Friends';
 import type { User, PendingRequest } from '../../../api/friends';
 import FriendsContent from './FriendsContent';
 import styles from '../Friends.module.css';
-import { closeBtn } from '../../../types/icons';
+import ModalLayout from '../../../components/ui/ModalLayout';
 
 type FriendsModalProps = OpenState & {
   friends: User[];
@@ -24,20 +24,11 @@ export default function FriendsModal({
   if (!isOpen) return null;
 
   return (
-    <div
-      className={`glass-panel absolute bottom-0 left-0 flex flex-col overflow-hidden rounded-xl ${styles.friendsModal}`}
+    <ModalLayout
+      variant="popover"
+      onClose={() => setIsOpen(false)}
+      className={`absolute bottom-0 left-0 ${styles.friendsModal}`}
     >
-      <div className="relative flex h-10 shrink-0 items-center">
-        <button
-          type="button"
-          aria-label="Close"
-          className="modal-button modal-close"
-          onClick={() => setIsOpen(false)}
-        >
-          {closeBtn}
-        </button>
-      </div>
-
       <FriendsContent
         friends={friends}
         requests={requests}
@@ -45,6 +36,6 @@ export default function FriendsModal({
         onRemoveFriend={onRemoveFriend}
         isLoggedIn={isLoggedIn}
       />
-    </div>
+    </ModalLayout>
   );
 }

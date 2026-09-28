@@ -47,10 +47,7 @@ export class AuthService {
     providerId: string;
     avatar: string;
   }) {
-    let user = await this.usersService.findFromProviderOrNull(
-      profile.provider,
-      profile.providerId
-    );
+    let user = await this.usersService.findFromProviderOrNull(profile.provider, profile.providerId);
 
     if (!user) {
       // Les emails des comptes locaux ne sont pas vérifiés : n'importe qui peut
@@ -85,10 +82,13 @@ export class AuthService {
     // Le jti rend chaque refresh token unique : sans lui, deux logins dans la
     // même seconde (iat identique) produisent le même JWT, donc le même
     // tokenHash, et la contrainte @unique fait planter la création
-    const refreshToken = await this.jwtService.signAsync({ ...payload, jti: randomUUID() }, {
-      secret: this.config.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: '7d',
-    });
+    const refreshToken = await this.jwtService.signAsync(
+      { ...payload, jti: randomUUID() },
+      {
+        secret: this.config.get<string>('JWT_REFRESH_SECRET'),
+        expiresIn: '7d',
+      }
+    );
 
     await this.prisma.refreshToken.create({
       data: {

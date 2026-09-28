@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { FiltersProps } from '../../../types/map';
 import styles from '../Map.module.css';
-import CustomSelect from './CustomSelect';
-import { closeBtn } from '../../../types/icons';
+import ModalLayout from '../../../components/ui/ModalLayout';
+import Button from '../../../components/ui/Button';
+import TextField from '../../../components/ui/TextField';
+import Select from '../../../components/ui/Select';
 
 export default function Filters({ onApplyFilters }: FiltersProps) {
   const { t } = useTranslation();
@@ -39,7 +40,12 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
   };
 
   const handleReset = () => {
-    const defaultFilters = { city: 'Paris', startDate: '', endDate: '', priceType: '' };
+    const defaultFilters = {
+      city: 'Paris',
+      startDate: '',
+      endDate: '',
+      priceType: '',
+    };
     setCity('Paris');
     setStartDate('');
     setEndDate('');
@@ -50,95 +56,74 @@ export default function Filters({ onApplyFilters }: FiltersProps) {
 
   return (
     <>
-      <button
+      <Button
+        variant="icon"
         type="button"
         aria-label="Open Filters"
         onClick={() => setIsOpen(true)}
-        className={`glass-panel icon-btn fixed left-4 top-1/2 -translate-y-1/2 z-500 w-10 h-10 rounded-full cursor-pointer active:scale-95 flex items-center justify-center ${styles.filterTrigger}`}
+        className={`glass-panel fixed left-4 top-1/2 -translate-y-1/2 z-500 w-10 h-10 rounded-full cursor-pointer active:scale-95 flex items-center justify-center ${styles.filterTrigger}`}
       >
         <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
           <path d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
         </svg>
-      </button>
+      </Button>
 
-      {(isOpen || isAnimating) &&
-        createPortal(
-          <div
-            onAnimationEnd={handleAnimationEnd}
-            data-state={isOpen ? 'open' : 'closed'}
-            className={`${styles.filterModal || styles.sidebarModal || 'filterModal'} glass-panel h-auto w-64 fixed left-3 top-1/2 -translate-y-1/2 flex flex-col p-4 gap-4 z-50 rounded-xl ${styles.filterPanel}`}
-          >
-            <button
+      {(isOpen || isAnimating) && (
+        <ModalLayout
+          variant="popover"
+          portal
+          onClose={() => setIsOpen(false)}
+          title={t('filters.title', 'Events Filters')}
+          dataState={isOpen ? 'open' : 'closed'}
+          onAnimationEnd={handleAnimationEnd}
+          className={`${styles.filterModal} h-auto w-64 fixed left-3 top-1/2 -translate-y-1/2 z-50 ${styles.filterPanel}`}
+          bodyClassName="flex flex-col gap-4"
+        >
+          <TextField
+            label={t('filters.cityLabel', 'Ville / Localisation')}
+            type="text"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder={t('filters.cityPlaceholder', 'Ex: Paris')}
+          />
+
+          <Select
+            label={t('filters.priceCategory', 'Price category')}
+            options={PRICE_OPTIONS}
+            value={priceType}
+            onChange={(val) => setPriceType(val)}
+            placeholder={t('filters.selectCategory', 'Select category')}
+          />
+
+          <TextField
+            label={t('filters.fromDate', 'From :')}
+            type="date"
+            min="2026-08-01"
+            max="2028-12-31"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+
+          <div dir="ltr" className="flex gap-2 mt-2">
+            <Button
+              variant="primary"
               type="button"
-              aria-label="Close"
-              className="modal-button modal-close"
-              onClick={() => setIsOpen(false)}
+              onClick={handleApply}
+              className={`w-1/2 ${styles.filterAction} ${styles.filterActionPrimary}`}
             >
-              {closeBtn}
-            </button>
-
-            <h3 className={`text-lg text-center pb-2 pr-6 ${styles.filterTitle}`}>
-              {t('filters.title', 'Events Filters')}
-            </h3>
-
-            <div className="flex flex-col gap-1">
-              <label className={`text-xs ${styles.filterLabel}`}>
-                {t('filters.cityLabel', 'Ville / Localisation')}
-              </label>
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder={t('filters.cityPlaceholder', 'Ex: Paris')}
-                className={styles.filterControl}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label className={`text-xs ${styles.filterLabel}`}>
-                {t('filters.priceCategory', 'Price category')}
-              </label>
-              <CustomSelect
-                options={PRICE_OPTIONS}
-                value={priceType}
-                onChange={(val) => setPriceType(val)}
-                placeholder={t('filters.selectCategory', 'Select category')}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label className={`text-xs ${styles.filterLabel}`}>
-                {t('filters.fromDate', 'From :')}
-              </label>
-              <input
-                type="date"
-                min="2026-08-01"
-                max="2028-12-31"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className={`w-full ${styles.filterControl}`}
-              />
-            </div>
-
-            <div dir="ltr" className="flex gap-2 mt-2">
-              <button
-                type="button"
-                onClick={handleApply}
-                className={`w-1/2 ${styles.filterAction} ${styles.filterActionPrimary}`}
-              >
-                {t('filters.apply', 'Filtrer')}
-              </button>
-              <button
-                type="button"
-                onClick={handleReset}
-                className={`flex items-center justify-center w-1/2 ${styles.filterAction} ${styles.filterActionSecondary}`}
-              >
-                {t('filters.reset', 'Reset')}
-              </button>
-            </div>
-          </div>,
-          document.body
-        )}
+              {t('filters.apply', 'Filtrer')}
+            </Button>
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={handleReset}
+              className={`flex items-center justify-center w-1/2 ${styles.filterAction} ${styles.filterActionSecondary}`}
+            >
+              {t('filters.reset', 'Reset')}
+            </Button>
+          </div>
+        </ModalLayout>
+      )}
     </>
   );
 }

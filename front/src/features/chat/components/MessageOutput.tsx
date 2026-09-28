@@ -24,7 +24,7 @@ export default function MessageOutput({ messages, currentUserId }: MessageOutput
         return (
           <div
             key={message.id}
-            className={`flex flex-col max-w-[80%] ${isMe ? 'self-end items-end' : 'self-start items-start'}`}
+            className={`flex flex-col max-w-[80%] ${message.pending ? 'opacity-60' : ''} ${isMe ? 'self-end items-end' : 'self-start items-start'}`}
           >
             <span className="text-[10px] text-gray-400 px-1 mb-0.5">{displayName}</span>
             <div

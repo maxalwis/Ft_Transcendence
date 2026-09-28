@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import type { EventItem } from '../../../types/event';
 import { useTranslatedEvent } from '../hooks/useTranslatedEvent';
 import { PriceIcon } from './PriceIcon';
+import EventImage from './EventImage';
+import Card from '../../../components/ui/Card';
+import Chip from '../../../components/ui/Chip';
 
 interface EventResultCardProps {
   event: EventItem;
@@ -64,17 +67,14 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
   };
 
   return (
-    <article
+    <Card
+      variant="article"
       onClick={handleClick}
-      className="glass-article flex cursor-pointer flex-col transition-all"
+      className="flex cursor-pointer flex-col transition-all"
     >
       <div className="flex flex-col">
         <div className="aspect-[16/11] shrink-0 overflow-hidden rounded-lg">
-          <img
-            src={event.coverUrl || '/event_image.webp'}
-            alt={displayedTitle || t('eventPreview.defaultAlt')}
-            className="h-full w-full object-cover"
-          />
+          <EventImage src={event.coverUrl} alt={event.title} />
         </div>
 
         <div className="flex min-h-[76px] flex-col pt-3 leading-tight">
@@ -85,7 +85,7 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
           )}
 
           <div className="mt-auto flex items-center justify-between gap-2">
-            <p className="mb-3! text-xs">{displayedCategory || t('categories.others')}</p>
+            <Chip className="mb-3!">{displayedCategory || t('categories.others')}</Chip>
 
             {isPaid !== undefined && (
               <p className="mb-3!">
@@ -95,6 +95,6 @@ export default function EventResultCard({ event, onClick }: EventResultCardProps
           </div>
         </div>
       </div>
-    </article>
+    </Card>
   );
 }

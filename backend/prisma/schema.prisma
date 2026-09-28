@@ -87,7 +87,7 @@ model User {
   password    String?    // nullable pour OAuth
   provider    String?    // OAuth
   providerId  String?    // OAuth
-  avatar      String?
+  avatar      String?    @default("/profile_picture_default.webp")
   status      UserStatus @default(OFFLINE)
   preferredLanguage PreferredLanguage @default(FR)
   preferredCategory PreferredCategory?

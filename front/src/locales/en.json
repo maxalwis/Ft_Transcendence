@@ -35,6 +35,7 @@
   "eventPreview": {
     "defaultAlt": "Event",
     "seeDetails": "View details",
+    "seeAllEvents": "View all {{count}} events",
     "undefinedDate": "Undefined date",
     "start": "Start",
     "end": "End",
@@ -111,7 +112,6 @@
   },
   "passwordModal": {
     "title": "Change Password",
-    "close": "Close",
     "currentPassword": "Current Password",
     "currentPasswordPlaceholder": "Current Password",
     "newPassword": "New Password",
@@ -122,9 +122,11 @@
     "changePassword": "Change Password",
     "loading": "Loading...",
     "mismatchError": "Passwords do not match.",
+    "incorrectPasswordError": "The current password is incorrect.",
+    "noPasswordSetError": "No password is set for this account.",
+    "serverError": "An error occurred while changing the password. Please try again.",
     "lengthError": "Password must be between 8 and 72 characters.",
     "tooManyAttempts": "Too many attempts. Please try again in a minute.",
-    "serverError": "Something went wrong. Please try again.",
     "reloginRequired": "Password changed. Please log in again with your new password."
   },
   "authModal": {
@@ -140,7 +142,6 @@
     "createOne": "Create one",
     "alreadyHaveAccount": "Already have an account?",
     "signInLink": "Sign in",
-    "close": "Close",
     "loginWithGoogle": "Log in with Google",
     "loginWith42": "Log in with 42",
     "errors": {
@@ -155,7 +156,7 @@
   "authBtn": {
     "login": "Login",
     "logout": "Logout",
-    "editProfile": "Edit Profile"
+    "profile": "Profile"
   },
   "oauth": {
     "connecting": "Connecting...",
@@ -171,6 +172,7 @@
     "changePassword": "Change Password",
     "saving": "Saving...",
     "saveError": "Unable to save changes",
+    "saveSuccess": "Profile updated successfully.",
     "preferredLanguage": "Preferred Language",
     "preferredCategory": "Preferred Category",
     "changePicture": "Change Picture",
@@ -238,8 +240,8 @@
   },
   "sidebar": {
     "event": "Event",
+    "results": "Results",
     "selectEvent": "Select an event.",
-    "close": "Close",
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar"
   }
