@@ -1,4 +1,4 @@
-.PHONY: all up logs down elk clean fclean build check-env re restart test-unit test-health test-e2e prepare-socket seed elk-seed url
+.PHONY: all up logs down elk clean fclean build check-env re restart test-unit test-health test-e2e prisma-studio tools seed elk-seed url
 export CONTAINERS_REGISTRIES_CONF = $(shell pwd)/.containers/registries.conf
 export PODMAN_COMPOSE_WARNING_LOGS=0
 # The source IP for the default route, i.e. the interface actually facing the
@@ -56,10 +56,7 @@ clean:
 	podman compose down -v
 
 fclean:
-	podman compose down -v --remove-orphans 2>/dev/null || true
-	-podman ps -aq | xargs -r podman rm -f
-	-podman images -aq | xargs -r podman rmi -f
-	podman system prune -af --volumes
+	podman compose --profile elk --profile prisma-studio --profile tools down -v --remove-orphans --rmi all 2>/dev/null || true
 	-pkill -u $$(whoami) -f rootlessport 2>/dev/null || true
 	rm -rf backend/dist backend/node_modules worker/node_modules
 
