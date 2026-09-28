@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateLocalUserDto, CreateOAuthUserDto } from './dto/create-user.dto';
 import { SAFE_USER_SELECT, type SafeUser } from './safe-user-select';
 import { USERNAME_MAX, USERNAME_MIN } from './dto/validation-rules';
+import { removeUploadedAvatar } from './avatar-files';
 
 @Injectable()
 export class UsersService {
@@ -143,8 +144,17 @@ export class UsersService {
       preferredCategory?: 'MUSIC' | 'CULTURE' | 'WORKSHOPS' | 'LEISURE' | 'OTHERS';
     }
   ): Promise<User> {
-    await this.findOne(id); // Lève une NotFoundException si l'ID n'existe pas
-    return this.catchDuplicateError(() => this.prisma.user.update({ where: { id }, data }));
+    const previous = await this.findOne(id); // Lève une NotFoundException si l'ID n'existe pas
+    const updated = await this.catchDuplicateError(() =>
+      this.prisma.user.update({ where: { id }, data })
+    );
+
+    // Nouvel avatar uploadé : l'ancien fichier ne sert plus, on le supprime du disque
+    if (data.avatar && previous.avatar !== data.avatar) {
+      await removeUploadedAvatar(previous.avatar);
+    }
+
+    return updated;
   }
 
   // Factorise le try/catch P2002 commun à createLocal, createOAuth et update

@@ -2,13 +2,13 @@ import { request } from './api';
 
 export async function exportMyData(): Promise<unknown> {
   const res = await request('/gdpr/export');
-  if (!res.ok) throw new Error('Failed to export data');
+  if (!res.ok) throw new Error('GDPR_EXPORT_FAILED');
   return res.json();
 }
 
 export async function requestAccountDeletion(): Promise<void> {
   const res = await request('/gdpr/delete-request', { method: 'POST' });
-  if (!res.ok) throw new Error('Failed to request account deletion');
+  if (!res.ok) throw new Error('GDPR_DELETE_REQUEST_FAILED');
 }
 
 // Confirms from the logged-in account, with the emailed token and (for

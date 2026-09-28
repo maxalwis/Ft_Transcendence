@@ -7,6 +7,7 @@ import { useNotification } from '../../../context/notifications/useNotification'
 import { useTranslation } from 'react-i18next';
 import { useChatSocket } from '../hooks/useChatSocket';
 import EmptyState from '../../../components/ui/EmptyState';
+import Spinner from '../../../components/ui/Spinner';
 
 export type Message = {
   id: number;
@@ -39,13 +40,8 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
         if (isMounted) setMessages(data);
       })
       .catch((err: unknown) => {
-        if (isMounted) {
-          const message =
-            err instanceof Error
-              ? err.message
-              : t('chat.errors.loadMessages', 'Failed to load messages');
-          showWarning(message);
-        }
+        console.error('Error loading messages:', err);
+        if (isMounted) showWarning(t('chat.errors.loadMessages', 'Failed to load messages'));
       })
       .finally(() => {
         if (isMounted) setLoading(false);
@@ -96,14 +92,16 @@ export default function Chat({ eventId, currentUserId }: ChatProps) {
         showWarning(t('chat.errors.tooManyMessages'));
         return;
       }
-      const errorMessage = err instanceof Error ? err.message : '';
-      showWarning(
-        `${t('chat.errors.sendMessage', 'Error while trying to send the message')}: ${errorMessage}`
-      );
+      showWarning(t('chat.errors.sendMessage', 'Error while trying to send the message'));
     }
   };
 
-  if (loading) return <EmptyState>{t('chat.loadingMessages', 'Loading messages...')}</EmptyState>;
+  if (loading)
+    return (
+      <EmptyState>
+        <Spinner size="sm" label={t('chat.loadingMessages', 'Loading messages...')} />
+      </EmptyState>
+    );
 
   return (
     <div className="flex flex-col flex-1 min-h-0 gap-3 relative">

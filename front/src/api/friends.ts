@@ -24,7 +24,7 @@ export async function getFriends(): Promise<User[]> {
   const res = await request(API_URL);
 
   if (!res.ok) {
-    throw new Error('Erreur de récupération des amis');
+    throw new Error('FRIENDS_LOAD_FAILED');
   }
 
   return res.json();
@@ -34,7 +34,7 @@ export async function getPendingRequests(): Promise<PendingRequest[]> {
   const res = await request(`${API_URL}/pending`);
 
   if (!res.ok) {
-    throw new Error('Erreur lors de la récupération des demandes');
+    throw new Error('FRIEND_REQUESTS_LOAD_FAILED');
   }
 
   return res.json();
@@ -46,8 +46,14 @@ export async function sendFriendRequest(receiverId: number) {
   });
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => null);
-    throw new Error(errorData?.message || "Erreur lors de l'envoi");
+    // Codes translated by the UI (useApiErrorMessage), never the backend's raw text
+    const codes: Record<number, string> = {
+      400: 'FRIEND_REQUEST_SELF',
+      404: 'USER_NOT_FOUND',
+      409: 'FRIEND_REQUEST_EXISTS',
+      429: 'TOO_MANY_ATTEMPTS',
+    };
+    throw new Error(codes[res.status] ?? 'FRIEND_REQUEST_FAILED');
   }
 
   return res.json();
@@ -59,7 +65,7 @@ export async function acceptFriendRequest(senderId: number) {
   });
 
   if (!res.ok) {
-    throw new Error("Impossible d'accepter la demande");
+    throw new Error('FRIEND_ACCEPT_FAILED');
   }
 
   return res.json();
@@ -71,13 +77,7 @@ export async function rejectFriendRequest(senderId: number) {
   });
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => null);
-
-    const message = Array.isArray(errorData?.message)
-      ? errorData.message.join(', ')
-      : errorData?.message;
-
-    throw new Error(message || `Impossible de refuser la demande (${res.status})`);
+    throw new Error('FRIEND_REJECT_FAILED');
   }
 
   return res.json();
@@ -89,7 +89,7 @@ export async function removeFriend(friendId: number) {
   });
 
   if (!res.ok) {
-    throw new Error('Impossible de supprimer cet ami');
+    throw new Error('FRIEND_REMOVE_FAILED');
   }
 
   return res.json();

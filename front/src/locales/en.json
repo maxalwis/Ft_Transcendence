@@ -14,13 +14,15 @@
   },
   "common": {
     "back": "Back",
-    "close": "Close"
+    "close": "Close",
+    "closeNotification": "Close notification"
   },
   "events": {
     "loading": "Loading events...",
     "noEvents": "No events found",
     "errors": {
-      "loadFailed": "Error loading the event"
+      "loadFailed": "Error loading the event",
+      "searchFailed": "Unable to load the results."
     }
   },
   "eventDetails": {
@@ -46,12 +48,6 @@
     }
   },
   "filters": {
-    "title": "Events Filters",
-    "cityLabel": "City / Location",
-    "cityPlaceholder": "Ex: Paris",
-    "priceCategory": "Price category",
-    "selectCategory": "Select category",
-    "fromDate": "From :",
     "priceButton": "Price",
     "dateButton": "Date",
     "apply": "Apply",
@@ -59,7 +55,9 @@
     "allPrices": "All",
     "free": "Free",
     "feeBased": "Fee-based",
-    "resetDate": "Reset"
+    "resetDate": "Reset",
+    "searchButton": "Search",
+    "searchPlaceholder": "Title, description, venue…"
   },
   "friends": {
     "buttonTitle": "Friends",
@@ -96,7 +94,8 @@
     "errors": {
       "acceptFailed": "Failed to accept friend request.",
       "rejectFailed": "Failed to reject friend request."
-    }
+    },
+    "backToFriends": "Back to friends"
   },
   "chat": {
     "title": "Chat",
@@ -108,7 +107,8 @@
       "loadMessages": "Failed to load messages",
       "sendMessage": "Error while trying to send the message",
       "tooManyMessages": "You are sending too many messages. Please wait a few seconds."
-    }
+    },
+    "sendMessage": "Send message"
   },
   "passwordModal": {
     "title": "Change Password",
@@ -183,7 +183,8 @@
     "deleteAccount": "Delete my account",
     "deleteEmailSent": "A confirmation email has been sent. Check your inbox to finish deleting your account.",
     "exportError": "Unable to export your data",
-    "deleteRequestError": "Unable to send the confirmation email"
+    "deleteRequestError": "Unable to send the confirmation email",
+    "avatarAlt": "Avatar preview"
   },
   "publicProfile": {
     "title": "View Profile",
@@ -244,5 +245,36 @@
     "selectEvent": "Select an event.",
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar"
+  },
+  "search": {
+    "sort": {
+      "label": "Sort by",
+      "date": "Date",
+      "title": "Title (A-Z)",
+      "popularity": "Popularity"
+    },
+    "order": {
+      "asc": "Ascending order",
+      "desc": "Descending order"
+    },
+    "resultsCount": "Results: {{count}}"
+  },
+  "pagination": {
+    "previous": "Previous page",
+    "next": "Next page",
+    "label": "Pagination"
+  },
+  "errors": {
+    "tooManyAttempts": "Too many requests. Please try again in a moment.",
+    "friendRequestExists": "A friend request or friendship already exists with this user.",
+    "friendRequestSelf": "You cannot add yourself as a friend.",
+    "userNotFound": "User not found.",
+    "usernameTaken": "This username is already taken."
+  },
+  "languageSelector": {
+    "label": "Language"
+  },
+  "adminTools": {
+    "toggle": "Admin tools"
   }
 }

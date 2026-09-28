@@ -8,6 +8,10 @@ import {
   Max,
   IsDefined,
   IsString,
+  IsIn,
+  IsInt,
+  Min,
+  MaxLength,
 } from 'class-validator';
 import type { BoundingBox } from './bounding-box.interface';
 import type { CenterPoint } from './center-point.interface';
@@ -45,6 +49,12 @@ export class MapQueryDto {
   @IsOptional()
   @IsString()
   city?: string;
+
+  // Recherche plein texte (titre, description, lieu), insensible à la casse
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  q?: string;
 
   @IsOptional()
   @IsISO8601()
@@ -104,4 +114,59 @@ export class NearbyQueryDto {
   @IsOptional()
   @IsString()
   price?: string;
+}
+
+// Colonnes de tri autorisées (liste blanche : jamais de valeur utilisateur dans le SQL)
+export const EVENT_SORT_FIELDS = ['date', 'title', 'popularity'] as const;
+export type EventSortField = (typeof EVENT_SORT_FIELDS)[number];
+export const SORT_ORDERS = ['asc', 'desc'] as const;
+export type SortOrder = (typeof SORT_ORDERS)[number];
+
+// GET /events/search : mêmes filtres que la carte, plus tri et pagination côté serveur
+export class SearchEventsQueryDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  q?: string;
+
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
+  @IsISO8601()
+  from?: string;
+
+  @IsOptional()
+  @IsISO8601()
+  to?: string;
+
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @IsOptional()
+  @IsString()
+  price?: string;
+
+  @IsOptional()
+  @IsIn(EVENT_SORT_FIELDS)
+  sort: EventSortField = 'date';
+
+  @IsOptional()
+  @IsIn(SORT_ORDERS)
+  order: SortOrder = 'asc';
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page: number = 1;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(50)
+  limit: number = 10;
 }

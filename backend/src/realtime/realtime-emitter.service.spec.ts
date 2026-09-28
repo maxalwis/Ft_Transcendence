@@ -51,6 +51,24 @@ describe('RealtimeEmitterService', () => {
     expect(roomMock.emit).toHaveBeenCalledWith('friend:updated', { foo: 'bar' });
   });
 
+  it('should broadcast to several per-user rooms at once', () => {
+    service.setServer(serverMock);
+
+    service.emitToUsers([2, 3], 'user:online', { userId: 1 });
+
+    expect(serverMock.to).toHaveBeenCalledWith(['user:2', 'user:3']);
+    expect(roomMock.emit).toHaveBeenCalledWith('user:online', { userId: 1 });
+  });
+
+  it('should not emit anything for an empty user list', () => {
+    service.setServer(serverMock);
+
+    service.emitToUsers([], 'user:online', { userId: 1 });
+
+    expect(serverMock.to).not.toHaveBeenCalled();
+    expect(serverMock.emit).not.toHaveBeenCalled();
+  });
+
   it('should broadcast to the per-event room', () => {
     service.setServer(serverMock);
 

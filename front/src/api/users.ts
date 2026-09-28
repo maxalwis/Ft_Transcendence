@@ -21,7 +21,7 @@ export async function searchUsers(username: string): Promise<UserSearchResult[]>
 
   const res = await request(`${API_URL}/search?username=${encodeURIComponent(username)}`);
 
-  if (!res.ok) throw new Error('Erreur lors de la recherche');
+  if (!res.ok) throw new Error('USER_SEARCH_FAILED');
   return res.json();
 }
 
@@ -76,7 +76,8 @@ export async function updateProfile(payload: UpdateProfilePayload) {
   });
 
   if (!res.ok) {
-    throw new Error('Échec de la mise à jour');
+    // Only the username is unique among the editable fields
+    throw new Error(res.status === 409 ? 'USERNAME_TAKEN' : 'PROFILE_UPDATE_FAILED');
   }
 
   return res.json();

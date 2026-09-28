@@ -27,7 +27,7 @@ export default function FriendsModal({
     <ModalLayout
       variant="popover"
       onClose={() => setIsOpen(false)}
-      className={`absolute bottom-0 left-0 ${styles.friendsModal}`}
+      className={`absolute bottom-0 start-0 ${styles.friendsModal}`}
     >
       <FriendsContent
         friends={friends}

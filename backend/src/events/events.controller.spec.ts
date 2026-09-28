@@ -42,14 +42,15 @@ describe('EventsController', () => {
     });
 
     it('should fall back to the unbounded search when no bbox is provided', () => {
-      controller.findForMap({ city: 'Paris' });
+      controller.findForMap({ city: 'Paris', q: 'jazz' });
 
       expect(eventsServiceMock.findAllForMap).toHaveBeenCalledWith(
         undefined,
         undefined,
         undefined,
         undefined,
-        'Paris'
+        'Paris',
+        'jazz'
       );
       expect(eventsServiceMock.findForMap).not.toHaveBeenCalled();
     });

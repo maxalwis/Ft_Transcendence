@@ -94,7 +94,7 @@ export default function EventSidebarContent({ eventId, currentUserId }: EventSid
           </span>
         </div>
 
-        <div dir="ltr" className="flex-1 min-h-0 overflow-hidden flex flex-col">
+        <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
           {eventId && currentUserId ? (
             <Chat eventId={eventId} currentUserId={Number(currentUserId)} />
           ) : (

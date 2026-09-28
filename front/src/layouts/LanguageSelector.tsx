@@ -15,7 +15,7 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
     { code: 'es', title: 'Español', Flag: FlagES },
     { code: 'ar', title: 'العربية', Flag: FlagSA },
   ] as const;
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
   const [isOpen, setIsOpen] = useState(false);
   const selectorRef = useRef<HTMLDivElement>(null);
@@ -44,7 +44,7 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
       className="
         fixed
         top-[calc(var(--nav-row2-top)+0.25rem)]
-        right-4
+        end-4
         z-1100
         pointer-events-auto
 
@@ -61,8 +61,8 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         className="glass-panel mb-1"
-        title="Language"
-        aria-label="Language"
+        title={t('languageSelector.label')}
+        aria-label={t('languageSelector.label')}
         aria-expanded={isOpen}
       >
         <LanguageIcon className="w-5 h-5" />

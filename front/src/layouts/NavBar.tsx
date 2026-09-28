@@ -5,6 +5,7 @@ import { fr, enUS, es, ar } from 'date-fns/locale';
 import LanguageSelector from './LanguageSelector';
 import 'react-datepicker/dist/react-datepicker.css';
 import Button from '../components/ui/Button';
+import TextField from '../components/ui/TextField';
 import { ArrowLeftIcon, ArrowRightIcon } from '../types/icons';
 
 registerLocale('fr', fr);
@@ -24,7 +25,11 @@ export type NavBarProps = {
   onPriceChange?: (priceType: string) => void;
   startDate?: string;
   onDateChange?: (date: string) => void;
+  searchQuery?: string;
+  onSearchChange?: (q: string) => void;
 };
+
+type FilterPopover = 'search' | 'price' | 'date';
 
 export default function NavBar({
   onSelectCategory,
@@ -34,12 +39,15 @@ export default function NavBar({
   onPriceChange,
   startDate,
   onDateChange,
+  searchQuery,
+  onSearchChange,
 }: NavBarProps) {
   const { t, i18n } = useTranslation();
   const datePickerLocale = i18n.language.split('-')[0];
-  const [openPopover, setOpenPopover] = useState<'price' | 'date' | null>(null);
-  const priceRef = useRef<HTMLDivElement>(null);
-  const dateRef = useRef<HTMLDivElement>(null);
+  const [openPopover, setOpenPopover] = useState<FilterPopover | null>(null);
+  const [searchDraft, setSearchDraft] = useState('');
+  // Wrapper (pill + panel) of each filter, for the click-outside detection
+  const popoverRefs = useRef<Partial<Record<FilterPopover, HTMLDivElement | null>>>({});
 
   // Scroll for categories
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
@@ -86,8 +94,11 @@ export default function NavBar({
     if (!el) return;
 
     const { scrollLeft, scrollWidth, clientWidth } = el;
-    setCanScrollLeft(scrollLeft > 4);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 4);
+    const maxScroll = scrollWidth - clientWidth;
+    // In RTL, scrollLeft starts at 0 on the right edge and goes negative towards the left
+    const fromLeft = getComputedStyle(el).direction === 'rtl' ? maxScroll + scrollLeft : scrollLeft;
+    setCanScrollLeft(fromLeft > 4);
+    setCanScrollRight(fromLeft < maxScroll - 4);
   }, []);
 
   useEffect(() => {
@@ -128,9 +139,9 @@ export default function NavBar({
     if (!openPopover) return;
 
     const handleClickOutside = (e: MouseEvent) => {
-      const ref = openPopover === 'price' ? priceRef : dateRef;
+      const wrapper = popoverRefs.current[openPopover];
 
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (wrapper && !wrapper.contains(e.target as Node)) {
         setOpenPopover(null);
       }
     };
@@ -155,7 +166,19 @@ export default function NavBar({
     { label: t('filters.feeBased', 'Payant'), value: 'fee-based' },
   ];
 
+  const submitSearch = (q: string) => {
+    onSearchChange?.(q.trim());
+    setOpenPopover(null);
+    onOpenResults?.();
+  };
+
   const filters = [
+    {
+      type: 'search' as const,
+      label: searchQuery
+        ? `${t('filters.searchButton')} : ${searchQuery}`
+        : t('filters.searchButton'),
+    },
     {
       type: 'price' as const,
       label: t('filters.priceButton', 'Prix'),
@@ -170,10 +193,7 @@ export default function NavBar({
   ];
 
   return (
-    <div
-      dir="ltr"
-      className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-4 pointer-events-none"
-    >
+    <div className="absolute top-0 left-0 right-0 z-500 flex flex-col items-center px-4 pointer-events-none">
       <LanguageSelector embedded />
 
       {/* Row 1: categories. In compact mode, map controls and language selector share row 2 with the filters */}
@@ -256,24 +276,71 @@ export default function NavBar({
         {filters.map((filter) => {
           const isOpen = openPopover === filter.type;
 
-          const isSelected = filter.type === 'price' ? !!priceType : !!startDate;
+          const isSelected = {
+            search: !!searchQuery,
+            price: !!priceType,
+            date: !!startDate,
+          }[filter.type];
 
           return (
-            <div key={filter.type} className="relative">
+            <div
+              key={filter.type}
+              className="relative"
+              ref={(el) => {
+                popoverRefs.current[filter.type] = el;
+              }}
+            >
               <Button
                 variant="ghost"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
+                  if (filter.type === 'search') setSearchDraft(searchQuery ?? '');
                   setOpenPopover((prev) => (prev === filter.type ? null : filter.type));
                 }}
-                className={`glass-filter ${isOpen || isSelected ? 'isSelected' : ''}`}
+                aria-expanded={isOpen}
+                className={`glass-filter max-w-[14rem] truncate ${isOpen || isSelected ? 'isSelected' : ''}`}
               >
                 {filter.label}
               </Button>
 
               {isOpen && (
                 <>
+                  {filter.type === 'search' && (
+                    <form
+                      role="search"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        submitSearch(searchDraft);
+                      }}
+                      className="glass-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 flex w-64 flex-col gap-2 rounded-xl p-2 z-20"
+                    >
+                      <TextField
+                        type="search"
+                        autoFocus
+                        maxLength={100}
+                        value={searchDraft}
+                        onChange={(e) => setSearchDraft(e.target.value)}
+                        placeholder={t('filters.searchPlaceholder')}
+                        aria-label={t('filters.searchButton')}
+                      />
+                      <div className="flex gap-2">
+                        <Button variant="primary" size="sm" type="submit" className="flex-1">
+                          {t('filters.apply')}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          type="button"
+                          onClick={() => submitSearch('')}
+                          className="flex-1"
+                        >
+                          {t('filters.reset')}
+                        </Button>
+                      </div>
+                    </form>
+                  )}
+
                   {filter.type === 'price' && (
                     <div className="glass-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 flex flex-col gap-1 min-w-[140px] rounded-xl p-1.5 z-20">
                       {priceOptions.map((opt) => {
@@ -290,7 +357,7 @@ export default function NavBar({
                               setOpenPopover(null);
                               onOpenResults?.();
                             }}
-                            className={`text-left px-3 py-1.5 rounded-lg text-sm whitespace-nowrap ${
+                            className={`text-start px-3 py-1.5 rounded-lg text-sm whitespace-nowrap ${
                               isActive ? 'isSelected' : ''
                             }`}
                           >

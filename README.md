@@ -15,7 +15,7 @@ Users can browse events on an interactive map, search and filter them, interact 
 * Interactive event map using Leaflet
 * Paris Open Data event ingestion
 * Event creation through a public API
-* Advanced search by category, price and precise date
+* Advanced search: full-text search, category, price and date filters, sorting (date, title, popularity) and server-side pagination
 * Nearby-event search using geospatial queries
 * User registration, authentication and profiles
 * JWT authentication
@@ -142,6 +142,19 @@ make elk
 ```
 
 This starts Elasticsearch, Logstash and Kibana through the corresponding Compose profile.
+
+A one-shot `elasticsearch-setup` container ([elasticsearch/scripts/setup.sh](elasticsearch/scripts/setup.sh)) then configures the cluster before Kibana and Logstash start:
+
+* **Security**: `xpack.security` is enabled. Every request to Elasticsearch is authenticated. Kibana uses the built-in `kibana_system` user, and Logstash uses a `logstash_internal` user that can only write to `nestjs-logs-*`. The passwords come from `ELASTIC_PASSWORD`, `KIBANA_SYSTEM_PASSWORD` and `LOGSTASH_INTERNAL_PASSWORD` in `.env`.
+* **Retention**: the ILM policy `nestjs-logs-policy` keeps each daily index hot for 7 days, then force-merges it and makes it read-only (warm). It deletes the index after 30 days, once it has been archived.
+* **Archiving**: the SLM policy `daily-logs-archive` snapshots every log index each night into the `logs-archive` filesystem repository (a dedicated `elasticsearch_snapshots` volume). Snapshots are kept for 1 year.
+
+Access (HTTPS through nginx):
+
+* Kibana: `https://localhost:8445`. Log in first with the nginx basic auth (`ADMIN_AUTH_USER` / `ADMIN_AUTH_PASSWORD`), then on the Kibana login page with `elastic` / `ELASTIC_PASSWORD`.
+* Elasticsearch: `https://localhost:8447`, with `elastic` / `ELASTIC_PASSWORD`.
+
+In Kibana, the policies are under *Stack Management → Index Lifecycle Policies* and *Stack Management → Snapshot and Restore*.
 
 ---
 
@@ -315,7 +328,7 @@ PostGIS is used for event coordinates and nearby-event queries.
 | Interactive map      | Displays events geographically                 | flebrun, maalwis, sleroy           |
 | Marker clustering    | Groups nearby map markers                      | flebrun                            |
 | Event details        | Displays event information and metadata        | maalwis                            |
-| Advanced search      | Category, price and precise-date filtering     | helsnous, sleroy                   |
+| Advanced search      | Text search, filters, sorting and pagination   | helsnous, sleroy                   |
 | Nearby events        | Geospatial radius queries                      | sleroy                             |
 | User management      | Registration, profiles and account management  | helsnous, maalwis, sleroy          |
 | JWT authentication   | Local authentication                           | sleroy, helsnous                   |
@@ -348,10 +361,10 @@ The project implements the following selected modules.
 | Web              | WebSockets                              |      2 | Socket.IO backend gateway and frontend integration                  | sleroy, npagnon, flebrun           |
 | Web              | Multiple languages                      |      1 | French, English, Spanish and Arabic                                 | sleroy, helsnous, maalwis, flebrun |
 | Web              | RTL language                            |      1 | Arabic translations and RTL layout                                  | flebrun, maalwis                   |
-| Web              | Advanced search                         |      1 | Category, price and precise-date filtering                          | helsnous, sleroy                   |
+| Web              | Advanced search                         |      1 | Text search, filters, sorting and server-side pagination            | helsnous, sleroy                   |
 | User management  | Standard user management/authentication |      2 | Accounts, JWT and profile management                                | helsnous, sleroy, maalwis          |
 | User management  | Remote OAuth 2.0                        |      1 | Remote OAuth authentication                                         | sleroy                             |
-| DevOps           | ELK                                     |      2 | Elasticsearch, Logstash and Kibana                                  | flebrun                            |
+| DevOps           | ELK                                     |      2 | ELK stack, ILM retention, snapshot archiving, security              | flebrun                            |
 | Data & analytics | Data export and import                  |      1 | Personal-data export/deletion and event creation through public API | npagnon                            |
 
 **Total: 19 points**

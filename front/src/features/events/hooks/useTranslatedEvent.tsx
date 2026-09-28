@@ -56,11 +56,7 @@ export function useTranslatedEvent(eventId: string, lang: string) {
         const json = await res.json();
         setData(json);
       } catch (err: unknown) {
-        if (err instanceof Error) {
-          if (err.name !== 'AbortError') {
-            showWarning(err.message);
-          }
-        } else {
+        if (!(err instanceof Error && err.name === 'AbortError')) {
           showWarning(t('events.errors.loadFailed', 'Error loading the event'));
         }
       } finally {

@@ -184,10 +184,18 @@ services:
       - node.name=elasticsearch
       - discovery.type=single-node
       - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
-      - xpack.security.enabled=false
+      # Authentication + role-based access on every request. TLS is terminated by nginx
+      # (:8447), ES itself is only reachable on the internal compose network.
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      # Snapshot repository for log archiving (see elasticsearch/scripts/setup.sh)
+      - path.repo=/usr/share/elasticsearch/snapshots
       - 'logger.level=WARN'
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
+      - elasticsearch_snapshots:/usr/share/elasticsearch/snapshots
       - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:z
       - ./elasticsearch/config/empty-aws-config:/usr/share/elasticsearch/.aws/config:ro,z
     networks:
@@ -196,12 +204,34 @@ services:
       test:
         [
           'CMD-SHELL',
-          "curl -s http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'",
+          "curl -s -u elastic:$$ELASTIC_PASSWORD http://localhost:9200/_cluster/health | grep -q 'status.*green\\|status.*yellow'",
         ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
+    logging:
+      driver: 'json-file'
+    profiles:
+      - 'elk'
+      - 'tools'
+
+  # One-shot: service users, ILM retention, snapshot archiving (elasticsearch/scripts/setup.sh)
+  elasticsearch-setup:
+    image: docker.io/curlimages/curl:latest
+    container_name: elasticsearch_setup
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+      - LOGSTASH_INTERNAL_PASSWORD=${LOGSTASH_INTERNAL_PASSWORD}
+    volumes:
+      - ./elasticsearch/scripts/setup.sh:/usr/local/bin/setup.sh:ro,z
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - transcendence_network
+    entrypoint: ['/bin/sh', '/usr/local/bin/setup.sh']
     logging:
       driver: 'json-file'
     profiles:
@@ -218,9 +248,10 @@ services:
     environment:
       - LS_JAVA_OPTS=-Xms512m -Xmx512m
       - xpack.monitoring.enabled=false
+      - LOGSTASH_INTERNAL_PASSWORD=${LOGSTASH_INTERNAL_PASSWORD}
     depends_on:
-      elasticsearch:
-        condition: service_healthy
+      elasticsearch-setup:
+        condition: service_completed_successfully
     networks:
       - transcendence_network
     logging:
@@ -237,15 +268,21 @@ services:
       - ELASTIC_APM_ACTIVE=false
       - ELASTIC_APM_LOG_LEVEL=off
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
     volumes:
       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
     depends_on:
-      elasticsearch:
-        condition: service_healthy
+      elasticsearch-setup:
+        condition: service_completed_successfully
     networks:
       - transcendence_network
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:5601/api/status']
+      test:
+        [
+          'CMD-SHELL',
+          'curl -sf -u kibana_system:$$ELASTICSEARCH_PASSWORD http://localhost:5601/api/status > /dev/null',
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -259,6 +296,8 @@ services:
   kibana-setup:
     image: docker.io/curlimages/curl:latest
     container_name: kibana_setup
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     depends_on:
       kibana:
         condition: service_healthy
@@ -303,6 +342,7 @@ volumes:
   libretranslate_models:
   avatars_data:
   elasticsearch_data:
+  elasticsearch_snapshots:
 
 networks:
   transcendence_network:

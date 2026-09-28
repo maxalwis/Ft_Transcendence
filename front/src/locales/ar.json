@@ -14,13 +14,15 @@
   },
   "common": {
     "back": "رجوع",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "closeNotification": "إغلاق الإشعار"
   },
   "events": {
     "loading": "جارٍ تحميل الفعاليات...",
     "noEvents": "لم يتم العثور على فعاليات",
     "errors": {
-      "loadFailed": "حدث خطأ أثناء تحميل الفعالية"
+      "loadFailed": "حدث خطأ أثناء تحميل الفعالية",
+      "searchFailed": "تعذر تحميل النتائج."
     }
   },
   "eventDetails": {
@@ -46,12 +48,6 @@
     }
   },
   "filters": {
-    "title": "مرشحات الفعاليات",
-    "cityLabel": "المدينة / الموقع",
-    "cityPlaceholder": "مثال: باريس",
-    "priceCategory": "فئة السعر",
-    "selectCategory": "اختر الفئة",
-    "fromDate": "من تاريخ:",
     "priceButton": "السعر",
     "dateButton": "التاريخ",
     "apply": "تطبيق",
@@ -59,7 +55,9 @@
     "allPrices": "الكل",
     "free": "مجاني",
     "feeBased": "مدفوع",
-    "resetDate": "إعادة تعيين التاريخ"
+    "resetDate": "إعادة تعيين التاريخ",
+    "searchButton": "بحث",
+    "searchPlaceholder": "العنوان، الوصف، المكان…"
   },
   "friends": {
     "buttonTitle": "الأصدقاء",
@@ -96,7 +94,8 @@
     "errors": {
       "acceptFailed": "حدث خطأ أثناء قبول الطلب.",
       "rejectFailed": "حدث خطأ أثناء رفض الطلب."
-    }
+    },
+    "backToFriends": "العودة إلى الأصدقاء"
   },
   "chat": {
     "title": "الدردشة",
@@ -108,7 +107,8 @@
       "loadMessages": "تعذّر تحميل الرسائل",
       "sendMessage": "حدث خطأ أثناء إرسال الرسالة",
       "tooManyMessages": "أنت ترسل رسائل كثيرة جدًا. يرجى الانتظار بضع ثوانٍ."
-    }
+    },
+    "sendMessage": "إرسال الرسالة"
   },
   "passwordModal": {
     "title": "تغيير كلمة المرور",
@@ -183,7 +183,8 @@
     "deleteAccount": "حذف حسابي",
     "deleteEmailSent": "تم إرسال بريد إلكتروني للتأكيد. تحقق من صندوق الوارد لإكمال حذف حسابك.",
     "exportError": "تعذر تصدير بياناتك",
-    "deleteRequestError": "تعذر إرسال بريد التأكيد"
+    "deleteRequestError": "تعذر إرسال بريد التأكيد",
+    "avatarAlt": "معاينة الصورة الرمزية"
   },
   "publicProfile": {
     "title": "عرض الملف الشخصي",
@@ -244,5 +245,36 @@
     "selectEvent": "اختر فعالية.",
     "collapse": "طي الشريط الجانبي",
     "expand": "توسيع الشريط الجانبي"
+  },
+  "search": {
+    "sort": {
+      "label": "ترتيب حسب",
+      "date": "التاريخ",
+      "title": "العنوان (أ-ي)",
+      "popularity": "الشعبية"
+    },
+    "order": {
+      "asc": "ترتيب تصاعدي",
+      "desc": "ترتيب تنازلي"
+    },
+    "resultsCount": "النتائج: {{count}}"
+  },
+  "pagination": {
+    "previous": "الصفحة السابقة",
+    "next": "الصفحة التالية",
+    "label": "التنقل بين الصفحات"
+  },
+  "errors": {
+    "tooManyAttempts": "طلبات كثيرة جدًا. أعد المحاولة بعد قليل.",
+    "friendRequestExists": "يوجد بالفعل طلب صداقة أو صداقة مع هذا المستخدم.",
+    "friendRequestSelf": "لا يمكنك إضافة نفسك كصديق.",
+    "userNotFound": "المستخدم غير موجود.",
+    "usernameTaken": "اسم المستخدم هذا مستخدم بالفعل."
+  },
+  "languageSelector": {
+    "label": "اللغة"
+  },
+  "adminTools": {
+    "toggle": "أدوات الإدارة"
   }
 }

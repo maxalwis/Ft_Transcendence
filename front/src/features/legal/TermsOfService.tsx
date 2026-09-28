@@ -3,14 +3,10 @@ import { useTranslation } from 'react-i18next';
 import styles from './Legal.module.css';
 
 export default function TermsOfService() {
-  const { t, i18n } = useTranslation();
-  const isArabic = i18n.language === 'ar';
+  const { t } = useTranslation();
 
   return (
-    <div
-      className={`${styles.legalContainer} ${isArabic ? 'text-right' : 'text-left'}`}
-      dir={isArabic ? 'rtl' : 'ltr'}
-    >
+    <div className={`${styles.legalContainer} text-start`}>
       <h1>{t('legalContent.termsTitle')}</h1>
       <p>{t('legalContent.termsSubtitle')}</p>
 

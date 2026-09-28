@@ -135,7 +135,7 @@ export default function BottomBar() {
 
   return (
     <>
-      <div dir="ltr" className="fixed bottom-2 w-full px-4 sm:px-6 z-[1000] pointer-events-none">
+      <div className="fixed bottom-2 w-full px-4 sm:px-6 z-[1000] pointer-events-none">
         {/* PC Version */}
         <div className="flex items-center justify-between w-full mobile-desktop">
           <div className="pointer-events-auto">

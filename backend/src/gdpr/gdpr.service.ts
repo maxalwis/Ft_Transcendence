@@ -12,6 +12,8 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
+import { removeUploadedAvatar } from '../users/avatar-files';
+import { deletedNoticeMail, deletionConfirmMail, exportNoticeMail } from './gdpr-mails';
 
 const DELETE_PURPOSE = 'gdpr-account-deletion';
 
@@ -43,11 +45,7 @@ export class GdprService {
 
     if (user.email) {
       try {
-        await this.mail.sendMail({
-          to: user.email,
-          subject: 'Your data export',
-          text: 'You requested a copy of your data. It was generated and downloaded from your account.',
-        });
+        await this.mail.sendMail({ to: user.email, ...exportNoticeMail(user.preferredLanguage) });
       } catch (err) {
         // The export itself succeeded; a notification email is a courtesy, not the deliverable.
         this.logger.warn(`Failed to send data export notification to user ${userId}: ${err}`);
@@ -78,13 +76,7 @@ export class GdprService {
     try {
       await this.mail.sendMail({
         to: user.email,
-        subject: 'Confirm your account deletion',
-        text:
-          'You requested to permanently delete your account. This cannot be undone.\n\n' +
-          `To confirm, open this link within 15 minutes:\n\n${confirmUrl}`,
-        html:
-          '<p>You requested to permanently delete your account. This cannot be undone.</p>' +
-          `<p><a href="${confirmUrl}">Confirm account deletion</a> (valid for 15 minutes)</p>`,
+        ...deletionConfirmMail(user.preferredLanguage, confirmUrl),
       });
     } catch (err) {
       // Here the email IS the deliverable: without it the user has no way to confirm.
@@ -146,6 +138,8 @@ export class GdprService {
     }
 
     await this.prisma.user.delete({ where: { id: payload.sub } });
+    // Le fichier de l'avatar uploadé fait partie des données personnelles
+    await removeUploadedAvatar(user.avatar);
 
     // La confirmation se fait dans l'onglet ouvert depuis l'email : les autres
     // onglets de l'utilisateur sont prévenus pour se déconnecter, puis leurs
@@ -155,11 +149,7 @@ export class GdprService {
 
     if (user.email) {
       try {
-        await this.mail.sendMail({
-          to: user.email,
-          subject: 'Your account has been deleted',
-          text: 'Your account and all associated data have been permanently deleted.',
-        });
+        await this.mail.sendMail({ to: user.email, ...deletedNoticeMail(user.preferredLanguage) });
       } catch (err) {
         // The account is already deleted at this point; the email is just a notice.
         this.logger.warn(`Failed to send deletion notice to user ${payload.sub}: ${err}`);

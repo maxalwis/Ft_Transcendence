@@ -5,6 +5,7 @@ import { useNotification } from '../../../context/notifications/useNotification'
 import Button from '../../../components/ui/Button';
 import Avatar from '../../../components/ui/Avatar';
 import { BackIcon } from '../../../types/icons';
+import { useApiErrorMessage } from '../../../hooks/useApiErrorMessage';
 
 type FriendsRequestsProps = {
   requests: PendingRequest[];
@@ -15,13 +16,14 @@ type FriendsRequestsProps = {
 export default function FriendsRequests({ requests, onDataChanged, onBack }: FriendsRequestsProps) {
   const { t } = useTranslation();
   const { showWarning } = useNotification();
+  const errorMessage = useApiErrorMessage();
 
   const handleAccept = async (senderId: number) => {
     try {
       await acceptFriendRequest(senderId);
       onDataChanged();
     } catch (err) {
-      showWarning(err instanceof Error ? err.message : t('friendsRequests.errors.acceptFailed'));
+      showWarning(errorMessage(err, t('friendsRequests.errors.acceptFailed')));
     }
   };
 
@@ -30,7 +32,7 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
       await rejectFriendRequest(senderId);
       onDataChanged();
     } catch (err) {
-      showWarning(err instanceof Error ? err.message : t('friendsRequests.errors.rejectFailed'));
+      showWarning(errorMessage(err, t('friendsRequests.errors.rejectFailed')));
     }
   };
 
@@ -41,7 +43,7 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
           variant="icon"
           type="button"
           onClick={onBack}
-          aria-label="Back to friends"
+          aria-label={t('friendsRequests.backToFriends')}
           className="modal-button self-start"
         >
           <BackIcon className="h-4 w-4" />
@@ -59,7 +61,7 @@ export default function FriendsRequests({ requests, onDataChanged, onBack }: Fri
         variant="icon"
         type="button"
         onClick={onBack}
-        aria-label="Back to friends"
+        aria-label={t('friendsRequests.backToFriends')}
         className="modal-button self-start"
       >
         <BackIcon className="h-4 w-4" />

@@ -218,7 +218,7 @@ textarea {
 }
 
 .ds-button-icon.close {
-  right: 0;
+  inset-inline-end: 0;
   top: var(--space-3);
   position: absolute;
   --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
@@ -226,7 +226,7 @@ textarea {
 }
 
 .ds-button-icon.back {
-  left: 0;
+  inset-inline-start: 0;
   top: var(--space-3);
   position: absolute;
   --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
@@ -476,6 +476,60 @@ textarea {
 .ds-empty-state-italic {
   font-style: italic;
   font-size: var(--font-size-xs);
+}
+
+/* ==========================================================================
+   Design System - Spinner
+   ========================================================================== */
+
+.ds-spinner {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ds-spinner-circle {
+  width: var(--space-6);
+  height: var(--space-6);
+  border: 3px solid var(--color-orange-border);
+  border-top-color: var(--color-orange-primary);
+  border-radius: var(--radius-full);
+  animation: ds-spin 0.8s linear infinite;
+}
+
+.ds-spinner-sm .ds-spinner-circle {
+  width: var(--space-4);
+  height: var(--space-4);
+  border-width: 2px;
+}
+
+@keyframes ds-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-spinner-circle {
+    animation-duration: 2.4s;
+  }
+}
+
+/* ==========================================================================
+   Design System - Pagination
+   ========================================================================== */
+
+.ds-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.ds-pagination-counter {
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ==========================================================================
@@ -879,7 +933,14 @@ pre {
    ========================================================================== */
 
 /* 1. Base Text Alignment & Direction */
+/* --inline-dir: 1 in LTR, -1 in RTL. Multiply horizontal translations with it so that
+   slide animations and offsets follow the reading direction. */
+:root {
+  --inline-dir: 1;
+}
+
 [dir='rtl'] {
+  --inline-dir: -1;
   text-align: right;
 }
 
@@ -913,8 +974,9 @@ pre {
 }
 
 /* 4. Flip Directional Icons (Back arrows, Next buttons, etc.) */
+/* `scale` (not `transform`) so it composes with rotations set on the same icon */
 [dir='rtl'] .rtl-flip {
-  transform: scaleX(-1);
+  scale: -1 1;
 }
 
 @layer base {

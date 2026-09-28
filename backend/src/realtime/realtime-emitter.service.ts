@@ -31,4 +31,9 @@ export class RealtimeEmitterService {
   emitToUser(userId: number, event: string, payload: unknown) {
     this.server?.to(`user:${userId}`).emit(event, payload);
   }
+
+  emitToUsers(userIds: number[], event: string, payload: unknown) {
+    if (userIds.length === 0) return;
+    this.server?.to(userIds.map((id) => `user:${id}`)).emit(event, payload);
+  }
 }

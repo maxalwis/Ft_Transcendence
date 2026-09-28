@@ -66,8 +66,9 @@ describe('GDPR (e2e)', () => {
    * confirmation URL, exactly like a user clicking the link would.
    */
   function getDeletionToken(email: string): string {
+    // Matched on the link, not the subject: emails use the user's preferred language
     const mail = sentMails.find(
-      (m) => m.to === email && m.subject === 'Confirm your account deletion'
+      (m) => m.to === email && m.text.includes('/account/delete-confirm?token=')
     );
 
     if (!mail) {

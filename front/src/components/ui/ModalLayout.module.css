@@ -74,11 +74,11 @@
   border-radius: var(--radius-md);
 }
 
-/* ---- sidebar: fixed right panel, bottom sheet on mobile ---- */
+/* ---- sidebar: fixed panel on the inline-end side (right in LTR, left in RTL), bottom sheet on mobile ---- */
 .shell[data-variant='sidebar'] {
   position: fixed;
   top: calc(var(--spacing) * 15);
-  right: var(--space-3);
+  inset-inline-end: var(--space-3);
   bottom: calc(var(--spacing) * 15);
   z-index: 1000;
   width: 20vw;
@@ -86,6 +86,10 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   transform-origin: bottom right;
+}
+
+:global([dir='rtl']) .shell[data-variant='sidebar'] {
+  transform-origin: bottom left;
 }
 
 .shell[data-variant='sidebar'][data-state='open'] {
@@ -198,7 +202,7 @@
 @keyframes sidebarIn {
   from {
     opacity: 0;
-    transform: translateX(10vw);
+    transform: translateX(calc(10vw * var(--inline-dir, 1)));
   }
   to {
     opacity: 1;
@@ -213,7 +217,7 @@
   }
   to {
     opacity: 0;
-    transform: translateX(10vw);
+    transform: translateX(calc(10vw * var(--inline-dir, 1)));
   }
 }
 
