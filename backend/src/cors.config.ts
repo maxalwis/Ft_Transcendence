@@ -8,12 +8,12 @@
 // permet de tester l'app depuis un autre appareil du même wifi sans avoir à
 // reconfigurer FRONTEND_URL à chaque fois que l'IP de la machine de test
 // change (voir `make url` pour le lien à partager).
-const FRONTEND_URL = process.env.FRONTEND_URL;
+export const FRONTEND_URL = process.env.FRONTEND_URL;
 
 const PRIVATE_LAN_HOST =
   /^(10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})$/;
 
-function isAllowedOrigin(origin: string): boolean {
+export function isAllowedOrigin(origin: string): boolean {
   if (origin === FRONTEND_URL) return true;
   if (!FRONTEND_URL) return false;
 
