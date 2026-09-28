@@ -218,6 +218,24 @@ describe('Realtime multi-user concurrency (e2e)', () => {
     expect(notification.senderId).toBe(userAId);
   }, 10000);
 
+  // Relies on the friend request sent by A in the previous test
+  it('notifies friends in realtime when a user goes online and offline', async () => {
+    await agent(app.getHttpServer())
+      .patch(`/friends/accept/${userAId}`)
+      .set('Authorization', `Bearer ${tokenB}`)
+      .expect(200);
+
+    const socketA = await connectSocket(tokenA);
+
+    const onlinePromise = waitForEvent<{ userId: number }>(socketA, 'user:online');
+    const socketB = await connectSocket(tokenB);
+    expect(await onlinePromise).toEqual({ userId: userBId });
+
+    const offlinePromise = waitForEvent<{ userId: number }>(socketA, 'user:offline');
+    socketB.disconnect();
+    expect(await offlinePromise).toEqual({ userId: userBId });
+  }, 10000);
+
   it('keeps a user online while another socket for the same user remains connected', async () => {
     const socketA1 = await connectSocket(tokenA);
     const socketA2 = await connectSocket(tokenA);

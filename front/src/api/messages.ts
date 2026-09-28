@@ -15,7 +15,7 @@ export interface Message {
 
 export async function fetchEventMessages(eventId: string): Promise<Message[]> {
   const res = await request(`/events/${eventId}/messages`);
-  if (!res.ok) throw new Error('Failed to fetch messages');
+  if (!res.ok) throw new Error('MESSAGES_LOAD_FAILED');
   return res.json();
 }
 
@@ -26,12 +26,7 @@ export async function sendEventMessage(eventId: string, content: string): Promis
   });
 
   if (!res.ok) {
-    if (res.status === 429) throw new Error('TOO_MANY_ATTEMPTS');
-    const errorData = await res.json().catch(() => null);
-    const message = Array.isArray(errorData?.message)
-      ? errorData.message.join(', ')
-      : errorData?.message || 'Failed to send message';
-    throw new Error(message);
+    throw new Error(res.status === 429 ? 'TOO_MANY_ATTEMPTS' : 'MESSAGE_SEND_FAILED');
   }
 
   return res.json();

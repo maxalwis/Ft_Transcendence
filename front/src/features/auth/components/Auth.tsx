@@ -111,7 +111,7 @@ export default function LoginButton({
           <div className="absolute bottom-full left-1/2 mb-0.5 -translate-x-1/2 glass-panel flex flex-col min-w-40 z-50">
             <Button
               variant="ghost"
-              className="px-4 py-2 text-left hover:bg-white/10"
+              className="px-4 py-2 text-start hover:bg-white/10"
               onClick={() => {
                 setIsEditOpen(true);
                 setIsMenuOpen(false);
@@ -122,7 +122,7 @@ export default function LoginButton({
 
             <Button
               variant="ghost"
-              className="px-4 py-2 text-left hover:bg-white/10"
+              className="px-4 py-2 text-start hover:bg-white/10"
               onClick={handleLogout}
             >
               {t('authBtn.logout')}

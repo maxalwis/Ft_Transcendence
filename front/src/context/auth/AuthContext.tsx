@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, type ReactNode } from 'react';
-import { setAccessToken as setApiAccessToken } from '../../api/api';
+import { refresh, setAccessToken as setApiAccessToken } from '../../api/api';
 import { AuthContext, type User } from './AuthContextInstance';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -47,19 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const tryRefresh = async () => {
       try {
-        const port = import.meta.env.VITE_HTTPS_PORT || '8443';
-
-        const res = await fetch(`https://localhost:${port}/api/auth/refresh`, {
-          method: 'POST',
-          credentials: 'include',
-        });
-
-        if (!res.ok) {
-          logout();
-          return;
-        }
-
-        const data = await res.json();
+        const data = await refresh();
 
         if (data.user && data.accessToken) {
           setAuth(data.user, data.accessToken);
@@ -90,19 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     refreshTimer.current = setTimeout(async () => {
       try {
-        const port = import.meta.env.VITE_HTTPS_PORT || '8443';
-
-        const res = await fetch(`https://localhost:${port}/api/auth/refresh`, {
-          method: 'POST',
-          credentials: 'include',
-        });
-
-        if (!res.ok) {
-          logout();
-          return;
-        }
-
-        const data = await res.json();
+        const data = await refresh();
 
         if (data.user && data.accessToken) {
           setAuth(data.user, data.accessToken);

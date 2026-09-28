@@ -29,7 +29,7 @@
 .scrollableContent {
   overflow-y: auto;
   max-height: 60vh;
-  padding-right: var(--space-2);
+  padding-inline-end: var(--space-2);
 }
 
 .scrollableContent::-webkit-scrollbar {

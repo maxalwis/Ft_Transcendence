@@ -36,8 +36,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       React.createElement(
         'div',
         {
-          dir: 'ltr',
-          className: 'fixed top-3 left-3 z-9999 pointer-events-auto',
+          className: 'fixed top-3 start-3 z-9999 pointer-events-auto',
         },
         React.createElement(Toast, {
           message: notification.message,

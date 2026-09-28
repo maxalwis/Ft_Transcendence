@@ -128,7 +128,7 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
             </Button>
           </form>
 
-          <div dir="ltr" className="flex justify-center gap-2 mt-4">
+          <div className="flex justify-center gap-2 mt-4">
             <Button
               variant="icon"
               type="button"
@@ -136,10 +136,7 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
               onClick={() => (window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`)}
               aria-label={t('authModal.loginWithGoogle')}
             >
-              <img
-                src="https://img.icons8.com/?size=25&id=17949&format=png&color=000000"
-                alt="Google"
-              />
+              <img src="https://img.icons8.com/?size=25&id=17949&format=png&color=000000" alt="" />
             </Button>
 
             <Button
@@ -153,7 +150,7 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
             </Button>
           </div>
 
-          <div dir="ltr" className="flex items-center justify-center gap-3 text-sm mt-4">
+          <div className="flex items-center justify-center gap-3 text-sm mt-4">
             <span>{t('authModal.noAccount')}</span>
 
             <Button
@@ -207,7 +204,7 @@ export default function AuthModal({ isOpen, onClose, embedded = false }: AuthMod
             </Button>
           </form>
 
-          <div dir="ltr" className="flex items-center justify-center gap-3 text-sm mt-4">
+          <div className="flex items-center justify-center gap-3 text-sm mt-4">
             <span>{t('authModal.alreadyHaveAccount')}</span>
 
             <Button

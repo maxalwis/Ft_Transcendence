@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { CloseIcon, WarningIcon, CheckIcon, InfoIcon } from '../../types/icons';
+import { useTranslation } from 'react-i18next';
 import Button from './Button';
 
 export type ToastVariant = 'warning' | 'success' | 'error' | 'info';
@@ -24,6 +25,7 @@ export default function Toast({
   duration = 5000,
   variant = 'warning',
 }: ToastProps) {
+  const { t } = useTranslation();
   const [isExiting, setIsExiting] = useState(false);
   const [prevMessage, setPrevMessage] = useState(message);
 
@@ -64,7 +66,7 @@ export default function Toast({
         variant="icon"
         type="button"
         onClick={handleDismiss}
-        aria-label="Close notification"
+        aria-label={t('common.closeNotification')}
         className="modal-button modal-close"
       >
         <CloseIcon className="h-4 w-4" />

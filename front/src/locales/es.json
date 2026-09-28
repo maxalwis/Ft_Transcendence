@@ -14,13 +14,15 @@
   },
   "common": {
     "back": "Volver",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "closeNotification": "Cerrar la notificación"
   },
   "events": {
     "loading": "Cargando eventos...",
     "noEvents": "No se encontraron eventos",
     "errors": {
-      "loadFailed": "Error al cargar el evento"
+      "loadFailed": "Error al cargar el evento",
+      "searchFailed": "No se pudieron cargar los resultados."
     }
   },
   "eventDetails": {
@@ -46,12 +48,6 @@
     }
   },
   "filters": {
-    "title": "Filtros de eventos",
-    "cityLabel": "Ciudad / Ubicación",
-    "cityPlaceholder": "Ej: París",
-    "priceCategory": "Categoría de precio",
-    "selectCategory": "Seleccionar categoría",
-    "fromDate": "Desde :",
     "priceButton": "Precio",
     "dateButton": "Fecha",
     "apply": "Filtrar",
@@ -59,7 +55,9 @@
     "allPrices": "Todos",
     "free": "Gratis",
     "feeBased": "De pago",
-    "resetDate": "Restablecer"
+    "resetDate": "Restablecer",
+    "searchButton": "Buscar",
+    "searchPlaceholder": "Título, descripción, lugar…"
   },
   "friends": {
     "buttonTitle": "Amigos",
@@ -96,7 +94,8 @@
     "errors": {
       "acceptFailed": "Error al aceptar la solicitud.",
       "rejectFailed": "Error al rechazar la solicitud."
-    }
+    },
+    "backToFriends": "Volver a los amigos"
   },
   "chat": {
     "title": "Chat",
@@ -108,7 +107,8 @@
       "loadMessages": "Error al cargar los mensajes",
       "sendMessage": "Error al enviar el mensaje",
       "tooManyMessages": "Estás enviando demasiados mensajes. Espera unos segundos."
-    }
+    },
+    "sendMessage": "Enviar mensaje"
   },
   "passwordModal": {
     "title": "Cambiar contraseña",
@@ -183,7 +183,8 @@
     "deleteAccount": "Eliminar mi cuenta",
     "deleteEmailSent": "Se ha enviado un correo de confirmación. Revisa tu bandeja de entrada para finalizar la eliminación.",
     "exportError": "No se pudieron exportar tus datos",
-    "deleteRequestError": "No se pudo enviar el correo de confirmación"
+    "deleteRequestError": "No se pudo enviar el correo de confirmación",
+    "avatarAlt": "Vista previa del avatar"
   },
   "publicProfile": {
     "title": "Ver perfil",
@@ -244,5 +245,36 @@
     "selectEvent": "Selecciona un evento.",
     "collapse": "Colapsar barra lateral",
     "expand": "Expandir barra lateral"
+  },
+  "search": {
+    "sort": {
+      "label": "Ordenar por",
+      "date": "Fecha",
+      "title": "Título (A-Z)",
+      "popularity": "Popularidad"
+    },
+    "order": {
+      "asc": "Orden ascendente",
+      "desc": "Orden descendente"
+    },
+    "resultsCount": "Resultados: {{count}}"
+  },
+  "pagination": {
+    "previous": "Página anterior",
+    "next": "Página siguiente",
+    "label": "Paginación"
+  },
+  "errors": {
+    "tooManyAttempts": "Demasiadas solicitudes. Inténtalo de nuevo en un momento.",
+    "friendRequestExists": "Ya existe una solicitud de amistad o una amistad con este usuario.",
+    "friendRequestSelf": "No puedes agregarte a ti mismo como amigo.",
+    "userNotFound": "Usuario no encontrado.",
+    "usernameTaken": "Este nombre de usuario ya está en uso."
+  },
+  "languageSelector": {
+    "label": "Idioma"
+  },
+  "adminTools": {
+    "toggle": "Herramientas de administración"
   }
 }

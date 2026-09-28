@@ -14,6 +14,7 @@ import { ClusterLayer } from './ClusterLayer';
 import { AdminPanelLinks } from '../../externalLinks/AdminPanelLinks';
 import MapHoverPreview from './MapHoverPreview';
 import MapSidebarPanel, { type SidebarState } from './MapSidebarPanel';
+import type { EventSortField, SortOrder } from '../../../api/events';
 
 // State Management, Hooks & Helpers
 import { useNotification } from '../../../context/notifications/useNotification';
@@ -63,13 +64,33 @@ export default function Map() {
     endDate: string;
     priceType: string;
     category: string;
+    q: string;
   }>({
     city: 'Paris',
     startDate: '',
     endDate: '',
     priceType: '',
     category: '',
+    q: '',
   });
+
+  // Results list ordering (server-side sort, see /events/search)
+  const [resultsSort, setResultsSort] = useState<{ sort: EventSortField; order: SortOrder }>({
+    sort: 'date',
+    order: 'asc',
+  });
+
+  const resultsSearch = useMemo(
+    () => ({
+      q: filters.q,
+      city: filters.city,
+      from: filters.startDate,
+      category: filters.category.trim(),
+      price: filters.priceType,
+      ...resultsSort,
+    }),
+    [filters, resultsSort]
+  );
 
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Suppresses MapEventsHandler's "clear active group on zoom" while EventMapController is
@@ -77,7 +98,6 @@ export default function Map() {
   const skipZoomClearRef = useRef(false);
 
   const {
-    isLoading,
     eventGroups,
     activeGroup,
     currentEvent,
@@ -275,6 +295,25 @@ export default function Map() {
   }, []);
 
   /*
+   * Text search handler (title, description, venue): filters the map and the results list.
+   */
+  const handleSearchChange = useCallback((q: string) => {
+    setCurrentResultsPage(1);
+    setResultsScrollTop(0);
+
+    setFilters((prev) => ({
+      ...prev,
+      q,
+    }));
+  }, []);
+
+  const handleSortChange = useCallback((sort: EventSortField, order: SortOrder) => {
+    setCurrentResultsPage(1);
+    setResultsScrollTop(0);
+    setResultsSort({ sort, order });
+  }, []);
+
+  /*
    * Apply preferredLanguage / preferredCategory once, right after a real login.
    * Excludes silent session restores on page refresh (justLoggedIn stays false then).
    */
@@ -380,6 +419,8 @@ export default function Map() {
         onPriceChange={handlePriceChange}
         startDate={filters.startDate}
         onDateChange={handleDateChange}
+        searchQuery={filters.q}
+        onSearchChange={handleSearchChange}
       />
 
       <BottomBar />
@@ -389,9 +430,9 @@ export default function Map() {
         sidebar={sidebar}
         isOpen={isSidebarOpen}
         currentUserId={user?.id}
-        events={events}
         groupEvents={groupEvents}
-        isLoading={isLoading}
+        search={resultsSearch}
+        onSortChange={handleSortChange}
         currentResultsPage={currentResultsPage}
         onPageChange={setCurrentResultsPage}
         resultsScrollTop={resultsScrollTop}

@@ -59,12 +59,14 @@ export const ArrowDownIcon = (props: IconProps) => (
 );
 
 /**
- * Semantic alias for ArrowLeftIcon.
+ * Semantic "go back" arrow: ArrowLeftIcon, mirrored in RTL (back points to the inline start).
  *
- * Use ArrowLeftIcon when the meaning is directional.
+ * Use ArrowLeftIcon when the meaning is physically directional.
  * Use BackIcon when the meaning is specifically "go back".
  */
-export const BackIcon = ArrowLeftIcon;
+export const BackIcon = ({ className = '', ...props }: IconProps) => (
+  <ArrowLeftIcon className={`rtl-flip ${className}`} {...props} />
+);
 
 /* -------------------------------------------------------------------------- */
 /* Actions                                                                    */

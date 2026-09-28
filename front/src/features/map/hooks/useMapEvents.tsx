@@ -81,6 +81,7 @@ export function useMapEvents(
     category?: string;
     minPrice?: number | string;
     maxPrice?: number | string;
+    q?: string;
   }
 ) {
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -109,6 +110,7 @@ export function useMapEvents(
   const category = filters?.category ?? '';
   const minPrice = filters?.minPrice ?? '';
   const maxPrice = filters?.maxPrice ?? '';
+  const q = filters?.q?.trim() ?? '';
 
   const url = useMemo(() => {
     const params = new URLSearchParams();
@@ -119,6 +121,7 @@ export function useMapEvents(
     if (category.trim() !== '') params.append('category', category.trim());
     if (minPrice !== '') params.append('minPrice', String(minPrice));
     if (maxPrice !== '') params.append('maxPrice', String(maxPrice));
+    if (q) params.append('q', q);
 
     const envUrl = import.meta.env?.VITE_API_URL;
     const queryString = params.toString();
@@ -130,7 +133,7 @@ export function useMapEvents(
     return cleanBase.endsWith('/api')
       ? `${cleanBase}/events/map${queryPath}`
       : `${cleanBase}/api/events/map${queryPath}`;
-  }, [city, startDate, endDate, priceType, category, minPrice, maxPrice]);
+  }, [city, startDate, endDate, priceType, category, minPrice, maxPrice, q]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -153,14 +156,7 @@ export function useMapEvents(
         const response = await fetch(url, { signal: controller.signal });
 
         if (!response.ok) {
-          const errorData = (await response.json().catch(() => ({}))) as {
-            message?: string | string[];
-          };
-          const message = Array.isArray(errorData.message)
-            ? errorData.message.join(', ')
-            : errorData.message || `Error ${response.status}: Failed to load map events`;
-
-          throw new Error(message);
+          throw new Error(`Error ${response.status}: Failed to load map events`);
         }
 
         const text = await response.text();
@@ -178,12 +174,7 @@ export function useMapEvents(
         if (controller.signal.aborted) return;
         console.error('Failed to fetch map events:', err);
         showWarningRef.current(
-          err instanceof Error
-            ? err.message
-            : tRef.current(
-                'events.errors.loadFailed',
-                'An error occurred while loading map events.'
-              )
+          tRef.current('events.errors.loadFailed', 'An error occurred while loading map events.')
         );
       } finally {
         if (!controller.signal.aborted) setIsLoading(false);

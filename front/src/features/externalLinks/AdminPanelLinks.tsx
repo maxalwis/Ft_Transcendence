@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import L from 'leaflet';
 import { useMap } from 'react-leaflet';
+import { useTranslation } from 'react-i18next';
 import styles from './AdminPanelLinks.module.css';
 
 interface DashboardLink {
@@ -50,6 +51,7 @@ const dashboards: DashboardLink[] = [
 ];
 
 const DropdownMenu: React.FC = () => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -79,9 +81,9 @@ const DropdownMenu: React.FC = () => {
           isOpen ? '' : styles.toggleClosed
         }`}
         role="button"
-        aria-label="Parameters"
+        aria-label={t('adminTools.toggle')}
         aria-expanded={isOpen}
-        title="Parameters"
+        title={t('adminTools.toggle')}
       >
         <svg
           className="w-4 h-4"

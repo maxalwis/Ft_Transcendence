@@ -1,6 +1,6 @@
 import { Controller, Query, Get, Param, Header, Logger } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { MapQueryDto, NearbyQueryDto } from './dto/map-query.dto';
+import { MapQueryDto, NearbyQueryDto, SearchEventsQueryDto } from './dto/map-query.dto';
 
 @Controller('events')
 export class EventsController {
@@ -30,8 +30,15 @@ export class EventsController {
       query.to,
       query.category,
       priceStr,
-      query.city
+      query.city,
+      query.q
     );
+  }
+
+  // Liste de résultats : filtres + recherche texte + tri + pagination côté serveur
+  @Get('search')
+  search(@Query() query: SearchEventsQueryDto) {
+    return this.eventsService.search(query);
   }
 
   @Get('nearby')

@@ -5,6 +5,7 @@ import { UsersService } from '../users/users.service';
 import { SessionTrackerService } from './session-tracker.service';
 import { RealtimeEmitterService } from './realtime-emitter.service';
 import { EventsService } from '../events/events.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 describe('RealtimeGateway', () => {
   let gateway: RealtimeGateway;
@@ -13,6 +14,7 @@ describe('RealtimeGateway', () => {
   let sessionTrackerMock: any;
   let emitterMock: any;
   let eventsServiceMock: any;
+  let prismaMock: any;
 
   // exp = maintenant + 15 min, en secondes comme dans un vrai JWT
   const mockClient = (userId?: number, exp = Math.floor(Date.now() / 1000) + 15 * 60) => ({
@@ -30,8 +32,17 @@ describe('RealtimeGateway', () => {
     authServiceMock = { verifyAccessToken: jest.fn() };
     usersServiceMock = { setStatusIfExists: jest.fn() };
     sessionTrackerMock = { addSession: jest.fn(), removeSession: jest.fn() };
-    emitterMock = { setServer: jest.fn(), emitGlobal: jest.fn() };
+    emitterMock = { setServer: jest.fn(), emitGlobal: jest.fn(), emitToUsers: jest.fn() };
     eventsServiceMock = { findOne: jest.fn() };
+    // user 1 est ami avec 2 (demande envoyée) et 3 (demande reçue)
+    prismaMock = {
+      friendship: {
+        findMany: jest.fn().mockResolvedValue([
+          { senderId: 1, receiverId: 2 },
+          { senderId: 3, receiverId: 1 },
+        ]),
+      },
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -41,6 +52,7 @@ describe('RealtimeGateway', () => {
         { provide: SessionTrackerService, useValue: sessionTrackerMock },
         { provide: RealtimeEmitterService, useValue: emitterMock },
         { provide: EventsService, useValue: eventsServiceMock },
+        { provide: PrismaService, useValue: prismaMock },
       ],
     }).compile();
 
@@ -56,7 +68,7 @@ describe('RealtimeGateway', () => {
   });
 
   describe('handleConnection', () => {
-    it('should join the per-user room, track the session and broadcast presence', async () => {
+    it('should join the per-user room, track the session and notify friends only', async () => {
       const client = mockClient(1);
       usersServiceMock.setStatusIfExists.mockResolvedValue({ id: 1, status: 'ONLINE' });
 
@@ -65,7 +77,8 @@ describe('RealtimeGateway', () => {
       expect(client.join).toHaveBeenCalledWith('user:1');
       expect(sessionTrackerMock.addSession).toHaveBeenCalledWith(1, 'socket-1');
       expect(usersServiceMock.setStatusIfExists).toHaveBeenCalledWith(1, 'ONLINE');
-      expect(emitterMock.emitGlobal).toHaveBeenCalledWith('user:online', { userId: 1 });
+      expect(emitterMock.emitToUsers).toHaveBeenCalledWith([2, 3], 'user:online', { userId: 1 });
+      expect(emitterMock.emitGlobal).not.toHaveBeenCalled();
     });
 
     // Cas où l'utilisateur a été supprimé (GDPR, etc.) entre l'auth du socket
@@ -78,7 +91,7 @@ describe('RealtimeGateway', () => {
 
       expect(sessionTrackerMock.removeSession).toHaveBeenCalledWith(1, 'socket-1');
       expect(client.disconnect).toHaveBeenCalledWith(true);
-      expect(emitterMock.emitGlobal).not.toHaveBeenCalled();
+      expect(emitterMock.emitToUsers).not.toHaveBeenCalled();
     });
   });
 
@@ -126,7 +139,7 @@ describe('RealtimeGateway', () => {
 
       await gateway.handleDisconnect(client as any);
 
-      expect(emitterMock.emitGlobal).toHaveBeenCalledWith('user:offline', { userId: 1 });
+      expect(emitterMock.emitToUsers).toHaveBeenCalledWith([2, 3], 'user:offline', { userId: 1 });
     });
 
     it('should not broadcast offline while other sessions of the user remain', async () => {
@@ -136,7 +149,7 @@ describe('RealtimeGateway', () => {
       await gateway.handleDisconnect(client as any);
 
       expect(usersServiceMock.setStatusIfExists).not.toHaveBeenCalled();
-      expect(emitterMock.emitGlobal).not.toHaveBeenCalled();
+      expect(emitterMock.emitToUsers).not.toHaveBeenCalled();
     });
   });
 

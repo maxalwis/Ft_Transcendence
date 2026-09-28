@@ -7,7 +7,10 @@ import { MailService } from '../mail/mail.service';
 import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 import * as bcrypt from 'bcrypt';
 
+import { removeUploadedAvatar } from '../users/avatar-files';
+
 jest.mock('bcrypt', () => ({ compare: jest.fn() }));
+jest.mock('../users/avatar-files', () => ({ removeUploadedAvatar: jest.fn() }));
 
 const DELETE_PURPOSE = 'gdpr-account-deletion';
 
@@ -122,5 +125,41 @@ describe('GdprService.confirmDeletion (deletion hardening)', () => {
     expect(bcrypt.compare).not.toHaveBeenCalled();
     expect(prisma.user.delete).toHaveBeenCalledWith({ where: { id: 1 } });
     expect(res).toEqual({ deleted: true, userId: 1 });
+  });
+
+  it('removes the uploaded avatar file of a deleted account', async () => {
+    jwt.verifyAsync.mockResolvedValue({ sub: 1, purpose: DELETE_PURPOSE });
+    prisma.user.findUnique.mockResolvedValue({
+      id: 1,
+      email: 'a@b.c',
+      password: null,
+      avatar: '/uploads/avatars/123.png',
+    });
+    await service.confirmDeletion(1, 'tok', undefined);
+    expect(removeUploadedAvatar).toHaveBeenCalledWith('/uploads/avatars/123.png');
+  });
+
+  it("sends the deletion notice in the user's preferred language", async () => {
+    jwt.verifyAsync.mockResolvedValue({ sub: 1, purpose: DELETE_PURPOSE });
+    prisma.user.findUnique.mockResolvedValue({
+      id: 1,
+      email: 'a@b.c',
+      password: null,
+      preferredLanguage: 'ES',
+    });
+    await service.confirmDeletion(1, 'tok', undefined);
+    expect(mail.sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({ to: 'a@b.c', subject: 'Tu cuenta ha sido eliminada' })
+    );
+  });
+
+  it('sends the confirmation link in the preferred language, RTL for Arabic', async () => {
+    prisma.user.findUnique.mockResolvedValue({ id: 1, email: 'a@b.c', preferredLanguage: 'AR' });
+    jwt.signAsync.mockResolvedValue('signed-token');
+    await service.requestDeletion(1);
+    const sent = mail.sendMail.mock.calls[0][0];
+    expect(sent.subject).toBe('تأكيد حذف حسابك');
+    expect(sent.html).toContain('dir="rtl"');
+    expect(sent.text).toContain('token=signed-token');
   });
 });

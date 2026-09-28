@@ -4,6 +4,9 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '../generated/prisma/client';
+import { removeUploadedAvatar } from './avatar-files';
+
+jest.mock('./avatar-files', () => ({ removeUploadedAvatar: jest.fn() }));
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -106,6 +109,34 @@ describe('UsersService', () => {
       const { data } = prismaMock.user.create.mock.calls[0][0];
       expect(data.username).toBe('Elodie_Martin1');
       expect(data.password).toBeNull();
+    });
+  });
+
+  describe('update', () => {
+    beforeEach(() => (removeUploadedAvatar as jest.Mock).mockReset());
+
+    it('should delete the previous uploaded avatar file when a new one is saved', async () => {
+      prismaMock.user.findUnique.mockResolvedValue({
+        ...mockUser,
+        avatar: '/uploads/avatars/old.png',
+      });
+      prismaMock.user.update.mockResolvedValue({ ...mockUser, avatar: '/uploads/avatars/new.png' });
+
+      await service.update(1, { avatar: '/uploads/avatars/new.png' });
+
+      expect(removeUploadedAvatar).toHaveBeenCalledWith('/uploads/avatars/old.png');
+    });
+
+    it('should keep the avatar file when the avatar is not changed', async () => {
+      prismaMock.user.findUnique.mockResolvedValue({
+        ...mockUser,
+        avatar: '/uploads/avatars/old.png',
+      });
+      prismaMock.user.update.mockResolvedValue(mockUser);
+
+      await service.update(1, { username: 'alice2' });
+
+      expect(removeUploadedAvatar).not.toHaveBeenCalled();
     });
   });
 

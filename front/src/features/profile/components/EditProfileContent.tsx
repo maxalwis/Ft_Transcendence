@@ -11,6 +11,7 @@ import Button from '../../../components/ui/Button';
 import TextField from '../../../components/ui/TextField';
 import Select from '../../../components/ui/Select';
 import { updateProfile } from '../../../api/users';
+import { useApiErrorMessage } from '../../../hooks/useApiErrorMessage';
 
 interface EditProfileContentProps {
   onClose: () => void;
@@ -45,6 +46,7 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { showWarning, showSuccess } = useNotification();
+  const errorMessage = useApiErrorMessage();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -103,8 +105,8 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
       updateUser(updated);
       showSuccess(t('profileSettings.saveSuccess'));
       onClose();
-    } catch {
-      showWarning(t('profileSettings.saveError', 'Unable to save changes.'));
+    } catch (err) {
+      showWarning(errorMessage(err, t('profileSettings.saveError', 'Unable to save changes.')));
     } finally {
       setIsSaving(false);
     }
@@ -123,7 +125,11 @@ export default function EditProfileContent({ onClose, shell }: EditProfileConten
             {avatarLoadFailed ? (
               <span>{username.charAt(0).toUpperCase() || '?'}</span>
             ) : (
-              <img src={avatarPreview} alt="Avatar" onError={() => setAvatarLoadFailed(true)} />
+              <img
+                src={avatarPreview}
+                alt={t('profileSettings.avatarAlt')}
+                onError={() => setAvatarLoadFailed(true)}
+              />
             )}
           </Button>
           <input

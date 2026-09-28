@@ -2,9 +2,12 @@ import { useTranslation } from 'react-i18next';
 
 import SideBar from '../../../layouts/Sidebar';
 import EventSidebarContent from '../../events/components/EventSidebarContent';
-import EventResultsSidebar from '../../events/components/EventResultsSidebar';
+import EventResultsSidebar, {
+  type ResultsSearch,
+} from '../../events/components/EventResultsSidebar';
 
 import type { EventItem } from '../../../types/event';
+import type { EventSortField, SortOrder } from '../../../api/events';
 
 export type SidebarState = { type: 'event'; eventId: string } | { type: 'results' } | null;
 
@@ -12,9 +15,9 @@ interface MapSidebarPanelProps {
   sidebar: SidebarState;
   isOpen: boolean;
   currentUserId?: string | number;
-  events: EventItem[];
   groupEvents: EventItem[] | null;
-  isLoading: boolean;
+  search: ResultsSearch;
+  onSortChange: (sort: EventSortField, order: SortOrder) => void;
   currentResultsPage: number;
   onPageChange: (page: number) => void;
   resultsScrollTop: number;
@@ -29,9 +32,9 @@ export default function MapSidebarPanel({
   sidebar,
   isOpen,
   currentUserId,
-  events,
   groupEvents,
-  isLoading,
+  search,
+  onSortChange,
   currentResultsPage,
   onPageChange,
   resultsScrollTop,
@@ -55,8 +58,9 @@ export default function MapSidebarPanel({
     >
       {sidebar.type === 'results' && (
         <EventResultsSidebar
-          events={groupEvents ?? events}
-          isLoading={isLoading}
+          groupEvents={groupEvents}
+          search={search}
+          onSortChange={onSortChange}
           currentPage={currentResultsPage}
           onPageChange={onPageChange}
           onEventClick={onEventClick}

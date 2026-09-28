@@ -58,7 +58,7 @@ export default function ViewProfile({ friend, onClose, onRemove }: ViewProfilePr
           <div className="flex justify-between gap-4">
             <span className={styles.fieldLabel}>{t('publicProfile.preferredCategory')}</span>
 
-            <span className={`text-right ${styles.fieldValue}`}>
+            <span className={`text-end ${styles.fieldValue}`}>
               {friend.preferredCategory
                 ? t(`categories.${friend.preferredCategory.toLowerCase()}`)
                 : t('publicProfile.notProvided')}
@@ -68,7 +68,7 @@ export default function ViewProfile({ friend, onClose, onRemove }: ViewProfilePr
           <div className="flex justify-between gap-4">
             <span className={styles.fieldLabel}>{t('publicProfile.preferredLanguage')}</span>
 
-            <span className={`text-right ${styles.fieldValue}`}>
+            <span className={`text-end ${styles.fieldValue}`}>
               {friend.preferredLanguage
                 ? {
                     FR: 'Français',

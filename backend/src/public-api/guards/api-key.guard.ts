@@ -1,5 +1,14 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import type { Request } from 'express';
+import { createHash, timingSafeEqual } from 'crypto';
+
+// Constant-time comparison: a plain !== returns as soon as a character differs, which
+// leaks how much of the key is correct through the response time. Hashing first gives
+// both buffers the same length, as timingSafeEqual requires.
+function safeEqual(a: string, b: string): boolean {
+  const digest = (value: string) => createHash('sha256').update(value).digest();
+  return timingSafeEqual(digest(a), digest(b));
+}
 
 /**
  * Protects the public API: requires a valid `X-API-Key` header matching
@@ -16,7 +25,7 @@ export class ApiKeyGuard implements CanActivate {
     if (!expected) {
       throw new UnauthorizedException('Public API key is not configured');
     }
-    if (!provided || provided !== expected) {
+    if (!provided || !safeEqual(provided, expected)) {
       throw new UnauthorizedException('Invalid or missing API key');
     }
     return true;

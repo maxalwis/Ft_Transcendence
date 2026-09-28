@@ -4,7 +4,7 @@ import styles from '../Event.module.css';
 import LikeButton from './LikeButton';
 import Button from '../../../components/ui/Button';
 import Chip from '../../../components/ui/Chip';
-import { ArrowLeftIcon, ArrowRightIcon } from '../../../types/icons';
+import Pagination from '../../../components/ui/Pagination';
 import EventImage from './EventImage';
 
 export interface Friend {
@@ -189,35 +189,21 @@ export default function EventPreview({
       </div>
 
       {totalInGroup > 1 && (
-        <div dir="ltr" className="flex justify-between items-center px-5 pt-3">
-          <Button
-            variant="icon"
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onPrev) onPrev(e);
-            }}
-            disabled={currentIndex === 0}
-            className={`${styles['events-details-carousel-button']} disabled:opacity-40`}
-          >
-            <ArrowLeftIcon className="h-4 w-4" />
-          </Button>
-          <span className={styles['events-details-carousel-counter']}>
-            {currentIndex + 1} / {totalInGroup}
-          </span>
-          <Button
-            variant="icon"
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onNext) onNext(e);
-            }}
-            disabled={currentIndex === totalInGroup - 1}
-            className={`${styles['events-details-carousel-button']} disabled:opacity-40`}
-          >
-            <ArrowRightIcon className="close h-4 w-4" />
-          </Button>
-        </div>
+        <Pagination
+          current={currentIndex + 1}
+          total={totalInGroup}
+          onPrevious={(e) => {
+            e.stopPropagation();
+            if (onPrev) onPrev(e);
+          }}
+          onNext={(e) => {
+            e.stopPropagation();
+            if (onNext) onNext(e);
+          }}
+          className="px-5 pt-3"
+          buttonClassName={`${styles['events-details-carousel-button']} disabled:opacity-40`}
+          counterClassName={styles['events-details-carousel-counter']}
+        />
       )}
 
       <div className={styles['events-details-content']}>

@@ -5,10 +5,21 @@ import styles from '../Event.module.css';
 import { useTranslation } from 'react-i18next';
 import Button from '../../../components/ui/Button';
 import EmptyState from '../../../components/ui/EmptyState';
+import Select from '../../../components/ui/Select';
+import Pagination from '../../../components/ui/Pagination';
+import Spinner from '../../../components/ui/Spinner';
+import { ArrowDownIcon, ArrowUpIcon } from '../../../types/icons';
+import { useEventSearch } from '../hooks/useEventSearch';
+import type { EventSearchParams, EventSortField, SortOrder } from '../../../api/events';
+
+export type ResultsSearch = Omit<EventSearchParams, 'page' | 'limit'>;
 
 interface EventResultsSidebarProps {
-  events: EventItem[];
-  isLoading: boolean;
+  // Events of a clicked marker group, listed as is. When null, the list comes from the
+  // server search (filters + text + sort + pagination).
+  groupEvents: EventItem[] | null;
+  search: ResultsSearch;
+  onSortChange: (sort: EventSortField, order: SortOrder) => void;
   currentPage: number;
   onPageChange: (page: number) => void;
   onEventClick: (eventId: string) => void;
@@ -38,8 +49,9 @@ function useIsMobile() {
 }
 
 export default function EventResultsSidebar({
-  events,
-  isLoading,
+  groupEvents,
+  search,
+  onSortChange,
   currentPage,
   onPageChange,
   onEventClick,
@@ -47,16 +59,51 @@ export default function EventResultsSidebar({
   onScrollTopChange,
 }: EventResultsSidebarProps) {
   const { t } = useTranslation();
-  const [eventsPerPage, setEventsPerPage] = useState(1);
+  const [eventsPerPage, setEventsPerPage] = useState(4);
   const [hasOverflow, setHasOverflow] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [isAtTop, setIsAtTop] = useState(true);
   const listRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const itemsPerPage = isMobile ? 5 : eventsPerPage;
-  const totalPages = Math.max(1, Math.ceil(events.length / (isMobile ? 5 : eventsPerPage)));
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedEvents = events.slice(startIndex, startIndex + itemsPerPage);
+  const isGroup = groupEvents !== null;
+
+  const {
+    result,
+    isLoading: isSearching,
+    error: searchError,
+  } = useEventSearch({ ...search, page: currentPage, limit: itemsPerPage }, !isGroup);
+
+  let paginatedEvents: EventItem[];
+  let totalPages: number;
+  let totalCount: number;
+
+  if (isGroup) {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    paginatedEvents = groupEvents.slice(startIndex, startIndex + itemsPerPage);
+    totalPages = Math.max(1, Math.ceil(groupEvents.length / itemsPerPage));
+    totalCount = groupEvents.length;
+  } else {
+    paginatedEvents = result?.data ?? [];
+    totalPages = result?.totalPages ?? 1;
+    totalCount = result?.total ?? 0;
+  }
+
+  const isLoading = !isGroup && isSearching && !result;
+  const hasResults = paginatedEvents.length > 0;
+
+  // The page size depends on the sidebar height: when it grows, the current page may no
+  // longer exist.
+  useEffect(() => {
+    if (currentPage > totalPages) onPageChange(totalPages);
+  }, [currentPage, totalPages, onPageChange]);
+
+  const sortOptions = [
+    { value: 'date', label: t('search.sort.date') },
+    { value: 'title', label: t('search.sort.title') },
+    { value: 'popularity', label: t('search.sort.popularity') },
+  ];
+
   const handlePageChange = (page: number) => {
     onScrollTopChange(0);
     onPageChange(page);
@@ -90,14 +137,6 @@ export default function EventResultsSidebar({
 
       const count = Math.max(1, Math.floor((containerHeight + gap + 10) / (cardHeight + gap)));
 
-      console.log({
-        containerHeight,
-        cardHeight,
-        gap,
-        calculated: count,
-        fiveCardsHeight: cardHeight * 5 + gap * 4,
-      });
-
       setEventsPerPage((previous) => (previous === count ? previous : count));
     };
 
@@ -109,7 +148,7 @@ export default function EventResultsSidebar({
     return () => {
       observer.disconnect();
     };
-  }, [events, isMobile]);
+  }, [hasResults, isMobile]);
 
   /*
    * Track whether the results list is overflowing and whether
@@ -161,16 +200,62 @@ export default function EventResultsSidebar({
     return () => cancelAnimationFrame(frame);
   }, [scrollTop]);
 
+  const orderLabel = search.order === 'asc' ? t('search.order.asc') : t('search.order.desc');
+
+  const sortControls = !isGroup && (
+    <div className="flex shrink-0 items-end gap-2 pb-2">
+      <div className="min-w-0 flex-1">
+        <Select
+          label={t('search.sort.label')}
+          options={sortOptions}
+          value={search.sort}
+          onChange={(value) => onSortChange(value as EventSortField, search.order)}
+        />
+      </div>
+      <Button
+        variant="icon"
+        type="button"
+        onClick={() => onSortChange(search.sort, search.order === 'asc' ? 'desc' : 'asc')}
+        className="modal-button orange-surrounded"
+        aria-label={orderLabel}
+        title={orderLabel}
+      >
+        {search.order === 'asc' ? (
+          <ArrowUpIcon className="h-4 w-4" />
+        ) : (
+          <ArrowDownIcon className="h-4 w-4" />
+        )}
+      </Button>
+    </div>
+  );
+
   if (isLoading) {
-    return <EmptyState>{t('events.loading')}</EmptyState>;
+    return (
+      <EmptyState>
+        <Spinner label={t('events.loading')} />
+      </EmptyState>
+    );
   }
 
-  if (events.length === 0) {
-    return <EmptyState>{t('events.noEvents')}</EmptyState>;
+  if (!isGroup && searchError && !result) {
+    return <EmptyState>{t('events.errors.searchFailed')}</EmptyState>;
+  }
+
+  if (paginatedEvents.length === 0) {
+    return (
+      <div className={styles.resultsWrapper}>
+        {sortControls}
+        <EmptyState>{t('events.noEvents')}</EmptyState>
+      </div>
+    );
   }
 
   return (
     <div className={styles.resultsWrapper}>
+      {sortControls}
+      <p className="shrink-0 pb-2 text-sm opacity-75" aria-live="polite">
+        {t('search.resultsCount', { count: totalCount })}
+      </p>
       <div
         className={`${styles.resultsList} ${
           hasOverflow && !isAtBottom ? styles.hasBottomFade : ''
@@ -190,33 +275,14 @@ export default function EventResultsSidebar({
         </div>
       </div>
 
-      <div dir="ltr" className="flex shrink-0 items-center justify-between">
-        <Button
-          variant="icon"
-          type="button"
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-          className="modal-button orange-surrounded"
-          aria-label="Previous page"
-        >
-          &lt;
-        </Button>
-
-        <span>
-          {currentPage} / {totalPages}
-        </span>
-
-        <Button
-          variant="icon"
-          type="button"
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-          className="modal-button orange-surrounded"
-          aria-label="Next page"
-        >
-          &gt;
-        </Button>
-      </div>
+      <Pagination
+        current={currentPage}
+        total={totalPages}
+        onPrevious={() => handlePageChange(currentPage - 1)}
+        onNext={() => handlePageChange(currentPage + 1)}
+        className="shrink-0"
+        buttonClassName="modal-button orange-surrounded"
+      />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import {
 import { RealtimeEmitterService } from '../realtime/realtime-emitter.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { SAFE_USER_SELECT } from '../users/safe-user-select';
+import { findFriendIds } from './friend-ids';
 import { Prisma } from '../generated/prisma/client';
 
 @Injectable()
@@ -175,17 +176,7 @@ export class FriendsService {
   }
 
   // utilisé pour events-interest, plus léger que getUserFriends (renvoie seulement des id)
-  async getFriendIds(userId: number): Promise<number[]> {
-    const friendships = await this.prisma.friendship.findMany({
-      where: {
-        OR: [
-          { senderId: userId, status: 'ACCEPTED' },
-          { receiverId: userId, status: 'ACCEPTED' },
-        ],
-      },
-      select: { senderId: true, receiverId: true },
-    });
-
-    return friendships.map((f) => (f.senderId === userId ? f.receiverId : f.senderId));
+  getFriendIds(userId: number): Promise<number[]> {
+    return findFriendIds(this.prisma, userId);
   }
 }

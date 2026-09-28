@@ -18,6 +18,8 @@ import { EventsService } from '../events/events.service';
 import { User, UserStatus } from '../generated/prisma/browser';
 import { LoggerMiddleware } from '../logger.middleware';
 import { CORS_ORIGIN } from '../cors.config';
+import { PrismaService } from '../prisma/prisma.service';
+import { findFriendIds } from '../friends/friend-ids';
 
 @WebSocketGateway({
   cors: { origin: CORS_ORIGIN, credentials: true },
@@ -31,8 +33,15 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
     private sessionTracker: SessionTrackerService,
     private usersService: UsersService,
     private emitter: RealtimeEmitterService,
-    private eventsService: EventsService
+    private eventsService: EventsService,
+    private prisma: PrismaService
   ) {}
+
+  // Le statut en ligne n'est envoyé qu'aux amis (rooms user:<id>), pas à tous les clients
+  private async broadcastPresence(userId: number, event: 'user:online' | 'user:offline') {
+    const friendIds = await findFriendIds(this.prisma, userId);
+    this.emitter.emitToUsers(friendIds, event, { userId });
+  }
 
   afterInit(server: Server) {
     this.emitter.setServer(server);
@@ -81,7 +90,7 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
       return;
     }
 
-    this.emitter.emitGlobal('user:online', { userId });
+    await this.broadcastPresence(userId, 'user:online');
   }
 
   async handleDisconnect(client: Socket) {
@@ -96,7 +105,7 @@ export class RealtimeGateway implements OnGatewayInit, OnGatewayConnection, OnGa
       const user = await this.usersService.setStatusIfExists(userId, 'OFFLINE');
 
       if (user) {
-        this.emitter.emitGlobal('user:offline', { userId });
+        await this.broadcastPresence(userId, 'user:offline');
       }
 
       if (!user) {

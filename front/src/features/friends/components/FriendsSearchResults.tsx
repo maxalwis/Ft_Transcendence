@@ -9,6 +9,7 @@ import { useNotification } from '../../../context/notifications/useNotification'
 import Button from '../../../components/ui/Button';
 import Avatar from '../../../components/ui/Avatar';
 import EmptyState from '../../../components/ui/EmptyState';
+import { useApiErrorMessage } from '../../../hooks/useApiErrorMessage';
 
 type FriendsSearchResultsProps = {
   input: string;
@@ -25,6 +26,7 @@ export default function FriendsSearchResults({
 }: FriendsSearchResultsProps) {
   const { accessToken } = useAuth();
   const { showWarning } = useNotification();
+  const errorMessage = useApiErrorMessage();
   const { t } = useTranslation();
 
   const [results, setResults] = useState<UserSearchResult[]>([]);
@@ -76,9 +78,7 @@ export default function FriendsSearchResults({
 
       onDataChanged();
     } catch (err) {
-      showWarning(
-        err instanceof Error ? err.message : t('friends.errors.sendFailed', 'Error during sending.')
-      );
+      showWarning(errorMessage(err, t('friends.errors.sendFailed', 'Error during sending.')));
     } finally {
       setSendingRequest(null);
     }
@@ -119,7 +119,7 @@ export default function FriendsSearchResults({
                   </div>
 
                   <div
-                    className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full ${
+                    className={`absolute bottom-0 end-0 h-2.5 w-2.5 rounded-full ${
                       user.status === 'ONLINE' ? 'bg-green-500' : 'bg-gray-400'
                     }`}
                   />

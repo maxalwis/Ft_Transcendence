@@ -57,7 +57,7 @@ export default function MessageInput({ onSend, maxHeight = 160 }: MessageInputPr
       <textarea
         ref={textareaRef}
         rows={1}
-        className={`${styles.input} chat-message-input glass-panel w-full resize-none rounded-3xl py-2 pl-4 pr-12 border transition-all overflow-y-auto`}
+        className={`${styles.input} chat-message-input glass-panel w-full resize-none rounded-3xl py-2 ps-4 pe-12 border transition-all overflow-y-auto`}
         placeholder={t('chat.placeholder')}
         maxLength={150}
         value={input}
@@ -75,7 +75,7 @@ export default function MessageInput({ onSend, maxHeight = 160 }: MessageInputPr
           type="button"
           className={styles.sendButton}
           onClick={handleSend}
-          aria-label="Send message"
+          aria-label={t('chat.sendMessage')}
         >
           <SendIcon
             className={`${styles.sendIcon} rtl-flip ${hasText ? styles.sendIconActive : ''}`}

@@ -10,6 +10,7 @@ import { useSocket } from '../../../context/socket/useSocket';
 import FriendsContent from './FriendsContent';
 import FriendsModal from './FriendsModal';
 import Button from '../../../components/ui/Button';
+import { useApiErrorMessage } from '../../../hooks/useApiErrorMessage';
 
 export type OpenState = {
   isOpen: boolean;
@@ -27,6 +28,7 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
   const [requests, setRequests] = useState<PendingRequest[]>([]);
 
   const { showWarning } = useNotification();
+  const errorMessage = useApiErrorMessage();
   const { t } = useTranslation();
   const { user, accessToken } = useAuth();
   const { socket } = useSocket();
@@ -46,11 +48,9 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
       setFriends(friendsList);
       setRequests(pendingList);
     } catch (err) {
-      showWarning(
-        err instanceof Error ? err.message : t('friends.errorLoading', 'Error loading friends.')
-      );
+      showWarning(errorMessage(err, t('friends.errorLoading', 'Error loading friends.')));
     }
-  }, [accessToken, fetchData, showWarning, t]);
+  }, [accessToken, fetchData, showWarning, errorMessage, t]);
 
   const handleRemoveFriend = async (friendId: number) => {
     if (!accessToken) return;
@@ -59,11 +59,7 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
       await removeFriend(friendId);
       await loadData();
     } catch (err) {
-      showWarning(
-        err instanceof Error
-          ? err.message
-          : t('friends.errors.removeFailed', 'Error during removal.')
-      );
+      showWarning(errorMessage(err, t('friends.errors.removeFailed', 'Error during removal.')));
     }
   };
 
@@ -84,6 +80,27 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
       socket.off('friend:updated', handleFriendUpdate);
     };
   }, [socket, loadData]);
+
+  // Live online/offline dot: the backend notifies friends when a user connects or leaves
+  useEffect(() => {
+    if (!socket) return;
+
+    const setStatus =
+      (status: User['status']) =>
+      ({ userId }: { userId: number }) =>
+        setFriends((prev) => prev.map((f) => (f.id === userId ? { ...f, status } : f)));
+
+    const handleOnline = setStatus('ONLINE');
+    const handleOffline = setStatus('OFFLINE');
+
+    socket.on('user:online', handleOnline);
+    socket.on('user:offline', handleOffline);
+
+    return () => {
+      socket.off('user:online', handleOnline);
+      socket.off('user:offline', handleOffline);
+    };
+  }, [socket]);
 
   useEffect(() => {
     if (!socket) return;
@@ -109,14 +126,12 @@ export default function Friends({ embedded = false, onBack }: FriendsProps) {
         setFriends(friendsList);
         setRequests(pendingList);
       } catch (err) {
-        showWarning(
-          err instanceof Error ? err.message : t('friends.errorLoading', 'Error loading friends.')
-        );
+        showWarning(errorMessage(err, t('friends.errorLoading', 'Error loading friends.')));
       }
     };
 
     void load();
-  }, [accessToken, fetchData, showWarning, t]);
+  }, [accessToken, fetchData, showWarning, errorMessage, t]);
 
   return (
     <div className={embedded ? 'flex h-full min-h-0 w-full flex-col overflow-hidden' : 'relative'}>
