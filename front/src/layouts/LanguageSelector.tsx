@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LanguageIcon, FlagFR, FlagGB, FlagES, FlagSA } from './FlagIcons';
 import Button from '../components/ui/Button';
@@ -86,8 +86,9 @@ export default function LanguageSelector({ embedded = false }: LanguageSelectorP
               variant="flag"
               key={code}
               type="button"
-              onClick={() => {
+              onClick={(event: MouseEvent<HTMLButtonElement>) => {
                 i18n.changeLanguage(code);
+                event.currentTarget.blur();
                 setIsOpen(false);
               }}
               title={title}
