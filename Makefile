@@ -1,10 +1,20 @@
-.PHONY: all up logs down elk clean fclean build check-env re restart test-unit test-health test-e2e prepare-socket seed elk-seed
+.PHONY: all up logs down elk clean fclean build check-env re restart test-unit test-health test-e2e prepare-socket seed elk-seed url
 export CONTAINERS_REGISTRIES_CONF = $(shell pwd)/.containers/registries.conf
 export PODMAN_COMPOSE_WARNING_LOGS=0
-LAN_IP := $(shell hostname -I | awk '{print $$1}')
+# The source IP for the default route, i.e. the interface actually facing the
+# wifi/router — not just the first address `hostname -I` happens to list,
+# which can be a virtual bridge (libvirt's virbr0, docker0, podman0, ...)
+# that nothing outside this machine can reach.
+LAN_IP := $(shell ip -4 route get 1.1.1.1 2>/dev/null | sed -n 's/.* src \([0-9.]*\).*/\1/p')
 HTTPS_PORT := 8443
 
 all: up
+
+# Prints the link to hand to someone testing on the same wifi. LAN_IP is
+# re-detected each run since it changes with the network/machine.
+url:
+	@printf "Local: \033[36mhttps://localhost:$(HTTPS_PORT)\033[0m\n"
+	@printf "LAN:   \033[36mhttps://$(LAN_IP):$(HTTPS_PORT)\033[0m  (share this with testers on the same wifi)\n"
 
 logs:
 	podman compose logs -f

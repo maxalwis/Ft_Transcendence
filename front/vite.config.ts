@@ -63,6 +63,10 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), tailwindcss()],
     server: {
       host: true,
+      // Testers reach the dev server via nginx using a LAN IP (which changes
+      // per machine), not just "localhost" — Vite blocks unknown Host headers
+      // by default, so this has to stay permissive in this dev-only setup.
+      allowedHosts: true,
       hmr: {
         protocol: 'wss',
         clientPort: Number(process.env.HTTPS_PORT || env.HTTPS_PORT) || 8443,
